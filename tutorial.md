@@ -1,6 +1,22 @@
 
 # Vehicle Tutorial 
 
+## Contents of tutorial
+
+1. A simple semantically meaningful example.
+    - Maybe hierarchical classification? e.g. In this dogs dataset it shouldn't confuse an Afghan hound and a Border terrier.
+    - Introduce basic syntax and properties.
+2. A more complicated semantically meaningful example 
+    - e.g. AcasXu
+    - Introduces building and reusing functions.
+3. Less semantically meaningful
+    - e.g. MNIST robustness
+    - Introduces concepts of datasets, parameters etc.
+4. Semantically meaningful + integration with Agda.
+    - Braking example?
+    - Vehicle controller?
+
+
 ## Motivation
 - introduction of a dataset
 - describe a property in words
