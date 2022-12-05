@@ -51,7 +51,7 @@ noConfusionWith x dogs1 dogs2 =
       not (isFirstChoice x dog1 and isSecondChoice x dog2)
 
 --------------------------------------------------------------------------------
--- Propertieschihuahua
+-- Properties chihuahua
 
 @property
 doesNotConfuseBigAndSmall : Bool
