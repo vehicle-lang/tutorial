@@ -32,7 +32,7 @@ Once a specification has been verified, Vehicle allows you to export the proof t
 - example of property not holding 
 - fix in vehicle!
 
-## Example 1
+## Example 1 - Stanford Dogs Dataset
 
 For this first example, we will consider a neural network that classifies dog breeds from images in the 
 [Stanford Dog Dataset](https://www.kaggle.com/datasets/jessicali9530/stanford-dogs-dataset). Although the dataset includes 120 breeds, for this example, we will focus on only 20 breeds.
@@ -57,13 +57,13 @@ Thus, we simply need to provide its input and output types.
 ```
 
 Function types are declared using `:` and function arguments are separated with `->`. 
-For example, we have called our network `score`. It takes in a 2-dimension tensor of size 28 x 28
-filled with rationals - an image -, and return a vector of 20 rationals -a score for each of the 0 to 19 dog breeds-.
+In this case, we have called our network `score`. It takes in a 2-dimension tensor of size 28 x 28
+filled with rationals - an image -, and returns a vector of 20 rationals -a score for each of the 0 to 19 dog breeds-.
 Networks are annotated with the keyword `@network` on the previous line of their declaration.
 
 ## Declaration of properties
 
-### A simple property
+### A simple property (ExistsGreatDane)
 
 Let us start with a simple property stating that there is at least one image classified as a Great Dane.
 
@@ -81,7 +81,7 @@ vector returned by `score` for the image `img` will have its maximum in index `d
 the type of `d1` is `Index 20`. The set of valid instances of this type are the natural numbers {0, ..., 19}.
 By using the type `Index 20` instead of simply `Nat`, we make sure that no out-of-bound errors will arise from using `!`, which is the vector look-up operator, when accessing position `d1` of `(score img)`, i.e. `(score img) ! d1`, since we know that `score` will output a vector of size 20.
  
-The `forall` quantifier allows us to check that all dog breeds `d2`, such that `d2` is different from `d1`, have a lower score than `d1` in the score vector for `img`, i.e. `(score img)`. 
+The `forall` quantifier allows us to check that all dog breeds `d2`, such that `d2` is different from `d1`, have a lower score than `d1` in the vector `(score img)`. 
 
 Instead of repeatedly writing `Tensor Rat[28,28]`, we can declare a type synonym called `Image`.
 Similarly, we can define `Dog` to be an index of the 20 breeds. Like this, the signature of 
@@ -100,7 +100,6 @@ where we have declared `greatDane` to be the index number 1 of all the breeds.
 
 
 ```{.vcl}
-
     GreatDane = 1
 
     @property
@@ -110,11 +109,12 @@ where we have declared `greatDane` to be the index number 1 of all the breeds.
 
 Note how we have annotated `existsGreatDane` with the keyword `@property`. Properties 
 are boolean expressions whose value cannot be decided within Vehicle and will instead be decided
-by the verifier. 
+by the verifier. Properties in Vehicle Specification should always have the `@property` keyword 
+in the previous line.
 
 If we compile this specification and pass it to the verifier, `existsGreatDane` will most likely 
 hold for a nonsensical image. To avoid this, we must restrict our property to valid images only.
-We will consider an image is valid if all its pixels are valid, i.e., normalized to be in the range 0 to 1.
+We consider an image valid if all its pixels are valid, i.e., normalized to be in the range 0 to 1.
 
 ```{.vcl}
     validPixel : Rat -> Bool
@@ -133,44 +133,63 @@ We can now rewrite our property restricted to valid images only.
     existsGreatDane = exists img . (validImage img) and (isFirstChoice img GreatDane)
 ``` 
 
-### A more meaningful property
+### A more meaningful property (DoesNotConfuseBigAndSmall)
 
+Let us now consider the property that our network is not confusing small dogs with big dogs. That is, 
+if our first choice for a dog image is a big or small dog, the second choice should be too. 
 
+Suppose the indexes 2, 11 and 12 of the score vector refer to German Shepherds, Chihuahuas and Pekinese dogs.
+Type synonyms conveniently allow us to give a meaningful name to these indexes. 
+
+```{.vcl}
+    germanShepherd = 2
+    chihuahua  = 11
+    pekinese   = 12
+```
+
+We now define two lists of dogs (recall that the type of Dog is `Index 20`) holding what we consider as small and big dogs. Lists hold an arbitrary number of elements of a single type, and are created using `[x_1, ..., x_n]`. 
 
 
 ```{.vcl}
-    isSecondChoice : Image -> Dog -> Bool
-    isSecondChoice x dog2 =
-        let scores = score x in
-        xists dog1 .
-            isFirstChoice dog1 and
-            forall d . d != dog1 and d != dog2 => scores ! dog2 > scores ! d
-
-    noConfusionWith : Image -> List Dog -> List Dog -> Bool
-    noConfusionWith x dogs1 dogs2 =
-        forall dog1 in dogs1 .
-            forall dog2 in dogs2 .
-                not (isFirstChoice x dog1 and isSecondChoice x dog2)
-
-    germanShepherd = 2
-
-    chihuahua  = 11
-    pekinese   = 12
-
     smallDogs : List Dog
     smallDogs = [chihuahua, pekinese]
 
     bigDogs : List Dog
     bigDogs = [greatDane, germanShepherd]
+```
+
+A dog `d2` will be the second choice of our network for a certain image `img` if there exists another dog `d1` (different from `d2`) that is classified as first choice, such that any other dog `d3` has a lower score than `d1` and `d2`. The `let ... in` clause allows us to make the code more readable by defining an expression to be used 
+after `in`.
+
+```{.vcl}
+    isSecondChoice : Image -> Dog -> Bool
+    isSecondChoice img d2 =
+        let scores = score img in
+        exists d1 .
+            isFirstChoice d1 and d1 != d2 and 
+            forall d3 . d3 != d1 and d3 != d2 => scores ! d2 > scores ! d3
+```
 
 
+
+```{.vcl}
+    noConfusionWith : Image -> List Dog -> List Dog -> Bool
+    noConfusionWith x dogs1 dogs2 =
+        forall dog1 in dogs1 .
+            forall dog2 in dogs2 .
+                not (isFirstChoice x dog1 and isSecondChoice x dog2)
+```
+
+(Comment on not using for loops to transverse the lists.)
+    
+```{.vcl}
     @property
     doesNotConfuseBigAndSmall : Bool
     doesNotConfuseBigAndSmall =
         forall x . validImage x => noConfusionWith x bigDogs smallDogs
 ```
 
-### Declaration of a dataset
+## Declaration of a dataset
 
 - declaration of dataset
     
