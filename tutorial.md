@@ -20,6 +20,8 @@
  
 Neural networks are a widely-used and highly popular tool in the field of machine learning. As such, it is important to establish formal guarantees about their behaviour. 
 
+Following the pioneering work of [...,Katz17,...] that showed how domain-specific SMT-solving methods can be used to verify properties of simple neural networks, neural network verification has become an active research area. Formally, a neural network is a function $N : R^m \rightarrow R^n$, where $R^m$ and $R^n$ can be implemented as vectors of real or rational numbers. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon-$ neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the output will be in $\delta$ distance to $N(\mathabf{x})$. 
+
 This tutorial will introduce you to Vehicle, a tool for enforcing specifications on neural networks. 
 Vehicle allows you to express specifications in a high-level, human-readable format. Then compiles them into low-level queries that can be passed to verifiers to prove whether the specification holds or provide a counterexample. 
 Once a specification has been verified, Vehicle allows you to export the proof to an interactive theorem prover. Currently, Vehicle supports the verifier Marabou, the ITP Agda, and the ONNX format for neural networks.
