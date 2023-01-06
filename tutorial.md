@@ -46,7 +46,7 @@ Once a specification has been verified (possibly after property-driven re-traini
 Vehicle programs can be compiled to an unusually broad set of backends,
 including: 
 
- a) regularisaton functions for Tensorflow which can be used to guide 
+ a) loss functions for Tensorflow which can be used to guide 
  both specification-directed training and gradient-based counter-example
  search.
  
