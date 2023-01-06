@@ -39,9 +39,10 @@ Once a specification has been verified (possibly after property-driven re-traini
 
 Currently, Vehicle supports the verifier Marabou, the ITP Agda, and the ONNX format for neural networks.
 
-## Motivation
+## Vehicle Preliminaries
 
-- introduction of dataset
+- introduction of dataset and models
+- introduction of basic syntax
 - describe a property in words
 - example with NN?
 - example of property not holding 
