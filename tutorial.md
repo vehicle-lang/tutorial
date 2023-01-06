@@ -40,7 +40,7 @@ Combined together, these four points make practical use of verification techniqu
 
 ### What does Vehicle Team Propose?
 
-Surely, something can be done to ease the effort!? In this tutorial, we present the tool Vehicle that does just that: it provides an environment that allows one to express neural network specifications in a high-level, human-readable format. Then it compiles them into low-level queries that can be passed automatically to verifiers to prove whether the specification holds or provide a counterexample. If the specification cannot be verified, Vehicle gives one an option to automatically generate a new loss fuction that can be used to train the model to satisfy the stated property. 
+In this tutorial, we present the tool Vehicle that does just that: it provides an environment that allows one to express neural network specifications in a high-level, human-readable format. Then it compiles them into low-level queries that can be passed automatically to verifiers to prove whether the specification holds or provide a counterexample. If the specification cannot be verified, Vehicle gives one an option to automatically generate a new loss fuction that can be used to train the model to satisfy the stated property. 
 Once a specification has been verified (possibly after property-driven re-training), Vehicle allows one to export the proof to an interactive theorem prover, and reason about the behavior of the complex system that embeds the machine learning model. 
 
 Vehicle programs can be compiled to an unusually broad set of backends,
