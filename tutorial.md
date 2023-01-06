@@ -3,6 +3,8 @@
 
 ## Outline
 
+0. Introduction and Motivation for Vehicle
+
 1. A simple semantically meaningful example.
     - Maybe hierarchical classification? e.g. In this dogs dataset it shouldn't confuse an Afghan hound and a Border terrier.
     - Introduce basic syntax and properties.
@@ -16,11 +18,11 @@
     - Braking example?
     - Vehicle controller?
 
-## Introduction
+## Introduction and Motivation
  
 Neural networks are a widely-used and highly popular tool in the field of machine learning. As such, it is important to establish formal guarantees about their behaviour. Following the pioneering work of [...,Katz17,...] that showed how domain-specific SMT-solving methods can be used to verify properties of simple neural networks, neural network verification has become an active research area. 
 
-Formally, a neural network is a function $N : R^m \rightarrow R^n$, where $R^m$ and $R^n$ can be implemented as vectors of real or rational numbers. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon-$ neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called *($\epsilon$-ball) robustness*, as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
+Formally, a neural network is a function $N : R^m \rightarrow R^n$, where $R^m$ and $R^n$ can be implemented as vectors of real or rational numbers. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called ($\epsilon$*-ball) robustness*, as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
 
 Seen as functions, neural networks have two particular features that play an important role in their verification: these functions are not written manually, but generated (or *fitted*) to model the given data distribution. As a consequence, "big data" often requires one to use large neural networks, and we often attribute very little semantic or structural meaning to the resulting function. 
 
