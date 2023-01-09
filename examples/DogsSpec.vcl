@@ -24,10 +24,17 @@ bigDogs = [greatDane, germanShepherd]
 type Image = Tensor Rat [28, 28]
 type Score = Rat
 
-network score : Image -> Vector Score numberOfDogs
+@network
+score : Image -> Vector Score numberOfDogs
 
 getScore : Image -> Dog -> Score
 getScore x dog = score x ! dog
+
+validPixel : Rat -> Bool
+validPixel p = 0 <= p <= 1
+
+validImage : Image -> Bool
+validImage x = forall i j . validPixel (x ! i ! j)
 
 --------------------------------------------------------------------------------
 -- Predicates
@@ -40,9 +47,7 @@ isFirstChoice x dog1 =
 isSecondChoice : Image -> Dog -> Bool
 isSecondChoice x dog2 =
   let scores = score x in
-  exists dog1 .
-    isFirstChoice dog1 and
-    forall d . d != dog1 and d != dog2 => scores ! dog2 > scores ! d
+  exists dog1 . (isFirstChoice x dog1) and (forall d . d != dog1 and d != dog2 => scores ! dog2 > scores ! d)
 
 noConfusionWith : Image -> List Dog -> List Dog -> Bool
 noConfusionWith x dogs1 dogs2 =
@@ -50,8 +55,9 @@ noConfusionWith x dogs1 dogs2 =
     forall dog2 in dogs2 .
       not (isFirstChoice x dog1 and isSecondChoice x dog2)
 
---------------------------------------------------------------------------------
--- Properties chihuahua
+
+-------------------------------------------------------------------------------
+-- Properties
 
 @property
 doesNotConfuseBigAndSmall : Bool
