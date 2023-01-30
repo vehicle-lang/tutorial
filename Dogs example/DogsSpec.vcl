@@ -27,9 +27,6 @@ type Score = Rat
 @network
 score : Image -> Vector Score numberOfDogs
 
-getScore : Image -> Dog -> Score
-getScore x dog = score x ! dog
-
 validPixel : Rat -> Bool
 validPixel p = 0 <= p <= 1
 
