@@ -36,7 +36,7 @@ There are four main research challenges in this area:
 3. Neural networks are rarely used as stand-alone oracles. They are usually part of more complex systems. Verifying the network's behavior within a larger system is an area that still requires investigation. (maybe good to give a few citations here for existing work)
 4. Because a given neural network is generated to fit the data, rather than to satisfy a given property, in the majority of cases, a naive attempt to verify the network results in failure to establish that the property actually holds.  For example, as reported in [], a 99% accurate network may only be proven robust in the neighborhood of 1% of its images. However, one can re-train the network by translating a given property into a loss function, and this can dramatically increase the chances that the network satisfies the property: [] shows in the best case an increase from 1% to 90%. (Check DL2 paper and last year's stats from Marco's paper and give citations).    
 
-Combined together, these four points make practical use of verification techniques inaccessible for the majority of machine learning practitioners and even researchers, despite of the high demand for safety guarantees in complex intelligent systems. Imagine, for example, a designer of a chatbot who tries to prove that the chatbot does not offend or mislead a human user, and suppose they were lucky enough to install one available neural network verifier.  For a start, their neural network maybe too big to verify, so they need to make it small enough. Next, they need to define formally what "offend or mislead" is, the task that is made harder by having to use a relatively low-level language of the verifier that expects the properties to be stated on the level of individual inputs and neurons. If they have made through that hurdle, and finally can run the "verify" command line, they may suddenly find that their property fails for the model they have. So, they need to return to square one and train a different model, that does satisfy the property. Unfortunately, the installed verifier will not be able to help with this task!
+Combined together, these four points make practical use of verification techniques inaccessible for the majority of machine learning practitioners and even researchers, despite of the high demand for safety guarantees in complex intelligent systems. Imagine, for example, a designer of a chatbot who tries to prove that the chatbot does not offend or mislead a human user, and suppose they were lucky enough to install one available neural network verifier.  For a start, their neural network may be too big to verify, so they need to make it small enough. Next, they need to define formally what "offend or mislead" is, the task that is made harder by having to use a relatively low-level language of the verifier that expects the properties to be stated on the level of individual inputs and neurons. If they have made through that hurdle, and finally can run the "verify" command line, they may suddenly find that their property fails for the model they have. So, they need to return to square one and train a different model, that does satisfy the property. Unfortunately, the installed verifier will not be able to help with this task!
 
 ### What does Vehicle Team Propose?
 
@@ -70,6 +70,16 @@ verification and training, and will give a hands-on experience on
 solving these problems at a level of a higher-order specification 
 language with dependent types.
 
+### Prerequisites
+
+To follow the tutorial, you will need Vehicle, Marabou and Agda installed in your machine.
+For instructions, refer to [vehicle documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
+You can also download already trained networks for our examples from [link to tutorial repo].
+
+(Recommendation to use vsc with vcl syntax highlighting)
+(Who is the tutorial aimed at and what previous knowledge do we assume?)
+
+
 ## Vehicle Preliminaries
 
 - introduction of dataset and models
@@ -81,42 +91,54 @@ language with dependent types.
 
 ## Example 1 - Stanford Dogs Dataset
 
-For this first example, we will consider a neural network that classifies dog breeds from images in the 
-[Stanford Dog Dataset](https://www.kaggle.com/datasets/jessicali9530/stanford-dogs-dataset). Although the dataset includes 120 breeds, for this example, we will focus on only 20 breeds.
-That is, for a given input image, the network will give a probability distribution over the 20 dog breeds. 
+For this first example, we consider a neural network that classifies dog images from the 
+[Stanford Dog Dataset](https://www.kaggle.com/datasets/jessicali9530/stanford-dogs-dataset) [Khosla et al., 2011] into their breeds. 
+The dataset includes over 20000 images of 120 dog breeds. For simplicity, we reduce it to 3600 images of 20 breeds.
 
-We want to ensure that the trained network is not confusing breeds that do not have similar characteristics. 
-For instance, it is acceptable for the network to classify a German Shepherd as a Great Dane, but it should not confuse a German Shepherd with a Chihuahua. 
+We assume the trained network takes an input image and outputs a probability distribution over the 20 breeds.
+(Comment about specifics of the trained network).
 
-Let us see how you can express and enforce this property in Vehicle. 
-To do so, you will need the trained network in ONNX format and the dataset.
+We want to ensure that the trained network is not confusing breeds of similar characteristics. 
+For instance, it is acceptable for the network to classify a German Shepherd as a Great Dane, but it should not confuse a German Shepherd with a Chihuahua. We split the 20 breeds into two lists by dog size and then aim to verify that our network is not confusing 
+big dogs with small dogs. Let us see how we can express and enforce this property (possibly by retraining) in Vehicle. 
 
 - Section0 : Introduce design choice for property specification. (some need data, some need networks, some none of them).
 
 ## Declaration of the network
 
-We will start by declaring the network. In Vehicle specifications, networks are essentially black-box functions. 
-Thus, we simply need to provide its input and output types.
+In Vehicle specifications, networks are treated as black-box functions. 
+They are declared as regular functions, but only require one to specify their type signature preceded by the keyword `@network`.
 
 ```{.vcl}
     @network
     score : Tensor Rat[28, 28] -> Vector Rat 20
 ```
+Functions in Vehicle are declared by stating their name, followed by a semicolon and its input and output types, separated by `->`. 
+In this case, we have called our network `score`. It takes in a `Tensor Rat[28,28]`, which corresponds to a 2-dimension tensor of 
+size 28x28 filled with rationals - an image -, and returns a `Vector Rat 20`, a vector of 20 rationals - a score for each of the 0 to 19 
+breeds-.
 
-Function types are declared using `:` and function arguments are separated with `->`. 
-In this case, we have called our network `score`. It takes in a 2-dimension tensor of size 28 x 28
-filled with rationals - an image -, and returns a vector of 20 rationals -a score for each of the 0 to 19 dog breeds-.
-Networks are annotated with the keyword `@network` on the previous line of their declaration.
+Vehicle can typecheck and compile a specification knowing only the type signature of the network. (and why this is good)
+It requires the user to provide a specific network in onnx format at the verification step.
 
 ## Declaration of properties
 
+Properties are boolean expressions whose value cannot be decided within Vehicle and will instead be decided
+by the verifier. A specification can have multiple properties, which must be annotated with the `@property` keyword and can have 
+either `Bool`, `Vector Bool` or `Tensor Bool` as types. 
+
+For example, a property stating that some previously defined function `f` is always positive would look as follows.
+
+```{.vcl}
+@property
+fIsPositive : Bool
+fIsPositive = forall x . f x > 0.0
+```
+
 ### A simple property (ExistsGreatDane)
 
-Let us start with a simple property stating that there is at least one image classified as a Great Dane.
-
-First, we need to declare an auxiliary function `isFirstChoice` that 
-checks whether the network classifies a given image `img` as a specific dog breed `d1`. In other words, that the 
-vector returned by `score` for the image `img` will have its maximum in index `d1`.
+Let us start with an example of a simple property stating that there is at least one image classified as a Great Dane.
+First, we need to declare an auxiliary function that determines for each image, what is the predicted breed by our network `score`.
 
 ```{.vcl}
     isFirstChoice : Tensor Rat[28, 28] -> Index 20 -> Bool
@@ -124,15 +146,15 @@ vector returned by `score` for the image `img` will have its maximum in index `d
         forall d2 . d2 != d1 => (score img) ! d1 > (score img) ! d2
 ```
 
-`isFirstChoice` takes in an image (`Tensor Rat[28,28]`) and a reference to a specific dog breed `d1`. Note how 
-the type of `d1` is `Index 20`. The set of valid instances of this type are the natural numbers {0, ..., 19}.
-By using the type `Index 20` instead of simply `Nat`, we make sure that no out-of-bound errors will arise from using `!`, which is the vector look-up operator, when accessing position `d1` of `(score img)`, i.e. `(score img) ! d1`, since we know that `score` will output a vector of size 20.
- 
-The `forall` quantifier allows us to check that all dog breeds `d2`, such that `d2` is different from `d1`, have a lower score than `d1` in the vector `(score img)`. 
+`isFirstChoice` takes in an image `img` (with type `Tensor Rat[28,28]`) and an index `d1` referring to a specific dog breed. Note how 
+the type of `d1` is `Index 20`. The set of valid instances of the type `Index n` are the natural numbers in {0, ..., n-1}.
+`!` is the vector look-up operator, i.e. `(score img) ! d1` retrieves position `d1` of the vector `(score img)`.
+By using the type `Index 20` instead of simply a natural number, we make sure that no out-of-bound errors will arise, since `score` will output a vector of size 20 and `d1` will be in the range [0, ... 19]. 
+The `forall` quantifier checks that all dog breeds indices `d2`, that are different from `d1`, have a lower score than `d1` in the network's output vector `(score img)`, i.e. that `d1` is the maximum and thus the predicted breed.
 
-Instead of repeatedly writing `Tensor Rat[28,28]`, we can declare a type synonym called `Image`.
-Similarly, we can define `Dog` to be an index of the 20 breeds. Like this, the signature of 
-`isFirstChoice` becomes more meaningful and simple.
+Vehicle supports type synonyms. For instance, instead of repeatedly writing `Tensor Rat[28,28]` and `Index 20`, 
+we can declare new types called `Image` and `Dog`. Like this, the signature of 
+`isFirstChoice` becomes more meaningful.
 
 ```{.vcl}
     type Image  = Tensor Rat [28, 28]
@@ -141,10 +163,9 @@ Similarly, we can define `Dog` to be an index of the 20 breeds. Like this, the s
     isFirstChoice : Image -> Dog -> Bool
 ``` 
 
-We can now check whether at least one image will be classified as a Great Dane. 
-We use `exists` to check whether the predicate `isFirstChoice img greatDane` holds for some image `img`,
-where we have declared `greatDane` to be the index number 1 of all the breeds.
-
+We can now write the property `existsGreatDane` stating that at least one image will be classified as a Great Dane. 
+`exists img` checks whether the predicate `isFirstChoice img greatDane` holds for some image `img`,
+where we have declared `greatDane` as the dog breed number 1.
 
 ```{.vcl}
     GreatDane = 1
@@ -154,12 +175,7 @@ where we have declared `greatDane` to be the index number 1 of all the breeds.
     existsGreatDane = exists img . isFirstChoice img greatDane
 ```
 
-Note how we have annotated `existsGreatDane` with the keyword `@property`. Properties 
-are boolean expressions whose value cannot be decided within Vehicle and will instead be decided
-by the verifier. Properties in Vehicle Specification should always have the `@property` keyword 
-in the previous line.
-
-If we compile this specification and pass it to the verifier, `existsGreatDane` will most likely 
+But wait! If we compile this specification as is and pass it to the verifier, `existsGreatDane` will most likely 
 hold for a nonsensical image. To avoid this, we must restrict our property to valid images only.
 We consider an image valid if all its pixels are valid, i.e., normalized to be in the range 0 to 1.
 
@@ -168,9 +184,9 @@ We consider an image valid if all its pixels are valid, i.e., normalized to be i
     validPixel p = 0 <= p <= 1
 
     validImage : Image -> Bool
-    validImage x = forall i j . validPixel x ! i ! j
+    validImage img = forall i j . validPixel (img ! i ! j)
 ```
-Here, `forall` conveniently infers the type of `i` and `j` as `Index 28`, based on the type of `x`, i.e. a 2-dimensional tensor of size 28x28. It then uses `i`, `j` as iterators to access each of the pixels in the image, i.e. `x ! i ! j`.
+Here, `forall` conveniently infers the type of `i` and `j` as `Index 28`, based on the type of `img`, i.e. a 2-dimensional tensor of size 28x28. It then uses `i`, `j` to refer to each of the pixels in the image, i.e. `x ! i ! j`.
 
 We can now rewrite our property restricted to valid images only.
 
@@ -182,22 +198,41 @@ We can now rewrite our property restricted to valid images only.
 
 ### A more meaningful property (DoesNotConfuseBigAndSmall)
 
-Let us now consider the property that our network is not confusing small dogs with big dogs. That is, 
-if our first choice for a dog image is a big or small dog, the second choice should be too. 
+Let us now consider a more meaning property. We want to make sure the network is not confusing small dogs with big dogs. That is, 
+if the first choice for an image is a big or small dog, the second choice should be too. 
 
-Suppose the indexes 2, 11 and 12 of the score vector refer to German Shepherds, Chihuahuas and Pekinese dogs.
-Type synonyms conveniently allow us to give a meaningful name to these indexes. 
+We need an auxiliary function `isSecondChoice`. Given an image `img` and a breed `d2`, it checks whether `d2` is the network's second breed choice for `img`. This is the case if any other breeds `d3` that different from `d1` (the first choice) and `d2` (the second choice) have lower scores than `d1` and `d2`. 
+
+The `let ... in ...` clause lets us define a variable to be used after `in`. In this case, we give the name `scores` to the output of the network for `img`, i.e. `score img`. 
 
 ```{.vcl}
-    germanShepherd = 2
-    chihuahua  = 11
-    pekinese   = 12
+    isSecondChoice : Image -> Dog -> Bool
+    isSecondChoice img d2 =
+    let scores = score img in
+    exists d1 . (isFirstChoice img d1) and (forall d . d != d1 and d != d2 => scores ! d2 > scores ! d)
 ```
 
-We now define two lists of dogs (recall that the type of Dog is `Index 20`) holding what we consider as small and big dogs. Lists hold an arbitrary number of elements of a single type, and are created using `[x_1, ..., x_n]`. 
+```{.vcl}
+    noConfusionWith : Image -> List Dog -> List Dog -> Bool
+    noConfusionWith img dogsList1 dogsList2 =
+    forall d1 in dogsList1 .
+        forall d2 in dogsList2 .
+        not (isFirstChoice img d1 and isSecondChoice img d2)
+```
 
+`noConfusionWith` takes an image `img` and two lists of breeds, and checks whether the first and second choice for `img` 
+are in the same list. The nested `forall` quantifiers take all possible pairs of dogs, one in each list, and check that they are not the first and second choice of the network. 
+
+We split the breeds into two lists, `bigDogs` and `smallDogs`.
+Lists in vehicle can hold an arbitrary number of elements of a single type and are declared using `[x_1, ..., x_n]`. 
+We define `smallDogs`and `bigDogs` with type `List Dog` (recall that this is really `List Index 20`).
 
 ```{.vcl}
+    greatDane       = 1
+    germanShepherd  = 2
+    chihuahua       = 11
+    pekinese        = 12
+
     smallDogs : List Dog
     smallDogs = [chihuahua, pekinese]
 
@@ -205,27 +240,9 @@ We now define two lists of dogs (recall that the type of Dog is `Index 20`) hold
     bigDogs = [greatDane, germanShepherd]
 ```
 
-A dog `d2` will be the second choice of our network for a certain image `img` if there exists another dog `d1` (different from `d2`) that is classified as first choice, such that any other dog `d3` has a lower score than `d1` and `d2`. The `let ... in` clause allows us to make the code more readable by defining an expression to be used 
-after `in`.
-
-```{.vcl}
-    isSecondChoice : Image -> Dog -> Bool
-    isSecondChoice img d2 =
-        let scores = score img in
-        exists d1 .
-            isFirstChoice d1 and d1 != d2 and 
-            forall d3 . d3 != d1 and d3 != d2 => scores ! d2 > scores ! d3
-```
-
-
-
-```{.vcl}
-    noConfusionWith : Image -> List Dog -> List Dog -> Bool
-    noConfusionWith x dogs1 dogs2 =
-        forall dog1 in dogs1 .
-            forall dog2 in dogs2 .
-                not (isFirstChoice x dog1 and isSecondChoice x dog2)
-```
+We are finally ready to state our desired property `doesNotConfuseBigAndSmall`: for all images `img` that are valid, 
+`noConfusionWith` will return true for `img` `bigDogs` and `smallDogs`, i.e. if all valid images have their first and second 
+choice in the same list.
 
 (Comment on not using for loops to transverse the lists.)
     
@@ -233,15 +250,20 @@ after `in`.
     @property
     doesNotConfuseBigAndSmall : Bool
     doesNotConfuseBigAndSmall =
-        forall x . validImage x => noConfusionWith x bigDogs smallDogs
+        forall img . validImage img => noConfusionWith img bigDogs smallDogs
 ```
 
 ## Declaration of a dataset
 
+(do we need the dataset for this example? I am not sure)
+
 - declaration of dataset
+
     
 
+## References
 
+Aditya Khosla, Nityananda Jayadevaprakash, Bangpeng Yao and Li Fei-Fei. Novel dataset for Fine-Grained Image Categorization. First Workshop on Fine-Grained Visual Categorization (FGVC), IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2011. 
 
 
 

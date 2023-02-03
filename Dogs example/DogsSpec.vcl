@@ -31,26 +31,26 @@ validPixel : Rat -> Bool
 validPixel p = 0 <= p <= 1
 
 validImage : Image -> Bool
-validImage x = forall i j . validPixel (x ! i ! j)
+validImage img = forall i j . validPixel (img ! i ! j)
 
 --------------------------------------------------------------------------------
 -- Predicates
 
 isFirstChoice : Image -> Dog -> Bool
-isFirstChoice x dog1 =
-  let scores = score x in
-  forall d . d != dog1 => scores ! dog1 > scores ! d
+isFirstChoice img d1 =
+  let scores = score img in
+  forall d . d != d1 => scores ! d1 > scores ! d
 
 isSecondChoice : Image -> Dog -> Bool
-isSecondChoice x dog2 =
-  let scores = score x in
-  exists dog1 . (isFirstChoice x dog1) and (forall d . d != dog1 and d != dog2 => scores ! dog2 > scores ! d)
+isSecondChoice img d2 =
+  let scores = score img in
+  exists d1 . (isFirstChoice img d1) and (forall d . d != d1 and d != d2 => scores ! d2 > scores ! d)
 
 noConfusionWith : Image -> List Dog -> List Dog -> Bool
-noConfusionWith x dogs1 dogs2 =
-  forall dog1 in dogs1 .
-    forall dog2 in dogs2 .
-      not (isFirstChoice x dog1 and isSecondChoice x dog2)
+noConfusionWith img dogsList1 dogsList2 =
+  forall d1 in dogsList1 .
+    forall d2 in dogsList2 .
+      not (isFirstChoice img d1 and isSecondChoice img d2)
 
 
 -------------------------------------------------------------------------------
@@ -59,4 +59,4 @@ noConfusionWith x dogs1 dogs2 =
 @property
 doesNotConfuseBigAndSmall : Bool
 doesNotConfuseBigAndSmall =
-  forall x . validImage x => noConfusionWith x bigDogs smallDogs
+  forall img . validImage img => noConfusionWith img bigDogs smallDogs
