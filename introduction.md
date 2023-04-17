@@ -84,8 +84,7 @@ You can also download already trained networks for our examples from [link to tu
 - Guy Katz, Clarke Barrett, D. Dill, K. Julian, and M. Kochenderfer. Reluplex: An Efficient SMT
 Solver for Verifying Deep Neural Networks. In CAV, 2017.
 - Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin T. Vechev. An abstract
-domain for certifying neural networks. Proc. ACM Program. Lang., 3(POPL):41:1–41:30,
-2019.
+domain for certifying neural networks. Proc. ACM Program. Lang., 3(POPL):41:1–41:30, 2019.
 - Shiqi Wang, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh, and J. Zico
 Kolter. Beta-crown: Efficient bound propagation with per-neuron split constraints for neu-
 ral network robustness verification. In Marc’Aurelio Ranzato, Alina Beygelzimer, Yann N.
