@@ -30,17 +30,13 @@ Seen as functions, neural networks have particular features that play an importa
 
 ### Challenges in Neural Network Verification
 
-There are four main research challenges in this area: 
-1. Scalability of (semi-)decision procedures that check the property satisfaction for neural networks. State-of-the art neural network verifiers [...], based on a combination of abstract interpretation algorithms and domain-specific heuristics can verify neural networks of size ... whereas large industrial models used by Amazon or Google reach the size of .... (I need help here from Matthew, Marco or Natalia)
-2. Limited scope of neural network properties available in the literature. Arguably,  $\epsilon$-ball robustness has very limited practical applications. Various efforts of the community to broaden the range of verifiable properties mainly resulted in domain specific solutions (see eg [] for verification of networks used in air collision avoidance). 
-3. Neural networks are rarely used as stand-alone oracles. They are usually part of more complex systems. Verifying the network's behavior within a larger system is an area that still requires investigation. (maybe good to give a few citations here for existing work)
-4. Because a given neural network is generated to fit the data, rather than to satisfy a given property, in the majority of cases, a naive attempt to verify the network results in failure to establish that the property actually holds.  For example, as reported in [], a 99% accurate network may only be proven robust in the neighborhood of 1% of its images. However, one can re-train the network by translating a given property into a loss function, and this can dramatically increase the chances that the network satisfies the property: [] shows in the best case an increase from 1% to 90%. (Check DL2 paper and last year's stats from Marco's paper and give citations).    
+There are several  research challenges in this area: 
+1. On the solver side, these undecidability of non-linear real arithmetic [@Akbarpour2009] and scalability of neural network verifiers [@Wang2021] stand as two main challenges.  
+2. The scope of neural network properties available in the literature is limited. Robustness is the most popular general property to date [@Casadio2022], and others include mostly domain-speccific properties, such as ACAS Xu Benchmark [@Katz2017], which we will consider shortly in this tutorial. 
+3. In all realistic scenarious, even accurate neural networks require extra "property-driven" training in order to comply with verification properties in question. It means such "property-drive" training should be integrated with verification. 
+4. Finally, neural networks usually work as components of complex systems, and the question of integating neural networ solevers with other theorem provers is yet unsolved. 
 
-Combined together, these four points make practical use of verification techniques inaccessible for the majority of machine learning practitioners and even researchers, despite of the high demand for safety guarantees in complex intelligent systems. Imagine, for example, a designer of a chatbot who tries to prove that the chatbot does not offend or mislead a human user, and suppose they were lucky enough to install one available neural network verifier.  For a start, their neural network may be too big to verify, so they need to make it small enough. Next, they need to define formally what "offend or mislead" is, the task that is made harder by having to use a relatively low-level language of the verifier that expects the properties to be stated on the level of individual inputs and neurons. If they have made through that hurdle, and finally can run the "verify" command line, they may suddenly find that their property fails for the model they have. So, they need to return to square one and train a different model, that does satisfy the property. Unfortunately, the installed verifier will not be able to help with this task!
-
-### What does Vehicle Team Propose?
-
-In this tutorial, we present the tool Vehicle that provides support for this complex verification cycle: It provides an environment that allows one to express neural network specifications in a high-level, human-readable format. Then it compiles them into low-level queries that can be passed automatically to verifiers to prove whether the specification holds or provide a counterexample. If the specification cannot be verified, Vehicle gives one an option to automatically generate a new loss function that can be used to train the model to satisfy the stated property. 
+This tutorial will focus on challenges 2, 3 and 4, and will present the tool Vehicle that provides support in tcakling them. In particular,  it provides a specification language that allows one to express neural network specifications in a high-level, human-readable format. Then it compiles them into low-level queries that can be passed automatically to verifiers to prove whether the specification holds or provide a counterexample. If the specification cannot be verified, Vehicle gives one an option to automatically generate a new loss function that can be used to train the model to satisfy the stated property. 
 Once a specification has been verified (possibly after property-driven re-training), Vehicle allows one to export the proof to an interactive theorem prover, and reason about the behavior of the complex system that embeds the machine learning model. 
 
 Vehicle programs can be compiled to an unusually broad set of backends,
@@ -91,6 +87,7 @@ ral network robustness verification. In Marc’Aurelio Ranzato, Alina Beygelzime
 Dauphin, Percy Liang, and Jennifer Wortman Vaughan, editors, Advances in Neural In-
 formation Processing Systems 34: Annual Conference on Neural Information Processing
 Systems 2021, NeurIPS 2021, December 6-14, 2021, virtual, pages 29909–29921, 2021.
+- Behzad Akbarpour and Lawrence C. Paulson. MetiTarski: An automatic theorem prover for real valued special functions. Journal of Automated Reasoning 44(3), 175–205, 2009
 
 ## Vehicle Preliminaries
 
