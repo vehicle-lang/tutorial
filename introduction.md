@@ -22,7 +22,7 @@
  
 ### What is Neural Network Verification about?
 
-Neural networks are widely used in the field of machine learning; and are often embedded as *pattern-recognition* or *signal processing* components into complex software. In some scenarious, it becomes important to establish formal guarantees about their behaviour. Following the pioneering work of [...,Katz17,...] that showed how domain-specific SMT-solving methods can be used to verify properties of simple neural networks, neural network verification has become an active research area. 
+Neural networks are widely used in the field of machine learning; and are often embedded as *pattern-recognition* or *signal processing* components into complex software. In some scenarious, it becomes important to establish formal guarantees about their behaviour. Following the pioneering work of [@Katz2017,Singh2019,Wang2021] that showed how domain-specific SMT-solving methods can be used to verify properties of simple neural networks, neural network verification has become an active research area. 
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$, where $R^m$ and $R^n$ can be implemented as vectors of real or rational numbers. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called $\epsilon$*-ball robustness* (or just *robustness*), as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
 
@@ -78,6 +78,20 @@ You can also download already trained networks for our examples from [link to tu
 
 (Recommendation to use vsc with vcl syntax highlighting)
 
+
+### Related work
+
+- Guy Katz, Clarke Barrett, D. Dill, K. Julian, and M. Kochenderfer. Reluplex: An Efficient SMT
+Solver for Verifying Deep Neural Networks. In CAV, 2017.
+- Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin T. Vechev. An abstract
+domain for certifying neural networks. Proc. ACM Program. Lang., 3(POPL):41:1–41:30,
+2019.
+- Shiqi Wang, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh, and J. Zico
+Kolter. Beta-crown: Efficient bound propagation with per-neuron split constraints for neu-
+ral network robustness verification. In Marc’Aurelio Ranzato, Alina Beygelzimer, Yann N.
+Dauphin, Percy Liang, and Jennifer Wortman Vaughan, editors, Advances in Neural In-
+formation Processing Systems 34: Annual Conference on Neural Information Processing
+Systems 2021, NeurIPS 2021, December 6-14, 2021, virtual, pages 29909–29921, 2021.
 
 ## Vehicle Preliminaries
 
