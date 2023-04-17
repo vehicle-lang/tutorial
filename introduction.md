@@ -77,6 +77,11 @@ You can also download already trained networks for our examples from [link to tu
 
 ### Related work
 
+- Behzad Akbarpour and Lawrence C. Paulson. MetiTarski: An automatic theorem prover for real valued special functions. Journal of Automated Reasoning 44(3), 175–205, 2009.
+- Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen Kokke, Guy Katz,
+Guy Amir, and Idan Refaeli. Neural network robustness as a verification property: A
+principled case study. In Computer Aided Verification (CAV 2022), Lecture Notes in
+Computer Science. Springer, 2022.
 - Guy Katz, Clarke Barrett, D. Dill, K. Julian, and M. Kochenderfer. Reluplex: An Efficient SMT
 Solver for Verifying Deep Neural Networks. In CAV, 2017.
 - Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin T. Vechev. An abstract
@@ -87,7 +92,7 @@ ral network robustness verification. In Marc’Aurelio Ranzato, Alina Beygelzime
 Dauphin, Percy Liang, and Jennifer Wortman Vaughan, editors, Advances in Neural In-
 formation Processing Systems 34: Annual Conference on Neural Information Processing
 Systems 2021, NeurIPS 2021, December 6-14, 2021, virtual, pages 29909–29921, 2021.
-- Behzad Akbarpour and Lawrence C. Paulson. MetiTarski: An automatic theorem prover for real valued special functions. Journal of Automated Reasoning 44(3), 175–205, 2009
+
 
 ## Vehicle Preliminaries
 
