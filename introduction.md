@@ -26,7 +26,7 @@ Neural networks are widely used in the field of machine learning; and are often 
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called $\epsilon$*-ball robustness* (or just *robustness*), as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
 
-Seen as functions, neural networks have two particular features that play an important role in their verification: these functions are not written manually, but generated (or *fitted*) to model the given data distribution. As a consequence, "big data" often requires one to use large neural networks, and we often attribute very little semantic or structural meaning to the resulting function. 
+Seen as functions, neural networks have particular features that play an important role in their verification: these functions are not written manually, but generated (or *fitted*) to model the given data distribution. As a consequence, "big data" often requires one to use large neural networks, and we often attribute very little semantic or structural meaning to the resulting function. 
 
 ### Challenges in Neural Network Verification
 
