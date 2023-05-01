@@ -34,7 +34,7 @@ Formally, a neural network is a function $N : R^m \rightarrow R^n$. Verification
 Seen as functions, neural networks have particular features that play an important role in their verification: 
 - these functions are not written manually, but generated (or *fitted*) to model the unknown data distribution;
 - the "data" may be big, and require large neural networks; 
-- we often attribute very little semantic or structural meaning to the resulting function. 
+- we often attribute very little semantic meaning to the resulting function. 
 
 ### Challenges in Neural Network Verification
 
