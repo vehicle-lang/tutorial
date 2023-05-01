@@ -25,6 +25,7 @@
 Neural networks are widely used in the field of machine learning; and are often embedded as *pattern-recognition* or *signal processing* components into complex software. Below we see a schematic depiction of a neural network trained to classify hand-written digits:
 ![Neural Network](mnist_classification.png)
 
+The image is represented as a vector of real numbers, each vector element standing for a pixel value. Each arrow in the picture bears a *weight* that is used to multiply the input signal; each neuron computes the sum of its inputs.
 
 In some scenarious, it becomes important to establish formal guarantees about their behaviour. Following the pioneering work of [@Katz2017,Singh2019,Wang2021] neural network verification has become an active research area. 
 
