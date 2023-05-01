@@ -18,7 +18,7 @@
     - Braking example?
     - Vehicle controller?
 
-## Introduction and Motivation
+## 0. Introduction and Motivation
  
 ### What is Neural Network Verification about?
 
