@@ -38,7 +38,7 @@ Seen as functions, neural networks have particular features that play an importa
 
 ### Challenges in Neural Network Verification
 
-There are several  research challenges in this area: 
+There are several  research challenges in the area of neural network verification: 
 1. On the solver side, undecidability of non-linear real arithmetic [@Akbarpour2009] and scalability of neural network verifiers [@Wang2021] stand as two main challenges.  
 2. In all realistic scenarious, even accurate neural networks require extra "property-driven training" in order to comply with verification properties in question. This calls for new methods of integrating training with verification.
 3. The scope of neural network properties available in the literature is limited. Robustness is the most popular general property to date [@Casadio2022], and others include mostly domain-specific properties, such as ACAS Xu Benchmark [@Katz2017], which we will consider shortly in this tutorial. 
