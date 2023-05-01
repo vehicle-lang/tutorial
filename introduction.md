@@ -22,7 +22,11 @@
  
 ### What is Neural Network Verification about?
 
-Neural networks are widely used in the field of machine learning; and are often embedded as *pattern-recognition* or *signal processing* components into complex software. In some scenarious, it becomes important to establish formal guarantees about their behaviour. Following the pioneering work of [@Katz2017,Singh2019,Wang2021] neural network verification has become an active research area. 
+Neural networks are widely used in the field of machine learning; and are often embedded as *pattern-recognition* or *signal processing* components into complex software. Below we see a schematic depiction of a neural network trained to classify hand-written digits:
+![Neural Network](mnist_classification.png)
+
+
+In some scenarious, it becomes important to establish formal guarantees about their behaviour. Following the pioneering work of [@Katz2017,Singh2019,Wang2021] neural network verification has become an active research area. 
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called $\epsilon$*-ball robustness* (or just *robustness*), as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
 
