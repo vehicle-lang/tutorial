@@ -1,9 +1,9 @@
-name: CI
+name: Check Vehicle
 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types:
       - opened
@@ -11,27 +11,10 @@ on:
       - reopened
   merge_group:
 
-defaults:
-  run:
-    shell: sh
-
 jobs:
   check-vehicle:
     name: Check Vehicle on ${{ matrix.os.name }}
-
     runs-on: ${{ matrix.os.type }}
-
-    strategy:
-      matrix:
-        os:
-          - name: Linux
-            type: ubuntu-latest
-          - name: macOS
-            type: macos-latest
-          - name: Windows
-            type: windows-latest
-        python:
-          - version: "3.9"
 
     steps:
       - name: Get source
@@ -46,6 +29,20 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+        shell: sh
 
       - name: Check Vehicle
         run: find . -name '*.vcl' -exec vehicle check -s {} \;
+        shell: sh
+
+    strategy:
+      matrix:
+        os:
+          - name: Linux
+            type: ubuntu-latest
+          - name: macOS
+            type: macos-latest
+          - name: Windows
+            type: windows-latest
+        python:
+          - version: "3.9"
