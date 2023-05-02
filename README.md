@@ -4,25 +4,25 @@
 
 ## Outline
 
-0.  Introduction and Motivation for Vehicle
+0. Introduction and Motivation for Vehicle
 
-1.  A simple semantically meaningful example.
+1. A simple semantically meaningful example.
 
     - Maybe hierarchical classification? e.g. In this dogs dataset it
       shouldn’t confuse an Afghan hound and a Border terrier.
     - Introduce basic syntax and properties.
 
-2.  A more complicated semantically meaningful example
+2. A more complicated semantically meaningful example
 
     - e.g. AcasXu
     - Introduces building and reusing functions.
 
-3.  Less semantically meaningful
+3. Less semantically meaningful
 
     - e.g. MNIST robustness
     - Introduces concepts of datasets, parameters etc.
 
-4.  Semantically meaningful + integration with Agda.
+4. Semantically meaningful + integration with Agda.
 
     - Braking example?
     - Vehicle controller?
@@ -105,14 +105,14 @@ complex system that embeds the machine learning model.
 Vehicle programs can be compiled to an unusually broad set of backends,
 including:
 
-1)  loss functions for Tensorflow which can be used to guide both
+1) loss functions for Tensorflow which can be used to guide both
     specification-directed training and gradient-based counter-example
     search.
 
-2)  queries for the Marabou neural network verifier, which can be used
+2) queries for the Marabou neural network verifier, which can be used
     to formally prove that the network obeys the specification.
 
-3)  Agda specifications, which are tightly coupled to the original
+3) Agda specifications, which are tightly coupled to the original
     network and verification result, in order to scalably and
     maintainably construct larger proofs about machine learning-enhanced
     systems.
@@ -123,7 +123,7 @@ ONNX format for neural networks.
 ### Objectives of this Tutorial
 
 This tutorial will give an introduction to the Vehicle tool
-(https://github.com/vehicle-lang/vehicle) and its conceptual approach to
+(<https://github.com/vehicle-lang/vehicle>) and its conceptual approach to
 modelling specifications for machine learning systems via functional
 programming. It will teach the participants to understand the range of
 problems that arise in neural network property specification,
