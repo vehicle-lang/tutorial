@@ -11,6 +11,10 @@ on:
       - reopened
   merge_group:
 
+defaults:
+  run:
+    shell: sh
+
 jobs:
   check-vehicle:
     name: Check Vehicle on ${{ matrix.os.name }}
@@ -44,9 +48,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Check Vehicle
-        run: |
-          for spec in **/*.vcl
-          do
-            vehicle check -s "$spec"
-          done
-        shell: bash
+        run: find . -name '*.vcl' -exec vehicle check -s {} \;
