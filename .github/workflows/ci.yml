@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  merge_group:
+
+defaults:
+  run:
+    shell: sh
+
+jobs:
+  check-vehicle:
+    name: Check Vehicle on ${{ matrix.os.name }}
+
+    runs-on: ${{ matrix.os.type }}
+
+    strategy:
+      matrix:
+        os:
+          - name: Linux
+            type: ubuntu-latest
+          - name: macOS
+            type: macos-latest
+          - name: Windows
+            type: windows-latest
+        python:
+          - version: "3.9"
+
+    steps:
+      - name: Get source
+        uses: actions/checkout@v3
+
+      - name: Setup Python ${{ matrix.python.version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python.version }}
+          cache: "pip" # caching pip dependencies
+          cache-dependency-path: "requirements.txt"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check Vehicle
+        run: |
+          for file in **/*.vcl
+          do
+            vehicle check -s "$file"
+          done
+        shell: sh
