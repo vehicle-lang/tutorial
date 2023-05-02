@@ -53,4 +53,4 @@ jobs:
           do
             vehicle check -s "$file"
           done
-        shell: sh
+        shell: bash
