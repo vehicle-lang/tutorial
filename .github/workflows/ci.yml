@@ -48,9 +48,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Check Vehicle
-        run: |
-          for file in **/*.vcl
-          do
-            vehicle check -s "$file"
-          done
-        shell: sh
+        run: find . -name '*.vcl' -exec vehicle check -s {} \;
