@@ -22,6 +22,7 @@ They are declared as regular functions, but only require one to specify their ty
     @network
     score : Tensor Rat[28, 28] -> Vector Rat 20
 ```
+
 Functions in Vehicle are declared by stating their name, followed by a semicolon and its input and output types, separated by `->`.
 In this case, we have called our network `score`. It takes in a `Tensor Rat[28,28]`, which corresponds to a 2-dimension tensor of
 size 28x28 filled with rationals - an image -, and returns a `Vector Rat 20`, a vector of 20 rationals - a score for each of the 0 to 19
@@ -95,6 +96,7 @@ We consider an image valid if all its pixels are valid, i.e., normalized to be i
     validImage : Image -> Bool
     validImage img = forall i j . validPixel (img ! i ! j)
 ```
+
 Here, `forall` conveniently infers the type of `i` and `j` as `Index 28`, based on the type of `img`, i.e. a 2-dimensional tensor of size 28x28. It then uses `i`, `j` to refer to each of the pixels in the image, i.e. `x ! i ! j`.
 
 We can now rewrite our property restricted to valid images only.
@@ -165,8 +167,6 @@ choice in the same list.
 ## Declaration of a dataset
 
 (do we need the dataset for this example? I am not sure)
-
-
 
 ## References
 
