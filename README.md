@@ -4,25 +4,25 @@
 
 ## Outline
 
-0. Introduction and Motivation for Vehicle
+0.  Introduction and Motivation for Vehicle
 
-1. A simple semantically meaningful example.
+1.  A simple semantically meaningful example.
 
     - Maybe hierarchical classification? e.g. In this dogs dataset it
       shouldn’t confuse an Afghan hound and a Border terrier.
     - Introduce basic syntax and properties.
 
-2. A more complicated semantically meaningful example
+2.  A more complicated semantically meaningful example
 
     - e.g. AcasXu
     - Introduces building and reusing functions.
 
-3. Less semantically meaningful
+3.  Less semantically meaningful
 
     - e.g. MNIST robustness
     - Introduces concepts of datasets, parameters etc.
 
-4. Semantically meaningful + integration with Agda.
+4.  Semantically meaningful + integration with Agda.
 
     - Braking example?
     - Vehicle controller?
@@ -59,33 +59,38 @@ robust (does not change drastically) in the neighborhood of certain
 inputs.
 
 Seen as functions, neural networks have particular features that play an
-important role in their verification: - these functions are not written
-manually, but generated (or *fitted*) to model the unknown data
-distribution; - the “data” may be big, and require large neural
-networks; - we often attribute very little semantic meaning to the
-resulting function.
+important role in their verification:
+
+- these functions are not written manually, but generated (or *fitted*)
+  to model the unknown data distribution;
+- the “data” may be big, and require large neural networks;
+- we often attribute very little semantic meaning to the resulting
+  function.
 
 ### Challenges in Neural Network Verification
 
 There are several research challenges in the area of neural network
-verification: 1. On the solver side, undecidability of non-linear real
-arithmetic (**Akbarpour2009?**) and scalability of neural network
-verifiers (**Wang2021?**) stand as two main challenges. 2. In all
-realistic scenarious, even accurate neural networks require extra
-“property-driven training” in order to comply with verification
-properties in question. This calls for new methods of integrating
-training with verification. 3. The scope of neural network properties
-available in the literature is limited. Robustness is the most popular
-general property to date (Casadio et al. 2021), and others include
-mostly domain-specific properties, such as ACAS Xu Benchmark (Katz et
-al. 2017), which we will consider shortly in this tutorial. 4. The
-available language inrastructure (e.g. the existing neural network
-solvers) encourage property specifications in terms of the input space,
-whereas one often needs to reason about neural network behavior in terms
-of the problem space. 5. Finally, neural networks usually work as
-components of complex systems, and the question of smooth integation of
-existing neural network solvers with other theorem provers requires
-resolution.
+verification:
+
+1.  On the solver side, undecidability of non-linear real arithmetic
+    (**Akbarpour2009?**) and scalability of neural network verifiers
+    (**Wang2021?**) stand as two main challenges.
+2.  In all realistic scenarious, even accurate neural networks require
+    extra “property-driven training” in order to comply with
+    verification properties in question. This calls for new methods of
+    integrating training with verification.
+3.  The scope of neural network properties available in the literature
+    is limited. Robustness is the most popular general property to date
+    (Casadio et al. 2021), and others include mostly domain-specific
+    properties, such as ACAS Xu Benchmark (Katz et al. 2017), which we
+    will consider shortly in this tutorial.
+4.  The available language inrastructure (e.g. the existing neural
+    network solvers) encourage property specifications in terms of the
+    input space, whereas one often needs to reason about neural network
+    behavior in terms of the problem space.
+5.  Finally, neural networks usually work as components of complex
+    systems, and the question of smooth integation of existing neural
+    network solvers with other theorem provers requires resolution.
 
 This tutorial will focus on problems 2 – 5, and will present the tool
 Vehicle that provides support in alleviating them. In particular,
@@ -105,14 +110,14 @@ complex system that embeds the machine learning model.
 Vehicle programs can be compiled to an unusually broad set of backends,
 including:
 
-1) loss functions for Tensorflow which can be used to guide both
+1)  loss functions for Tensorflow which can be used to guide both
     specification-directed training and gradient-based counter-example
     search.
 
-2) queries for the Marabou neural network verifier, which can be used
+2)  queries for the Marabou neural network verifier, which can be used
     to formally prove that the network obeys the specification.
 
-3) Agda specifications, which are tightly coupled to the original
+3)  Agda specifications, which are tightly coupled to the original
     network and verification result, in order to scalably and
     maintainably construct larger proofs about machine learning-enhanced
     systems.
@@ -123,8 +128,8 @@ ONNX format for neural networks.
 ### Objectives of this Tutorial
 
 This tutorial will give an introduction to the Vehicle tool
-(<https://github.com/vehicle-lang/vehicle>) and its conceptual approach to
-modelling specifications for machine learning systems via functional
+(<https://github.com/vehicle-lang/vehicle>) and its conceptual approach
+to modelling specifications for machine learning systems via functional
 programming. It will teach the participants to understand the range of
 problems that arise in neural network property specification,
 verification and training, and will give a hands-on experience on
@@ -175,7 +180,7 @@ You can also download already trained networks for our examples from
 - example of property not holding
 - fix in vehicle!
 
-## Chapter 1. Getting Started: the Vehicle’s Language
+# Chapter 1. Getting Started: the Vehicle’s Language
 
 In this chapter we will introduce some basic features of **Vehicle** as
 a programming language. We will use the famous *ACAS Xu verification
@@ -183,7 +188,7 @@ challenge*, first introduced in 2017 by Guy Katz et al. in *“Reluplex:
 An Efficient SMT Solver for Verifying – Deep Neural Networks”
 (<https://arxiv.org/pdf/1702.01135.pdf>)*
 
-### Standard Components of a Verification Problem
+## Standard Components of a Verification Problem
 
 In the simplest verification scenario, we will need a neural network
 $N : R^m \rightarrow R^n$, and a property of the network we wish to
@@ -227,23 +232,27 @@ the illustration we will just consider the first of them: *If the
 intruder is distant and is significantly slower than the ownship, the
 score of a COC advisory will always be below a certain fixed threshold.*
 
-### Basic Building Blocks in Vehicle
+## Basic Building Blocks in Vehicle
 
-#### Types
+### Types
 
 Unlike many Neural Network verifiers, Vehicle is a typeful language, and
 each specification file starts with declaring the types. In the ACAS Xu
 case, these are
 
-    type InputVector = Vector Rat 6
-    type OutputVector = Vector Rat 5
+``` vehicle
+type InputVector = Vector Rat 6
+type OutputVector = Vector Rat 5
+```
 
 – the types of vectors of rational numbers that the network will be
 taking as inputs and giving as outputs; and ofcourse the type of the
 network itself:
 
-    @network
-    acasXu : InputVector -> OutputVector
+``` vehicle
+@network
+acasXu : InputVector -> OutputVector
+```
 
 The `Vector` type represents a mathematical vector, or in programming
 terms can be thought of as a fixed-length array. One potentially unusual
@@ -271,16 +280,18 @@ be. This follows the **Vehicle** philosophy that specifications should
 be independent of any particular network, and should be able to be used
 to train/test/verify a range of candidate networks implementations.
 
-#### Values
+### Values
 
 Types for values are automatically inferred by **Vehicle**. For example,
 we can declare the number $\pi$ and its type will be inferred as
 rational (note the minimalistic syntax required to do that in
 **Vehicle**):
 
-    pi = 3.141592
+``` vehicle
+pi = 3.141592
+```
 
-#### Working with Vectors
+### Working with Vectors
 
 Often, some amount of input or output pre-processing is expected when
 defining a neural network. In the case of our example, it is assumed
@@ -289,7 +300,7 @@ does not work directly with units like m/s. However, the specifications
 (and verification properties) we want to write should ideally concern
 the original units.
 
-##### Problem space versus Input space
+#### Problem space versus Input space
 
 When we encounter similar problems later, we will say we encountered an
 instance of *problem space / input space mismatch*. These occur because
@@ -302,55 +313,67 @@ properties of neural networks, one often needs to refer to the original
 problem. In this case specifications will be written in terms of the
 *problem space*. Let us see how this happens in practice.
 
-##### Vector Normalisation
+#### Vector Normalisation
 
 For clarity, we define a new type synonym for unnormalised input vectors
 which are in the problem space.
 
-    type UnnormalisedInputVector = Vector Rat 5
+``` vehicle
+type UnnormalisedInputVector = Vector Rat 5
+```
 
 Next we define the minimum and maximum values that each input can take.
 These correspond to the range of the inputs that the network is designed
 to work over.
 
-    minimumInputValues : UnnormalisedInputVector
-    minimumInputValues = [0,0,0,0,0]
+``` vehicle
+minimumInputValues : UnnormalisedInputVector
+minimumInputValues = [0,0,0,0,0]
 
-    maximumInputValues : UnnormalisedInputVector
-    maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
+maximumInputValues : UnnormalisedInputVector
+maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
+```
 
 We can therefore define a simple predicate saying whether a given input
 vector is in the right range.
 
-    validInput : UnnormalisedInputVector -> Bool
-    validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+``` vehicle
+validInput : UnnormalisedInputVector -> Bool
+validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+```
 
 Then the mean values that will be used to scale the inputs.
 
-    meanScalingValues : UnnormalisedInputVector
-    meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
+``` vehicle
+meanScalingValues : UnnormalisedInputVector
+meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
+```
 
 We can now define the normalisation function that takes an input vector
 and returns the unnormalised version.
 
-    normalise : UnnormalisedInputVector -> InputVector
-    normalise x = foreach i .
-      (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
+``` vehicle
+normalise : UnnormalisedInputVector -> InputVector
+normalise x = foreach i .
+  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
+```
 
 Using this we can define a new function that first normalises the input
 vector and then applies the neural network.
 
-    normAcasXu : UnnormalisedInputVector -> OutputVector
-    normAcasXu x = acasXu (normalise x)
+``` vehicle
+normAcasXu : UnnormalisedInputVector -> OutputVector
+normAcasXu x = acasXu (normalise x)
+```
 
-#### Functions
+### Functions
 
 In the above block, we saw function definitions for the first time, so
 let us highlight the important features of the **vehicle** language
 concerning functions. Functions make up the backbone of the Vehicle
 language.
 
-##### Function types
+#### Function types
 
 The function type is written `A -> B` where `A` is the input type and
 `B` is the output type. For example the function `validInput` above
@@ -366,7 +389,7 @@ and returns a function from `B` to `C`. In contrast `(A -> B) -> C` is a
 function that takes another function from `A -> B` as its first argument
 and returns something of type `C`.
 
-##### Function application
+#### Function application
 
 As in most functional languages, function application is written by
 juxtaposition of the function with its arguments. For example, given a
@@ -377,13 +400,15 @@ written `f x y` and this expression has type `Bool`.
 This is unlike imperative languages such as Python, C or Java where you
 would write `f(x,y)`.
 
-##### Function declarations
+#### Function declarations
 
 Declarations may be used to define new functions. A declaration is of
 the form
 
-    <name> : <type>
-    <name> [<args>] = <expr>
+``` vehicle
+<name> : <type>
+<name> [<args>] = <expr>
+```
 
 Observe how all functions above fit within this declaration scheme.
 
