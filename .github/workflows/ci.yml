@@ -11,10 +11,6 @@ on:
       - reopened
   merge_group:
 
-defaults:
-  run:
-    shell: sh
-
 jobs:
   check-vehicle:
     name: Check Vehicle on ${{ matrix.os.name }}
@@ -49,8 +45,8 @@ jobs:
 
       - name: Check Vehicle
         run: |
-          for file in **/*.vcl
+          for spec in **/*.vcl
           do
-            vehicle check -s "$file"
+            vehicle check -s "$spec"
           done
         shell: bash
