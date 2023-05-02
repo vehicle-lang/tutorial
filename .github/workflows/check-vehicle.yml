@@ -1,22 +1,15 @@
-name: CI
+name: Check Vehicle
 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types:
       - opened
       - synchronize
       - reopened
   merge_group:
-
-defaults:
-  run:
-    shell: sh
-
-env:
-  PANDOC_VERSION: "3.0.1"
 
 jobs:
   check-vehicle:
@@ -36,9 +29,11 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+        shell: sh
 
       - name: Check Vehicle
         run: find . -name '*.vcl' -exec vehicle check -s {} \;
+        shell: sh
 
     strategy:
       matrix:
@@ -51,24 +46,3 @@ jobs:
             type: windows-latest
         python:
           - version: "3.9"
-
-  update-readme:
-    name: Update README.md
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get source
-        uses: actions/checkout@v3
-
-      - name: Setup Pandoc
-        uses: pandoc/actions/setup@v1.0.0
-        with:
-          version: ${{ env.PANDOC_VERSION }}
-
-      - name: Update README.md
-        run: pandoc -d .pandoc-config.yaml -t gfm -o README.md
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Update README.md"
-          file_pattern: "README.md"
