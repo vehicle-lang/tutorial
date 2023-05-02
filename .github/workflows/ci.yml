@@ -44,6 +44,11 @@ jobs:
           cache: "pip" # caching pip dependencies
           cache-dependency-path: "requirements.txt"
 
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Check Vehicle
         run: |
           for file in **/*.vcl
