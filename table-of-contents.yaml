@@ -1,0 +1,11 @@
+# The list of files for the tutorial.
+input-files:
+  - "templates/header.md"
+  - "0. Introduction.md"
+  - "1. Vehicle Language.md"
+  - "templates/footer.md"
+
+# Configure Pandoc to typeset citations using the bibliography.
+citeproc: true
+metadata:
+  bibliography: "bibliography.bib"
