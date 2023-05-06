@@ -311,13 +311,20 @@ instance of *problem space / input space mismatch*. These occur because
 neural network models impose certain constraints on how a problem can be
 expressed. In the example above, values may need to be normalised. If we
 were to reason on input vectors directly, we would be writing
-specifications in terms of the *input space* (i.e. refering to the
+specifications in terms of the *input space* (i.e. referring to the
 neural network inputs directly). However, when reasoning about
 properties of neural networks, one often needs to refer to the original
 problem. In this case specifications will be written in terms of the
-*problem space*. Let us see how this happens in practice.
+*problem space*. Being able to reason about problem space, alongside the
+input space is a feature that distinguishes *Vehicle* from majority of
+the mainstream neural network verifiers, such as e.g. Marabou, ERAN, or
+$\alpha\beta$-Crown. Let us see how this happens in practice.
 
 #### Vector Normalisation
+
+We start with introducing the full block of code that normalises
+vectors, and will explain significant features of Vehicle syntax
+featured in the code block afterwards.
 
 For clarity, we define a new type synonym for unnormalised input vectors
 which are in the problem space.
