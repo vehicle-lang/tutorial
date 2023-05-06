@@ -206,7 +206,7 @@ In particular, the following measurements are of importance:
 - $v_{own}, v_{vint}$: feet per second - **the speed of both
   aircrafts**,
 - $\tau$: seconds - **time until loss of vertical separation**,
-- $a_prev$: **previous advisory**
+- $a_{prev}$: **previous advisory**
 
 as the following picture illustrates: ![ACAS Xu](images/acas_xu.png)
 
