@@ -205,7 +205,8 @@ In particular, the following measurements are of importance:
 - $\theta, \psi$: radians **measuring angle of intrusion**,
 - $v_{own}, v_{vint}$: feet per second - **the speed of both
   aircrafts**,
-- $\tau$: seconds - **time until loss of vertical separation**
+- $\tau$: seconds - **time until loss of vertical separation**,
+- $a_prev$: **previous advisory**
 
 as the following picture illustrates: ![ACAS Xu](images/acas_xu.png)
 
@@ -221,11 +222,14 @@ instructions:
 - strong left,
 - strong right.
 
-Given six input parameters, and five instructions, a neural network
-$N_{AX} : R^6 \rightarrow R^5$ is trained, given the previous historic
-data. The exact architecture of the neural network , or its training
-mode are not important at the moment for our argument, and so we will
-omit this discussion for now.
+Different neural networks are trained to analyise the relation of input
+and output variables, each individual neural network uses only five
+input variables.  
+Given five selected input parameters, and the five instructions above, a
+neural network $N_{AX} : R^5 \rightarrow R^5$ is trained, given the
+previous historic data. The exact architecture of the neural network, or
+its training mode are not important for our argument, and so we will
+omit the details for now.
 
 The original paper by Guy Katz lists ten properties, but for the sake of
 the illustration we will just consider the first of them: *If the
@@ -241,7 +245,7 @@ each specification file starts with declaring the types. In the ACAS Xu
 case, these are
 
 ``` vehicle
-type InputVector = Vector Rat 6
+type InputVector = Vector Rat 5
 type OutputVector = Vector Rat 5
 ```
 
