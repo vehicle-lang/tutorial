@@ -84,7 +84,7 @@ verification:
     (Casadio et al. 2021), and others include mostly domain-specific
     properties, such as ACAS Xu Benchmark (Katz et al. 2017), which we
     will consider shortly in this tutorial.
-4.  The available language inrastructure (e.g. the existing neural
+4.  The available language infrastructure (e.g. the existing neural
     network solvers) encourage property specifications in terms of the
     input space, whereas one often needs to reason about neural network
     behavior in terms of the problem space.
