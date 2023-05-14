@@ -527,14 +527,15 @@ therefore represents an arbitrary input of that type.
 
 Vehicle also has a matching quantifer `exists`.
 
-## How to run **Vehicle**??
+## How to run **Vehicle**
 
 To verify this property, we only need to have:
 
-– a verifier installed (at the moment of writing Vehicle has integration
-with Marabou) – the actual network or networks that we wish to verify.
-These need to be supplied in an ONNX format, one of the standard formats
-for representing trained neural networks.
+- a verifier installed (at the moment of writing Vehicle has integration
+  with Marabou);
+- the actual network or networks that we wish to verify. These need to
+  be supplied in an ONNX format, one of the standard formats for
+  representing trained neural networks.
 
 Having these suitably installed or located, it only takes one command
 line to obtain the result (note the `vcl` file, where we have written
@@ -549,7 +550,7 @@ the above specification):
   --property property1
 ```
 
-\*\*Vehicle passes the network, as well as a translation of our
+**Vehicle** passes the network, as well as a translation of our
 specification, to Marabou, and we obtain the result:
 
 ``` vehicle
