@@ -343,12 +343,26 @@ maximumInputValues : UnnormalisedInputVector
 maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
 ```
 
-We can therefore define a simple predicate saying whether a given input
-vector is in the right range.
+Note that above is the first instance of vector definition we encounter.
+The type-checker will ensure that all vectors written in this way are of
+the correct size (in this case, `5`). An alternative method to vector
+definition is to use the `foreach` constructor, which is used to provide
+a value for each `index i`. This method is useful if the vector has some
+regular structure. In fact, the vector `minimumInputValues` could be
+defined in this way:
+
+``` vehicle
+minimumInputValues : UnnormalisedInputVector
+minimumInputValues = foreach i . 0
+```
+
+Let us see how `foreach` works with vector indexing. Having defined the
+range of minimim and maximum values, we can define a simple predicate
+saying whether a given input vector is in the right range:
 
 ``` vehicle
 validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+validInput x = foreach i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 ```
 
 Then we define the mean values that will be used to scale the inputs:
@@ -428,6 +442,14 @@ written as `acasXu (normalise x)`, and this expression has type
 
 Some functions are pre-defined in **Vehicle**. For example, the above
 block uses multiplication `*`, division `/` and vector look up `!`.
+
+### Quantifiers
+
+The final building block to discuss are *quantifiers*, in the block
+above these are `forall` and `foreach`. Let us start with `forall`. One
+of the main advantages of **Vehicle** is that it can be used to state
+and prove specifications that describe the network’s behaviour over an
+infinite set of values.
 
 # References
 
