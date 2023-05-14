@@ -267,9 +267,7 @@ time rather than run time.
 
 The full type is therefore written as `Vector A n`, which represents the
 type of vectors with `n` elements of type `A`. For example,
-`Vector Rat 5` is a vector of length $10$ that contains rational
-numbers, and `Vector (List Nat) 2` is a vector of length $2$ that
-contains lists of natural numbers.
+`Vector Rat 5` is a vector of length $5$ that contains rational numbers.
 
 **Vehicle** in fact has a comprehensive support for programming with
 vectors, which we will see throughout this tutorial. But the interested
@@ -298,9 +296,9 @@ pi = 3.141592
 ### Working with Vectors
 
 Often, some amount of input or output pre-processing is expected when
-defining a neural network. In the case of our example, it is assumed
-that neural network inputs and outputs are normalised, i.e. the network
-does not work directly with units like m/s. However, the specifications
+defining a neural network. In our case, it is assumed that the `acasXu`
+neural network inputs and outputs are normalised, i.e. the network does
+not work directly with units like $m/s$. However, the specifications
 (and verification properties) we want to write should ideally concern
 the original units.
 
@@ -315,10 +313,10 @@ specifications in terms of the *input space* (i.e. referring to the
 neural network inputs directly). However, when reasoning about
 properties of neural networks, one often needs to refer to the original
 problem. In this case specifications will be written in terms of the
-*problem space*. Being able to reason about problem space, alongside the
-input space is a feature that distinguishes *Vehicle* from majority of
-the mainstream neural network verifiers, such as e.g. Marabou, ERAN, or
-$\alpha\beta$-Crown. Let us see how this happens in practice.
+*problem space*. Being able to reason about problem space (alongside the
+input space) is a feature that distinguishes **Vehicle** from majority
+of the mainstream neural network verifiers, such as e.g. Marabou, ERAN,
+or $\alpha\beta$-Crown. Let us see how this happens in practice.
 
 #### Vector Normalisation
 
@@ -380,18 +378,18 @@ normAcasXu x = acasXu (normalise x)
 ### Functions
 
 In the above block, we saw function definitions for the first time, so
-let us highlight the important features of the **vehicle** language
-concerning functions. Functions make up the backbone of the Vehicle
-language.
+let us highlight the important features of the **Vehicle** language
+concerning functions.
 
 #### Function types
 
-The function type is written `A -> B` where `A` is the input type and
-`B` is the output type. For example the function `validInput` above
-takes values of the (defined) type of `UnnormalisedInputVector` and
-returns values of type `Bool`. The function `normalise` has the same
-input type, but its output type is `InputVector`, which was define as a
-vector of rational numbers of size $5$.
+Functions make up the backbone of the **Vehicle** language. The function
+type is written `A -> B` where `A` is the input type and `B` is the
+output type. For example the function `validInput` above takes values of
+the (defined) type of `UnnormalisedInputVector` and returns values of
+type `Bool`. The function `normalise` has the same input type, but its
+output type is `InputVector`, which was define as a vector of rational
+numbers of size $5$.
 
 As is standard in functional languages, the function arrow associates to
 the right so `A -> B -> C` is therefore equivalent to `A -> (B -> C)`.
