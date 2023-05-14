@@ -381,6 +381,18 @@ In the above block, we saw function definitions for the first time, so
 let us highlight the important features of the **Vehicle** language
 concerning functions.
 
+#### Function declarations
+
+Declarations may be used to define new functions. A declaration is of
+the form
+
+``` vehicle
+<name> : <type>
+<name> [<args>] = <expr>
+```
+
+Observe how all functions above fit within this declaration scheme.
+
 #### Function types
 
 Functions make up the backbone of the **Vehicle** language. The function
@@ -412,17 +424,10 @@ argument `x` of type `UnnormalisedInputVector` the application of
 written as `acasXu (normalise x)`, and this expression has type
 `OutputVector`.
 
-#### Function declarations
+#### Pre-defined functions
 
-Declarations may be used to define new functions. A declaration is of
-the form
-
-``` vehicle
-<name> : <type>
-<name> [<args>] = <expr>
-```
-
-Observe how all functions above fit within this declaration scheme.
+Some functions are pre-defined in **Vehicle**. For example, the above
+block uses multiplication `*`, division `/` and vector look up `!`.
 
 # References
 
