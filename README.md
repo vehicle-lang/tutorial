@@ -438,10 +438,12 @@ argument `x` of type `UnnormalisedInputVector` the application of
 written as `acasXu (normalise x)`, and this expression has type
 `OutputVector`.
 
-#### Pre-defined functions
+#### Pre-defined functions and predicates
 
 Some functions are pre-defined in **Vehicle**. For example, the above
-block uses multiplication `*`, division `/` and vector look up `!`.
+block uses multiplication `*`, division `/` and vector look up `!`. We
+have also seen the use of a pre-defined “less or equal” predicate `<=`
+in the definition of the function `validInput` (note its `Bool` type).
 
 ### Quantifiers
 
