@@ -351,7 +351,7 @@ validInput : UnnormalisedInputVector -> Bool
 validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 ```
 
-Then the mean values that will be used to scale the inputs.
+Then we define the mean values that will be used to scale the inputs:
 
 ``` vehicle
 meanScalingValues : UnnormalisedInputVector
@@ -368,7 +368,7 @@ normalise x = foreach i .
 ```
 
 Using this we can define a new function that first normalises the input
-vector and then applies the neural network.
+vector and then applies the neural network:
 
 ``` vehicle
 normAcasXu : UnnormalisedInputVector -> OutputVector
@@ -393,21 +393,24 @@ numbers of size $5$.
 
 As is standard in functional languages, the function arrow associates to
 the right so `A -> B -> C` is therefore equivalent to `A -> (B -> C)`.
-The type `A -> (B -> C)` is a function that takes something of type `A`
-and returns a function from `B` to `C`. In contrast `(A -> B) -> C` is a
-function that takes another function from `A -> B` as its first argument
-and returns something of type `C`.
 
-#### Function application
+#### Function application and composition
 
 As in most functional languages, function application is written by
 juxtaposition of the function with its arguments. For example, given a
 function `f` of type `Rat -> Bool -> Rat` and arguments `x` of type
 `Rat` and `y` of type `Bool`, the application of `f` to `x` and `y` is
-written `f x y` and this expression has type `Bool`.
+written `f x y` and this expression has type `Bool`. This is unlike
+imperative languages such as Python, C or Java where you would write
+`f(x,y)`.
 
-This is unlike imperative languages such as Python, C or Java where you
-would write `f(x,y)`.
+Functions of suitable types can be composed. For example, given a
+function `acasXu` of type `InputVector -> OutputVector`, a function
+`normalise` of type `UnnormalisedInputVector -> InputVector` and an
+argument `x` of type `UnnormalisedInputVector` the application of
+`acasXu` to the `InputVector` resulting from applying `normalise x` is
+written as `acasXu (normalise x)`, and this expression has type
+`OutputVector`.
 
 #### Function declarations
 
