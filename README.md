@@ -551,7 +551,8 @@ the above specification):
 ```
 
 **Vehicle** passes the network, as well as a translation of our
-specification, to Marabou, and we obtain the result:
+specification, to Marabou, and we obtain the result – the `property1`
+indeed holds for the given neural network, `acasXu_1_7.onnx`:
 
 ``` vehicle
 Verifying properties:
