@@ -42,7 +42,7 @@ element standing for a pixel value. Each arrow in the picture bears a
 *weight* that is used to multiply the input signal; each neuron computes
 the sum of its inputs.
 
-In some scenarious, it becomes important to establish formal guarantees
+In some scenarios, it becomes important to establish formal guarantees
 about neural network behaviour. Following the pioneering work of (Katz
 et al. 2017, Singh2019, Wang2021) neural network verification has become
 an active research area.
@@ -144,7 +144,7 @@ documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 You can also download already trained networks for our examples from
 \[link to tutorial repo\].
 
-(Recommendation to use vsc with vcl syntax highlighting)
+(Recommendation to use Visual Studio Code with .vcl syntax highlighting)
 
 ### Related work
 
@@ -183,7 +183,7 @@ You can also download already trained networks for our examples from
 # Chapter 1. Getting Started: the Vehicle’s Language
 
 In this chapter we will introduce some basic features of **Vehicle** as
-a programming language. We will use the famous *ACAS Xu verification
+a specification language. We will use the famous *ACAS Xu verification
 challenge*, first introduced in 2017 by Guy Katz et al. in *“Reluplex:
 An Efficient SMT Solver for Verifying – Deep Neural Networks”
 (<https://arxiv.org/pdf/1702.01135.pdf>)*
@@ -195,8 +195,8 @@ $N : R^m \rightarrow R^n$, and a property of the network we wish to
 verify. Often, though not always, such property can be formulated based
 on our understanding of the domain where the neural network is used.
 ACAS Xu stands for *Airborne Collision Avoidance System for unmanned
-aircraft*. The objective is to analyse the airctaft’s position and
-distance relative to other airctafts and give collision avoidance
+aircraft*. The objective is to analyse the aircraft’s position and
+distance relative to other aircraft and give collision avoidance
 instructions.
 
 In particular, the following measurements are of importance:
@@ -222,14 +222,13 @@ instructions:
 - strong left,
 - strong right.
 
-Different neural networks are trained to analyise the relation of input
+Different neural networks are trained to analyse the relation of input
 and output variables, each individual neural network uses only five
-input variables.  
-Given five selected input parameters, and the five instructions above, a
-neural network $N_{AX} : R^5 \rightarrow R^5$ is trained, given the
-previous historic data. The exact architecture of the neural network, or
-its training mode are not important for our argument, and so we will
-omit the details for now.
+input variables. Given five selected input parameters, and the five
+instructions above, a neural network $N_{AX} : R^5 \rightarrow R^5$ is
+trained, given the previous historic data. The exact architecture of the
+neural network, or its training mode are not important for our argument,
+and so we will omit the details for now.
 
 The original paper by Guy Katz lists ten properties, but for the sake of
 the illustration we will just consider the first of them: *If the
@@ -250,7 +249,7 @@ type OutputVector = Vector Rat 5
 ```
 
 – the types of vectors of rational numbers that the network will be
-taking as inputs and giving as outputs; and ofcourse the type of the
+taking as inputs and giving as outputs; and of course the type of the
 network itself:
 
 ``` vehicle
@@ -272,15 +271,16 @@ type of vectors with `n` elements of type `A`. For example,
 **Vehicle** in fact has a comprehensive support for programming with
 vectors, which we will see throughout this tutorial. But the interested
 reader may go ahead and check the documentation pages for vectors:
-<https://vehicle-lang.readthedocs.io/en/stable/language/vectors.html>
+<https://vehicle-lang.readthedocs.io/en/stable/language/vectors.html>.
 
 Networks are declared by adding a `@network` annotation to a function
 declaration, as shown above. Note that although no implementation for
-the network is provided directly in the specification, `acasXu` can
-still be used in the specification as any other declared function would
-be. This follows the **Vehicle** philosophy that specifications should
-be independent of any particular network, and should be able to be used
-to train/test/verify a range of candidate networks implementations.
+the network is provided directly in the specification, the name `acasXu`
+can still be used in the specification as any other declared function
+would be. This follows the **Vehicle** philosophy that specifications
+should be independent of any particular network, and should be able to
+be used to train/test/verify a range of candidate networks
+implementations.
 
 ### Values
 
@@ -302,7 +302,7 @@ not work directly with units like $m/s$. However, the specifications
 (and verification properties) we want to write should ideally concern
 the original units.
 
-#### Problem space versus Input space
+#### Problem Space versus Input Space
 
 When we encounter similar problems later, we will say we encountered an
 instance of *problem space / input space mismatch*. These occur because
@@ -411,10 +411,10 @@ Observe how all functions above fit within this declaration scheme.
 
 Functions make up the backbone of the **Vehicle** language. The function
 type is written `A -> B` where `A` is the input type and `B` is the
-output type. For example the function `validInput` above takes values of
-the (defined) type of `UnnormalisedInputVector` and returns values of
+output type. For example, the function `validInput` above takes values
+of the (defined) type of `UnnormalisedInputVector` and returns values of
 type `Bool`. The function `normalise` has the same input type, but its
-output type is `InputVector`, which was define as a vector of rational
+output type is `InputVector`, which was defined as a vector of rational
 numbers of size $5$.
 
 As is standard in functional languages, the function arrow associates to
@@ -441,9 +441,10 @@ written as `acasXu (normalise x)`, and this expression has type
 #### Pre-defined functions and predicates
 
 Some functions are pre-defined in **Vehicle**. For example, the above
-block uses multiplication `*`, division `/` and vector look up `!`. We
-have also seen the use of a pre-defined “less or equal” predicate `<=`
-in the definition of the function `validInput` (note its `Bool` type).
+block uses multiplication `*`, division `/` and vector lookup `!`. We
+have also seen the use of a pre-defined “less than or equal to”
+predicate `<=` in the definition of the function `validInput` (note its
+`Bool` type).
 
 ## Property Definition in Vehicle
 
@@ -494,8 +495,11 @@ intruderDistantAndSlower x =
   x ! intruderSpeed      <= 60
 ```
 
-Note the reasoning in terms of the
-\``problem space", i.e. the use of unnormalised input vectors. We have already encountered the vector lookup`!`before; but now we have a new predefined comparison function,`\>=`, "greater or equal". The connective`and`is a usual Boolean connective (note the type of the function is`Bool\`).
+Note the reasoning in terms of the “problem space”, i.e. the use of
+unnormalised input vectors. We have already encountered the vector
+lookup `!` before; but now we have a new predefined comparison function,
+`>=`, “greater than or equal to”. The connective `and` is a usual
+Boolean connective (note the type of the function is `Bool`).
 
 There is little left to do, and we finish our mini-formalisation with
 the property statement:
@@ -508,9 +512,10 @@ property1 = forall x . validInput x and intruderDistantAndSlower x =>
 ```
 
 To flag that this is the property we want Marabou to verify, we use the
-label `@property`, we have seen this notation when we flagged a neural
-network declaration. The final new bit of syntax we have not yet
-discussed is the quantifier `forall`.
+label `@property`, we have seen this notation before when we used
+`@network` to annotate the neural network declaration. The final new
+bits of syntax we have not yet discussed is implication `=>` and the
+quantifier `forall`.
 
 ### Quantifiers
 
@@ -523,7 +528,8 @@ different beast.
 
 The definition of `property1` brings a new variable `x` of type
 `Vector Rat 5` into scope. The variable `x` has no assigned value and
-therefore represents an arbitrary input of that type.
+therefore represents an arbitrary input of that type. The body of the
+`forall` must have type `Bool`.
 
 Vehicle also has a matching quantifer `exists`.
 
@@ -551,8 +557,8 @@ the above specification):
 ```
 
 **Vehicle** passes the network, as well as a translation of our
-specification, to Marabou, and we obtain the result – the `property1`
-indeed holds for the given neural network, `acasXu_1_7.onnx`:
+specification, to Marabou, and we obtain the result – `property1` indeed
+holds for the given neural network, `acasXu_1_7.onnx`:
 
 ``` vehicle
 Verifying properties:
