@@ -6,23 +6,20 @@
 
 0.  Introduction and Motivation for Vehicle
 
-1.  A simple semantically meaningful example.
+1.  Introduction to Vehicle.
 
-    - Maybe hierarchical classification? e.g. In this dogs dataset it
-      shouldn’t confuse an Afghan hound and a Border terrier.
-    - Introduce basic syntax and properties.
+    - A simple semantically meaningful example: The famous ACAS Xu model
+      verification by Katz et al. 
+    - Introduction of basic syntax and properties.
+    - Introduction to building and reusing functions
 
-2.  A more complicated semantically meaningful example
+2.  A More Complex Scenario: Reasoning about geometric properties of
+    data
 
-    - e.g. AcasXu
-    - Introduces building and reusing functions.
+    - Example: MNIST robustness
+    - Introduction to concepts of datasets, parameters etc.
 
-3.  Less semantically meaningful
-
-    - e.g. MNIST robustness
-    - Introduces concepts of datasets, parameters etc.
-
-4.  Semantically meaningful + integration with Agda.
+3.  Semantically meaningful examples and integration with Agda.
 
     - Braking example?
     - Vehicle controller?
@@ -170,15 +167,6 @@ You can also download already trained networks for our examples from
   in Neural In- formation Processing Systems 34: Annual Conference on
   Neural Information Processing Systems 2021, NeurIPS 2021, December
   6-14, 2021, virtual, pages 29909–29921, 2021.
-
-## Vehicle Preliminaries
-
-- introduction of dataset and models
-- introduction of basic syntax
-- describe a property in words
-- example with NN?
-- example of property not holding
-- fix in vehicle!
 
 # Chapter 1. Getting Started: the Vehicle’s Language
 
@@ -362,7 +350,7 @@ saying whether a given input vector is in the right range:
 
 ``` vehicle
 validInput : UnnormalisedInputVector -> Bool
-validInput x = foreach i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 ```
 
 Then we define the mean values that will be used to scale the inputs:
