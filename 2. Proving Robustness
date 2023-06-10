@@ -1,1 +1,32 @@
+# Chapter 2. Proving Neural Network Robustness
+
+In this chapter we will learn about the problem that has received a lot of attention within the machine learning community: 
+_the problem of robustness of neural networks to out-of-distribution shifts, alos known as "adversarial attacks"._ 
+The problem was famously announced by Christian Szegedy and his co-authors in the paper _"Intriguing properties of neural networks"(<https://arxiv.org/pdf/1312.6199.pdf>)_
+
+So, here is the problem. Suppose we are given a data set $\mathcal{X}$ for classification of images, it consists of 
+pairs $(\mathbf{x}, \mathbf{y})$, where $\mathbf{x} \in \mathbb{R}^n$ is an input, and  $\mathbf{y} \in \mathbb{R}^m$ is the desired output.
+It is assumed that the outputs $\mathbf{y}$ are generated from $\mathbf{x}$ by some function $\mathcal{H} : \mathbb{R}^n → \mathbb{R}^m$ 
+and that $\mathbf{x}$ is drawn from some probability distribution over $\mathbb{R}^n$. 
+
+Let us take as an example the famous MNIST data set be LeCun et al.
+![Images from the MNIST data set](images/MNIST.jpeg)
+
+As we have already discussed in the previous chapter, a neural network is a function $f : \mathbb{R}^n → \mathbb{R}^m$  parametrised by 
+a set of weights $\mathbf{w}$. 
+The goal of training is to use the dataset $\mathcal{X}$ to find weights $\mathbf{w}$ such that $f$ approximates $\mathcal{H}$ well 
+over input regions with high probability density.
+
+
+When we train a neural network to be highly accurate on both the training and the test sets, we emprically test: 
+ *  how well the neural network can in principle approximate  $\mathcal{H}$  (we do this by measuring its accuracy on the training set)
+ *  how well that learnt hypothesis generalises to yet unseen data (we do this by measuring the accuracy on the test set).
+
+ Coming to our example, if my neural network has a $99 \%$ of accuracy on the MNIST data set, I should be satisfied that it learnt
+ what a a hand-written digit is. Sxegedy et al were the first to show systematically that this is not the case:
+take the image on the left, which is classified with high confidence as "0", apply perturbation on the middle,
+and your neural network will give a $94 \%$ confidence that it sees a "5", even despite the fact that the image did 
+not change the class (for the human eye):
+
+![Image from MNIST](images/true.png) ![Perturbation](images/eta.png) ![Resulting Perturbed Image](images/adv.png)
 
