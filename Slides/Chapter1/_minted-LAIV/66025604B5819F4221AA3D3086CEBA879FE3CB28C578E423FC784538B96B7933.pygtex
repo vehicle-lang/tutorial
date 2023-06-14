@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{vehicle}\PYG{Space}{ }\PYG{c}{\PYGZhy{}\PYGZhy{}compileAndVerify}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}specification acasXu.vcl}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}verifier Marabou}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}network acasXu:acasXu\PYGZus{}1\PYGZus{}7.onnx}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}property property1}
+
+\PYG{c}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{Verifying}\PYG{Space}{ }\PYG{n}{properties}\PYG{p}{:}
+\PYG{Space}{  }\PYG{n}{property1}\PYG{Space}{ }\PYG{o}{[==========================}\PYG{p}{=}\PYG{o}{]}\PYG{Space}{ }\PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{1}\PYG{Space}{ }\PYG{n}{queries}\PYG{Space}{ }\PYG{n}{complete}
+\PYG{n}{Result}\PYG{p}{:}\PYG{Space}{ }\PYG{n}{true}
+\PYG{Space}{   }\PYG{n}{property1}
+\end{Verbatim}

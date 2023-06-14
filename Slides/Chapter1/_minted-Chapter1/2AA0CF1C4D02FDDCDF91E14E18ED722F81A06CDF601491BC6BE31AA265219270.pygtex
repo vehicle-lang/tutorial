@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\PYG{n}{normalise}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{n}{InputVector}
+\PYG{n}{normalise}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{foreach}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{p}{.}
+\PYG{Space}{  }\PYG{p}{(}\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{\PYGZhy{}}\PYG{Space}{ }\PYG{n}{meanScalingValues}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{p}{)}\PYG{Space}{ }\PYG{o}{/}\PYG{Space}{ }\PYG{p}{(}\PYG{n}{maximumInputValues}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{p}{)}
+\end{Verbatim}

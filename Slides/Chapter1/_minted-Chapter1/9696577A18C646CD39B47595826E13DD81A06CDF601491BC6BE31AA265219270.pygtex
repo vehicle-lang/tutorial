@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\PYG{n}{minimumInputValues}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}
+\PYG{n}{minimumInputValues}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{foreach}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{p}{.}\PYG{Space}{ }\PYG{l+m+mi}{0}
+
+\end{Verbatim}

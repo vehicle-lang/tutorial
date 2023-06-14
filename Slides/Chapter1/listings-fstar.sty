@@ -1,0 +1,66 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{listings-fstar}[2018/01/23 Custom Package]
+
+\RequirePackage{amsfonts}
+\RequirePackage{xcolor}
+\RequirePackage{listings}
+
+\def\@fstar@basicstyle{\ttfamily\small}
+%\def\@fstar@keywordstyle{\@fstar@basicstyle\color[HTML]{d73a49}\bfseries}
+\def\@fstar@keywordstyle{\@fstar@basicstyle\bfseries}
+\def\@fstar@lcurly{{\@fstar@keywordstyle\{}}
+\def\@fstar@rcurly{{\@fstar@keywordstyle\}}}
+
+\lstdefinelanguage{FStar}{%
+  sensitive%
+, morecomment=[l]{//}%
+, morecomment=[s]{(*}{*)}%
+, morestring=[b]{"}%
+, alsodigit={}%
+, alsoother={}%
+, alsoletter={}%
+%
+% [1] reserved keywords
+% [2] type constructors
+%
+, morekeywords={Tot, val, let, rec, in, if, then, else, assert, assert_norm, type, open, module, decreases}
+, otherkeywords={}
+, morekeywords=[2]{layer, network}
+, literate={->}{{\@fstar@keywordstyle${\to}$}}1
+           {<-}{{\@fstar@keywordstyle${\leftarrow}$}}1
+           {forall}{{\@fstar@keywordstyle${\forall}$}}1
+           {==}{{\@fstar@keywordstyle${\equiv}$}}1
+           {==>}{{\@fstar@keywordstyle${\Longrightarrow}$}}1
+           {<.}{{\@fstar@keywordstyle${<}$}}1
+           {<=.}{{\@fstar@keywordstyle${\leq}$}}1
+           {>.}{{\@fstar@keywordstyle${>}$}}1
+           {>=.}{{\@fstar@keywordstyle${\geq}$}}1
+           {~.}{{\@fstar@keywordstyle${-}$}}1
+           {*.}{{\@fstar@keywordstyle${\times}$}}1
+           {+.}{{\@fstar@keywordstyle${+}$}}1
+           {-.}{{\@fstar@keywordstyle${-}$}}1
+           {/.}{{\@fstar@keywordstyle${/}$}}1
+           {::}{{\@fstar@keywordstyle${::}$}}1
+           {...}{\textellipsis}1
+           {sum_nneg}{sum$_{\geq 0}$}1
+           {sum_pos}{sum$_{\geq 0}$}1
+           {nneg_real}{{\@fstar@keywordstyle$\mathbb{R}_{\geq 0}$}}1
+           {pos_real}{{\@fstar@keywordstyle$\mathbb{R}_{> 0}$}}1
+           {pos_nat}{{\@fstar@keywordstyle$\mathbb{N}_{> 0}$}}1
+           {real}{{\@fstar@keywordstyle$\mathbb{R}$}}1
+           {nat}{{\@fstar@keywordstyle$\mathbb{N}$}}1
+           {x1}{x$_1$}1
+           {x2}{x$_2$}1
+}
+
+\lstdefinestyle{colouredFStar}{
+  basicstyle=\@fstar@basicstyle%
+, commentstyle=\color[gray]{0.4}%
+, identifierstyle=%
+, keywordstyle=\@fstar@keywordstyle% reserved keywords
+, keywordstyle=[2]% type constructors
+, columns=spaceflexible%
+, keepspaces=true%
+, showspaces=false%
+, showtabs=false%
+}

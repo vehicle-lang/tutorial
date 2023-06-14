@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{vehicle}\PYG{Space}{ }\PYG{p}{\PYGZbs{}}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}compileAndVerify \PYGZbs{}}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}specification acasXu.vcl \PYGZbs{}}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}verifier Marabou \PYGZbs{}}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}network acasXu:acasXu\PYGZus{}1\PYGZus{}7.onnx \PYGZbs{}}
+\PYG{Space}{  }\PYG{c}{\PYGZhy{}\PYGZhy{}property property1}
+\end{Verbatim}

@@ -1,0 +1,34 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{type}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{n}{Tensor}\PYG{Space}{ }\PYG{k+kt}{Rat}\PYG{Space}{ }\PYG{o}{[}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{28}\PYG{o}{]}
+\PYG{k}{type}\PYG{Space}{ }\PYG{n}{Label}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k+kt}{Index}\PYG{Space}{ }\PYG{l+m+mi}{10}
+\PYG{n}{validImage}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Bool}
+\PYG{n}{validImage}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{forall}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{n}{j}\PYG{Space}{ }\PYG{p}{.}\PYG{Space}{ }\PYG{l+m+mi}{0}\PYG{Space}{ }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{j}\PYG{Space}{ }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{l+m+mi}{1}
+
+\PYG{k+kd}{@network}
+\PYG{n}{classifier}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Vector}\PYG{Space}{ }\PYG{k+kt}{Rat}\PYG{Space}{ }\PYG{l+m+mi}{10}
+
+\PYG{n}{advises}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{n}{Label}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Bool}
+\PYG{n}{advises}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{forall}\PYG{Space}{ }\PYG{n}{j}\PYG{Space}{ }\PYG{p}{.}\PYG{Space}{ }\PYG{n}{j}\PYG{Space}{ }\PYG{o}{!=}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{=\PYGZgt{}}\PYG{Space}{ }\PYG{n}{classifier}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{\PYGZgt{}}\PYG{Space}{ }\PYG{n}{classifier}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{j}
+
+\PYG{k+kd}{@parameter}
+\PYG{n}{epsilon}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{k+kt}{Rat}
+
+\PYG{n}{boundedByEpsilon}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Bool}
+\PYG{n}{boundedByEpsilon}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{forall}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{n}{j}\PYG{Space}{ }\PYG{p}{.}\PYG{Space}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{epsilon}\PYG{Space}{ }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{j}\PYG{Space}{ }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{n}{epsilon}
+
+\PYG{n}{robustAround}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{n}{Label}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Bool}
+\PYG{n}{robustAround}\PYG{Space}{ }\PYG{n}{image}\PYG{Space}{ }\PYG{n}{label}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{forall}\PYG{Space}{ }\PYG{n}{pertubation}\PYG{Space}{ }\PYG{p}{.}
+\PYG{Space}{  }\PYG{k}{let}\PYG{Space}{ }\PYG{n}{perturbedImage}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{n}{image}\PYG{Space}{ }\PYG{o}{\PYGZhy{}}\PYG{Space}{ }\PYG{n}{pertubation}\PYG{Space}{ }\PYG{k}{in}
+\PYG{Space}{  }\PYG{n}{boundedByEpsilon}\PYG{Space}{ }\PYG{n}{pertubation}\PYG{Space}{ }\PYG{o+ow}{and}\PYG{Space}{ }\PYG{n}{validImage}\PYG{Space}{ }\PYG{n}{perturbedImage}\PYG{Space}{ }\PYG{o}{=\PYGZgt{}}
+\PYG{Space}{    }\PYG{n}{advises}\PYG{Space}{ }\PYG{n}{perturbedImage}\PYG{Space}{ }\PYG{n}{label}
+
+\PYG{k+kd}{@dataset}
+\PYG{n}{trainingImages}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{k+kt}{Vector}\PYG{Space}{ }\PYG{n}{Image}\PYG{Space}{ }\PYG{n}{n}
+
+\PYG{k+kd}{@dataset}
+\PYG{n}{trainingLabels}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{k+kt}{Vector}\PYG{Space}{ }\PYG{n}{Label}\PYG{Space}{ }\PYG{n}{n}
+
+\PYG{k+kd}{@property}
+\PYG{n}{robust}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{k+kt}{Vector}\PYG{Space}{ }\PYG{k+kt}{Bool}\PYG{Space}{ }\PYG{n}{n}
+\PYG{n}{robust}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{foreach}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{p}{.}\PYG{Space}{ }\PYG{n}{robustAround}\PYG{Space}{ }\PYG{p}{(}\PYG{n}{trainingImages}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{p}{)}\PYG{Space}{ }\PYG{p}{(}\PYG{n}{trainingLabels}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{p}{)}
+\end{Verbatim}

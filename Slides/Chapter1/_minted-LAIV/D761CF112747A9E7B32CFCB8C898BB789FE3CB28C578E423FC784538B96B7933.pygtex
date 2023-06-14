@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\PYG{n}{intruderDistantAndSlower}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Bool}
+\PYG{n}{intruderDistantAndSlower}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{p}{=}
+\PYG{Space}{  }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{distanceToIntruder}\PYG{Space}{ }\PYG{o}{\PYGZgt{}=}\PYG{Space}{ }\PYG{l+m+mi}{55947}\PYG{p}{.}\PYG{l+m+mi}{691}\PYG{Space}{ }\PYG{o+ow}{and}
+\PYG{Space}{  }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{speed}\PYG{Space}{              }\PYG{o}{\PYGZgt{}=}\PYG{Space}{ }\PYG{l+m+mi}{1145}\PYG{Space}{      }\PYG{o+ow}{and}
+\PYG{Space}{  }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{intruderSpeed}\PYG{Space}{      }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{l+m+mi}{60}
+\end{Verbatim}

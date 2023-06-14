@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\PYG{n}{minimumInputValues}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}
+\PYG{n}{minimumInputValues}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{o}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{o}{]}
+
+\PYG{n}{maximumInputValues}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}
+\PYG{n}{maximumInputValues}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{o}{[}\PYG{l+m+mi}{60261}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{pi}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{pi}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{1100}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{1200}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{o}{]}
+
+\PYG{n}{meanScalingValues}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}
+\PYG{n}{meanScalingValues}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{o}{[}\PYG{l+m+mi}{19791}\PYG{p}{.}\PYG{l+m+mi}{091}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{0}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{0}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{650}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{Space}{ }\PYG{l+m+mi}{600}\PYG{p}{.}\PYG{l+m+mi}{0}\PYG{o}{]}
+\end{Verbatim}
