@@ -31,7 +31,7 @@
 %\usepackage{cibeamer}
 \usepackage{tikz}
 \usetikzlibrary{arrows,shapes}
-%\xyoption{all} 
+%\xyoption{all}
 %\usepackage{listings}
 %\input macro
 \usepackage{cancel, comment}
@@ -158,41 +158,41 @@
 \begin{frame}
   \frametitle{Pervasive AI...}
 
-  
+
  \begin{columns}
 \column{.4\textwidth}
-  
+
   \uncover<2->{\begin{block}{Autonomous cars}
-     \begin{center}  \includegraphics[scale=.20]{Images/acar.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/acar.jpeg}  \end{center}
   \end{block}}
 
-  
+
    \uncover<4->{
   \begin{block}{Robotics}
-   \begin{center}  \includegraphics[scale=.10]{Images/nurse-robot-italy.jpg}  \end{center} 
+   \begin{center}  \includegraphics[scale=.10]{Images/nurse-robot-italy.jpg}  \end{center}
  \end{block}}
 
 \column{.4\textwidth}
 
 \uncover<3->{\begin{block}{Smart Homes}
-      \begin{center}  \includegraphics[scale=.20]{Images/smarthome.jpeg}  \end{center} 
+      \begin{center}  \includegraphics[scale=.20]{Images/smarthome.jpeg}  \end{center}
   \end{block}}
 
    \uncover<5->{
     \begin{block}{Chat Bots}
-     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center}
    \end{block}}
 
   \end{columns}
 
-  
+
    \uncover<6>{
     \begin{block}{}
       \begin{center} ...and many more ...
       %  : from finance market bots to personal devices like insullin controllers
      % \end{center}
    % \end{block}}
-  
+
   % \uncover<6>{
   %  \begin{block}{}
   %    \begin{center}
@@ -218,7 +218,7 @@
       in Edinburgh Robotarium and Edinburgh Center for Robotics
 
 %	\item At the moment, 22 members: 7 academic staff, 3 RAs,
-%          4 PhD and 8 MSc students not counting a number of collaborators. 
+%          4 PhD and 8 MSc students not counting a number of collaborators.
 \end{itemize}
 
 \begin{center}
@@ -230,7 +230,7 @@
 
 \begin{frame}
   \frametitle{LAIV members: }
-  
+
 %\begin{center}
 %  \includegraphics[width=7cm]{DSC_2635.jpg}
 %\end{center}
@@ -283,20 +283,20 @@
 
   \begin{center} AI methods divide into:
     \end{center}
-  
+
    \begin{columns}
 \column{.4\textwidth}
 
 \uncover<2->{Perception tasks:}
 
   \uncover<2->{\begin{block}{Computer Vision}
-     \begin{center}  \includegraphics[scale=.20]{Images/cv.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/cv.jpeg}  \end{center}
   \end{block}}
 
-  
+
    \uncover<2->{
   \begin{block}{Natural language understanding}
-   \begin{center}  \includegraphics[scale=.20]{Images/nlu.jpeg}  \end{center} 
+   \begin{center}  \includegraphics[scale=.20]{Images/nlu.jpeg}  \end{center}
  \end{block}}
 
 \column{.4\textwidth}
@@ -304,12 +304,12 @@
 \uncover<3->{Reasoning tasks:}
 
 \uncover<3->{\begin{block}{Planning}
-      \begin{center}  \includegraphics[scale=.20]{Images/route.jpeg}  \end{center} 
+      \begin{center}  \includegraphics[scale=.20]{Images/route.jpeg}  \end{center}
   \end{block}}
 
    \uncover<3->{
     \begin{block}{(Logical) reasoning}
-     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center}
    \end{block}}
 
 \end{columns}
@@ -320,7 +320,7 @@
  \beamertemplatearticlebibitems
 \bibitem{1}{A.Hill, E.K. and R.Petrick: Proof-Carrying Plans: a Resource Logic for AI Planning. PPDP'20.}
  \end{thebibliography}}}
-  
+
 \end{frame}
 
 
@@ -329,27 +329,27 @@
 
 \begin{frame}
   \frametitle{Neural Networks...}
- 
 
-    
+
+
  \begin{columns}
    \column{.4\textwidth}
 
-   
+
     \begin{center}
       \includegraphics[scale=0.3]{Images/NN}
-    \end{center}  
+    \end{center}
 
 \begin{block}{take care of \alert{\textbf{perception}} tasks:}
 
  \begin{itemize}
-  \item[] computer vision 
+  \item[] computer vision
   \item[] speech recognition
   \item[] pattern recognition
     \item[] ...
     \end{itemize}
 
-  
+
 \end{block}
 
 
@@ -358,9 +358,9 @@
 
 \column{.4\textwidth}
 
- 
+
 \begin{block}{In:}
- 
+
 \begin{itemize}
 \item[] autonomous cars
 \item[] robots
@@ -369,7 +369,7 @@
   \item[] medical applications
 \item[] chatbots
 %\item Google bot on mobile phones
-\item[]  mobile phone apps 
+\item[]  mobile phone apps
 \item[] $\ldots$
 \end{itemize}
 
@@ -377,7 +377,7 @@
 
 
  \end{columns}
-    
+
 \end{frame}
 
 % \subsection{What is it?}
@@ -389,19 +389,19 @@
 
   \begin{block}{... a function }
     $$N: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{block}
 
   %By abuse of terminology, a \emph{training} algorithm that computes this function exactly (via a loss minimisation algorithm such as \emph{gradient decent})
   %is also often called a \emph{neural network}.
 
 %  \pause
-  
+
 %  \begin{center}
 %Ignore the learning functions for now...
     % \small{We will ignore the training algorithm for now, and will look at neural networks as functions. }
 %\end{center}
-  
+
 \end{frame}
 
 
@@ -411,7 +411,7 @@
    ... a function that separate inputs (data points) into classes
   %\end{block}
    \pause
-   
+
   \begin{alertblock}{Suppose we have four data points}
        \begin{center}\begin{tabular}{l|ll c |}
       \hline
@@ -441,7 +441,7 @@ $$
 
 \begin{frame}
   \frametitle{}
- 
+
 
   \begin{alertblock}{Plotting these four data points in 3-dimensional space:}
     \begin{center}
@@ -553,7 +553,7 @@ $$
     } $
   \end{center}
   \end{alertblock}
-    
+
 \end{frame}
 
 \begin{frame}
@@ -579,7 +579,7 @@ $$
 \end{alertblock}
 
 (This is one of infinitely many solutions)
-    
+
 \end{frame}
 
 \begin{frame}
@@ -610,7 +610,7 @@ $$
 \end{alertblock}}
 
 %(This is one of infinitely many solutions)
-    
+
 \end{frame}
 
 %\begin{frame}
@@ -622,7 +622,7 @@ $$
   \frametitle{Activation functions}
 
     \begin{center}
-    
+
           \includegraphics[scale=.07]{Images/af.png}
     \end{center}
 
@@ -637,8 +637,8 @@ $$
      Different Data sets...
        \includegraphics[scale=.40]{Images/mnist_example_picture.png}
      \end{block}}
-   
- 
+
+
    \column{.5\textwidth}
   \uncover<2->{ \begin{block}{may call for}
       different shapes of networks
@@ -646,7 +646,7 @@ $$
        \includegraphics[scale=.40]{Images/neural_network_aplas.png}
 }
 \end{columns}
-   
+
  \end{frame}
 
 \begin{frame}
@@ -658,12 +658,12 @@ $$
   \item approximate functions when exact solution is hard to get
     \item tolerant to noisy and incomplete data
     \end{itemize}
-\end{alertblock}  
+\end{alertblock}
 \pause
 
 \begin{block}{BUT}
   \begin{itemize}
-   % \item continuous decision space means solutions can only be approximate 
+   % \item continuous decision space means solutions can only be approximate
 	\item solutions not easily conceptualised (\alert{lack of explainability})
 	%\item prone to error
 	\item prone to a new range of safety and security problems: \pause
@@ -682,7 +682,7 @@ $$
  %   Given a trained neural network and a correctly classified image of ``0'' on the left,
  %                 we can create a perturbation $\eta$ (middle) to the original image so that the same neural network predicts a ``5" with 92\% confidence for the modified image (right).
  %   \end{block}
-  
+
   	\includegraphics[width=.3\textwidth]{Images/true.png}
 	\uncover<2->{\includegraphics[width=.3\textwidth]{Images/eta.png}}
 	\uncover<3->{\includegraphics[width=.3\textwidth]{Images/adv.png}}
@@ -690,13 +690,13 @@ $$
 \begin{itemize}
 \item<4->[] the perturbations are imperceptible to human eye \pause
 \item<5->[] attacks transfer from one neural network to another \pause
-\item<6->[] affect any domain where neural networks are applied                 
+\item<6->[] affect any domain where neural networks are applied
 \end{itemize}
-                
+
 \end{frame}
 
 
-    
+
 %\subsection{How is it different?}
 
 \begin{frame}
@@ -775,7 +775,7 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
 \section{Challenges of Neural Network Verification}
 
 
-    
+
 
 
 
@@ -784,14 +784,14 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
 
     \begin{alertblock}{ $Program: \mathcal{A} \rightarrow \mathcal{B}$}
     %$$NeuralNet: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{alertblock}
-  
+
 and so are neural networks:
-  
+
   \begin{alertblock}{}
     $$NeuralNet: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{alertblock}
 
 %  \pause
@@ -799,19 +799,19 @@ and so are neural networks:
  % \begin{center}
  %   \alert{BUT?..}
  %   \end{center}
-  
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
   \begin{block}{... could be like any other verification task}
     \pause
 if not for the following four problems:
 \end{block}
 
 
-  
+
   \begin{center}
   \setbeamercovered{transparent}
 \begin{itemize}[<+->]
@@ -821,7 +821,7 @@ if not for the following four problems:
     \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 \begin{frame}
@@ -829,10 +829,10 @@ if not for the following four problems:
 
   \begin{alertblock}{ $Program: \mathcal{A} \rightarrow \mathcal{B}$}
     $$NeuralNet: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{alertblock}
 
-  
+
   \begin{block}{But normally, programs}
     \begin{itemize}
     \item[] have semantically meaningful parts
@@ -846,10 +846,10 @@ if not for the following four problems:
 
   \begin{alertblock}{   $Program: \mathcal{A} \rightarrow \mathcal{B}$}
      $$NeuralNet: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{alertblock}
 
-  
+
   \begin{block}{For neural nets:}
     \begin{itemize}
     \item[] \xout{have semantically meaningful parts}
@@ -867,10 +867,10 @@ if not for the following four problems:
 
   \begin{alertblock}{   $Program: \mathcal{A} \rightarrow \mathcal{B}$}
      $$NeuralNet: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{alertblock}
 
-  
+
   \begin{block}{For neural nets:}
     \begin{itemize}
     \item[] input and output are the only semantically meaningful parts
@@ -921,7 +921,7 @@ if not for the following four problems:
 %\end{block}
     \end{frame}
 
-    
+
 
 \begin{frame}
   \frametitle{For example,}
@@ -944,7 +944,7 @@ $$
     } $
   \end{center}
   \end{alertblock}
-    
+
 \end{frame}
 
 \begin{frame}
@@ -967,7 +967,7 @@ $$
 \end{align*}
   \end{center}
   \end{alertblock}
-    
+
 \end{frame}
 
 \begin{frame}
@@ -1006,7 +1006,7 @@ $$}
 David Aspinall. 2020. Neural Networks, Secure by Construction: An Exploration
 of Refinement Types. APLAS'20.}
 \end{thebibliography}}
- 
+
 \end{frame}
 
 
@@ -1020,7 +1020,7 @@ of Refinement Types. APLAS'20.}
        \includegraphics[scale=.20]{Images/data.jpeg}
      \end{alertblock}}
 %%%%%%%%%%%%%%
-     
+
      \column{.20\textwidth}
 
   \uncover<2->{\begin{alertblock}{}
@@ -1041,7 +1041,7 @@ of Refinement Types. APLAS'20.}
      \uncover<3->{\begin{alertblock}{}
          \tikzmark{n4}  $F^*$ \tikzmark{n10}
          \includegraphics[scale=.20]{Images/f*.png}
-           \tikzmark{n41}  
+           \tikzmark{n41}
     \end{alertblock}}
 
    \vspace{1cm}
@@ -1051,23 +1051,23 @@ of Refinement Types. APLAS'20.}
            %\includegraphics[scale=.25]{Images/NN.png}
        \end{block}}
 %%%%%%%%
-  
-     
+
+
        \column{.20\textwidth}
-    
+
          \uncover<4->{\begin{alertblock}{}
              \tikzmark{n42}   Z3
              \includegraphics[scale=.20]{Images/z3.jpeg}
-               \tikzmark{n43} 
+               \tikzmark{n43}
                   \end{alertblock}}
 
                  \vspace{0.5cm}
                  \uncover<4->{\begin{block}{}
-                     \includegraphics[scale=.20]{Images/tick.jpeg}   \tikzmark{n44} 
+                     \includegraphics[scale=.20]{Images/tick.jpeg}   \tikzmark{n44}
        \end{block}}
-   
+
    \end{columns}
-     
+
 %   \begin{tikzpicture}[remember picture,overlay]
 
 %   \path[draw=blue, thick,->]<2-> (n1) -- (n2);
@@ -1080,7 +1080,7 @@ of Refinement Types. APLAS'20.}
 %\end{tikzpicture}
  \end{frame}
 
- 
+
 \begin{frame}[fragile]
   \frametitle{Except you only see:}
 
@@ -1091,7 +1091,7 @@ of Refinement Types. APLAS'20.}
        \includegraphics[scale=.20]{Images/data.jpeg}
      \end{alertblock}}
 %%%%%%%%%%%%%%
-     
+
      \column{.20\textwidth}
 
 
@@ -1102,7 +1102,7 @@ of Refinement Types. APLAS'20.}
      \uncover<1->{\begin{alertblock}{}
          \tikzmark{n4}  $F^*$ \tikzmark{n10}
          \includegraphics[scale=.20]{Images/f*.png}
-           \tikzmark{n41}  
+           \tikzmark{n41}
     \end{alertblock}}
 
    \vspace{1cm}
@@ -1112,13 +1112,13 @@ of Refinement Types. APLAS'20.}
            %\includegraphics[scale=.25]{Images/NN.png}
        \end{block}}
 %%%%%%%%
-  
-     
+
+
        \column{.20\textwidth}
-    
-    
+
+
    \end{columns}
-     
+
 %   \begin{tikzpicture}[remember picture,overlay]
 
 %   \path[draw=blue, thick,->]<2-> (n1) -- (n2);
@@ -1152,7 +1152,7 @@ let model = NLast // <- makes single-layer network
 \pause
 \begin{alertblock}{NB}
   Uniform syntax for all networks we obtain from Python code!
-\end{alertblock}      
+\end{alertblock}
       \end{block}
 
   \end{frame}
@@ -1162,7 +1162,7 @@ let model = NLast // <- makes single-layer network
 
   \begin{itemize}
   \item[1] Let Python process the data and find a suitable network
-    
+
     \item[2] Export Python neural net to F* automatically:
     \end{itemize}
 
@@ -1177,18 +1177,18 @@ let model = (*@ \hl{NLast} @*) // <- makes single-layer network
 %\pause
 \begin{alertblock}{NB}
   Uniform syntax for all networks we obtain from Python code!
-\end{alertblock}      
+\end{alertblock}
       \end{block}
 
   \end{frame}
 
-  
+
 \begin{frame}[fragile]
   \frametitle{Refinement type library for Neural Net Verification}
 
   \begin{itemize}
   \item[1] Let Python process the data and find a suitable network
-   
+
     \item[2] Export Python neural net to F* automatically:
 
       \item[3] Define your verification conditions:
@@ -1211,13 +1211,13 @@ let verify x1 x2 = run model [x1; x2]
 %
         \end{frame}
 
-          
+
 \begin{frame}[fragile]
   \frametitle{Refinement type library for Neural Net Verification}
 
   \begin{itemize}
   \item[1] Let Python process the data and find a suitable network
-   
+
     \item[2] Export Python neural net to F* automatically:
 
       \item[3] Define your verification conditions:
@@ -1235,7 +1235,7 @@ let verify x1 x2 = run (*@\hl{model}@*) [x1; x2]
 \end{lstlisting}
 \end{alertblock}
 \pause
-Note: it is a universal property. 
+Note: it is a universal property.
 % \begin{itemize}
 %      \item[4] Type check and relax!
 %          \end{itemize}
@@ -1247,7 +1247,7 @@ Note: it is a universal property.
 
   \begin{itemize}
   \item[1] Let Python process the data and find a suitable network
-   
+
     \item[2] Export Python neural net to F* automatically:
 
       \item[3] Define your verification conditions:
@@ -1270,11 +1270,11 @@ let verify x1 x2 = run model [x1; x2]
 
         \end{frame}
 
-  
+
 \begin{frame}
   \frametitle{Neural net robustness as refinement type}
 
-  
+
       {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
@@ -1282,14 +1282,14 @@ let verify x1 x2 = run model [x1; x2]
 David Aspinall. 2020. Neural Networks, Secure by Construction: An Exploration
 of Refinement Types. APLAS'20.}
 \end{thebibliography}}
- 
+
   \setbeamercovered{transparent}
 \begin{itemize}[<+->]
   \item Builds on the real number library in F*;
   \item  Concise Linear Algebra module;
-  \item Straightforward definitions of neural nets as composed functions;  
+  \item Straightforward definitions of neural nets as composed functions;
 \item with linear or ``non-linear'' activation functions
-\item A Python wrapper. 
+\item A Python wrapper.
 \end{itemize}
 \end{frame}
 
@@ -1308,11 +1308,11 @@ of Refinement Types. APLAS'20.}
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall the 4 problems:}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is opaque
@@ -1321,18 +1321,18 @@ of Refinement Types. APLAS'20.}
           \item[IV] Finding verifiable neural networks is difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall the 4 problems:}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is  opaque
@@ -1345,16 +1345,16 @@ of Refinement Types. APLAS'20.}
    \beamertemplatearticlebibitems
     \bibitem{6}{Wen Kokke. 2020. Sapphire: a Neural Net Verification Library for Z3 in Python. \url{https://github.com/wenkokke/sapphire}}
 \end{thebibliography}}
-    
-      
+
+
     \item[II] Number of verification parameters is huge
     \item[III] Undecidable verification for non-linear functions
-          \item[IV] Finding verifiable neural networks 
+          \item[IV] Finding verifiable neural networks
     \end{itemize}
 
 
 \end{center}
-    
+
 \end{frame}
 
 \begin{frame}[fragile]
@@ -1367,7 +1367,7 @@ of Refinement Types. APLAS'20.}
       % \includegraphics[scale=.25]{Images/neural_network_aplas.png}
      \end{block}}
 %%%%%%%%%%%%%%
-     
+
      \column{.3\textwidth}
 
   \uncover<2->{\begin{block}{}
@@ -1382,7 +1382,7 @@ of Refinement Types. APLAS'20.}
     \end{block}}
 
    \end{columns}
-     
+
    \begin{tikzpicture}[remember picture,overlay]
         %\path[draw=magenta,thick,->]<3-> ([yshift=3mm]n1) to ++(0,3mm) to [out=0, in=0,distance=2.5in] (t1);
    \path[draw=magenta,ultra thick,->]<2-> (n1) -- (n2);
@@ -1392,28 +1392,28 @@ of Refinement Types. APLAS'20.}
    \path[draw=magenta,ultra thick,->]<3-> (n3) -- (n4);
 \end{tikzpicture}
  \end{frame}
- 
+
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is opaque
       \begin{alertblock}{Use refinement types (for [functional] elegance)}
         ... or SMT solvers directly.
         \end{alertblock}
-      
+
     \item[II] \hl{Number of verification parameters is huge}
     \item[III] Undecidable verification for non-linear functions
              \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
@@ -1456,11 +1456,11 @@ of Refinement Types. APLAS'20.}
     \end{frame}
 
 
-    
+
 \begin{frame}
   \frametitle{Scale in Neural network verification }
 
-    
+
   \begin{block}{MNIST data set}
     \begin{center}
       $28 × 28$ images of the handwritten digits “0” to
@@ -1472,7 +1472,7 @@ of Refinement Types. APLAS'20.}
   \end{block}
 \pause
 
- 
+
  \begin{columns}
 \column{.4\textwidth}
   \begin{block}{The smallest network}
@@ -1483,28 +1483,28 @@ of Refinement Types. APLAS'20.}
 \item[hidden] layer of (say) 128 ReLU nodes
 \pause
 \item[output] layer of $10$ softmax neurons
-\end{itemize}    
+\end{itemize}
 \end{block}
 
 
-\column{.4\textwidth} 
+\column{.4\textwidth}
 
   \begin{center}
-    
+
           \includegraphics[scale=.25]{Images/neural_network_aplas.png}
     \end{center}
 
-     
+
  \end{columns}
 
-  
+
 \end{frame}
 
 
 \begin{frame}[fragile]
   \frametitle{Scaling Neural network verification }
   \begin{center}
-    
+
           \includegraphics[scale=.20]{Images/neural_network_aplas.png}
     \end{center}
 
@@ -1512,7 +1512,7 @@ of Refinement Types. APLAS'20.}
 \begin{lstlisting}
 val sample_in : vector real 784
 let sample_in = let v = [7.394R; ~.0.451R; ...; 0.199R]
-\end{lstlisting}         
+\end{lstlisting}
 \begin{lstlisting}
 val sample_out: vector real 10
 let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
@@ -1533,7 +1533,7 @@ let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
 \begin{frame}[fragile]
   \frametitle{Scaling Neural network verification }
   \begin{center}
-    
+
           \includegraphics[scale=.20]{Images/neural_network_aplas.png}
     \end{center}
 
@@ -1541,7 +1541,7 @@ let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
 \begin{lstlisting}
 val sample_in : vector real 784
 let sample_in = let v = [7.394R; ~.0.451R; ...; 0.199R]
-\end{lstlisting}         
+\end{lstlisting}
 \begin{lstlisting}
 val sample_out: vector real 10
 let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
@@ -1554,13 +1554,13 @@ let _ = (*@  \hl{$\forall$ (x:vector $\Real$ 784).} @*)(|sample_in - x| <. 0.01R
 ==> (|sample_out - (run network x)| <. 0.1R))
    \end{lstlisting}
 \end{alertblock}
-  
+
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Scaling Neural network verification }
   \begin{center}
-    
+
           \includegraphics[scale=.20]{Images/neural_network_aplas.png}
     \end{center}
 
@@ -1568,7 +1568,7 @@ let _ = (*@  \hl{$\forall$ (x:vector $\Real$ 784).} @*)(|sample_in - x| <. 0.01R
 \begin{lstlisting}
 val sample_in : vector real 784
 let sample_in = let v = [7.394R; ~.0.451R; ...; 0.199R]
-\end{lstlisting}         
+\end{lstlisting}
 \begin{lstlisting}
 val sample_out: vector real 10
 let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
@@ -1577,18 +1577,18 @@ let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
 
 \begin{alertblock}{And prove the $\epsilon$-ball property:}
   \begin{lstlisting}
-let _ =  forall (x:vector real 784). (*@ \hl{(|sample\_in - x| $<$ 0.01R} @*) 
+let _ =  forall (x:vector real 784). (*@ \hl{(|sample\_in - x| $<$ 0.01R} @*)
  ==> (|sample_out - (run network x)| <. 0.1R))
 \end{lstlisting}
 \end{alertblock}
-  
+
 \end{frame}
 
 
 \begin{frame}[fragile]
   \frametitle{Scaling Neural network verification }
   \begin{center}
-    
+
           \includegraphics[scale=.20]{Images/neural_network_aplas.png}
     \end{center}
 
@@ -1596,7 +1596,7 @@ let _ =  forall (x:vector real 784). (*@ \hl{(|sample\_in - x| $<$ 0.01R} @*)
 \begin{lstlisting}
 val sample_in : vector real 784
 let sample_in = let v = [7.394R; ~.0.451R; ...; 0.199R]
-\end{lstlisting}         
+\end{lstlisting}
 \begin{lstlisting}
 val sample_out: vector real 10
 let sample_out = let v = [0.998R; 0.000R; ...; 0.000R]
@@ -1609,13 +1609,13 @@ let _ =  forall (x:vector real 784). (|sample_in - x| <. 0.01R)
 ==> (|sample_out - (*@ \hl{(run network x)} @*) | <. 1.0R))
 \end{lstlisting}
 \end{alertblock}
-  
+
 \end{frame}
-    
+
 \begin{frame}
   \frametitle{Scaling Neural network verification }
   \begin{center}
-    
+
           \includegraphics[scale=.40]{Images/neural_network_aplas.png}
     \end{center}
 
@@ -1628,24 +1628,24 @@ let _ =  forall (x:vector real 784). (|sample_in - x| <. 0.01R)
 \item[output] layer of $10$ softmax neurons
 \pause
   \item[total] $784 \times 128 + 128 +
-128 \times 10 + 10 = 101770$ parameters 
-%\pause 
+128 \times 10 + 10 = 101770$ parameters
+%\pause
 %\item[] because layers are fully connected,
 
 %  each input parameter occurs at least
 %128 × 10 = 1280 times in the SMT query
-\end{itemize}    
+\end{itemize}
 \end{block}
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is  opaque
@@ -1654,17 +1654,17 @@ let _ =  forall (x:vector real 784). (|sample_in - x| <. 0.01R)
              \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -1676,22 +1676,22 @@ let _ =  forall (x:vector real 784). (|sample_in - x| <. 0.01R)
           \item[or] use over-approximation (in the style of abstract interpretation)
           \end{itemize}
       \end{alertblock}
-      
+
     \item[III] Undecidable verification for non-linear functions
              \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -1711,22 +1711,22 @@ of Refinement Types. APLAS'20.}
          \item[or] use over-approximation (in the style of abstract interpretation)
           \end{itemize}
       \end{alertblock}
-      
+
     \item[III] Undecidable verification for non-linear functions
              \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -1734,7 +1734,7 @@ of Refinement Types. APLAS'20.}
       \begin{alertblock}{Reduce the number of parameters (to scale)}
         \begin{itemize}
         \item[either] reduce network size and re-train
-          
+
          \item[or] reduce the network to a provably equivalent
       {\scriptsize
  \begin{thebibliography}{99}
@@ -1745,22 +1745,22 @@ Simplifying Neural Networks Using Formal Verification. NFM 2020: 85-93}
          \item[or] use over-approximation (in the style of abstract interpretation)
           \end{itemize}
       \end{alertblock}
-      
+
     \item[III] Undecidable verification for non-linear functions
              \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
   \end{center}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -1768,9 +1768,9 @@ Simplifying Neural Networks Using Formal Verification. NFM 2020: 85-93}
       \begin{alertblock}{Reduce the number of parameters (to scale)}
         \begin{itemize}
         \item[either] reduce network size and re-train
-          
+
          \item[or] reduce the network to a provably equivalent
-     
+
          \item[or] use over-approximation (in the style of abstract interpretation)
             {\scriptsize
  \begin{thebibliography}{99}
@@ -1781,12 +1781,12 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
 \end{thebibliography}}
           \end{itemize}
       \end{alertblock}
-      
+
     \item[III] Undecidable verification for non-linear functions
        \item[IV] Finding verifiable neural networks may be difficult
       \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
@@ -1800,7 +1800,7 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
        \includegraphics[scale=.25]{Images/neural_network_aplas.png}
      \end{block}}
 %%%%%%%%%%%%%%
-     
+
      \column{.3\textwidth}
 
   \uncover<2->{\begin{block}{}
@@ -1810,7 +1810,7 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
 \vspace{1cm}
 
      \uncover<4->{\begin{alertblock}{}
-       \tikzmark{n5} can verify a  \tikzmark{n7}  different object! 
+       \tikzmark{n5} can verify a  \tikzmark{n7}  different object!
        \end{alertblock}}
 %%%%%%%%
      \column{.3\textwidth}
@@ -1818,16 +1818,16 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
      \uncover<3->{\begin{block}{}
       \tikzmark{n4}  overwhelming No of parameters  \tikzmark{n10}
     \end{block}}
-  
+
 %\vspace{0.5cm}
-    
+
          \uncover<5->{\begin{alertblock}{}
              \tikzmark{n6}   verify a  \tikzmark{n8} smaller network
                     \includegraphics[scale=.25]{Images/neural_network_aplas2.png}
      \end{alertblock}}
 
    \end{columns}
-     
+
    \begin{tikzpicture}[remember picture,overlay]
         %\path[draw=magenta,thick,->]<3-> ([yshift=3mm]n1) to ++(0,3mm) to [out=0, in=0,distance=2.5in] (t1);
    \path[draw=magenta,ultra thick,->]<2-> (n1) -- (n2);
@@ -1859,14 +1859,14 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
 \end{frame}
 
 
-        
+
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -1876,7 +1876,7 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
 
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
@@ -1886,7 +1886,7 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
   \frametitle{Activation functions}
 
     \begin{center}
-    
+
           \includegraphics[scale=.07]{Images/af.png}
     \end{center}
 
@@ -1907,7 +1907,7 @@ An abstract domain for certifying neural networks. Proc. ACM Program. Lang. 3(PO
 cylindrical algebraic decomposition
       \end{itemize}
     \end{block}
- 
+
     \column{.4\textwidth}
 \uncover<3->{
     \begin{block}{We need:}
@@ -1942,7 +1942,7 @@ Supports:
       \end{itemize}
       \hl{for 4-5 variables}
 \end{block}
-      
+
     \column{.4\textwidth}
 \uncover<2->{
     \begin{block}{We need:}
@@ -1971,7 +1971,7 @@ valued special functions. Journal of Automated Reasoning 44(3), 175–205 (Aug
 	\includegraphics[width=0.33333\textwidth]{Images/sigmoid25.png}
 
 
-        
+
                 {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
@@ -1992,7 +1992,7 @@ of Refinement Types. APLAS'20.}
 	\includegraphics[width=0.33333\textwidth]{Images/tanh_hard.png}%
 	\includegraphics[width=0.33333\textwidth]{Images/tanh_margin.png}
 
-        
+
                 {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
@@ -2001,15 +2001,15 @@ David Aspinall.  Neural Networks, Secure by Construction: An Exploration
 of Refinement Types. APLAS'20.}
 \end{thebibliography}}
 
-\end{frame}  
+\end{frame}
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -2027,7 +2027,7 @@ of Refinement Types. APLAS'20.}
          \item[IV] Finding verifiable neural networks may be difficult
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 \begin{frame}[fragile]
@@ -2039,7 +2039,7 @@ of Refinement Types. APLAS'20.}
      \uncover<1->{\begin{block}{}
       \tikzmark{n4}  overwhelming No of parameters  \tikzmark{n10}
     \end{block}}
-  
+
 
      \uncover<2->{ \begin{block}{}
        Non-linearity\tikzmark{n11}
@@ -2047,9 +2047,9 @@ of Refinement Types. APLAS'20.}
     %   \includegraphics[scale=.25]{Images/neural_network_aplas.png}
      \end{block}}
 
-   
+
 %%%%%%%%%%%%%%
-     
+
      \column{.3\textwidth}
 
   %\uncover<1->{ \begin{block}{}
@@ -2060,26 +2060,26 @@ of Refinement Types. APLAS'20.}
 \vspace{1cm}
 
      \uncover<1->{\begin{alertblock}{}
-       \tikzmark{n5} can verify  \tikzmark{n23} a  \tikzmark{n7}  different object!  \tikzmark{n14} 
+       \tikzmark{n5} can verify  \tikzmark{n23} a  \tikzmark{n7}  different object!  \tikzmark{n14}
        \end{alertblock}}
 %%%%%%%%
      \column{.3\textwidth}
 
-   
+
 %\vspace{0.5cm}
-    
+
          \uncover<1->{\begin{alertblock}{}
              \tikzmark{n6}   verify a  \tikzmark{n8} smaller network
                    % \includegraphics[scale=.25]{Images/neural_network_aplas2.png}
            \end{alertblock}}
-         
+
          \uncover<4->{\begin{alertblock}{}
              \tikzmark{n13}   verify a  \tikzmark{n8} linearised network
                     \includegraphics[scale=.2]{Images/sigmoid25.png}
      \end{alertblock}}
 
    \end{columns}
-     
+
    \begin{tikzpicture}[remember picture,overlay]
         %\path[draw=magenta,thick,->]<3-> ([yshift=3mm]n1) to ++(0,3mm) to [out=0, in=0,distance=2.5in] (t1);
   % \path[draw=blue, thick,->]<1-> (n1) -- (n2);
@@ -2095,22 +2095,22 @@ of Refinement Types. APLAS'20.}
    %\path[draw=magenta, ultra thick,->]<4-> (n11) -- (n5);
           \path[draw=magenta, ultra thick,->]<3-> (n11) -- (n5);
        \path[draw=magenta, ultra thick,->]<4-> (n14) -- (n13);
-   
+
 \end{tikzpicture}
 
         \end{frame}
 
-        
+
 
 
 
 \begin{frame}
   \frametitle{Neural Network Verification}
-  
+
  \begin{block}{Recall}
 
 \end{block}
-  
+
   \begin{center}
     \begin{itemize}
     \item[I] Semantics of function components is mostly opaque
@@ -2129,10 +2129,10 @@ of Refinement Types. APLAS'20.}
 \pause
                       \begin{alertblock}{(Re-)Train your network correct}
            \end{alertblock}
-           
+
     \end{itemize}
 \end{center}
-    
+
 \end{frame}
 
 
@@ -2140,7 +2140,7 @@ of Refinement Types. APLAS'20.}
   \frametitle{Constraint-driven training}
 
   \begin{alertblock}{ Train your network correct!}
-  
+
   \begin{itemize}
   \item augment loss functions with logical constraints
                 {\scriptsize
@@ -2162,7 +2162,7 @@ PaRoT: A Practical Framework for Robust Deep Neural Network Training. NFM 2020: 
     \bibitem{6}{M.Balunovic and M.Vechev. 2020. Adversarial Training and Provable
 Defenses: Bridging the Gap. ICLR 2020.}
 \end{thebibliography}}
-    
+
   \end{itemize}
 
 
@@ -2191,7 +2191,7 @@ Defenses: Bridging the Gap. ICLR 2020.}
      \uncover<1->{\begin{block}{}
       \tikzmark{n4}  overwhelming No of parameters  \tikzmark{n10}
     \end{block}}
-  
+
 
      \uncover<1->{ \begin{block}{}
        Non-linearity\tikzmark{n11}
@@ -2205,9 +2205,9 @@ Defenses: Bridging the Gap. ICLR 2020.}
     %   \includegraphics[scale=.25]{Images/neural_network_aplas.png}
      \end{block}}
 
-   
+
 %%%%%%%%%%%%%%
-     
+
      \column{.3\textwidth}
 
   %\uncover<1->{ \begin{block}{}
@@ -2218,19 +2218,19 @@ Defenses: Bridging the Gap. ICLR 2020.}
 \vspace{1cm}
 
      \uncover<1->{\begin{alertblock}{}
-       \tikzmark{n5} can verify  \tikzmark{n23} a  \tikzmark{n7}  different object!  \tikzmark{n14} 
+       \tikzmark{n5} can verify  \tikzmark{n23} a  \tikzmark{n7}  different object!  \tikzmark{n14}
        \end{alertblock}}
 %%%%%%%%
      \column{.3\textwidth}
 
-   
+
 %\vspace{0.5cm}
-    
+
          \uncover<1->{\begin{alertblock}{}
              \tikzmark{n6}   verify a  \tikzmark{n8} smaller network
                    % \includegraphics[scale=.25]{Images/neural_network_aplas2.png}
            \end{alertblock}}
-         
+
          \uncover<1->{\begin{alertblock}{}
              \tikzmark{n13}   verify a  \tikzmark{n8} linearised network
                   %  \includegraphics[scale=.2]{Images/sigmoid25.png}
@@ -2242,7 +2242,7 @@ Defenses: Bridging the Gap. ICLR 2020.}
      \end{alertblock}}
 
    \end{columns}
-     
+
    \begin{tikzpicture}[remember picture,overlay]
         %\path[draw=magenta,thick,->]<3-> ([yshift=3mm]n1) to ++(0,3mm) to [out=0, in=0,distance=2.5in] (t1);
   % \path[draw=blue, thick,->]<1-> (n1) -- (n2);
@@ -2260,7 +2260,7 @@ Defenses: Bridging the Gap. ICLR 2020.}
           \path[draw=blue, thick,->]<1-> (n14) -- (n13);
                \path[draw=magenta, ultra thick,->]<3-> (n31) -- (n5);
        \path[draw=magenta, ultra thick,->]<4-> (n14) -- (n33);
-   
+
 \end{tikzpicture}
 
         \end{frame}
@@ -2271,7 +2271,7 @@ Defenses: Bridging the Gap. ICLR 2020.}
 
 \begin{center}
 
-  
+
  \begin{columns}
    \column{.3\textwidth}
   \includegraphics[width=5cm]{Images/question.jpeg}
@@ -2291,14 +2291,14 @@ Defenses: Bridging the Gap. ICLR 2020.}
   \frametitle{Continuous Verification}
 
  \begin{tikzpicture}[scale=.7]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\footnotesize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 \draw (11.1,0) node{{\footnotesize \it Neural Network}};
 
 
@@ -2306,11 +2306,11 @@ Defenses: Bridging the Gap. ICLR 2020.}
 \draw (5,-0.4) node{\footnotesize{the training-verification cycle}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify or modify constraints}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}};
 \end{tikzpicture}
 
 \pause
@@ -2323,20 +2323,20 @@ Defenses: Bridging the Gap. ICLR 2020.}
       \end{center}
 \end{block}
 
-\end{frame}  
+\end{frame}
 
 \begin{frame}
   \frametitle{Continuous Verification}
 
  \begin{tikzpicture}[scale=.7]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\footnotesize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 \draw (11.1,0) node{{\footnotesize \it Neural Network}};
 
 
@@ -2344,11 +2344,11 @@ Defenses: Bridging the Gap. ICLR 2020.}
 \draw (5,-0.4) node{\footnotesize{the training-verification cycle}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify or modify constraints}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}};
 \end{tikzpicture}
 
 \pause
@@ -2381,14 +2381,14 @@ of Refinement Types. APLAS'20.}
   \frametitle{Continuous Verification}
 
  \begin{tikzpicture}[scale=.7]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\footnotesize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 \draw (11.1,0) node{{\footnotesize \it Neural Network}};
 
 
@@ -2396,11 +2396,11 @@ of Refinement Types. APLAS'20.}
 \draw (5,-0.4) node{\footnotesize{the training-verification cycle}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify or modify constraints}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}};
 \end{tikzpicture}
 
   \begin{block}{Role of logicians:}
@@ -2410,7 +2410,7 @@ of Refinement Types. APLAS'20.}
 \begin{itemize}
   \item study tractable problems
 \pause
-\item devise domain-specific solvers for neural networks: 
+\item devise domain-specific solvers for neural networks:
 \end{itemize}
 
                 {\scriptsize
@@ -2420,7 +2420,7 @@ of Refinement Types. APLAS'20.}
 neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
 (2019)
 }
- 
+
 \end{thebibliography}}
 
 
@@ -2433,14 +2433,14 @@ neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
   \frametitle{Continuous Verification}
 
  \begin{tikzpicture}[scale=.7]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\footnotesize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 \draw (11.1,0) node{{\footnotesize \it Neural Network}};
 
 
@@ -2448,11 +2448,11 @@ neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
 \draw (5,-0.4) node{\footnotesize{the training-verification cycle}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify or modify constraints}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}};
 \end{tikzpicture}
   \setbeamercovered{transparent}
 
@@ -2483,14 +2483,14 @@ neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
   \frametitle{Continuous Verification}
 
  \begin{tikzpicture}[scale=.7]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\footnotesize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 \draw (11.1,0) node{{\footnotesize \it Neural Network}};
 
 
@@ -2498,11 +2498,11 @@ neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
 \draw (5,-0.4) node{\footnotesize{the training-verification cycle}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify or modify constraints}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{reduce, reshape, re-train}}}};
 \end{tikzpicture}
 
 \begin{alertblock}{Role of declarative programming in \emph{continuous} verification?}
@@ -2514,7 +2514,7 @@ neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
   \end{alertblock}
 
 
-  
+
   \footnotesize{
   $\mathtt{verify} \ x :\ x: \Real^n \alert{\{|\mathtt{sample\_in} - x| < \epsilon \}} \Longrightarrow y: \Real^m \alert{\{|\mathtt{sample\_out} - y| < \epsilon'\}} $\\
   $\mathtt{verify}\  x = \mathtt{run}\ \uncover<1>{\mathtt{network}\ x} \uncover<2->{\alert{?NETWORK?}\ \ \  x}   $
@@ -2537,7 +2537,7 @@ neural networks. In: CAV 2019, Part I. LNCS, vol. 11561, pp. 443–452. Springer
 
   \end{block}
 
-  
+
 \begin{center}
 
 \includegraphics[width=4cm]{Images/question.jpeg}

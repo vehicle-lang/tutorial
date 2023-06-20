@@ -54,7 +54,7 @@
 %\usepackage{cibeamer}
 \usepackage{tikz}
 \usetikzlibrary{arrows,shapes}
-%\xyoption{all} 
+%\xyoption{all}
 %\usepackage{listings}
 %\input macro
 \usepackage{cancel, comment}
@@ -154,7 +154,7 @@
 
  \begin{frame}
   \frametitle{Vehicle Team}
-  
+
 %\begin{center}
 %  \includegraphics[width=7cm]{DSC_2635.jpg}
 %\end{center}
@@ -181,20 +181,20 @@
     \includegraphics[width=1.5cm]{Images/Luca.jpeg}
     \begin{block}{\footnotesize{Luca Arnaboldi}}
    \end{block}
- 
+
       \includegraphics[width=1.5cm]{Images/Kathrin.jpg}
   \begin{block}{\footnotesize{Kathrin Stark}}
    \end{block}
 
- 
+
    \column{.3\textwidth}
-   
+
      \includegraphics[width=1.6cm]{Images/Bob.jpeg}
-  
+
          % \includegraphics[width=2cm]{photoDP.jpg}
           \begin{block}{\footnotesize{Bob Atkey}}
      \end{block}
- 
+
        \includegraphics[width=1.5cm]{Images/Marco.jpg}
         \begin{block}{\footnotesize{Marco Casadio}}
      \end{block}
@@ -210,12 +210,12 @@
 
 \begin{frame}
 \frametitle{Neural nets for classification}
-\includegraphics[scale=.30]{Images/mnist_classification.png} 
+\includegraphics[scale=.30]{Images/mnist_classification.png}
 
 \begin{block}{Formally,}
- a neural network is a function $N : R^n \rightarrow R^m$. 
+ a neural network is a function $N : R^n \rightarrow R^m$.
 \end{block}
- 
+
 \end{frame}
 
 \begin{frame}
@@ -227,12 +227,12 @@
   \item approximate functions when exact solution is hard to get
     \item tolerant to noisy and incomplete data
     \end{itemize}
-\end{alertblock}  
+\end{alertblock}
 \pause
 
 \begin{block}{BUT}
   \begin{itemize}
-   % \item continuous decision space means solutions can only be approximate 
+   % \item continuous decision space means solutions can only be approximate
 	\item solutions not easily conceptualised (\alert{lack of explainability})
 	%\item prone to error
 	\item prone to a new range of safety and security problems: \pause
@@ -251,7 +251,7 @@
  %   Given a trained neural network and a correctly classified image of ``0'' on the left,
  %                 we can create a perturbation $\eta$ (middle) to the original image so that the same neural network predicts a ``5" with 92\% confidence for the modified image (right).
  %   \end{block}
-  
+
   	\includegraphics[width=.3\textwidth]{Images/true.png}
 	\uncover<2->{\includegraphics[width=.3\textwidth]{Images/eta.png}}
 	\uncover<3->{\includegraphics[width=.3\textwidth]{Images/adv.png}}
@@ -259,9 +259,9 @@
 \begin{itemize}
 \item<4->[] the perturbations are imperceptible to human eye \pause
 \item<5->[] attacks transfer from one neural network to another \pause
-\item<6->[] affect any domain where neural networks are applied                 
+\item<6->[] affect any domain where neural networks are applied
 \end{itemize}
-                
+
 \end{frame}
 
 \begin{frame}
@@ -302,8 +302,8 @@
  % \begin{block}{}
 %\end{block}
     \end{frame}
-    
-    
+
+
     \begin{frame}
 \frametitle{Another example property: ACAS Xu}
 A collision avoidance system for unmanned autonomous aircraft.
@@ -353,7 +353,7 @@ The system was originally implemented as a 2Gb lookup table but was replaced wit
 \begin{block}{}
 \begin{equation*}
 \begin{array}{l}
-(\rho \geq 55947.691) \wedge 
+(\rho \geq 55947.691) \wedge
 (v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
 \Rightarrow \text{the score for COC is at most 1500}
 \end{array}
@@ -361,11 +361,11 @@ The system was originally implemented as a 2Gb lookup table but was replaced wit
 \end{block}
 
 \end{frame}
-    
+
     \begin{frame}
     \frametitle{More Generally}
-    
-    \begin{block}{Given $N : R^n \rightarrow R^m$} 
+
+    \begin{block}{Given $N : R^n \rightarrow R^m$}
     Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs.
 \end{block}
   \uncover<2->{
@@ -434,7 +434,7 @@ Marabou is our choice as it is complete, and the set of expressible queries is l
 \begin{tikzpicture}[thick,
     set/.style = {circle,
         minimum size = 3cm}]
- 
+
 % Set A
 \node[rectangle,draw] (A) at (0,4) {Property};
 
@@ -475,10 +475,10 @@ Marabou is our choice as it is complete, and the set of expressible queries is l
 
 \begin{frame}
   \frametitle{Challenges the area faces}
-  
+
   \begin{itemize}[<+->]
   \item Theory: finding appropriate verification properties
-\item  Solvers: undecidability of non-linear real arithmetic  and scalability of neural network verifiers 
+\item  Solvers: undecidability of non-linear real arithmetic  and scalability of neural network verifiers
 \item ML: understanding and integrating property-driven training
 
 \item Programming: finding the right languages to support these developments
@@ -585,20 +585,20 @@ PACMPL, 3(POPL):41:1–41:30.}
 \pause
 \item Interpretability - code is not easy to understand.
 \pause
-\item Integration - properties of networks cannot be linked to larger control system properties. 
+\item Integration - properties of networks cannot be linked to larger control system properties.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Vehicle ...}
- 
+
  \textbf{ is a domain-specific functional language for writing high-level property specifications for neural networks}
- 
+
 \begin{center}
 \begin{tikzpicture}[thick,
     set/.style = {circle,
         minimum size = 3cm}]
- 
+
 % Set A
 \node[rectangle,draw] (A) at (1.5,5) {Property in Vehicle};
 
@@ -636,7 +636,7 @@ PACMPL, 3(POPL):41:1–41:30.}
 
 
 
-   
+
 
 \section{Introduction to Vehicle (a mini tutorial)}
 
@@ -675,19 +675,19 @@ pi = 3.141592
 \begin{frame}[fragile]
 \frametitle{Working with Vectors}
 \begin{itemize}
-\item some input or output pre-processing maybe expected when defining a neural network. 
+\item some input or output pre-processing maybe expected when defining a neural network.
 
 \begin{example}
 It is assumed that the ACAS Xu inputs and outputs are normalised, i.e. the network does not work directly with units like $m/s$. However, the specifications  we want to write should ideally concern the original units.
 \end{example}
 
-\pause 
+\pause
 
-\item This is an instance of \emph{`` problem space / input space mismatch"} 
+\item This is an instance of \emph{`` problem space / input space mismatch"}
 \item ... that is very common in neural net verification
 
-\item 
-Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from 
+\item
+Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from
 majority of the mainstream neural network verifiers
 \end{itemize}
 \end{frame}
@@ -719,14 +719,14 @@ meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 
 \begin{frame}[fragile]
 \frametitle{Vector manipulation}
-An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`. 
+An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`.
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 
 minimumInputValues : UnnormalisedInputVector
 minimumInputValues = foreach i . 0
 
 \end{minted}
-Let us see how  `foreach` works with vector indexing. 
+Let us see how  `foreach` works with vector indexing.
 
 We can now define the normalisation function that takes an input vector and
 returns the unnormalised version.
@@ -755,7 +755,7 @@ Functions make up the backbone of the \textbf{Vehicle} language.
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 
 validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i . 
+validInput x = forall i .
   minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 
 \end{minted}
@@ -785,10 +785,10 @@ normAcasXu x = acasXu (normalise x)
 \frametitle{Pre-defined functions and predicates}
 We have already used:
 \begin{minted}[fontsize=\footnotesize]{vehicle}
-* 
-/ 
-! 
-<= 
+*
+/
+!
+<=
 \end{minted}
 
 \begin{block}{Exercise}
@@ -859,7 +859,7 @@ Can you identify whether the specification is written in terms of input space or
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 @property
 property1 : Bool
-property1 = forall x . 
+property1 = forall x .
    validInput x and intruderDistantAndSlower x =>
            normAcasXu x ! clearOfConflict <= 1500
 \end{minted}
@@ -867,7 +867,7 @@ property1 = forall x .
 \begin{block}{Exercise!}
 \footnotesize{
 \begin{enumerate}
-\item Can you guess the purpose of the syntax 
+\item Can you guess the purpose of the syntax
 \begin{minted}{vehicle}
 @property
 \end{minted}
@@ -888,12 +888,12 @@ property1 = forall x .
 \end{enumerate}
 \end{block}
 
-\pause 
+\pause
 \begin{minted}[fontsize=\footnotesize]{vehicle}
-vehicle --compileAndVerify 
-  --specification acasXu.vcl 
-  --verifier Marabou 
-  --network acasXu:acasXu_1_7.onnx 
+vehicle --compileAndVerify
+  --specification acasXu.vcl
+  --verifier Marabou
+  --network acasXu:acasXu_1_7.onnx
   --property property1
 
 --------------------------------------------------
@@ -944,14 +944,14 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 
 \begin{frame}
 \frametitle{Vehicle ...}
- 
+
  \textbf{ is a domain-specific functional language for writing high-level property specifications for neural networks}
- 
+
 \begin{center}
 \begin{tikzpicture}[thick,
     set/.style = {circle,
         minimum size = 3cm}]
- 
+
 % Set A
 \node[rectangle,draw] (A) at (1.5,5) {\alert{\textbf{Property in Vehicle}}};
 
@@ -988,7 +988,7 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
   \frametitle{Vehicle Architecture}
      \begin{center}
       \includegraphics[scale=0.25]{Images/full-architecture-fixed}
-    \end{center}  
+    \end{center}
 
   \end{frame}
 
@@ -1024,14 +1024,14 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
   \footnotesize{
   \begin{itemize}
   \item Theory: finding appropriate verification properties
-\item  Solvers: undecidability of non-linear real arithmetic  and scalability of neural network verifiers 
+\item  Solvers: undecidability of non-linear real arithmetic  and scalability of neural network verifiers
 \item \alert{ML: understanding and integrating property-driven training}
 \item \alert{Programming: finding the right languages to support these developments}
 \item \alert{Complex systems: integration of neural net verification into complex systems}
   \end{itemize}}
-  
+
   \begin{center}
-  \includegraphics[scale=.20]{Images/Slide1.jpg} 
+  \includegraphics[scale=.20]{Images/Slide1.jpg}
   \end{center}
 \end{frame}
 

@@ -51,7 +51,7 @@
 %\usepackage{cibeamer}
 \usepackage{tikz}
 \usetikzlibrary{arrows,shapes}
-%\xyoption{all} 
+%\xyoption{all}
 %\usepackage{listings}
 %\input macro
 \usepackage{cancel, comment}
@@ -164,41 +164,41 @@
 \begin{frame}
   \frametitle{Pervasive AI...}
 
-  
+
  \begin{columns}
 \column{.4\textwidth}
-  
+
   \uncover<2->{\begin{block}{Autonomous cars}
-     \begin{center}  \includegraphics[scale=.20]{Images/acar.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/acar.jpeg}  \end{center}
   \end{block}}
 
-  
+
    \uncover<4->{
   \begin{block}{Robotics}
-   \begin{center}  \includegraphics[scale=.09]{Images/nurse-robot-italy.jpg}  \end{center} 
+   \begin{center}  \includegraphics[scale=.09]{Images/nurse-robot-italy.jpg}  \end{center}
  \end{block}}
 
 \column{.4\textwidth}
 
 \uncover<3->{\begin{block}{Smart Homes}
-      \begin{center}  \includegraphics[scale=.20]{Images/smarthome.jpeg}  \end{center} 
+      \begin{center}  \includegraphics[scale=.20]{Images/smarthome.jpeg}  \end{center}
   \end{block}}
 
    \uncover<5->{
     \begin{block}{Chat Bots}
-     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center}
    \end{block}}
 
   \end{columns}
 
-  
+
    \uncover<6>{
     \begin{block}{}
       \begin{center} ...and many more ...
       %  : from finance market bots to personal devices like insullin controllers
      % \end{center}
    % \end{block}}
-  
+
   % \uncover<6>{
   %  \begin{block}{}
   %    \begin{center}
@@ -211,11 +211,11 @@
 
   \begin{frame}
     \frametitle{}
-       \begin{center}  \includegraphics[scale=1.0]{Images/tree.jpg}  \end{center} 
+       \begin{center}  \includegraphics[scale=1.0]{Images/tree.jpg}  \end{center}
 
 
     \end{frame}
-  
+
 
 \begin{frame}
 \frametitle{Lab for AI and Verification}
@@ -231,7 +231,7 @@
       in Edinburgh Robotarium and Edinburgh Center for Robotics
 
 %	\item At the moment, 22 members: 7 academic staff, 3 RAs,
-%          4 PhD and 8 MSc students not counting a number of collaborators. 
+%          4 PhD and 8 MSc students not counting a number of collaborators.
 \end{itemize}
 
 \begin{center}
@@ -243,7 +243,7 @@
 
 \begin{frame}
   \frametitle{LAIV members: }
-  
+
 %\begin{center}
 %  \includegraphics[width=7cm]{DSC_2635.jpg}
 %\end{center}
@@ -264,12 +264,12 @@
    \includegraphics[width=1.3cm]{Images/liliaPhoto.jpg}
    \begin{block}{}
    \end{block}
-  
+
    \includegraphics[width=1.5cm]{Images/Matthew.jpg}
     \begin{block}{}
    \end{block}
-     \includegraphics[width=1.5cm]{Images/Natalia.jpg} 
-  
+     \includegraphics[width=1.5cm]{Images/Natalia.jpg}
+
   \column{.2\textwidth}
   \includegraphics[width=1.3cm]{Images/Hans.jpg}
      \begin{block}{}
@@ -304,20 +304,20 @@
 
   \begin{center} Methodologically, AI methods divide into:
     \end{center}
-  
+
    \begin{columns}
 \column{.4\textwidth}
 
 \uncover<2->{Perception tasks:}
 
   \uncover<2->{\begin{block}{Computer Vision}
-     \begin{center}  \includegraphics[scale=.20]{Images/cv.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/cv.jpeg}  \end{center}
   \end{block}}
 
-  
+
    \uncover<2->{
   \begin{block}{Signal processing}
-   \begin{center}  \includegraphics[scale=.20]{Images/nlu.jpeg}  \end{center} 
+   \begin{center}  \includegraphics[scale=.20]{Images/nlu.jpeg}  \end{center}
  \end{block}}
 
 \column{.4\textwidth}
@@ -325,12 +325,12 @@
 \uncover<3->{Reasoning tasks:}
 
 \uncover<3->{\begin{block}{Planning}
-      \begin{center}  \includegraphics[scale=.20]{Images/route.jpeg}  \end{center} 
+      \begin{center}  \includegraphics[scale=.20]{Images/route.jpeg}  \end{center}
   \end{block}}
 
    \uncover<3->{
     \begin{block}{(Logical) reasoning}
-     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center}
    \end{block}}
 
 \end{columns}
@@ -341,13 +341,13 @@
 % \beamertemplatearticlebibitems
 %\bibitem{1}{A.Hill, E.K. and R.Petrick: Proof-Carrying Plans: a Resource Logic for AI Planning. PPDP'20.}
 % \end{thebibliography}}}
-  
+
 \end{frame}
 
 \begin{frame}
   \frametitle{LAIV's sample projects:}
 
-  
+
    \begin{columns}
 \column{.4\textwidth}
 
@@ -357,7 +357,7 @@ Perception tasks:
 
 \begin{itemize}
 \item Geometrical properties of robust classifiers %\emph{\footnotesize{(D.Kienitz, M.Lones, E.K.)}}
-  
+
      {\scriptsize
  \begin{thebibliography}{99}
  \beamertemplatearticlebibitems
@@ -374,7 +374,7 @@ Perception tasks:
 \begin{block}{}
   Reasoning tasks:
 \end{block}
-  
+
 \begin{itemize}
 \item Corecursive proofs and coinductive reasoning %\emph{\footnotesize{(Y.Li, D.Rozplokhas, E.K.)}}
      {\scriptsize
@@ -386,7 +386,7 @@ Perception tasks:
   \item ...
   \end{itemize}
 
-  
+
 
 
 \end{columns}
@@ -414,7 +414,7 @@ to
 
 perception and reasoning tasks}
 
-  
+
 \end{frame}
 
 
@@ -425,7 +425,7 @@ perception and reasoning tasks}
   \frametitle{NB: Maslow pyramid}
      \begin{center}
       \includegraphics[scale=0.4]{Images/Maslow4}
-    \end{center}  
+    \end{center}
 
   \end{frame}
 
@@ -434,7 +434,7 @@ perception and reasoning tasks}
   \frametitle{Modelling complex AI systems:}
      \begin{center}
       \includegraphics[scale=0.4]{Images/pic}
-    \end{center}  
+    \end{center}
 
   \end{frame}
 
@@ -444,12 +444,12 @@ perception and reasoning tasks}
    \column{.4\textwidth}
     \begin{center}
       \includegraphics[scale=0.3]{Images/chatbot}
-    \end{center}  
+    \end{center}
 
     \begin{alertblock}{Control:}
 Verify that the chatbot will not insult or mislead
     \end{alertblock}
-    
+
     \begin{block}{Search:}
       for meaningful response
 
@@ -470,18 +470,18 @@ Speech as signals
    \column{.4\textwidth}
     \begin{center}
       \includegraphics[scale=0.3]{Images/chatbot}
-    \end{center}  
+    \end{center}
 
     \begin{alertblock}{Control:}
 Verify that the chatbot will not insult or mislead
     \end{alertblock}
-    
+
      {\scriptsize
  \begin{thebibliography}{99}
  \beamertemplatearticlebibitems
   \bibitem{2}{M.Casadio, E. Komendantskaya, V.Rieser, M.Daggitt, D.Kienitz, L.Arnaboldi and W.Kokke: Why Robust Natural Language Understanding is a Challenge. FoMLAS 2022.}
 \end{thebibliography}}
-    
+
 %\pause
 \column{.4\textwidth}
 
@@ -495,12 +495,12 @@ Verify that the chatbot will not insult or mislead
    \column{.4\textwidth}
     \begin{center}
       \includegraphics[scale=0.3]{Images/chatbot}
-    \end{center}  
+    \end{center}
 
     \begin{alertblock}{Control:}
 Verify that the chatbot will not insult or mislead
     \end{alertblock}
-    
+
     \begin{block}{Search:}
       for meaningful response
 
@@ -533,12 +533,12 @@ for optimal classification
    \column{.4\textwidth}
     \begin{center}
       \includegraphics[scale=0.3]{Images/chatbot}
-    \end{center}  
+    \end{center}
 
     \begin{alertblock}{Control:}
 Verify that the chatbot will not insult or mislead
     \end{alertblock}
-    
+
     \begin{block}{Search:}
       for meaningful response
 
@@ -561,7 +561,7 @@ verify the classifiers are safe (robust)
  \beamertemplatearticlebibitems
   \bibitem{2}{M.Casadio, E.Komendantskaya, M.Daggitt, W.Kokke, G.Katz, G.Amir and I.Refaeli: Neural Network Robustness as a Verification Property. CAV'22.}
 \end{thebibliography}}
-    
+
 \end{columns}
 \end{frame}
 
@@ -596,17 +596,17 @@ fuel consumption, fairness of allocations, compliance with the law (max number o
  \beamertemplatearticlebibitems
   \bibitem{2}{A.Hill, E. Komendantskaya, M. Daggitt and R.Petrick. Actions You Can Handle:Dependent Types for AI Plans. TyDE 2021 }
 \end{thebibliography}}
-    
+
 \end{frame}
 
   \begin{frame}
     \frametitle{In this talk,}
 
 we will see an instance of this ``top-layer'' analysis, using example of neural network verification and types.
-    
+
      \begin{center}
       \includegraphics[scale=0.4]{Images/pic}
-    \end{center}  
+    \end{center}
 
   \end{frame}
 
@@ -616,27 +616,27 @@ we will see an instance of this ``top-layer'' analysis, using example of neural 
 
 \begin{frame}
   \frametitle{Neural Networks...}
- 
 
-    
+
+
  \begin{columns}
    \column{.4\textwidth}
 
-   
+
     \begin{center}
       \includegraphics[scale=0.3]{Images/NN}
-    \end{center}  
+    \end{center}
 
 \begin{block}{take care of \alert{\textbf{perception}} tasks:}
 
  \begin{itemize}
-  \item[] computer vision 
+  \item[] computer vision
   \item[] speech recognition
   \item[] pattern recognition
     \item[] ...
     \end{itemize}
 
-  
+
 \end{block}
 
 
@@ -645,9 +645,9 @@ we will see an instance of this ``top-layer'' analysis, using example of neural 
 
 \column{.4\textwidth}
 
- 
+
 \begin{block}{In:}
- 
+
 \begin{itemize}
 \item[] autonomous cars
 \item[] robots
@@ -656,7 +656,7 @@ we will see an instance of this ``top-layer'' analysis, using example of neural 
   \item[] medical applications
 \item[] chatbots
 %\item Google bot on mobile phones
-\item[]  mobile phone apps 
+\item[]  mobile phone apps
 \item[] $\ldots$
 \end{itemize}
 
@@ -664,7 +664,7 @@ we will see an instance of this ``top-layer'' analysis, using example of neural 
 
 
  \end{columns}
-    
+
 \end{frame}
 
 % \subsection{What is it?}
@@ -676,12 +676,12 @@ we will see an instance of this ``top-layer'' analysis, using example of neural 
 
   \begin{block}{... a function }
     $$f: \Real^n \rightarrow \Real^m$$
-   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}. 
+   % where $n$ is the size (or \emph{dimension}) of inputs, and $m$ -- the number of \emph{classes}.
   \end{block}
   \pause
   ... We may later use notation $f(\mathbf{x}) = \mathbf{y}$
 
-  
+
 \end{frame}
 
 
@@ -691,7 +691,7 @@ we will see an instance of this ``top-layer'' analysis, using example of neural 
    ... a function that separates inputs (data points) into classes
   %\end{block}
    \pause
-   
+
   \begin{alertblock}{Suppose we have four data points}
        \begin{center}\begin{tabular}{l|ll c |}
       \hline
@@ -721,7 +721,7 @@ $$
 
 \begin{frame}
   \frametitle{}
- 
+
 
   \begin{alertblock}{Plotting these four data points in 3-dimensional space:}
     \begin{center}
@@ -833,7 +833,7 @@ $$
     } $
   \end{center}
   \end{alertblock}
-    
+
 \end{frame}
 
 \begin{frame}
@@ -859,7 +859,7 @@ $$
 \end{alertblock}
 
 (This is one of infinitely many solutions)
-    
+
 \end{frame}
 
 
@@ -892,7 +892,7 @@ $$
 \end{alertblock}}
 
 %(This is one of infinitely many solutions)
-    
+
 \end{frame}
 
 
@@ -916,7 +916,7 @@ $$
 \end{align*}
   \end{center}
   \end{alertblock}
-    
+
 \end{frame}
 
 \begin{frame}
@@ -953,7 +953,7 @@ $$}
   \end{flushleft}
 
   It may be useful to look into types of neural nets!
- 
+
 \end{frame}
 
 %\begin{frame}
@@ -968,8 +968,8 @@ $$}
      Different Data sets...
        \includegraphics[scale=.40]{Images/mnist_example_picture.png}
      \end{block}}
-   
- 
+
+
    \column{.5\textwidth}
   \uncover<2->{ \begin{block}{may call for}
       different shapes of networks
@@ -977,7 +977,7 @@ $$}
        \includegraphics[scale=.40]{Images/neural_network_aplas.png}
 }
 \end{columns}
-   
+
  \end{frame}
 
 
@@ -990,12 +990,12 @@ $$}
   \item approximate functions when exact solution is hard to get
     \item tolerant to noisy and incomplete data
     \end{itemize}
-\end{alertblock}  
+\end{alertblock}
 \pause
 
 \begin{block}{BUT}
   \begin{itemize}
-   % \item continuous decision space means solutions can only be approximate 
+   % \item continuous decision space means solutions can only be approximate
 	\item solutions not easily conceptualised (\alert{lack of explainability})
 	%\item prone to error
 	\item prone to a new range of safety and security problems: \pause
@@ -1014,7 +1014,7 @@ $$}
  %   Given a trained neural network and a correctly classified image of ``0'' on the left,
  %                 we can create a perturbation $\eta$ (middle) to the original image so that the same neural network predicts a ``5" with 92\% confidence for the modified image (right).
  %   \end{block}
-  
+
   	\includegraphics[width=.3\textwidth]{Images/true.png}
 	\uncover<2->{\includegraphics[width=.3\textwidth]{Images/eta.png}}
 	\uncover<3->{\includegraphics[width=.3\textwidth]{Images/adv.png}}
@@ -1022,9 +1022,9 @@ $$}
 \begin{itemize}
 \item<4->[] the perturbations are imperceptible to human eye \pause
 \item<5->[] attacks transfer from one neural network to another \pause
-\item<6->[] affect any domain where neural networks are applied                 
+\item<6->[] affect any domain where neural networks are applied
 \end{itemize}
-                
+
 \end{frame}
 
 \begin{frame}
@@ -1088,15 +1088,15 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
   \end{itemize}
 \end{frame}
 
- 
+
 
 %\begin{frame}
 %\frametitle{}
 %      \begin{enumerate}
 %      \item \alert{connect Logic to problems studied in Neural Nets community}
 %      \item get explanatory power?
-%      \item get practical applications? 
-%      \item natural, simple idea?  
+%      \item get practical applications?
+%      \item natural, simple idea?
 %       \end{enumerate}
 %\end{frame}
 
@@ -1145,20 +1145,20 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
 %\end{block}
     \end{frame}
 
-   
+
 
 \begin{frame}
   \frametitle{Continuous Verification}
 
  \begin{tikzpicture}[scale=.7]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\footnotesize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 \draw (11.1,0) node{{\footnotesize \it Neural Network}};
 
 
@@ -1166,11 +1166,11 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
 \draw (5,-0.4) node{\footnotesize{ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \alert{robust}(f(\x)) $}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{re-train}}}};
 \end{tikzpicture}
 
 \pause
@@ -1198,7 +1198,7 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
     \item depends on \alert{loss functions}
       \item some other parameters like shape of the functions
       \end{enumerate}
-    
+
 \end{frame}
 
 
@@ -1212,7 +1212,7 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
       {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar: 
+    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar:
        A survey on image data augmentation for deep learning. J.
 Big Data 6, 60 (2019)}
 \end{thebibliography}}
@@ -1224,7 +1224,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=5cm]{Images/SR-vs-CR-1.png}
 
   \end{center}
-  
+
 \end{frame}
 
 
@@ -1235,7 +1235,7 @@ Big Data 6, 60 (2019)}
       {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar: 
+    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar:
        A survey on image data augmentation for deep learning. J.
 Big Data 6, 60 (2019)}
 \end{thebibliography}}
@@ -1246,7 +1246,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=5cm]{Images/SR-vs-CR-2.png}
 
   \end{center}
-  
+
 \end{frame}
 
 
@@ -1261,7 +1261,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=5cm]{Images/SR-vs-CR-4.png}
 
   \end{center}
-  
+
 \end{frame}
 
 
@@ -1275,7 +1275,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=5cm]{Images/SR-vs-CR-5.png}
 
   \end{center}
-  
+
  \end{frame}
 
  \begin{frame}[fragile]
@@ -1288,7 +1288,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=5cm]{Images/SR-vs-CR-3.png}
 
   \end{center}
-  
+
  \end{frame}
 
 
@@ -1297,17 +1297,17 @@ Big Data 6, 60 (2019)}
 
 %\begin{definition}[Loss Function]
 %	\label{def:loss}
-	Given a data set $\mathcal{D} $,  a function  ${f: \Real^n \rightarrow \Real^m}$, and a penalty function $\lfloor \ . \rfloor: \Real^m \rightarrow \Real^m \rightarrow \Real$, a loss function is defined as 
+	Given a data set $\mathcal{D} $,  a function  ${f: \Real^n \rightarrow \Real^m}$, and a penalty function $\lfloor \ . \rfloor: \Real^m \rightarrow \Real^m \rightarrow \Real$, a loss function is defined as
 	\begin{equation}\label{eqn:loss}
 	\loss{\x, \y} = \lfloor \y, f(\x) \rfloor
 	\end{equation}
 %	where $(\x,\y) \in \mathcal{D}$
 %\end{definition}
 
- 
+
 
 %Intuitively, a loss function outputs a real number, or \emph{a penalty}, that measures the difference between the ``ground truth'' output $\y$ and the output $f(\x)$ given by the model.
-Standard options for $\lfloor\cdot \rfloor$ are $L_0, L_2$ or $L_{\infty}$ norms, which compute vector distances between $\y$ and $f(\x)$. 
+Standard options for $\lfloor\cdot \rfloor$ are $L_0, L_2$ or $L_{\infty}$ norms, which compute vector distances between $\y$ and $f(\x)$.
 
 %Cross entropy is very often used for classification problems that have an output between 0 and 1 as it is based on probability distributions - problems in which for each data point the model returns us the probability of said data point belonging to each of the classes.
 
@@ -1315,7 +1315,7 @@ Standard options for $\lfloor\cdot \rfloor$ are $L_0, L_2$ or $L_{\infty}$ norms
 
 \begin{example}[Cross Entropy Loss Function]
 	\label{eq:cross-entropy}
-	Given a function  ${f: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as 
+	Given a function  ${f: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as
 	\begin{equation}\label{eq:ce}
 	\losssymbol_{ce}(\x, \y) = - \sum_{i=1}^{m} \y_i \; \log(f(\x)_i)
 	\end{equation}
@@ -1334,7 +1334,7 @@ Standard options for $\lfloor\cdot \rfloor$ are $L_0, L_2$ or $L_{\infty}$ norms
      \item Replace the standard training objective with:
 %\begin{equation}
 $\max_{\forall \xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)$.
-% \item Algorithmically, minimise the loss wrt the worst-case perturbation: %The earliest suggestion was the Fast Gradient Sign Method (FGSM) algorithm introduced by \cite{GoodfellowSS14}: 
+% \item Algorithmically, minimise the loss wrt the worst-case perturbation: %The earliest suggestion was the Fast Gradient Sign Method (FGSM) algorithm introduced by \cite{GoodfellowSS14}:
 %\begin{equation*}
 %\text{FGSM}(\xt) = \xt + \epsilon \cdot \text{sign}(\nabla_\x \lossfn(\x, \y))
 %\end{equation*}
@@ -1356,8 +1356,8 @@ ICLR 2015, San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings (2015
     \begin{frame}
       \frametitle{3. Lipshitz Continuity}
 
-      Optimise for: 
-      
+      Optimise for:
+
   \begin{equation*}
     \label{eq:lipschitz-robustness}
     \forall \xs: \distance{\xs}{\xt} \leq \epsilon \Rightarrow \distance{f(\xs)}{f(\xt)} \leq L \distance{\xs}{\xt}
@@ -1379,11 +1379,11 @@ and much more...
 
     \end{frame}
 
-        
+
 \begin{frame}
   \frametitle{}
   \begin{center}
-    
+
           \includegraphics[scale=.80]{Images/gap2.jpeg}
     \end{center}
 
@@ -1395,7 +1395,7 @@ and much more...
 
 {\footnotesize{
 $$
-\xy0;/r.20pc/: 
+\xy0;/r.20pc/:
 (30,0)*[o]=<80pt,20pt>\hbox{\txt{\textbf{Neural Network}\\   $f: \Real^n \rightarrow \Real^m$ }}="a"*\frm<8pt>{-,},
 (0,-20)*[o]=<20pt,20pt>\hbox{\txt{train NN \\ ``robust''}}="b", %*\frm<8pt>{=}, {-,}
 (0,-40)*[o]=<40pt,20pt>\hbox{\txt{Python}}="c"*\frm<8pt>{.},
@@ -1419,7 +1419,7 @@ $$}}
   \end{block}
 
 \end{frame}
-  
+
 
   \begin{frame}
   \frametitle{In ``pyramid'' terms}
@@ -1428,14 +1428,14 @@ $$}}
   %  \end{center}
     \begin{alertblock}{Control: Continuous Verification}
  \begin{tikzpicture}[scale=.4]
- 
-\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+\draw[fill=white] (-3,.5) rectangle (1,-.5);
 \node (0,0) { };
  \draw (-1,0) node {{\scriptsize \it Verifier} };
 
-\draw[fill=gray,draw=gray] (10.95,.45) rectangle (16.30,-.55);  
-\draw[fill=white] (10.9,.5) rectangle (16.25,-.5); 
+\draw[fill=gray,draw=gray] (10.95,.45) rectangle (16.30,-.55);
+\draw[fill=white] (10.9,.5) rectangle (16.25,-.5);
 \draw (14.1,0) node{{\scriptsize \it Neural Network}};
 
 
@@ -1443,24 +1443,24 @@ $$}}
 \draw (6,-0.4) node{\scriptsize{ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \alert{robust}(f(\x)) $}};
 
 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (10.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (10.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 \draw (6,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{red}{verify}}}};
- 
-\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (10.9,-.4); 
-\draw (6,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{re-train}}}}; 
+
+\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (10.9,-.4);
+\draw (6,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{red}{re-train}}}};
 \end{tikzpicture}
     \end{alertblock}
     \begin{block}{Search:}
 \begin{itemize}
          \item find adversarial violations (in SMT solving style);
-\end{itemize}      
+\end{itemize}
 \end{block}
 \begin{block}{Perceive:}
 
   \begin{itemize}
     \item analyse   Data (eg images)
       \item find best classifier (in ML style);
-    \end{itemize}    
+    \end{itemize}
 
 \end{block}
 \end{frame}
@@ -1474,7 +1474,7 @@ $$}}
   \begin{flushleft}
     \includegraphics[width=1cm]{Images/idea.png}
   \end{flushleft}
-  
+
  \begin{block}{Robustness Is a Type}
 
    \begin{itemize}[<+-|alert@+>]
@@ -1482,7 +1482,7 @@ $$}}
    \item They have Refinement Types:
 
   $$f: (\x: \Real^n \{\x \in  \mathbb{B}(\hat{\x})\}) \rightarrow (\y: \Real^m \{|\y - f(\hat{\x})| \leq \delta \})$$
-    
+
      \end{itemize}
 \end{block}
    {\scriptsize
@@ -1501,15 +1501,15 @@ of Refinement Types. APLAS'20.}
   \begin{flushleft}
     \includegraphics[width=1cm]{Images/idea.png}
   \end{flushleft}
-  
+
  \begin{block}{Verification of Neural Nets is Type Checking}
 
     To type-check the function
 
   $$f: (\x: \Real^n \{\x \in  \mathbb{B}(\hat{\x})\}) \rightarrow (\y: \Real^m \{|\y - f(\hat{\x})| \leq \delta \})$$
-   
+
    \begin{itemize}[<+-|alert@+>]
- 
+
    \item Use SMT-solvers for type checking, as Liquid Haskell and $F^*$ do
         {\scriptsize
  \begin{thebibliography}{99}
@@ -1522,7 +1522,7 @@ of Refinement Types. APLAS'20.}
 \pause
 
 \item Or -- better -- use existing neural network solvers (like Marabou)
-    
+
      \end{itemize}
 \end{block}
 
@@ -1537,7 +1537,7 @@ of Refinement Types. APLAS'20.}
 
 {\footnotesize{
 $$
-\xy0;/r.20pc/: 
+\xy0;/r.20pc/:
 (30,0)*[o]=<80pt,20pt>\hbox{\txt{\textbf{Neural Network}\\   $f: \Real^n \rightarrow \Real^m$ }}="a"*\frm<8pt>{-,},
 (0,-20)*[o]=<20pt,20pt>\hbox{\txt{train NN \\ ``robust''}}="b", %*\frm<8pt>{=}, {-,}
 (0,-40)*[o]=<40pt,20pt>\hbox{\txt{Python}}="c"*\frm<8pt>{.},
@@ -1554,7 +1554,7 @@ $$}}
 
 {\footnotesize{
 $$
-\xy0;/r.20pc/: 
+\xy0;/r.20pc/:
 (30,0)*[o]=<250pt,20pt>\hbox{\txt{\textbf{Neural Network Property as Refinement Type}\\   $f: (\x: \Real^n \{\x \in  \mathbb{B}(\hat{\x})\}) \rightarrow (\y: \Real^m \{|\y - f(\hat{\x})| \leq \delta \})$}}="f"*\frm<8pt>{-,},
 (0,-4)*[o]=<20pt,1pt>\hbox{}="g1",
 %(0,-20)*[o]=<20pt,30pt>\hbox{\txt{synthesise \\ robust NN \\ from the type}}="g", %*\frm<8pt>{=}, {-,}
@@ -1577,22 +1577,22 @@ $$}}
   \begin{flushleft}
     \includegraphics[width=1cm]{Images/idea.png}
   \end{flushleft}
-  
+
  \begin{block}{Robust Training is Type-Driven Program Synthesis}
 
     To synthesise the function $ \alert{f?}$ from its type
 
   $$ \alert{f?}: (\x: \Real^n \{\x \in  \mathbb{B}(\hat{\x})\}) \rightarrow (\y: \Real^m \{|\y - f(\hat{\x})| \leq \delta \})$$
-   
+
    \begin{itemize}[<+-|alert@+>]
 \item Do not rely on folklore heuristics such as data augmentation
-     
-   \item Design general methods to convert robustness properties into loss functions 
+
+   \item Design general methods to convert robustness properties into loss functions
 
 
 {\footnotesize{
 $$
-\xy0;/r.20pc/: 
+\xy0;/r.20pc/:
 (0,0)*[o]=<60pt,20pt>\hbox{\txt{\textbf{Property} $\mathcal{P}$ }}="a"*\frm<8pt>{-,},
 (40,0)*[o]=<80pt,20pt>\hbox{\txt{Translation to $\mathcal{L}_{\mathcal{P}}$}}="b"*\frm<8pt>{=}, %{-,}
 (80,0)*[o]=<60pt,20pt>\hbox{\txt{Training}}="c"*\frm<8pt>{.},
@@ -1600,7 +1600,7 @@ $$
 "b";"c" **\dir{-} ?>*\dir{>},
 \endxy
 $$}}
-    
+
      \end{itemize}
 \end{block}
 
@@ -1621,7 +1621,7 @@ $$}}
         $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \alert{robust}(f(\x)) $
 
         \item We find that ML heuristics map to formal properties:
-          	\begin{tabular}{p{3.5cm}|p{5.5cm}} 
+          	\begin{tabular}{p{3.5cm}|p{5.5cm}}
 		%\toprule
 		Training style & Definition of \textbf{$robust$}  \\ \hline \hline
 		%\midrule
@@ -1634,7 +1634,7 @@ $$}}
 	\end{tabular}
         \end{itemize}
   \end{block}
-    
+
   \end{frame}
 
 
@@ -1658,9 +1658,9 @@ G. Katz, G.~Amir, and I.~Rafaeli. 2022. Neural Network Robustness as a Verificat
 A Principled Case Study. CAV'22.}
 \end{thebibliography}}
 
-     
+
 \end{frame}
-  
+
 
 \begin{frame}
   \frametitle{Idea - V}
@@ -1670,7 +1670,7 @@ A Principled Case Study. CAV'22.}
   \end{flushleft}
 
   \begin{block}{Using these propeties/types, we can design methods of type driven program synthesis }
-  
+
     \begin{itemize}
       \item \textbf{Differentiable Logics}
  give us an idea of how to systematically convert properties into loss functions
@@ -1679,7 +1679,7 @@ A Principled Case Study. CAV'22.}
 
 {\footnotesize{
 $$
-\xy0;/r.20pc/: 
+\xy0;/r.20pc/:
 (30,0)*[o]=<250pt,20pt>\hbox{\txt{\textbf{Neural Network Property as Refinement Type}\\   $f: (\x: \Real^n \{\x \in  \mathbb{B}(\hat{\x})\}) \rightarrow (\y: \Real^m \{|\y - f(\hat{\x})| \leq \delta \})$}}="f"*\frm<8pt>{-,},
 (0,-4)*[o]=<20pt,1pt>\hbox{}="g1",
 (0,-20)*[o]=<20pt,30pt>\hbox{\txt{\alert{synthesise} \\ \alert{robust NN} \\ \alert{from the type}}}="g", %*\frm<8pt>{=}, {-,}
@@ -1701,9 +1701,9 @@ $$}}
 
   	\begin{equation*}
 		\Phi \ni \phi, \phi_1, \phi_2 = A\ |\ \phi_1 \wedge \phi_2\ |\ \neg \phi%\ \phi_1 \vee \phi_2\ |\ \phi_1 \Rightarrow \phi_2
-	\end{equation*} 
-  
- 
+	\end{equation*}
+
+
 
         \pause
 
@@ -1712,7 +1712,7 @@ $$}}
 
         {\footnotesize{
 $$
-\xy0;/r.20pc/: 
+\xy0;/r.20pc/:
 (0,0)*[o]=<60pt,20pt>\hbox{\txt{\textbf{Property} $\mathcal{P}$ }}="a"*\frm<8pt>{-,},
 (40,0)*[o]=<80pt,20pt>\hbox{\txt{Translation to $\mathcal{L}_{\mathcal{P}}$}}="b"*\frm<8pt>{=}, %{-,}
 (80,0)*[o]=<60pt,20pt>\hbox{\txt{Training}}="c"*\frm<8pt>{.},
@@ -1720,7 +1720,7 @@ $$
 "b";"c" **\dir{-} ?>*\dir{>},
 \endxy
 $$}}
-        
+
 \end{frame}
 
 
@@ -1729,7 +1729,7 @@ $$}}
 
 \begin{frame}
   \frametitle{Fuzzy Differentiable Logic}
-  
+
  \begin{block}{G\"{o}del translation:}
    \begin{align*}
      \tfuzzy{A} & \in [0, 1]\\
@@ -1737,7 +1737,7 @@ $$}}
 \tfuzzy{\wedge} &:= \lam{\val_1,\val_2} \min (\tfuzzy{\val_1}, \tfuzzy{\val_2})\\
 \end{align*}
 
-   
+
 \end{block}
 
  {\scriptsize
@@ -1746,12 +1746,12 @@ $$}}
     \bibitem{11}{E. van Krieken, E. Acar, and F. van Harmelen. Analyzing
 differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.}
 \end{thebibliography}}
-    
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Fuzzy Differentiable Logic}
-  
+
  \begin{block}{Łukasiewicz translation:}
    \begin{align*}
      \tlukasiewicz{A} & \in [0, 1]\\
@@ -1759,7 +1759,7 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 \tlukasiewicz{\wedge } &= \lam{\val_1,\val_2} \max(\tlukasiewicz{\val_1}+\tlukasiewicz{\val_2}-1,0))\\
 \end{align*}
 
-   
+
 \end{block}
 
  {\scriptsize
@@ -1768,13 +1768,13 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
     \bibitem{11}{E. van Krieken, E. Acar, and F. van Harmelen. Analyzing
 differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.}
 \end{thebibliography}}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Fuzzy Differentiable Logic}
-  
+
  \begin{block}{Yager translation:}
    \begin{align*}
      \tyager{A} & \in [0, 1]\\
@@ -1783,7 +1783,7 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
      & \text{for}\ p\geq 1\\
 \end{align*}
 
-   
+
 \end{block}
 
  {\scriptsize
@@ -1793,13 +1793,13 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 }
 \end{thebibliography}}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Fuzzy Differentiable Logic}
-  
+
  \begin{block}{Product translation:}
    \begin{align*}
      \tproduct{A} & \in [0, 1]\\
@@ -1807,7 +1807,7 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 \tproduct{\wedge} &= \lam{\val_1,\val_2} \tproduct{\val_1}\times\tproduct{\val_2}\\
 \end{align*}
 
-   
+
 \end{block}
 
  {\scriptsize
@@ -1817,13 +1817,13 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 }
 \end{thebibliography}}
-    
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Differentiable Logic DL2}
-  
+
  \begin{block}{DL2 translation:}
    \begin{align*}
      \tDLtwo{A} & \in [0, \infty]\\
@@ -1839,18 +1839,18 @@ differentiable fuzzy logic operators. Artificial Intelligence, 302:103602, 2022.
 C. Zhang, and M. Vechev. DL2: Training and querying neural networks
 with logic, 2019.}
 \end{thebibliography}}
-    
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Signal Temporal Logic}
-    
+
   \begin{block}{STL translation}
      \begin{align*}
      \tSTL{A} & \in [-\inf, \inf]\\
      \tSTL{\neg } &:= \lam{\val} -\tSTL{\val}\\
   \end{align*}
-   
+
 \end{block}
 
  {\scriptsize
@@ -1859,12 +1859,12 @@ with logic, 2019.}
     \bibitem{11}{P. Varnai and D. Dimarogonas. On robustness metrics for learning
 stl tasks, American Control Conference (ACC)2020.}
 \end{thebibliography}}
-    
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Signal Temporal Logic}
-    
+
   \begin{block}{}
         \begin{equation}
 \tSTL{\conjM}  = \lam{\val_1,\ldots,\val_M}
@@ -1880,9 +1880,9 @@ $$
 \val_{\min} = \min (\tSTL{\val_1}, \ldots, \tSTL{\val_M})$$
 
 $$\tilde{\val_i} = \dfrac{\tSTL{\val_i} - \val_{\min}}{\val_{\min}} $$
-  
+
 \end{block}
-    
+
 \end{frame}
 
 
@@ -1897,38 +1897,38 @@ $$\tilde{\val_i} = \dfrac{\tSTL{\val_i} - \val_{\min}}{\val_{\min}} $$
 \item and there are even several suitable choices!
 
   \end{itemize}
-  
-\end{frame}  
+
+\end{frame}
 
 \begin{frame}
   \frametitle{}
   \footnotesize{
 	\begin{tabular}{|p{0.18\textwidth}|c|c|c|c|c|c|}
-			\hline 
-			& $\tDLtwo{ \wedge }$ & $ \tfuzzy{ \wedge  } $ &$\tlukasiewicz{\wedge }$&$ \tyager{ \wedge } $&$ \tproduct{ \wedge } $&$ \tSTL{\wedge } $\\ 
-			\hline 
-			& $ [0, \infty]$ &$ [0,1]$&$ [0,1]$&$[0,1]$&$[0,1]$& $ [-\infty, \infty] $\\ 
+			\hline
+			& $\tDLtwo{ \wedge }$ & $ \tfuzzy{ \wedge  } $ &$\tlukasiewicz{\wedge }$&$ \tyager{ \wedge } $&$ \tproduct{ \wedge } $&$ \tSTL{\wedge } $\\
+			\hline
+			& $ [0, \infty]$ &$ [0,1]$&$ [0,1]$&$[0,1]$&$[0,1]$& $ [-\infty, \infty] $\\
 			\hline \hline
 			\textbf{Properties:} & &&&&&\\
 			\hline \hline
-			
-			\hline 
+
+			\hline
 			\alert{Idempotence} & no & yes  &no &no &no & yes\\
-			\hline 
+			\hline
 			\alert{Commutativity} & yes & yes  &yes &yes &yes & yes \\
-			\hline 
+			\hline
 			Shadow-lifting  & yes & no &no&no&yes& yes \\
-			\hline 
+			\hline
 			Min-max boundedness & no & yes &no&no&yes& yes \\
-			\hline 
+			\hline
 			Scale invariance & yes & yes &no&no&no& yes \\
-			
+
 			\hline
 			\alert{Associativity} &yes &yes&yes &yes &yes &no\\
 			\hline
 			%has negation &no*&yes*&yes*&yes*&yes*&yes*\\
 			%\hline
-			
+
 		\end{tabular}}
 
  {\scriptsize
@@ -1938,8 +1938,8 @@ $$\tilde{\val_i} = \dfrac{\tSTL{\val_i} - \val_{\min}}{\val_{\min}} $$
  Differentiable Logics for Neural Network Verification. FOMLAS 2022}
 \end{thebibliography}}
 
-%Current work: formulate own DL. 
-               
+%Current work: formulate own DL.
+
 \end{frame}
 
 %\begin{frame}
@@ -1970,8 +1970,8 @@ $$\tilde{\val_i} = \dfrac{\tSTL{\val_i} - \val_{\min}}{\val_{\min}} $$
 \end{enumerate}
 \end{block}
 
-\pause 
-So, overall, we advanced our understanding and our formalisation. How about programming practices? 
+\pause
+So, overall, we advanced our understanding and our formalisation. How about programming practices?
 
 \end{frame}
 
@@ -1983,7 +1983,7 @@ So, overall, we advanced our understanding and our formalisation. How about prog
   \end{flushleft}
 
   \begin{block}{Turn what we learnt into Programming Practice }
-  
+
     \begin{itemize}
       \item A new framework for \emph{\alert{Continuous Verification}}
 \end{itemize}
@@ -2026,7 +2026,7 @@ $$}}
 \end{thebibliography}}
 
   \end{frame}
-  
+
 
 
 
@@ -2038,7 +2038,7 @@ $$}}
 \begin{frame}
 \frametitle{Property language}
 
-Tentatively called VCL (verification condition language) or Vehicle. 
+Tentatively called VCL (verification condition language) or Vehicle.
 
 \begin{center}
 \includegraphics[width=6cm]{Images/vehicle-language-sample.png}
@@ -2086,7 +2086,7 @@ Automatic compilation down to interactive theorem prover (e.g. Agda) with call o
   \frametitle{}
      \begin{center}
       \includegraphics[scale=0.25]{Images/full-architecture-fixed}
-    \end{center}  
+    \end{center}
 
   \end{frame}
 
@@ -2120,7 +2120,7 @@ Automatic compilation down to interactive theorem prover (e.g. Agda) with call o
 
 {\scriptsize{
 $$
-\xy0;/r.1pc/: 
+\xy0;/r.1pc/:
 (30,0)*[o]=<80pt,20pt>\hbox{\txt{\textbf{Neural Network}\\   $f: \Real^n \rightarrow \Real^m$ }}="a"*\frm<8pt>{-,},
 (0,-20)*[o]=<20pt,20pt>\hbox{\txt{train NN \\ ``robust''}}="b", %*\frm<8pt>{=}, {-,}
 (0,-40)*[o]=<40pt,8pt>\hbox{\txt{Python}}="c"*\frm<8pt>{.},
@@ -2136,10 +2136,10 @@ $$}}
 % \pause
 %\begin{block}
 \begin{center}
- \alert{vs} 
+ \alert{vs}
   \end{center}
 %\end{block}
-  
+
 {\scriptsize{
 $$
 \xy0;/r.20pc/:
@@ -2166,7 +2166,7 @@ $$}}
   \frametitle{NB: Maslow pyramid}
      \begin{center}
       \includegraphics[scale=0.4]{Images/Maslow4}
-    \end{center}  
+    \end{center}
 
   \end{frame}
 
@@ -2175,7 +2175,7 @@ $$}}
   \frametitle{Modelling complex AI systems:}
      \begin{center}
       \includegraphics[scale=0.3]{Images/pic}
-    \end{center}  
+    \end{center}
 
     Tier 3 can bring \alert{better}...
     \begin{itemize}
@@ -2193,15 +2193,15 @@ $$}}
     \end{center}
 
     \begin{block}{Thanks for your attention!}
-   
+
       \end{block}
 
     \begin{center}
       \includegraphics[scale=0.2]{Images/question}
     \end{center}
-      
+
   \end{frame}
-  
+
 
 \end{document}
 
@@ -2235,7 +2235,7 @@ $$}}
       \includegraphics[scale=0.3]{Images/taxi}
     \end{center}
 \pause
-  
+
 \begin{block}{Could they be modelled by the same tools? }
   \begin{enumerate}
     \item only if the ``control properties'' fit with the syntax of the searching engine
@@ -2253,8 +2253,8 @@ $$}}
 
    \begin{center}
       \includegraphics[scale=0.2]{Images/pic}
-    \end{center}  
-  
+    \end{center}
+
 \begin{block}{a method that separates search and control}
  \begin{itemize}
  \item Execute the searching engine first
@@ -2265,7 +2265,7 @@ complex or abstract, constraints \alert{as types} on the functions to control th
   \end{block}
 
 
-  
+
   %\begin{example}
   %    the optimal route given as a function can be annotated with a type that imposes an additional check whether the projected journey duration is less or equal than the legal daily limit of a given driver
    % \end{example}
@@ -2276,41 +2276,41 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 \begin{frame}
   \frametitle{Pervasive AI...}
 
-  
+
  \begin{columns}
 \column{.4\textwidth}
-  
+
   \uncover<2->{\begin{block}{Autonomous cars}
-     \begin{center}  \includegraphics[scale=.20]{Images/acar.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/acar.jpeg}  \end{center}
   \end{block}}
 
-  
+
    \uncover<4->{
   \begin{block}{Robotics}
-   \begin{center}  \includegraphics[scale=.10]{Images/nurse-robot-italy.jpg}  \end{center} 
+   \begin{center}  \includegraphics[scale=.10]{Images/nurse-robot-italy.jpg}  \end{center}
  \end{block}}
 
 \column{.4\textwidth}
 
 \uncover<3->{\begin{block}{Smart Homes}
-      \begin{center}  \includegraphics[scale=.20]{Images/smarthome.jpeg}  \end{center} 
+      \begin{center}  \includegraphics[scale=.20]{Images/smarthome.jpeg}  \end{center}
   \end{block}}
 
    \uncover<5->{
     \begin{block}{Chat Bots}
-     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center}
    \end{block}}
 
   \end{columns}
 
-  
+
    \uncover<6>{
     \begin{block}{}
       \begin{center} ...and many more ...
       %  : from finance market bots to personal devices like insullin controllers
      % \end{center}
    % \end{block}}
-  
+
   % \uncover<6>{
   %  \begin{block}{}
   %    \begin{center}
@@ -2336,7 +2336,7 @@ complex or abstract, constraints \alert{as types} on the functions to control th
       in Edinburgh Robotarium and Edinburgh Center for Robotics
 
 %	\item At the moment, 22 members: 7 academic staff, 3 RAs,
-%          4 PhD and 8 MSc students not counting a number of collaborators. 
+%          4 PhD and 8 MSc students not counting a number of collaborators.
 \end{itemize}
 
 \begin{center}
@@ -2348,7 +2348,7 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 
 \begin{frame}
   \frametitle{LAIV members: }
-  
+
 %\begin{center}
 %  \includegraphics[width=7cm]{DSC_2635.jpg}
 %\end{center}
@@ -2369,9 +2369,9 @@ complex or abstract, constraints \alert{as types} on the functions to control th
    \includegraphics[width=1.3cm]{Images/liliaPhoto.jpg}
    \begin{block}{}
    \end{block}
-  
+
    \includegraphics[width=1.5cm]{Images/Matthew.jpg}
-  
+
   \column{.2\textwidth}
   \includegraphics[width=1.3cm]{Images/Hans.jpg}
      \begin{block}{}
@@ -2406,20 +2406,20 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 
   \begin{center} AI methods divide into:
     \end{center}
-  
+
    \begin{columns}
 \column{.4\textwidth}
 
 \uncover<2->{Perception tasks:}
 
   \uncover<2->{\begin{block}{Computer Vision}
-     \begin{center}  \includegraphics[scale=.20]{Images/cv.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/cv.jpeg}  \end{center}
   \end{block}}
 
-  
+
    \uncover<2->{
   \begin{block}{Natural language understanding}
-   \begin{center}  \includegraphics[scale=.20]{Images/nlu.jpeg}  \end{center} 
+   \begin{center}  \includegraphics[scale=.20]{Images/nlu.jpeg}  \end{center}
  \end{block}}
 
 \column{.4\textwidth}
@@ -2427,12 +2427,12 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 \uncover<3->{Reasoning tasks:}
 
 \uncover<3->{\begin{block}{Planning}
-      \begin{center}  \includegraphics[scale=.20]{Images/route.jpeg}  \end{center} 
+      \begin{center}  \includegraphics[scale=.20]{Images/route.jpeg}  \end{center}
   \end{block}}
 
    \uncover<3->{
     \begin{block}{(Logical) reasoning}
-     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center} 
+     \begin{center}  \includegraphics[scale=.20]{Images/chatbot.jpeg}  \end{center}
    \end{block}}
 
 \end{columns}
@@ -2443,7 +2443,7 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 % \beamertemplatearticlebibitems
 %\bibitem{1}{A.Hill, E.K. and R.Petrick: Proof-Carrying Plans: a Resource Logic for AI Planning. PPDP'20.}
 % \end{thebibliography}}}
-  
+
 \end{frame}
 
 
@@ -2452,27 +2452,27 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 
 \begin{frame}
   \frametitle{Neural Networks...}
- 
 
-    
+
+
  \begin{columns}
    \column{.4\textwidth}
 
-   
+
     \begin{center}
       \includegraphics[scale=0.3]{Images/NN}
-    \end{center}  
+    \end{center}
 
 \begin{block}{take care of \alert{\textbf{perception}} tasks:}
 
  \begin{itemize}
-  \item[] computer vision 
+  \item[] computer vision
   \item[] speech recognition
   \item[] pattern recognition
     \item[] ...
     \end{itemize}
 
-  
+
 \end{block}
 
 
@@ -2481,9 +2481,9 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 
 \column{.4\textwidth}
 
- 
+
 \begin{block}{In:}
- 
+
 \begin{itemize}
 \item[] autonomous cars
 \item[] robots
@@ -2492,7 +2492,7 @@ complex or abstract, constraints \alert{as types} on the functions to control th
   \item[] medical applications
 \item[] chatbots
 %\item Google bot on mobile phones
-\item[]  mobile phone apps 
+\item[]  mobile phone apps
 \item[] $\ldots$
 \end{itemize}
 
@@ -2500,7 +2500,7 @@ complex or abstract, constraints \alert{as types} on the functions to control th
 
 
  \end{columns}
-    
+
 \end{frame}
 
 \end{document}
