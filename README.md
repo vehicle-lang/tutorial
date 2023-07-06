@@ -555,6 +555,24 @@ Result: true
   🗸 property1
 ```
 
+## Exercises
+
+### Exercise 1. Your first Vehicle specification.
+
+1.  On the tutorial pages, find the ONNX model, `iris_model.onnx`
+    trained on the famous Iris data set:
+    https://en.wikipedia.org/wiki/Iris_flower_data_set Find also the
+    data set in the `idx` format.
+2.  Using the Wikipedia page or other sources, examine the data set, and
+    try to define a few “obvious properties” that should hold for a
+    model that does its classification.
+3.  Write those properties as a Vehicle specification, ensure it type
+    checks. See Vehicl Manual pages
+    (<https://vehicle-lang.readthedocs.io/en/stable/>) how to run type
+    checking.
+4.  Using the Vehicle command line, verify your specification,
+    i.e. check whether the properties hold.
+
 # References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
