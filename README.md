@@ -2,6 +2,17 @@
 
 # A Vehicle Tutorial
 
+## With contributions by:
+
+- Matthew Daggitt,
+- Wen Kokke,
+- Ekaterina Komendantskaya,
+- Bob Atkey,
+- Natalia Slusarz,
+- Marco Casadio,
+- Ben Coke,
+- Jeonghyeon Lee
+
 ## Outline
 
 0.  Introduction and Motivation for Vehicle
@@ -19,7 +30,10 @@
     - Example: MNIST robustness
     - Introduction to concepts of datasets, parameters etc.
 
-3.  Semantically meaningful examples and integration with Agda.
+3.  Property-Driven Training – Example: FMNIST – Generation of Loss
+    Functions with Vehicle – Super-class Robustness
+
+4.  Semantically meaningful examples and integration with Agda.
 
     - Braking example?
     - Vehicle controller?
