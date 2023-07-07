@@ -1,7 +1,7 @@
 # Chapter 3. Property-Driven Training
 
 We finished the last chapter with a conjecture concerning 
-diminishing robustness verification success with increasing values of $\epislon$.
+diminishing robustness verification success with increasing values of $\epsilon$.
 Let us now see, using a concrete example, how soon the success rate declines.
 
 The last exercise of the previous chapter gave us a property specification
