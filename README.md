@@ -8,6 +8,7 @@
 - Wen Kokke,
 - Ekaterina Komendantskaya,
 - Bob Atkey,
+- Luca Arnaboldi,
 - Natalia Slusarz,
 - Marco Casadio,
 - Ben Coke,
