@@ -1,1 +1,9 @@
 # Chapter 3. Property-Driven Training
+
+We finished the last chapter with a conjecture concerning 
+diminishing robustness verification success with increasing values of $\epislon$.
+Let us now see, using a concrete example, how soon the success rate declines.
+
+The last exercise of the previous chapter gave us a property specification
+for robustness of ``Fashion MNIST" models. We propose now to look into the statistics of verifying one of such models on 500 examples from the data set. To obtain quicker execution times, let us use the model
+with one input layer of $32$ neurons, and one output layer of $10$ neurons. 
