@@ -11,12 +11,17 @@ def test_loss_function_tensorflow_bounded() -> None:
         import tensorflow as tf
 
         # Prepare a simple network
-        model = tf.keras.Sequential(
-            [
-                tf.keras.layers.Input(shape=(1,)),
-                tf.keras.layers.Dense(units=1),
-            ]
-        )
+        # model = tf.keras.Sequential(
+        #    [
+        #        tf.keras.layers.Input(shape=(1,)),
+        #        tf.keras.layers.Dense(units=1),
+        #    ]
+        #)
+
+        model = tf.keras.Sequential()
+        model.add(tf.keras.layers.Flatten(input_shape=(28,28)))
+        model.add(tf.keras.layers.Dense(32, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dense(10))
 
         def f(input: Any) -> Any:
             return model(tf.expand_dims(input, axis=0), training=True)[0]
@@ -119,6 +124,8 @@ def test_loss_function_tensorflow_bounded() -> None:
             print(f"Train loss: {float(train_loss):.4f}")
         print(f"Test acc: {float(test_acc):.4f}")
         print(f"Test loss: {float(test_loss):.4f}")
+
+    model.save(f'onnxNetworks/fashion1l32n')
 
     except ModuleNotFoundError:
         from logging import warning
