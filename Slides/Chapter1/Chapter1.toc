@@ -1,2 +1,0 @@
-\babel@toc {nil}{}\relax 
-\beamer@sectionintoc {1}{Vehicle' Syntax}{13}{0}{1}
