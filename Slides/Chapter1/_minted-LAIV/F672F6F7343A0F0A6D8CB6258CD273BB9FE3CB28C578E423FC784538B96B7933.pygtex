@@ -1,7 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-
-\PYG{n}{validInput}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{k+kt}{Bool}
-\PYG{n}{validInput}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{k}{forall}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{p}{.}
-\PYG{Space}{  }\PYG{n}{minimumInputValues}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}\PYG{Space}{ }\PYG{o}{\PYGZlt{}=}\PYG{Space}{ }\PYG{n}{maximumInputValues}\PYG{Space}{ }\PYG{o}{!}\PYG{Space}{ }\PYG{n}{i}
-
-\end{Verbatim}
