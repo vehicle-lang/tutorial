@@ -124,7 +124,7 @@
 \mode<presentation>
 \title[Vehicle Tutorial Chapter 1]{Vehicle Tutorial Chapter 1: Getting Started}
 %\subtitle{in Neuro-Symbolic Landscape}
-\author[Katya et al]{Ekaterina Komendantskaya and Matthew Daggitt and Wen Kokke and ...}
+\author[Vehicle]{Ekaterina Komendantskaya and Matthew Daggitt (today's presentors), on behalf of the Vehicle team}
 \institute[]{}
 
 \date[]{}
@@ -146,166 +146,41 @@
 \titlepage
 \end{frame}
 
-
-
-
-
-
-
- \begin{frame}
-  \frametitle{Vehicle Team}
-  
-%\begin{center}
-%  \includegraphics[width=7cm]{DSC_2635.jpg}
-%\end{center}
- \begin{columns}
-   \column{.3\textwidth}
-   \includegraphics[width=1.3cm]{Images/Matthew.jpg}
-
-      \begin{block}{\footnotesize{Matthew Daggitt}}
-     \end{block}
-    \includegraphics[width=1.5cm]{Images/RS.jpg}
-   \begin{block}{\footnotesize{Rob Stewart}}
-     \end{block}
-          \includegraphics[width=1.5cm]{Images/Natalia.jpg}
-           \begin{block}{\footnotesize{Natalia Slusarz}}
-     \end{block}
-
-  %\includegraphics[width=2cm]{Manuel_Maarek.jpg}
-
-  % \includegraphics[width=2cm]{photoDP.jpg}
-   \column{.3\textwidth}
-   \includegraphics[width=1.6cm]{Images/Wen.png}
-   \begin{block}{\footnotesize{Wen Kokke}}
-   \end{block}
-    \includegraphics[width=1.5cm]{Images/Luca.jpeg}
-    \begin{block}{\footnotesize{Luca Arnaboldi}}
-   \end{block}
- 
-      \includegraphics[width=1.5cm]{Images/Kathrin.jpg}
-  \begin{block}{\footnotesize{Kathrin Stark}}
-   \end{block}
-
- 
-   \column{.3\textwidth}
-   
-     \includegraphics[width=1.6cm]{Images/Bob.jpeg}
-  
-         % \includegraphics[width=2cm]{photoDP.jpg}
-          \begin{block}{\footnotesize{Bob Atkey}}
-     \end{block}
- 
-       \includegraphics[width=1.5cm]{Images/Marco.jpg}
-        \begin{block}{\footnotesize{Marco Casadio}}
-     \end{block}
-   \includegraphics[width=1.8cm]{Images/Katya3.jpg}
-  \end{columns}
-  \end{frame}
-
-
-
-
-\section{Neural Network Verification: overview of the new domain}
-
-
 \begin{frame}
-\frametitle{Neural nets for classification}
-\includegraphics[scale=.30]{Images/mnist_classification.png} 
+\frametitle{In this chapter...}
 
-\begin{block}{Formally,}
- a neural network is a function $N : R^n \rightarrow R^m$. 
-\end{block}
- 
-\end{frame}
+We will:
 
-\begin{frame}
-\frametitle{Neural networks}
-
-\begin{alertblock}{... are ideal for  ``perception'' tasks:}
-    \setbeamercovered{transparent}
 \begin{itemize}[<+->]
-  \item approximate functions when exact solution is hard to get
-    \item tolerant to noisy and incomplete data
-    \end{itemize}
-\end{alertblock}  
+\item  ... introduce Main building blocks of Vehicle as a Programming Language 
+\item ... get to practice working with Vehicle 
+\item ... use the famous ACAS Xu benchmark to show Vehicle's work flow --
+from specification to verification
+\item ... try to identify PL problems that are being resolved by Vehicle 
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Recap: four PL problems}
+
 \pause
-
-\begin{block}{BUT}
-  \begin{itemize}
-   % \item continuous decision space means solutions can only be approximate 
-	\item solutions not easily conceptualised (\alert{lack of explainability})
-	%\item prone to error
-	\item prone to a new range of safety and security problems: \pause
-          \begin{itemize} \item[] adversarial attacks
-        \item[]  data poisoning
-        \item[] catastrophic forgetting
-          \end{itemize}
-\end{itemize}
-\end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{One example: Adversarial Attacks}
-
- % \begin{block}{}
- %   Given a trained neural network and a correctly classified image of ``0'' on the left,
- %                 we can create a perturbation $\eta$ (middle) to the original image so that the same neural network predicts a ``5" with 92\% confidence for the modified image (right).
- %   \end{block}
-  
-  	\includegraphics[width=.3\textwidth]{Images/true.png}
-	\uncover<2->{\includegraphics[width=.3\textwidth]{Images/eta.png}}
-	\uncover<3->{\includegraphics[width=.3\textwidth]{Images/adv.png}}
-
 \begin{itemize}
-\item<4->[] the perturbations are imperceptible to human eye \pause
-\item<5->[] attacks transfer from one neural network to another \pause
-\item<6->[] affect any domain where neural networks are applied                 
+\item[$I^O$] Interoperability -- properties are not portable between training/counter-example search/ verification.
+
+\item[$I^{P}$] Interpretability -- code is not easy to understand.
+
+\item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties. 
+
+\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level). 
 \end{itemize}
-                
 \end{frame}
 
-\begin{frame}
-      \frametitle{Verification Property:  ``$\epsilon$-ball robustness''}
-\begin{center}
-  \begin{tikzpicture}[scale=.8]
-  % draw the sphere
-  \shade[ball color = gray!40, opacity = 0.4] circle (2cm);
-  \draw (0,0) circle (2cm);
-  \draw (-2,0) arc (180:360:2 and 1);
-  \draw[dashed] (2,0) arc (0:180:2 and 1);
-  \fill[fill=black] (0,0) circle (1pt);
-  \draw[dashed,<->] (0,0 ) -- node[above]{$\epsilon$} (2,0);
-  % line for original image
-  \draw[] (0,0 ) -- node{} (0,-2.5);
-  \node (1orig) at (0,-3) {\includegraphics{Images/7_orig.png}};
- % \node[] at (0,-3.8) {NN: ``seven''};
-  % line for the perturbed image 1
-  \draw[] (-0.6,1.2) -- node{} (-0.9,2.7);
-  \node () at (-1,2.8) {\includegraphics{Images/7_v1}};
-  % line for the perturbed image 2
-  \draw[] (0.6,1.4) -- node{} (1.2,2.7);
-  \node () at (1.2,2.8) {\includegraphics{Images/7_v2}};
-  % line for the perturbed image 3
-  \draw[] (0.6,-1.2) -- node{} (2.5,-2.7);
-  \node () at (2.5,-2.8) {\includegraphics{Images/7_v3}};
-\end{tikzpicture}
-\end{center}
 
-
-  \begin{alertblock}{An $\epsilon$-ball     $\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = \{ {\mathbf{x} \in \mathbb{R}^n: |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon} \}$ }
-
-
-    Classify all  points in $\mathbb{B}(\hat{\mathbf{x}}, \epsilon)$ ``robustly''.
-    %in the \alert{``same class''} as $\hat{\mathbf{x}}$.
-  \end{alertblock}
-
- % \begin{block}{}
-%\end{block}
-    \end{frame}
-    
-    
     \begin{frame}
-\frametitle{Another example property: ACAS Xu}
+\frametitle{Recap: ACAS Xu}
 A collision avoidance system for unmanned autonomous aircraft.
 \tikz [remember picture,overlay]{
 \node at ([xshift=3cm,yshift=3cm]current page.south) {\includegraphics[width=0.5\linewidth]{Images/acas_xu.png}};}
@@ -361,284 +236,9 @@ The system was originally implemented as a 2Gb lookup table but was replaced wit
 \end{block}
 
 \end{frame}
-    
-    \begin{frame}
-    \frametitle{More Generally}
-    
-    \begin{block}{Given $N : R^n \rightarrow R^m$} 
-    Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs.
-\end{block}
-  \uncover<2->{
-    {\footnotesize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{Casadio, M., Komendantskaya, E., Daggitt, M.L., Kokke, W., Katz, G., Amir, G., Refaeli, I.:
-Neural network robustness as a verification property: A principled case study. In: Computer
-Aided Verification (CAV 2022).}
- \end{thebibliography}}}
-
-    \end{frame}
-
-\begin{frame}{Overview of The Verification Landscape}%{Problem Statement}
-% \centering<1>\includegraphics[width=0.8\textwidth]{img/first-slide-2015.pdf}
-% \centering<2>\includegraphics[width=0.8\textwidth]{img/first-slide-2017.pdf}
-% \centering<3>\includegraphics[width=0.8\textwidth]{img/first-slide-2022.pdf}
-\only<1>{\vspace{-0.5cm}\centering\includegraphics[width=0.9\textwidth]{Images/first-slide-2015.pdf}}
-\only<2>{\vspace{-0.5cm}\centering\includegraphics[width=0.9\textwidth]{Images/first-slide-2017.pdf}}
-\only<3>{\vspace{-0.5cm}\centering\includegraphics[width=0.9\textwidth]{Images/first-slide-2022.pdf}}
-\end{frame}
 
 
-
-
-
-
-\begin{frame}
-\frametitle{Current Verifier Landscape}
-
-A whole range of domain-specific verifiers exist:
-\begin{itemize}
-\pause
-\item Marabou (SMT technology)
-\pause
-\item ERAN (abstract interpretation + MILP)
-\pause
-\item Verisig (interval arithmetic)
-\item AlphaBetaCROWN (linear bound propagation)
-\item $\ldots $
-\end{itemize}
-
-\begin{block}{International Standards and Competitions}
-https://www.vnnlib.org/
-\end{block}
-
-\pause
-Marabou is our choice as it is complete, and the set of expressible queries is large!
-
-  \uncover<2->{
-    {\footnotesize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{Guy Katz, Clarke Barrett, D. Dill, K. Julian, and M. Kochenderfer. Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks. In CAV, 2017.}
- \end{thebibliography}}}
-
-\end{frame}
-
-\section{The lifecycle of neural network verification}
-
-
-\begin{frame}
-\frametitle{The lifecycle of neural network verification}
-
-\begin{center}
-\begin{tikzpicture}[thick,
-    set/.style = {circle,
-        minimum size = 3cm}]
- 
-% Set A
-\node[rectangle,draw] (A) at (0,4) {Property};
-
-\onslide<2->{
-\node[rectangle,draw] (B) at (-3,2) {Training};}
-\onslide<3->{
-\node[text width=1cm, align=center] at (-3,-1) {DL2 ACT etc.};
-}
-
-\onslide<4->{\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};}
-\onslide<6->{
-\node[text width=1cm, align=center] at (0,-1) {PGD FGSM etc.};
-}
-
-\onslide<8->{\node[rectangle,draw] (D) at (3,2) {Verification};}
-\onslide<8->{
-\node[text width=1.4cm, align=center] at (3,-1) {Marabou Eran etc.};
-}
-
-
- \onslide<10->{\node[rectangle,draw,text width=2cm] (E) at (6.5,2) {Integration into larger properties about the entire system};
-\draw [->] (D) edge (E);
-}
-
-\onslide<3->{\draw [->, dashed] (A) edge (B);}
-\onslide<6->{\draw [->, dashed] (A) edge (C);}
-\onslide<8->{\draw [->, dashed] (A) edge (D);}
-
-\onslide<4->{\draw [->] (B) edge (C);}
-\onslide<8->{\draw [->] (C) edge (D);}
-\onslide<10->{\draw [->] (D) edge (E);}
-
-\onslide<7->{\draw [->] (C) edge[bend left] (B);}
-\onslide<9->{\draw [->] (D) edge[bend left=45] (B);}
-\end{tikzpicture}
-\end{center}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Challenges the area faces}
-  
-  \begin{itemize}[<+->]
-  \item Theory: finding appropriate verification properties
-\item  Solvers: undecidability of non-linear real arithmetic  and scalability of neural network verifiers 
-\item ML: understanding and integrating property-driven training
-
-\item Programming: finding the right languages to support these developments
-\item Complex systems: integration of neural net verification into complex systems
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{}
-  \begin{alertblock}{ How BIG is the problem?}
-
-Lets look under the hood...
-  \end{alertblock}
-
- % \begin{block}{}
-%\end{block}
-    \end{frame}
-
-\begin{frame}
-\frametitle{Training framework: DL2}
-
-%\only<1>{
-\includegraphics[width=0.9\linewidth]{Images/DL2.png}
-%}
-
-%\only<2>{
-%\begin{equation*}
-%\forall x : \distance{x}{\hat{x}} \leq \epsilon \Rightarrow \distance{f(x)}{f(\hat{x})} \leq \delta
-%\end{equation*}
-%}
-
-  \uncover<1->{
-    {\scriptsize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{Fischer, M., Balunovic, M., Drachsler-Cohen, D., Gehr, T., Zhang, C., and
-Vechev, M. T.
-DL2: training and querying neural networks with logic.
-In Proc. of the 36th Int. Conf. Machine Learning, ICML 2019}
- \end{thebibliography}}}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Training framework: ART}
-\includegraphics[width=1\linewidth]{Images/art.png}
-
-  \uncover<1->{
-    {\scriptsize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{Lin, X., Zhu, H., Samanta, R., and Jagannathan, S. (2020).
-Art: Abstraction refinement-guided training for provably correct neural
-networks.
-In FMCAD 2020}
- \end{thebibliography}}}
-\end{frame}
-
-\begin{frame}
-\frametitle{Verification framework: Marabou }
-\includegraphics[width=0.9\linewidth]{Images/marabou.png}
-
-  \uncover<1->{
-    {\scriptsize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{Katz, G., Huang, D. A., Ibeling, D., Julian, K., Lazarus, C., Lim, R., Shah, P.,
-Thakoor, S., Wu, H., Zeljic, A., Dill, D. L., Kochenderfer, M. J., and Barrett,
-C. W. (2019).
-The Marabou framework for verification and analysis of deep neural
-networks.
-In CAV 2019}
- \end{thebibliography}}}
-\end{frame}
-
-\begin{frame}
-\frametitle{Verification framework: ERAN}
-\includegraphics[width=0.5\linewidth]{Images/eran.png}
-
- \uncover<1->{
-    {\scriptsize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{Singh, G., Gehr, T., Püschel, M., and Vechev, M. T. (2019).
-An abstract domain for certifying neural networks.
-PACMPL, 3(POPL):41:1–41:30.}
- \end{thebibliography}}}
-\end{frame}
-
-\begin{frame}
-\frametitle{Verification property language: VNNLIB}
-\includegraphics[width=0.8\linewidth]{Images/vnnlib.png}
-\end{frame}
-
-
-
-
-\begin{frame}
-\frametitle{Recap: What are the problems?}
-
-\pause
-\begin{itemize}
-\item Interoperability - properties are not portable between training/counter-example search/ verification.
-\pause
-\item Interpretability - code is not easy to understand.
-\pause
-\item Integration - properties of networks cannot be linked to larger control system properties. 
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Vehicle ...}
- 
- \textbf{ is a domain-specific functional language for writing high-level property specifications for neural networks}
- 
-\begin{center}
-\begin{tikzpicture}[thick,
-    set/.style = {circle,
-        minimum size = 3cm}]
- 
-% Set A
-\node[rectangle,draw] (A) at (1.5,5) {Property in Vehicle};
-
-\node[rectangle,draw] (B) at (-3,2) {Training};
-\node[text width=1cm, align=center] at (-3,0) {DL2 ACT etc.};
-
-\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};
-\node[text width=1cm, align=center] at (0,0) {PGD FGSM etc.};
-
-\node[rectangle,draw] (D) at (3,2) {Verification};
-\node[text width=1.4cm, align=center] at (3,0) {Marabou Eran etc.};
-
-\node[rectangle,draw] (E) at (6,2) {Integration};
-\node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
-
-\draw [->, dashed] (A) edge (B);
-\draw [->, dashed] (A) edge (C);
-\draw [->, dashed] (A) edge (D);
-\draw [->, dashed] (A) edge (E);
-
-\draw [->] (B) edge (C);
-\draw [->] (C) edge (D);
-\draw [->] (D) edge (E);
-
-\onslide<1->{
-\node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {Analysis \& informative error messages};
-}
-
-\end{tikzpicture}
-\end{center}
-\end{frame}
-
-
-
-
-
-
-   
-
-\section{Introduction to Vehicle (a mini tutorial)}
+\section{Vehicle' Syntax}
 
 \begin{frame}[fragile]
 \frametitle{Types}
@@ -673,7 +273,7 @@ pi = 3.141592
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Working with Vectors}
+\frametitle{Working with vectors}
 \begin{itemize}
 \item some input or output pre-processing maybe expected when defining a neural network. 
 
@@ -693,7 +293,7 @@ majority of the mainstream neural network verifiers
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Vector Normalisation}
+\frametitle{Vector normalisation}
 For clarity, we define a new type synonym for unnormalised input vectors which are in the problem space.
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 
@@ -744,7 +344,7 @@ normalise x = foreach i .
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Functions and Types}
+\frametitle{Functions and types}
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 <name> : <type>
 <name> [<args>] = <expr>
@@ -770,9 +370,12 @@ validInput x = forall i .
 
 
 \begin{frame}[fragile]
-\frametitle{Functions and Types}
+\frametitle{Functions and types}
 
 \begin{block}{Function Composition: Exercise!}
+
+Infer	the types of functions `acasXu`  and `normalise`:
+
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 normAcasXu : UnnormalisedInputVector -> OutputVector
 normAcasXu x = acasXu (normalise x)
@@ -905,7 +508,7 @@ Result: true
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Exercise: $\epsilon$-ball Robustness}
+\frametitle{Next Chapter Exercise: $\epsilon$-ball Robustness}
  \begin{minted}[fontsize=\tiny]{vehicle}
 type Image = Tensor Rat [28, 28]
 type Label = Index 10
@@ -945,7 +548,7 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{frame}
 \frametitle{Vehicle ...}
  
- \textbf{ is a domain-specific functional language for writing high-level property specifications for neural networks}
+ \textbf{ the part that we have seen}
  
 \begin{center}
 \begin{tikzpicture}[thick,
@@ -984,57 +587,21 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \end{center}
 \end{frame}
 
- \begin{frame}
-  \frametitle{Vehicle Architecture}
-     \begin{center}
-      \includegraphics[scale=0.25]{Images/full-architecture-fixed}
-    \end{center}  
-
-  \end{frame}
-
 \begin{frame}
-\frametitle{Sources}
+\frametitle{Concluding Exercise}
 
-\uncover<1->{
-    {\scriptsize
- \begin{thebibliography}{99}
- \beamertemplatearticlebibitems
-\bibitem{1}{M. Daggitt, R. Atkey, W. Kokke, E. Komendantskaya, L. Arnaboldi:
-Compiling Higher-Order Specifications to SMT Solvers: How to Deal with Rejection Constructively. CPP 2023}
+Which of the four PL problems we covered?
 
-\bibitem{1}{N. Slusarz, E. Komendantskaya, M. Daggitt, R. Stewart, K. Stark:
-Logic of Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023.}
+\pause
+\begin{itemize}
+\item[$I^O$] Interoperability -- properties are not portable between training/counter-example search/ verification.
 
-\bibitem{1}{
- 	Matthew L. Daggitt, Wen Kokke, Robert Atkey, Luca Arnaboldi, Ekaterina Komendantskaya:
-Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. FOMLAS}
+\item[$I^{P}$] Interpretability -- code is not easy to understand.
 
-\bibitem{1}{Vehicle Team: The Vehicle language: \url{https://github.com/vehicle-lang} 2023.}
+\item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties. 
 
-\bibitem{1}{M.Daggitt and W.Kokke: Vehicle User Manual. 2023.}
- \end{thebibliography}}}
-
-
+\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level). 
+\end{itemize}
 \end{frame}
-
-
-
-   \begin{frame}
-  \frametitle{Which challenges Vehicle addresses}
-  \footnotesize{
-  \begin{itemize}
-  \item Theory: finding appropriate verification properties
-\item  Solvers: undecidability of non-linear real arithmetic  and scalability of neural network verifiers 
-\item \alert{ML: understanding and integrating property-driven training}
-\item \alert{Programming: finding the right languages to support these developments}
-\item \alert{Complex systems: integration of neural net verification into complex systems}
-  \end{itemize}}
-  
-  \begin{center}
-  \includegraphics[scale=.20]{Images/Slide1.jpg} 
-  \end{center}
-\end{frame}
-
-
 
 \end{document}

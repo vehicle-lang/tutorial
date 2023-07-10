@@ -1,4 +1,2 @@
 \babel@toc {nil}{}\relax 
-\beamer@sectionintoc {1}{Neural Network Verification: overview of the new domain}{3}{0}{1}
-\beamer@sectionintoc {2}{The lifecycle of neural network verification}{32}{0}{2}
-\beamer@sectionintoc {3}{Introduction to Vehicle (a mini tutorial)}{59}{0}{3}
+\beamer@sectionintoc {1}{Vehicle' Syntax}{13}{0}{1}
