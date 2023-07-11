@@ -106,6 +106,8 @@ jobs:
         with:
           latexmk_use_lualatex: true
           latexmk_shell_escape: true
+          extra_system_packages: python3
+          pre_compile: pip install vehicle_lang[pygments]
           root_file: tutorial.tex
 
       - name: Upload generated PDF as artifact
