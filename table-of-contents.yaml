@@ -9,5 +9,6 @@ input-files:
 
 # Configure Pandoc to typeset citations using the bibliography.
 citeproc: true
+cite-method: natbib
 metadata:
   bibliography: "bibliography.bib"
