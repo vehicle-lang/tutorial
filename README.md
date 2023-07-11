@@ -237,7 +237,7 @@ In particular, the following measurements are of importance:
 as the following picture illustrates: ![ACAS Xu](images/acas_xu.png)
 
 $\theta$ and $\psi$ are measured counter clockwise, and are always in
-the range $[−\pi, \pi]$.
+the range $[-\pi, \pi]$.
 
 Based on this data the neural network is to issue one of the following
 instructions:
@@ -590,7 +590,7 @@ holds for the given neural network, `acasXu_1_7.onnx`:
 Verifying properties:
   property1 [=============================================] 1/1 queries complete
 Result: true
-  🗸 property1
+  ✓ property1
 ```
 
 ## Exercises
@@ -912,9 +912,9 @@ Verifying properties:
   robust [================================================] 9/9 queries complete
 Result: true
   robust: 2/2 verified
-    🗸 robust!0
+    ✓ robust!0
 
-    🗸 robust!1
+    ✓ robust!1
 ```
 
 The reader may have guessed at this pont that, as we make $\epsilon$
@@ -935,7 +935,9 @@ definition:
 
 Given an $\hat{\mathbf{x}} \in \mathcal{X}$,
 
-\$. \|-\| \|f() - f()\| \$.
+$$
+\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow |f(\hat{\mathbf{x}}) -  f(\mathbf{x})| \leq \delta
+$$
 
 We refer the interested reader for a more detailed discussion of
 different robustness properties in:
