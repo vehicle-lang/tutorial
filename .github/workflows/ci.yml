@@ -87,17 +87,6 @@ jobs:
         with:
           version: ${{ env.PANDOC_VERSION }}
 
-      - name: Setup Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: "pip" # caching pip dependencies
-          cache-dependency-path: "requirements.txt"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        shell: sh
-
       - name: Compile tutorial to LaTeX
         run: make latex
 
@@ -107,7 +96,10 @@ jobs:
           latexmk_use_lualatex: true
           latexmk_shell_escape: true
           extra_system_packages: python3
-          pre_compile: pip install vehicle_lang[pygments]
+          pre_compile: |
+            python -m ensurepip
+            pip install pygments
+            pip install vehicle_lang
           root_file: tutorial.tex
 
       - name: Upload generated PDF as artifact
