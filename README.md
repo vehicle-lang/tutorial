@@ -549,8 +549,8 @@ Result: true
 
 1.  On the tutorial pages, find the ONNX model, `iris_model.onnx`
     trained on the famous Iris data set:
-    <https://en.wikipedia.org/wiki/Iris_flower_data_set> Find also the
-    data set in the `idx` format.
+    https://en.wikipedia.org/wiki/Iris_flower_data_set Find also the
+    data set in the `idx` format (cf. tutorial repository).
 2.  Using the Wikipedia page or other sources, examine the data set, and
     try to define a few “obvious properties” that should hold for a
     model that does its classification.
