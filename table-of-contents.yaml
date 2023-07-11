@@ -3,6 +3,8 @@ input-files:
   - "templates/header.md"
   - "0. Introduction.md"
   - "1. Vehicle Language.md"
+  - "2. Proving Robustness.md"
+  - "3. Property-Driven Training.md"
   - "templates/footer.md"
 
 # Configure Pandoc to typeset citations using the bibliography.
