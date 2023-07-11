@@ -67,7 +67,7 @@ jobs:
           version: ${{ env.PANDOC_VERSION }}
 
       - name: Update README.md
-        run: make README.md
+        run: make gfm
 
       - name: Commit README.md
         if: github.event_name == 'push'
@@ -102,7 +102,7 @@ jobs:
           version: ${{ env.PANDOC_VERSION }}
 
       - name: Update README.md
-        run: make index.html
+        run: make html
 
       - name: Setup Pages
         if: github.event_name == 'push'
