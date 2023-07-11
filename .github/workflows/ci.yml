@@ -101,6 +101,17 @@ jobs:
         with:
           version: ${{ env.PANDOC_VERSION }}
 
+      - name: Setup Python ${{ matrix.python.version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python.version }}
+          cache: "pip" # caching pip dependencies
+          cache-dependency-path: "requirements.txt"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        shell: sh
+
       - name: Update README.md
         run: make html
 
