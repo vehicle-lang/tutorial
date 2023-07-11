@@ -105,8 +105,8 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           latexmk_use_lualatex: true
+          latexmk_shell_escape: true
           root_file: tutorial.tex
-          args: '-latexoption=-shell-escape'
 
       - name: Upload generated PDF as artifact
         uses: actions/upload-artifact@v3
