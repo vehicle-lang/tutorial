@@ -22,6 +22,7 @@ index.html: $(SOURCES)
 		--standalone                                          \
 		--template templates/easy_template/easy_template.html \
 		--table-of-contents                                   \
+		--number-sections                                     \
 		--katex                                               \
 		--output index.html
 

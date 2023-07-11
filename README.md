@@ -14,8 +14,6 @@ With contributions by
 - Ben Coke
 - Jeonghyeon Lee
 
-# Introduction and Motivation
-
 ## What is Neural Network Verification about?
 
 Neural networks are widely used in the field of machine learning; and
@@ -158,7 +156,7 @@ You can also download already trained networks for our examples from
   Neural Information Processing Systems 2021, NeurIPS 2021, December
   6-14, 2021, virtual, pages 29909–29921, 2021.
 
-# Chapter 1. Getting Started: the Vehicle’s Language
+# Getting Started: the Vehicle’s Language
 
 In this chapter we will introduce some basic features of **Vehicle** as
 a specification language. We will use the famous *ACAS Xu verification
@@ -563,7 +561,7 @@ Result: true
 4.  Using the Vehicle command line, verify your specification,
     i.e. check whether the properties hold.
 
-# Chapter 2. Proving Neural Network Robustness
+# Proving Neural Network Robustness
 
 ## Neural Network Robustness as a Verification Property
 
@@ -921,7 +919,7 @@ set](https://www.tensorflow.org/datasets/catalog/fashion_mnist), train
 the model, generate `onnx` and `idx` files, define the spec and verify
 its robustness.
 
-# Chapter 3. Property-Driven Training
+# Property-Driven Training
 
 ## Motivation and Problem Statement
 
