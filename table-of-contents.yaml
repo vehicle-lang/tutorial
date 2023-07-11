@@ -1,10 +1,10 @@
 # The list of files for the tutorial.
 input-files:
   - "templates/header.md"
-  - "0. Introduction.md"
-  - "1. Vehicle Language.md"
-  - "2. Proving Robustness.md"
-  - "3. Property-Driven Training.md"
+  - "chapters/1. Introduction.md"
+  - "chapters/2. Vehicle Language.md"
+  - "chapters/3. Proving Robustness.md"
+  - "chapters/4. Property-Driven Training.md"
   - "templates/footer.md"
 
 # Configure Pandoc to typeset citations using the bibliography.

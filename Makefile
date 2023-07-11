@@ -1,21 +1,11 @@
 SOURCES+=templates/header.md
-SOURCES+=0.\ Introduction.md
-SOURCES+=1.\ Vehicle\ Language.md
-SOURCES+=2.\ Proving\ Robustness.md
-SOURCES+=3.\ Property-Driven\ Training.md
+SOURCES+=chapters/1.\ Introduction.md
+SOURCES+=chapters/2.\ Vehicle\ Language.md
+SOURCES+=chapters/3.\ Proving\ Robustness.md
+SOURCES+=chapters/4.\ Property-Driven\ Training.md
 SOURCES+=templates/footer.md
 SOURCES+=bibliography.bib
 SOURCES+=$(wildcard images/*.png)
-
-################################################################################
-# Markdown
-################################################################################
-
-README.md: $(SOURCES)
-	pandoc                              \
-		--defaults table-of-contents.yaml \
-		--to html                         \
-		--output index.html
 
 ################################################################################
 # HTML
@@ -38,3 +28,17 @@ index.html: $(SOURCES)
 .PHONY: view
 view: index.html
 	python -m http.server
+
+
+################################################################################
+# Markdown
+################################################################################
+
+.PHONY: gfm
+gfm: README.md
+
+README.md: $(SOURCES)
+	pandoc                              \
+		--defaults table-of-contents.yaml \
+		--to gfm                          \
+		--output README.md
