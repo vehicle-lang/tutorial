@@ -555,9 +555,9 @@ Result: true
     try to define a few “obvious properties” that should hold for a
     model that does its classification.
 3.  Write those properties as a Vehicle specification, ensure it type
-    checks. See Vehicl Manual pages
-    (<https://vehicle-lang.readthedocs.io/en/stable/>) how to run type
-    checking.
+    checks. See the [Vehicle
+    Manual](https://vehicle-lang.readthedocs.io/en/stable/) for how to
+    run type checking.
 4.  Using the Vehicle command line, verify your specification,
     i.e. check whether the properties hold.
 
