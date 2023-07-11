@@ -76,6 +76,78 @@ jobs:
           commit_message: "Update README.md"
           file_pattern: "README.md"
 
+  # Compile the tutorial to a PDF
+  build-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get source
+        uses: actions/checkout@v3
+
+      - name: Setup Pandoc
+        uses: pandoc/actions/setup@v1.0.0
+        with:
+          version: ${{ env.PANDOC_VERSION }}
+
+      - name: Setup Python ${{ matrix.python.version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python.version }}
+          cache: "pip" # caching pip dependencies
+          cache-dependency-path: "requirements.txt"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        shell: sh
+
+      - name: Compile tutorial to LaTeX
+        run: make latex
+
+      - name: Compile tutorial to PDF
+        uses: xu-cheng/latex-action@v2
+        with:
+          latexmk_use_lualatex: true
+          root_file: tutorial.tex
+
+      - name: Upload generated PDF as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf
+          path: ./tutorial.pdf
+          if-no-files-found: error
+
+  # Compile the tutorial to an HTML page
+  build-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get source
+        uses: actions/checkout@v3
+
+      - name: Setup Pandoc
+        uses: pandoc/actions/setup@v1.0.0
+        with:
+          version: ${{ env.PANDOC_VERSION }}
+
+      - name: Setup Python ${{ matrix.python.version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python.version }}
+          cache: "pip" # caching pip dependencies
+          cache-dependency-path: "requirements.txt"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        shell: sh
+
+      - name: Compile tutorial to an HTML page
+        run: make html
+
+      - name: Upload generated HTML page as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: html
+          path: ./_site/
+          if-no-files-found: error
+
   update-pages:
     name: Update Pages
     runs-on: ubuntu-latest
@@ -112,7 +184,7 @@ jobs:
         run: pip install -r requirements.txt
         shell: sh
 
-      - name: Update README.md
+      - name: Build HTML page
         run: make html
 
       - name: Setup Pages

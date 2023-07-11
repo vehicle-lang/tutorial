@@ -35,6 +35,30 @@ _site/index.html: $(SOURCES) | _site/
 view: _site/index.html
 	python -m http.server --directory _site/
 
+################################################################################
+# PDF
+################################################################################
+
+.PHONY: pdf
+pdf: tutorial.pdf
+
+tutorial.pdf: tutorial.tex
+	latexmk -pdflua -latexoption=-shell-escape tutorial.tex
+
+.PHONY: latex
+latex: tutorial.tex
+
+tutorial.tex: $(SOURCES)
+	pandoc                                     \
+		--defaults table-of-contents.yaml        \
+		--to latex                               \
+		--metadata title="A Vehicle Tutorial"    \
+		--standalone                             \
+		--table-of-contents                      \
+		--number-sections                        \
+		--include-in-header templates/minted.tex \
+		--lua-filter filters/minted.lua          \
+		--output tutorial.tex
 
 ################################################################################
 # Markdown
