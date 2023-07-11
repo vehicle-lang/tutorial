@@ -106,6 +106,7 @@ jobs:
         with:
           latexmk_use_lualatex: true
           root_file: tutorial.tex
+          args: '-latexoption=-shell-escape'
 
       - name: Upload generated PDF as artifact
         uses: actions/upload-artifact@v3
