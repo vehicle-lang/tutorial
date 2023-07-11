@@ -56,7 +56,7 @@ and – extending from piece-wise linear to non-linear activation
 functions. (An example are sigmoid neurons handled by Verisig using
 interval arithmetic (Ivanov et al. 2019).) At the time of writing, there
 exist over a hundred verifiers for neural networks. Several papers and
-monographs are dedicated to the survey of the landscape~Huang et al.
+monographs are dedicated to the survey of the landscape Huang et al.
 (2020). The community established the specification standards
 [VNNLib](https://www.vnnlib.org/), common benchmarks and annual
 competitions. Vehicle compiles down to the VNNLib standard, with a view
