@@ -28,9 +28,9 @@ element standing for a pixel value. Each arrow in the picture bears a
 the sum of its inputs.
 
 In some scenarios, it becomes important to establish formal guarantees
-about neural network behaviour. Following the pioneering work of
-(**KatzBDJK2017?**) neural network verification has become an active
-research area.
+about neural network behaviour. Following the pioneering work of (Katz
+et al. 2019, singh2019abstract, wang2021beta) neural network
+verification has become an active research area.
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$.
 Verification of such functions most commonly boils down to specifying
@@ -58,8 +58,8 @@ There are several research challenges in the area of neural network
 verification:
 
 1.  On the solver side, undecidability of non-linear real arithmetic
-    (**Akbarpour2009?**) and scalability of neural network verifiers
-    (**Wang2021?**) stand as two main challenges.
+    (Akbarpour and Paulson 2009) and scalability of neural network
+    verifiers \[wang2021beta\] stand as two main challenges.
 2.  In all realistic scenarious, even accurate neural networks require
     extra “property-driven training” in order to comply with
     verification properties in question. This calls for new methods of
@@ -67,7 +67,7 @@ verification:
 3.  The scope of neural network properties available in the literature
     is limited. Robustness is the most popular general property to date
     (**CasadioDKKKS2022?**), and others include mostly domain-specific
-    properties, such as ACAS Xu Benchmark (**KatzBDJK2017?**), which we
+    properties, such as ACAS Xu Benchmark (Katz et al. 2017), which we
     will consider shortly in this tutorial.
 4.  The available language infrastructure (e.g. the existing neural
     network solvers) encourage property specifications in terms of the
@@ -152,7 +152,7 @@ You can also download already trained networks for our examples from
   per-neuron split constraints for neu- ral network robustness
   verification. In Marc’Aurelio Ranzato, Alina Beygelzimer, Yann N.
   Dauphin, Percy Liang, and Jennifer Wortman Vaughan, editors, Advances
-  in Neural In- formation Processing Systems 34: Annual Conference on
+  in Neural Information Processing Systems 34: Annual Conference on
   Neural Information Processing Systems 2021, NeurIPS 2021, December
   6-14, 2021, virtual, pages 29909–29921, 2021.
 
@@ -1013,3 +1013,33 @@ Following this work, Vehicle contains translation to several loss
 functions available in the literature.
 
 # References
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-Akbarpour2009" class="csl-entry">
+
+Akbarpour, Behzad, and Lawrence Charles Paulson. 2009. “MetiTarski: An
+Automatic Theorem Prover for Real-Valued Special Functions.” *Journal of
+Automated Reasoning* 44 (3): 175–205.
+
+</div>
+
+<div id="ref-katz2017reluplex" class="csl-entry">
+
+Katz, Guy, Clark Barrett, David L Dill, Kyle Julian, and Mykel J
+Kochenderfer. 2017. “Reluplex: An Efficient SMT Solver for Verifying
+Deep Neural Networks.” In *International Conference on Computer Aided
+Verification*, 97–117. Springer.
+
+</div>
+
+<div id="ref-katz2019marabou" class="csl-entry">
+
+Katz, Guy, Derek A Huang, Duligur Ibeling, Kyle Julian, Christopher
+Lazarus, Rachel Lim, Parth Shah, et al. 2019. “The Marabou Framework for
+Verification and Analysis of Deep Neural Networks.” In *International
+Conference on Computer Aided Verification*, 443–52. Springer.
+
+</div>
+
+</div>
