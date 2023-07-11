@@ -156,7 +156,7 @@ You can also download already trained networks for our examples from
   Neural Information Processing Systems 2021, NeurIPS 2021, December
   6-14, 2021, virtual, pages 29909–29921, 2021.
 
-# Getting Started: the Vehicle’s Language
+# Getting Started: the Vehicle Language
 
 In this chapter we will introduce some basic features of **Vehicle** as
 a specification language. We will use the famous *ACAS Xu verification
@@ -549,15 +549,15 @@ Result: true
 
 1.  On the tutorial pages, find the ONNX model, `iris_model.onnx`
     trained on the famous Iris data set:
-    https://en.wikipedia.org/wiki/Iris_flower_data_set Find also the
+    <https://en.wikipedia.org/wiki/Iris_flower_data_set> Find also the
     data set in the `idx` format (cf. tutorial repository).
 2.  Using the Wikipedia page or other sources, examine the data set, and
     try to define a few “obvious properties” that should hold for a
     model that does its classification.
 3.  Write those properties as a Vehicle specification, ensure it type
-    checks. See Vehicl Manual pages
-    (<https://vehicle-lang.readthedocs.io/en/stable/>) how to run type
-    checking.
+    checks. See the [Vehicle
+    Manual](https://vehicle-lang.readthedocs.io/en/stable/) for how to
+    run type checking.
 4.  Using the Vehicle command line, verify your specification,
     i.e. check whether the properties hold.
 
