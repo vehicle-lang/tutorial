@@ -30,12 +30,12 @@ the sum of its inputs.
 In some scenarios, it becomes important to establish formal guarantees
 about neural network behaviour. One of the first known attempts to
 verify neural networks, by (Pulina and Tacchella 2010), was based on
-abstract interpretation. The famous paper by~Szegedy (Szegedy et al.
+abstract interpretation. The famous paper by Szegedy (Szegedy et al.
 2013) that highlighted the problem of neural network vulnerability to
-small-norm input perturbations (\`\`adversarial attacks”) gave
-additional impulse to this line of research. In CAV’2017, two papers, by
-Huang et al (Huang et al. 2017) and Katz et al. (Katz et al. 2017), on
-neural network verification appeared and both used specialised forms of
+small-norm input perturbations (“adversarial attacks”) gave additional
+impulse to this line of research. In CAV’2017, two papers, by Huang et
+al (Huang et al. 2017) and Katz et al. (Katz et al. 2017), on neural
+network verification appeared and both used specialised forms of
 SMT-solving. The later gave rise to Marabou (Katz et al. 2019), – a
 rapidly developing sound and complete neural network verifer, which we
 use in Vehicle.  
