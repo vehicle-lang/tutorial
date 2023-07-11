@@ -28,6 +28,7 @@ _site/index.html: $(SOURCES) | _site/
 		--table-of-contents                                   \
 		--number-sections                                     \
 		--katex                                               \
+		--lua-filter filters/pygmentize.lua                   \
 		--output _site/index.html
 
 .PHONY: view
