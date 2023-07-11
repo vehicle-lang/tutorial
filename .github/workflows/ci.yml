@@ -97,7 +97,7 @@ jobs:
           latexmk_shell_escape: true
           extra_system_packages: python3
           pre_compile: |
-            python -m ensurepip
+            python -m ensurepip --default-pip
             pip install pygments
             pip install vehicle_lang
           root_file: tutorial.tex
