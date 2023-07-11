@@ -54,7 +54,7 @@
 %\usepackage{cibeamer}
 \usepackage{tikz}
 \usetikzlibrary{arrows,shapes}
-%\xyoption{all} 
+%\xyoption{all}
 %\usepackage{listings}
 %\input macro
 \usepackage{cancel, comment}
@@ -152,11 +152,11 @@
 We will:
 
 \begin{itemize}[<+->]
-\item  ... introduce Main building blocks of Vehicle as a Programming Language 
-\item ... get to practice working with Vehicle 
+\item  ... introduce Main building blocks of Vehicle as a Programming Language
+\item ... get to practice working with Vehicle
 \item ... use the famous ACAS Xu benchmark to show Vehicle's work flow --
 from specification to verification
-\item ... identify PL problems (cf Introduction) that are resolved by Vehicle 
+\item ... identify PL problems (cf Introduction) that are resolved by Vehicle
 
 \end{itemize}
 
@@ -172,9 +172,9 @@ from specification to verification
 
 \item[$I^{P}$] Interpretability -- code is not easy to understand.
 
-\item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties. 
+\item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties.
 
-\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level). 
+\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level).
 \end{itemize}
 \end{frame}
 
@@ -228,7 +228,7 @@ The system was originally implemented as a 2Gb lookup table but was replaced wit
 \begin{block}{}
 \begin{equation*}
 \begin{array}{l}
-(\rho \geq 55947.691) \wedge 
+(\rho \geq 55947.691) \wedge
 (v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
 \Rightarrow \text{the score for COC is at most 1500}
 \end{array}
@@ -275,19 +275,23 @@ pi = 3.141592
 \begin{frame}[fragile]
 \frametitle{Working with vectors}
 \begin{itemize}
-\item some input or output pre-processing maybe expected when defining a neural network. 
+\item some input or output pre-processing maybe expected when defining a neural network.
 
 \begin{example}
 It is assumed that the ACAS Xu inputs and outputs are normalised, i.e. the network does not work directly with units like $m/s$. However, the specifications  we want to write should ideally concern the original units.
 \end{example}
 
-\pause 
+\pause
 
+<<<<<<< HEAD
 \item This is an instance of \emph{``problem space / input space mismatch"} 
+=======
+\item This is an instance of \emph{`` problem space / input space mismatch"}
+>>>>>>> c39e43739cc272ef0a8dd742a011df67d3f1540e
 \item ... that is very common in neural net verification
 
-\item 
-Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from 
+\item
+Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from
 majority of the mainstream neural network verifiers
 \end{itemize}
 \end{frame}
@@ -319,14 +323,14 @@ meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 
 \begin{frame}[fragile]
 \frametitle{Vector manipulation}
-An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`. 
+An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`.
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 
 minimumInputValues : UnnormalisedInputVector
 minimumInputValues = foreach i . 0
 
 \end{minted}
-Let us see how  `foreach` works with vector indexing. 
+Let us see how  `foreach` works with vector indexing.
 
 We can now define the normalisation function that takes an input vector and
 returns the unnormalised version.
@@ -355,7 +359,7 @@ Functions make up the backbone of the \textbf{Vehicle} language.
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 
 validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i . 
+validInput x = forall i .
   minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 
 \end{minted}
@@ -388,10 +392,10 @@ normAcasXu x = acasXu (normalise x)
 \frametitle{Pre-defined functions and predicates}
 We have already used:
 \begin{minted}[fontsize=\footnotesize]{vehicle}
-* 
-/ 
-! 
-<= 
+*
+/
+!
+<=
 \end{minted}
 
 \begin{block}{Exercise}
@@ -462,7 +466,7 @@ Can you identify whether the specification is written in terms of input space or
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 @property
 property1 : Bool
-property1 = forall x . 
+property1 = forall x .
    validInput x and intruderDistantAndSlower x =>
            normAcasXu x ! clearOfConflict <= 1500
 \end{minted}
@@ -470,7 +474,7 @@ property1 = forall x .
 \begin{block}{Exercise!}
 \footnotesize{
 \begin{enumerate}
-\item Can you guess the purpose of the syntax 
+\item Can you guess the purpose of the syntax
 \begin{minted}{vehicle}
 @property
 \end{minted}
@@ -491,12 +495,12 @@ property1 = forall x .
 \end{enumerate}
 \end{block}
 
-\pause 
+\pause
 \begin{minted}[fontsize=\footnotesize]{vehicle}
-vehicle --compileAndVerify 
-  --specification acasXu.vcl 
-  --verifier Marabou 
-  --network acasXu:acasXu_1_7.onnx 
+vehicle --compileAndVerify
+  --specification acasXu.vcl
+  --verifier Marabou
+  --network acasXu:acasXu_1_7.onnx
   --property property1
 
 --------------------------------------------------
@@ -547,14 +551,14 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 
 \begin{frame}
 \frametitle{Vehicle ...}
- 
+
  \textbf{ the part that we have seen}
- 
+
 \begin{center}
 \begin{tikzpicture}[thick,
     set/.style = {circle,
         minimum size = 3cm}]
- 
+
 % Set A
 \node[rectangle,draw] (A) at (1.5,5) {\alert{\textbf{Property in Vehicle}}};
 
@@ -597,9 +601,9 @@ Which of the four PL problems we addressed?
 
 \item[$I^{P}$] Interpretability -- code is not easy to understand.
 
-\item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties. 
+\item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties.
 
-\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level). 
+\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level).
 \end{itemize}
 \end{frame}
 

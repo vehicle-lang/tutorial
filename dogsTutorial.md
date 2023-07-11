@@ -18,7 +18,7 @@ big dogs with small dogs. Let us see how we can express and enforce this propert
 In Vehicle specifications, networks are treated as black-box functions.
 They are declared as regular functions, but only require one to specify their type signature preceded by the keyword `@network`.
 
-```{.vcl}
+``` vehicle
     @network
     score : Tensor Rat[28, 28] -> Vector Rat 20
 ```
@@ -39,7 +39,7 @@ either `Bool`, `Vector Bool` or `Tensor Bool` as types.
 
 For example, a property stating that some previously defined function `f` is always positive would look as follows.
 
-```{.vcl}
+``` vehicle
 @property
 fIsPositive : Bool
 fIsPositive = forall x . f x > 0.0
@@ -50,7 +50,7 @@ fIsPositive = forall x . f x > 0.0
 Let us start with an example of a simple property stating that there is at least one image classified as a Great Dane.
 First, we need to declare an auxiliary function that determines for each image, what is the predicted breed by our network `score`.
 
-```{.vcl}
+``` vehicle
     isFirstChoice : Tensor Rat[28, 28] -> Index 20 -> Bool
     isFirstChoice img d1 =
         forall d2 . d2 != d1 => (score img) ! d1 > (score img) ! d2
@@ -66,7 +66,7 @@ Vehicle supports type synonyms. For instance, instead of repeatedly writing `Ten
 we can declare new types called `Image` and `Dog`. Like this, the signature of
 `isFirstChoice` becomes more meaningful.
 
-```{.vcl}
+``` vehicle
     type Image  = Tensor Rat [28, 28]
     type Dog    = Index 20
 
@@ -77,7 +77,7 @@ We can now write the property `existsGreatDane` stating that at least one image 
 `exists img` checks whether the predicate `isFirstChoice img greatDane` holds for some image `img`,
 where we have declared `greatDane` as the dog breed number 1.
 
-```{.vcl}
+``` vehicle
     GreatDane = 1
 
     @property
@@ -89,7 +89,7 @@ But wait! If we compile this specification as is and pass it to the verifier, `e
 hold for a nonsensical image. To avoid this, we must restrict our property to valid images only.
 We consider an image valid if all its pixels are valid, i.e., normalized to be in the range 0 to 1.
 
-```{.vcl}
+``` vehicle
     validPixel : Rat -> Bool
     validPixel p = 0 <= p <= 1
 
@@ -101,7 +101,7 @@ Here, `forall` conveniently infers the type of `i` and `j` as `Index 28`, based 
 
 We can now rewrite our property restricted to valid images only.
 
-```{.vcl}
+``` vehicle
     @property
     existsGreatDane : Bool
     existsGreatDane = exists img . (validImage img) and (isFirstChoice img GreatDane)
@@ -116,14 +116,14 @@ We need an auxiliary function `isSecondChoice`. Given an image `img` and a breed
 
 The `let ... in ...` clause lets us define a variable to be used after `in`. In this case, we give the name `scores` to the output of the network for `img`, i.e. `score img`.
 
-```{.vcl}
+``` vehicle
     isSecondChoice : Image -> Dog -> Bool
     isSecondChoice img d2 =
     let scores = score img in
     exists d1 . (isFirstChoice img d1) and (forall d . d != d1 and d != d2 => scores ! d2 > scores ! d)
 ```
 
-```{.vcl}
+``` vehicle
     noConfusionWith : Image -> List Dog -> List Dog -> Bool
     noConfusionWith img dogsList1 dogsList2 =
     forall d1 in dogsList1 .
@@ -138,7 +138,7 @@ We split the breeds into two lists, `bigDogs` and `smallDogs`.
 Lists in vehicle can hold an arbitrary number of elements of a single type and are declared using `[x_1, ..., x_n]`.
 We define `smallDogs`and `bigDogs` with type `List Dog` (recall that this is really `List Index 20`).
 
-```{.vcl}
+``` vehicle
     greatDane       = 1
     germanShepherd  = 2
     chihuahua       = 11
@@ -157,7 +157,7 @@ choice in the same list.
 
 (Comment on not using for loops to transverse the lists.)
 
-```{.vcl}
+``` vehicle
     @property
     doesNotConfuseBigAndSmall : Bool
     doesNotConfuseBigAndSmall =

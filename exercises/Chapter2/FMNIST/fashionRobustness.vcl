@@ -31,7 +31,7 @@ robustAround image label = forall perturbation .
 
 
 @dataset
-image : Vector Image 1 
+image : Vector Image 1
 
 @dataset
 label : Vector Label 1
