@@ -12,9 +12,13 @@ SOURCES+=$(wildcard images/*.png)
 ################################################################################
 
 .PHONY: html
-html: index.html
+html: _site/index.html
 
-index.html: $(SOURCES)
+_site/:
+	mkdir -p _site/
+
+_site/index.html: $(SOURCES) | _site/
+	cp -R images _site/images
 	pandoc                                                  \
 		--defaults table-of-contents.yaml                     \
 		--to html                                             \
@@ -24,11 +28,11 @@ index.html: $(SOURCES)
 		--table-of-contents                                   \
 		--number-sections                                     \
 		--katex                                               \
-		--output index.html
+		--output _site/index.html
 
 .PHONY: view
-view: index.html
-	python -m http.server
+view: _site/index.html
+	python -m http.server --directory _site/
 
 
 ################################################################################

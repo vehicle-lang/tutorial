@@ -111,8 +111,6 @@ jobs:
       - name: Upload Pages artifact
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v1
-        with:
-          path: index.html
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push'
