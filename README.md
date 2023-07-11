@@ -87,27 +87,48 @@ important role in their verification:
 There are several research challenges in the area of neural network
 verification:
 
-1.  On the solver side, undecidability of non-linear real arithmetic
-    (Akbarpour and Paulson 2009) and scalability of neural network
-    verifiers \[wang2021beta\] stand as two main challenges.
-2.  In all realistic scenarious, even accurate neural networks require
-    extra “property-driven training” in order to comply with
-    verification properties in question. This calls for new methods of
-    integrating training with verification.
-3.  The scope of neural network properties available in the literature
-    is limited. Robustness is the most popular general property to date
+1.  *Theory: finding appropriate verification properties.* The scope of
+    neural network properties available in the literature is limited.
+    Robustness is the most popular general property to date
     (**CasadioDKKKS2022?**), and others include mostly domain-specific
     properties, such as ACAS Xu Benchmark (Katz et al. 2017), which we
-    will consider shortly in this tutorial.
-4.  The available language infrastructure (e.g. the existing neural
-    network solvers) encourage property specifications in terms of the
-    input space, whereas one often needs to reason about neural network
-    behavior in terms of the problem space.
-5.  Finally, neural networks usually work as components of complex
-    systems, and the question of smooth integation of existing neural
-    network solvers with other theorem provers requires resolution.
+    will consider shortly in this tutorial. What neural network
+    properties we want and can realistically verify still stands as a
+    big research question.
 
-This tutorial will focus on problems 2 – 5, and will present the tool
+2.  *Solvers: undecidability of non-linear real arithmetic and
+    scalability of neural network verifiers.* On the solver side,
+    undecidability of non-linear real arithmetic (Akbarpour and
+    Paulson 2009) and scalability of neural network verifiers
+    \[wang2021beta\] stand as two main challenges.
+
+3.  *Machine Learning: understanding and integrating property-driven
+    training.* In all realistic scenarious, even accurate neural
+    networks require extra “property-driven training” in order to comply
+    with verification properties in question. This calls for new methods
+    of integrating training with verification. Several approaches exist,
+    including the recently introduced method of *“differentiable
+    logics”* that translate logical properties into loss functions. But
+    they all have pitfalls, see (Slusarz et al. 2023) for a discussion.
+
+4.  *Programming: finding the right languages to support these
+    developments* Many existing solvers have low-level syntax that is
+    hard to understand, making maintenance of code difficult. There is
+    very little programming infrastructure to interface verification and
+    property-driven training. The available language infrastructure
+    encourages property specifications in terms of the input space,
+    whereas one often needs to reason about neural network behavior in
+    terms of the problem space. This creates an additional *embedding
+    gap* on verification side, – a problem that eventually needs to be
+    resolved.
+
+5.  *Complex systems: integration of neural net verification into
+    complex systems.* Finally, neural networks usually work as
+    components of complex systems, and the question of smooth integation
+    of existing neural network solvers with other theorem provers
+    requires resolution.
+
+This tutorial will focus on problems 3 – 5, and will present the tool
 Vehicle that provides support in alleviating them. In particular,
 Vehicle provides a specification language that allows one to express
 neural network properties in a high-level, human-readable format (thus
@@ -1182,6 +1203,16 @@ Paul Jackson, 243–57. Berlin, Heidelberg: Springer Berlin Heidelberg.
 Singh, Gagandeep, Timon Gehr, Markus Püschel, and Martin Vechev. 2019.
 “An Abstract Domain for Certifying Neural Networks.” *Proceedings of the
 ACM on Programming Languages* 3 (POPL): 1–30.
+
+</div>
+
+<div id="ref-SKDSS23" class="csl-entry">
+
+Slusarz, Natalia, Ekaterina Komendantskaya, Matthew L. Daggitt, Robert
+J. Stewart, and Kathrin Stark. 2023. “Logic of Differentiable Logics:
+Towards a Uniform Semantics of DL.” In *LPAR-24: The International
+Conference on Logic for Programming, Artificial Intelligence and
+Reasoning*.
 
 </div>
 
