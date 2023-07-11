@@ -1,28 +1,32 @@
--- Inputs and outputs definitions, check dimensions of in and out for the onnx?
+--The input for the network is a 28 * 28 image
 type Image = Tensor Rat [28, 28]
 
+--A label is an int between 0 and 9
 type Label = Index 10
 
 
---Questions; what are the . and ! symbols, what is the logic here?/Check that all Rat's in image are between 0 and 1
+--All pixels in the image have values between 0 and 1
 validImage : Image -> Bool
 validImage x = forall i j . 0 <= x ! i ! j <= 1
 
-
+--The network takes an image and returns a vector of scores
 @network
 classifier : Image -> Vector Rat 10
 
---Function advises takes an image and returns a function from label to bool. x is the image, i is the label?
+--The classifier scores a given label above all others
 advises : Image -> Label -> Bool
-advises x i = forall j . j != i => classifier x ! i > classifier x ! j
+advises image label = forall j . j != label => classifier image ! label > classifier image ! j
 
+
+--The radius of the epsilon ball that we are checking robustness within
 @parameter
 epsilon : Rat
 
---Questions; what is -epsilon, negative epsilon?
+--Every pixel in the perturbation is less than or equal to epsilon
 boundedByEpsilon : Image -> Bool
-boundedByEpsilon x = forall i j . -epsilon <= x ! i ! j <= epsilon
+boundedByEpsilon perturbation = forall i j . -epsilon <= perturbation ! i ! j <= epsilon
 
+--Check that every valid perturbation of an image is classified as the given label
 robustAround : Image -> Label -> Bool
 robustAround image label = forall perturbation .
 	let perturbedImage = image - perturbation in
@@ -30,12 +34,15 @@ robustAround image label = forall perturbation .
 		advises perturbedImage label
 
 
+--Take two datasets one containing an image and one a label
 @dataset
-image : Vector Image 1
+imageDataset : Vector Image 1
 
 @dataset
-label : Vector Label 1
+labelDataset : Vector Label 1
 
+--Test the image for robustness around the label
 @property
 robust : Bool
-robust = robustAround (image ! 0) (label ! 0)
+robust = robustAround (imageDataset ! 0) (labelDataset ! 0)
+
