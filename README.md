@@ -28,9 +28,39 @@ element standing for a pixel value. Each arrow in the picture bears a
 the sum of its inputs.
 
 In some scenarios, it becomes important to establish formal guarantees
-about neural network behaviour. Following the pioneering work of (Katz
-et al. 2019, singh2019abstract, wang2021beta) neural network
-verification has become an active research area.
+about neural network behaviour. One of the first known attempts to
+verify neural networks, by (Pulina and Tacchella 2010), was based on
+abstract interpretation. The famous paper by~Szegedy (Szegedy et al.
+2013) that highlighted the problem of neural network vulnerability to
+small-norm input perturbations (\`\`adversarial attacks”) gave
+additional impulse to this line of research. In CAV’2017, two papers, by
+Huang et al (Huang et al. 2017) and Katz et al. (Katz et al. 2017), on
+neural network verification appeared and both used specialised forms of
+SMT-solving. The later gave rise to Marabou (Katz et al. 2019), – a
+rapidly developing sound and complete neural network verifer, which we
+use in Vehicle.  
+In 2019, the ERAN verifier by Dingh et al. (Singh et al. 2019) appeared
+in POPL, and showed that performance of abstract interpretation methods
+compares favourably against those based on SMT solving. However, the
+range of properties they handled was limited to proving adversarial
+robustness of neural networks; moreover ERAN was incomplete. This line
+of research led to many subsequent extensions, e.g. by Muller et al.
+(Müller et al. 2022), (Müller et al. 2023) to mention a few.  
+Mixed Integer Linear Programming (MILP) methods were brought into this
+community by Bastani et al. (Bastani et al. 2016), and were further
+developed into working tools, e.g. Venus (Botoeva et al. 2020). Neural
+network verifier extensions followed two main directions: – scaling to
+larger networks (we can mention $\alpha\beta$-Crown (Wang et al. 2021)
+and GCP-Crown (Zhang et al. 2022) as VNN-COMP winners in 2021 and 2022);
+and – extending from piece-wise linear to non-linear activation
+functions. (An example are sigmoid neurons handled by Verisig using
+interval arithmetic (Ivanov et al. 2019).) At the time of writing, there
+exist over a hundred verifiers for neural networks. Several papers and
+monographs are dedicated to the survey of the landscape~Huang et al.
+(2020). The community established the specification standards
+[VNNLib](https://www.vnnlib.org/), common benchmarks and annual
+competitions. Vehicle compiles down to the VNNLib standard, with a view
+to be compatible with the growing family of verifiers.
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$.
 Verification of such functions most commonly boils down to specifying
@@ -1024,6 +1054,73 @@ Automated Reasoning* 44 (3): 175–205.
 
 </div>
 
+<div id="ref-PGL-051" class="csl-entry">
+
+Albarghouthi, Aws. 2021. “Introduction to Neural Network Verification.”
+*Foundations and Trends® in Programming Languages* 7 (1–2): 1–157.
+<https://doi.org/10.1561/2500000051>.
+
+</div>
+
+<div id="ref-BastaniILVNC16" class="csl-entry">
+
+Bastani, Osbert, Yani Ioannou, Leonidas Lampropoulos, Dimitrios
+Vytiniotis, Aditya V. Nori, and Antonio Criminisi. 2016. “Measuring
+Neural Net Robustness with Constraints.” In *Advances in Neural
+Information Processing Systems 29: Annual Conference on Neural
+Information Processing Systems 2016, December 5-10, 2016, Barcelona,
+Spain*, edited by Daniel D. Lee, Masashi Sugiyama, Ulrike von Luxburg,
+Isabelle Guyon, and Roman Garnett, 2613–21.
+<https://proceedings.neurips.cc/paper/2016/hash/980ecd059122ce2e50136bda65c25e07-Abstract.html>.
+
+</div>
+
+<div id="ref-BotoevaKKLM20" class="csl-entry">
+
+Botoeva, Elena, Panagiotis Kouvaros, Jan Kronqvist, Alessio Lomuscio,
+and Ruth Misener. 2020. “Efficient Verification of ReLU-Based Neural
+Networks via Dependency Analysis.” In *The Thirty-Fourth AAAI Conference
+on Artificial Intelligence, AAAI 2020, the Thirty-Second Innovative
+Applications of Artificial Intelligence Conference, IAAI 2020, the Tenth
+AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI
+2020, New York, NY, USA, February 7-12, 2020*, 3291–99. AAAI Press.
+<https://ojs.aaai.org/index.php/AAAI/article/view/5729>.
+
+</div>
+
+<div id="ref-HuangKRSSTWY20" class="csl-entry">
+
+Huang, Xiaowei, Daniel Kroening, Wenjie Ruan, James Sharp, Youcheng Sun,
+Emese Thamo, Min Wu, and Xinping Yi. 2020. “A Survey of Safety and
+Trustworthiness of Deep Neural Networks: Verification, Testing,
+Adversarial Attack and Defence, and Interpretability.” *Comput. Sci.
+Rev.* 37: 100270. <https://doi.org/10.1016/j.cosrev.2020.100270>.
+
+</div>
+
+<div id="ref-HuangKWW17" class="csl-entry">
+
+Huang, Xiaowei, Marta Kwiatkowska, Sen Wang, and Min Wu. 2017. “Safety
+Verification of Deep Neural Networks.” In *Computer Aided Verification -
+29th International Conference, CAV 2017, Heidelberg, Germany, July
+24-28, 2017, Proceedings, Part I*, edited by Rupak Majumdar and Viktor
+Kuncak, 10426:3–29. Lecture Notes in Computer Science. Springer.
+[https://doi.org/10.1007/978-3-319-63387-9\\1](https://doi.org/10.1007/978-3-319-63387-9\_1).
+
+</div>
+
+<div id="ref-IvanovWAPL19" class="csl-entry">
+
+Ivanov, Radoslav, James Weimer, Rajeev Alur, George J. Pappas, and Insup
+Lee. 2019. “Verisig: Verifying Safety Properties of Hybrid Systems with
+Neural Network Controllers.” In *Proceedings of the 22nd ACM
+International Conference on Hybrid Systems: Computation and Control,
+HSCC 2019, Montreal, QC, Canada, April 16-18, 2019*, edited by Necmiye
+Ozay and Pavithra Prabhakar, 169–78. ACM.
+<https://doi.org/10.1145/3302504.3311806>.
+
+</div>
+
 <div id="ref-katz2017reluplex" class="csl-entry">
 
 Katz, Guy, Clark Barrett, David L Dill, Kyle Julian, and Mykel J
@@ -1039,6 +1136,79 @@ Katz, Guy, Derek A Huang, Duligur Ibeling, Kyle Julian, Christopher
 Lazarus, Rachel Lim, Parth Shah, et al. 2019. “The Marabou Framework for
 Verification and Analysis of Deep Neural Networks.” In *International
 Conference on Computer Aided Verification*, 443–52. Springer.
+
+</div>
+
+<div id="ref-LiuALSBK21" class="csl-entry">
+
+Liu, Changliu, Tomer Arnon, Christopher Lazarus, Christopher A. Strong,
+Clark W. Barrett, and Mykel J. Kochenderfer. 2021. “Algorithms for
+Verifying Deep Neural Networks.” *Found. Trends Optim.* 4 (3-4):
+244–404. <https://doi.org/10.1561/2400000035>.
+
+</div>
+
+<div id="ref-mueller2023abstract" class="csl-entry">
+
+Müller, Mark Niklas, Marc Fischer, Robin Staab, and Martin T. Vechev.
+2023. “Abstract Interpretation of Fixpoint Iterators with Applications
+to Neural Networks.” In *PLDI ’23: 44nd ACM SIGPLAN International
+Conference on Programming Language Design and Implementation, Orlando,
+Florida, United States June 17-21, 2023*. ACM.
+<https://doi.org/10.1145/3591252>.
+
+</div>
+
+<div id="ref-muller2022prima" class="csl-entry">
+
+Müller, Mark Niklas, Gleb Makarchuk, Gagandeep Singh, Markus Püschel,
+and Martin Vechev. 2022. “PRIMA: General and Precise Neural Network
+Certification via Scalable Convex Hull Approximations.” *Proceedings of
+the ACM on Programming Languages* 6 (POPL): 1–33.
+
+</div>
+
+<div id="ref-PT10" class="csl-entry">
+
+Pulina, Luca, and Armando Tacchella. 2010. “An Abstraction-Refinement
+Approach to Verification of Artificial Neural Networks.” In *Computer
+Aided Verification (CAV’23)*, edited by Tayssir Touili, Byron Cook, and
+Paul Jackson, 243–57. Berlin, Heidelberg: Springer Berlin Heidelberg.
+
+</div>
+
+<div id="ref-singh2019abstract" class="csl-entry">
+
+Singh, Gagandeep, Timon Gehr, Markus Püschel, and Martin Vechev. 2019.
+“An Abstract Domain for Certifying Neural Networks.” *Proceedings of the
+ACM on Programming Languages* 3 (POPL): 1–30.
+
+</div>
+
+<div id="ref-szegedy2013intriguing" class="csl-entry">
+
+Szegedy, Christian, Wojciech Zaremba, Ilya Sutskever, Joan Bruna,
+Dumitru Erhan, Ian Goodfellow, and Rob Fergus. 2013. “Intriguing
+Properties of Neural Networks.” In *International Conference on Learning
+Representations*. <http://arxiv.org/abs/1312.6199>.
+
+</div>
+
+<div id="ref-wang2021beta" class="csl-entry">
+
+Wang, Shiqi, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh,
+and J Zico Kolter. 2021. “Beta-CROWN: Efficient Bound Propagation with
+Per-Neuron Split Constraints for Complete and Incomplete Neural Network
+Verification.” *Advances in Neural Information Processing Systems* 34.
+
+</div>
+
+<div id="ref-zhang2022general" class="csl-entry">
+
+Zhang, Huan, Shiqi Wang, Kaidi Xu, Linyi Li, Bo Li, Suman Jana, Cho-Jui
+Hsieh, and J Zico Kolter. 2022. “General Cutting Planes for
+Bound-Propagation-Based Neural Network Verification.” *Advances in
+Neural Information Processing Systems*.
 
 </div>
 
