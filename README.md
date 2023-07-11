@@ -28,9 +28,9 @@ element standing for a pixel value. Each arrow in the picture bears a
 the sum of its inputs.
 
 In some scenarios, it becomes important to establish formal guarantees
-about neural network behaviour. Following the pioneering work of (Katz
-et al. 2017, Singh2019, Wang2021) neural network verification has become
-an active research area.
+about neural network behaviour. Following the pioneering work of
+(**KatzBDJK2017?**) neural network verification has become an active
+research area.
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$.
 Verification of such functions most commonly boils down to specifying
@@ -66,8 +66,8 @@ verification:
     integrating training with verification.
 3.  The scope of neural network properties available in the literature
     is limited. Robustness is the most popular general property to date
-    (Casadio et al. 2021), and others include mostly domain-specific
-    properties, such as ACAS Xu Benchmark (Katz et al. 2017), which we
+    (**CasadioDKKKS2022?**), and others include mostly domain-specific
+    properties, such as ACAS Xu Benchmark (**KatzBDJK2017?**), which we
     will consider shortly in this tutorial.
 4.  The available language infrastructure (e.g. the existing neural
     network solvers) encourage property specifications in terms of the
@@ -1013,25 +1013,3 @@ Following this work, Vehicle contains translation to several loss
 functions available in the literature.
 
 # References
-
-<div id="refs" class="references csl-bib-body hanging-indent">
-
-<div id="ref-CasadioDKKKS2022" class="csl-entry">
-
-Casadio, Marco, Matthew L. Daggitt, Ekaterina Komendantskaya, Wen Kokke,
-Daniel Kienitz, and Rob Stewart. 2021. “Property-Driven Training: All
-You (n)ever Wanted to Know About.” *CoRR* abs/2104.01396.
-<https://arxiv.org/abs/2104.01396>.
-
-</div>
-
-<div id="ref-KatzBDJK2017" class="csl-entry">
-
-Katz, Guy, Clark W. Barrett, David L. Dill, Kyle Julian, and Mykel J.
-Kochenderfer. 2017. “Reluplex: An Efficient SMT Solver for Verifying
-Deep Neural Networks.” *CoRR* abs/1702.01135.
-<http://arxiv.org/abs/1702.01135>.
-
-</div>
-
-</div>
