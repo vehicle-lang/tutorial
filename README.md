@@ -89,12 +89,11 @@ verification:
 
 1.  *Theory: finding appropriate verification properties.* The scope of
     neural network properties available in the literature is limited.
-    Robustness is the most popular general property to date
-    (**CasadioDKKKS2022?**), and others include mostly domain-specific
-    properties, such as ACAS Xu Benchmark (Katz et al. 2017), which we
-    will consider shortly in this tutorial. What neural network
-    properties we want and can realistically verify still stands as a
-    big research question.
+    Robustness is the most popular general property to date (Casadio et
+    al. 2021), and others include mostly domain-specific properties,
+    such as ACAS Xu Benchmark (Katz et al. 2017), which we will consider
+    shortly in this tutorial. What neural network properties we want and
+    can realistically verify still stands as a big research question.
 
 2.  *Solvers: undecidability of non-linear real arithmetic and
     scalability of neural network verifiers.* On the solver side,
@@ -200,7 +199,7 @@ You can also download already trained networks for our examples from
   Lang., 3(POPL):41:1–41:30, 2019.
 - Shiqi Wang, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh,
   and J. Zico Kolter. Beta-crown: Efficient bound propagation with
-  per-neuron split constraints for neu- ral network robustness
+  per-neuron split constraints for neural network robustness
   verification. In Marc’Aurelio Ranzato, Alina Beygelzimer, Yann N.
   Dauphin, Percy Liang, and Jennifer Wortman Vaughan, editors, Advances
   in Neural Information Processing Systems 34: Annual Conference on
@@ -1106,6 +1105,14 @@ Applications of Artificial Intelligence Conference, IAAI 2020, the Tenth
 AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI
 2020, New York, NY, USA, February 7-12, 2020*, 3291–99. AAAI Press.
 <https://ojs.aaai.org/index.php/AAAI/article/view/5729>.
+
+</div>
+
+<div id="ref-casadio2021property" class="csl-entry">
+
+Casadio, Marco, Matthew L. Daggitt, Ekaterina Komendantskaya, Wen Kokke,
+Daniel Kienitz, and Rob Stewart. 2021. “Property-Driven Training: All
+You (n) Ever Wanted to Know About.” *arXiv Preprint arXiv:2104.01396*.
 
 </div>
 
