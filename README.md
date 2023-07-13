@@ -14,7 +14,7 @@ With contributions by
 - Ben Coke
 - Jeonghyeon Lee
 
-## What is Neural Network Verification about?
+## What is Neural Network Verification?
 
 Neural networks are widely used in the field of machine learning; and
 are often embedded as *pattern-recognition* or *signal processing*
@@ -102,24 +102,24 @@ verification:
     \[wang2021beta\] stand as two main challenges.
 
 3.  *Machine Learning: understanding and integrating property-driven
-    training.* In all realistic scenarious, even accurate neural
-    networks require extra “property-driven training” in order to comply
-    with verification properties in question. This calls for new methods
-    of integrating training with verification. Several approaches exist,
+    training.* In all realistic scenarios, even accurate neural networks
+    require extra “property-driven training” in order to comply with
+    verification properties in question. This requires new methods of
+    integrating training with verification. Several approaches exist,
     including the recently introduced method of *“differentiable
     logics”* that translate logical properties into loss functions. But
     they all have pitfalls, see (Slusarz et al. 2023) for a discussion.
 
 4.  *Programming: finding the right languages to support these
     developments* Many existing solvers have low-level syntax that is
-    hard to understand, making maintenance of code difficult. There is
-    very little programming infrastructure to interface verification and
-    property-driven training. The available language infrastructure
-    encourages property specifications in terms of the input space,
-    whereas one often needs to reason about neural network behavior in
-    terms of the problem space. This creates an additional *embedding
-    gap* on verification side, – a problem that eventually needs to be
-    resolved.
+    hard to understand, making maintenance of the specification
+    difficult. There is very little programming infrastructure to
+    interface verification and property-driven training. Furthermore,
+    the available language infrastructure only allows specifications to
+    be written in terms of the input space, whereas one often needs to
+    reason about neural network behavior in terms of the problem space.
+    This creates an additional *embedding gap* on verification side, – a
+    problem that eventually needs to be resolved.
 
 5.  *Complex systems: integration of neural net verification into
     complex systems.* Finally, neural networks usually work as
@@ -127,9 +127,9 @@ verification:
     of existing neural network solvers with other theorem provers
     requires resolution.
 
-This tutorial will focus on problems 3 – 5, and will present the tool
-Vehicle that provides support in alleviating them. In particular,
-Vehicle provides a specification language that allows one to express
+This tutorial will focus on problems 3 – 5, and will present Vehicle, a
+tool that provides support in alleviating them. In particular, Vehicle
+is equipped with a specification language that allows one to express
 neural network properties in a high-level, human-readable format (thus
 opening the way to reasoning about a wider space of properties, and
 reasoning in terms of the problem space). Then it compiles the
@@ -167,19 +167,20 @@ This tutorial will give an introduction to the Vehicle tool
 to modelling specifications for machine learning systems via functional
 programming. It will teach the participants to understand the range of
 problems that arise in neural network property specification,
-verification and training, and will give a hands-on experience on
-solving these problems at a level of a higher-order specification
-language with dependent types.
+verification and training, and will give hands-on experience at solving
+these problems at a level of a higher-order specification language with
+dependent types.
 
 ## Prerequisites
 
 To follow the tutorial, you will need Vehicle, Marabou and Agda
 installed in your machine. For instructions, refer to [vehicle
 documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
-You can also download already trained networks for our examples from
-\[link to tutorial repo\].
+You can also download already trained networks for our examples from the
+[tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
 
-(Recommendation to use Visual Studio Code with .vcl syntax highlighting)
+(We recommend using Visual Studio Code with the “Vehicle Syntax
+Highlighting” plugin installed)
 
 ## Related work
 
@@ -208,22 +209,22 @@ You can also download already trained networks for our examples from
 
 # Getting Started: the Vehicle Language
 
-In this chapter we will introduce some basic features of **Vehicle** as
-a specification language. We will use the famous *ACAS Xu verification
-challenge*, first introduced in 2017 by Guy Katz et al. in *“Reluplex:
-An Efficient SMT Solver for Verifying – Deep Neural Networks”
-(<https://arxiv.org/pdf/1702.01135.pdf>)*
+In this chapter we will introduce some basic features of the **Vehicle**
+specification language. As an example, we will use the famous *ACAS Xu
+verification challenge*, first introduced in 2017 by Guy Katz et al. in
+*“Reluplex: An Efficient SMT Solver for Verifying – Deep Neural
+Networks” (<https://arxiv.org/pdf/1702.01135.pdf>)* ACAS Xu stands for
+*Airborne Collision Avoidance System for unmanned aircraft*. The
+objective of the system is to analyse the aircraft’s position and
+distance relative to other aircraft and give collision avoidance
+instructions.
 
 ## Standard Components of a Verification Problem
 
 In the simplest verification scenario, we will need a neural network
 $N : R^m \rightarrow R^n$, and a property of the network we wish to
-verify. Often, though not always, such property can be formulated based
-on our understanding of the domain where the neural network is used.
-ACAS Xu stands for *Airborne Collision Avoidance System for unmanned
-aircraft*. The objective is to analyse the aircraft’s position and
-distance relative to other aircraft and give collision avoidance
-instructions.
+verify. In this case the property can be formulated based on our
+understanding of the ACASXu domain.
 
 In particular, the following measurements are of importance:
 
@@ -239,48 +240,46 @@ as the following picture illustrates: ![ACAS Xu](images/acas_xu.png)
 $\theta$ and $\psi$ are measured counter clockwise, and are always in
 the range $[-\pi, \pi]$.
 
-Based on this data the neural network is to issue one of the following
+Based on these inputs, the system should produce one of the following
 instructions:
 
-- Clear-of-Conflict (CoC),
+- clear-of-conflict (CoC),
 - weak left,
 - weak right,
 - strong left,
 - strong right.
 
-Different neural networks are trained to analyse the relation of input
-and output variables, each individual neural network uses only five
-input variables. Given five selected input parameters, and the five
-instructions above, a neural network $N_{AX} : R^5 \rightarrow R^5$ is
-trained, given the previous historic data. The exact architecture of the
-neural network, or its training mode are not important for our argument,
-and so we will omit the details for now.
+In practice, the domains of $\tau$ and $a_{prev}$ are used to partition
+the input space into 45 discrete subspaces, and a different neural
+network is trained to analyse the relation of input and output variables
+within each subspace. Therefore each individual neural network uses only
+the first five input variables.
+
+Given the five input parameters, and the five instructions above, each
+neural network $N_{AX} : R^5 \rightarrow R^5$ is trained, given the
+previous historic data. The exact architecture of the neural networks,
+or their training modes are not important for our argument, and so we
+will omit the details for now.
 
 The original paper by Guy Katz lists ten properties, but for the sake of
-the illustration we will just consider the first of them: *If the
-intruder is distant and is significantly slower than the ownship, the
-score of a COC advisory will always be below a certain fixed threshold.*
+the illustration we will just consider the first of them as it applies
+to a single network: *If the intruder is distant and is significantly
+slower than the ownship, the score of a COC advisory will always be
+below a certain fixed threshold.*
 
 ## Basic Building Blocks in Vehicle
 
 ### Types
 
-Unlike many Neural Network verifiers, Vehicle is a typeful language, and
-each specification file starts with declaring the types. In the ACAS Xu
-case, these are
+Unlike many Neural Network verifier input formats, Vehicle is a typed
+language, and it is common for each specification file starts with
+declaring the types. In the ACAS Xu case, these are the types of vectors
+of rational numbers that the network will be taking as inputs and giving
+as outputs
 
 ``` vehicle
 type InputVector = Vector Rat 5
 type OutputVector = Vector Rat 5
-```
-
-– the types of vectors of rational numbers that the network will be
-taking as inputs and giving as outputs; and of course the type of the
-network itself:
-
-``` vehicle
-@network
-acasXu : InputVector -> OutputVector
 ```
 
 The `Vector` type represents a mathematical vector, or in programming
@@ -290,14 +289,24 @@ items it contains) must be known statically at compile time. This allows
 Vehicle to check for the presence of out-of-bounds errors at compile
 time rather than run time.
 
-The full type is therefore written as `Vector A n`, which represents the
-type of vectors with `n` elements of type `A`. For example,
-`Vector Rat 5` is a vector of length $5$ that contains rational numbers.
+The most general `Vector` type is therefore written as `Vector A n`,
+which represents the type of vectors containing `n` elements of type
+`A`. For example, in this case `Vector Rat 5` is a vector of length $5$
+that contains rational numbers.
 
 **Vehicle** in fact has a comprehensive support for programming with
 vectors, which we will see throughout this tutorial. But the interested
 reader may go ahead and check the documentation pages for vectors:
 <https://vehicle-lang.readthedocs.io/en/stable/language/vectors.html>.
+
+### Networks
+
+Given this, we can declare the network itself:
+
+``` vehicle
+@network
+acasXu : InputVector -> OutputVector
+```
 
 Networks are declared by adding a `@network` annotation to a function
 declaration, as shown above. Note that although no implementation for
@@ -319,7 +328,7 @@ rational (note the minimalistic syntax required to do that in
 pi = 3.141592
 ```
 
-### Working with Vectors
+### Vector operations
 
 Often, some amount of input or output pre-processing is expected when
 defining a neural network. In our case, it is assumed that the `acasXu`
