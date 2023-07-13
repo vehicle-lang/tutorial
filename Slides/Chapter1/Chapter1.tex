@@ -214,23 +214,24 @@ Outputs:
 
 \begin{frame}
 \frametitle{ACAS Xu}
-The system was originally implemented as a 2Gb lookup table but was replaced with a neural network in order to improve size and latency requirements.
 
-\pause
-10 different specified properties in total.
-
-\pause
-\begin{definition}[ACAS Xu: Property 1]
-\emph{If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.}
+%\pause
+\begin{definition}[ACAS Xu: Property 3]
+{\it If the intruder is directly ahead and is moving towards the
+ ownship, the score for COC will not be minimal.}
 \end{definition}
 
-\pause
+%\pause
 \begin{block}{}
 \begin{equation*}
 \begin{array}{l}
-(\rho \geq 55947.691) \wedge
-(v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
-\Rightarrow \text{the score for COC is at most 1500}
+1500 \leq \rho \leq 1800 \wedge -0.06 \leq \theta \leq 0.06 \\
+ \wedge \psi \geq 3.10 \wedge v_{own} \geq 980 \wedge
+v_{int} \geq 960 \\
+\Rightarrow \text{the score for COC} \neq 0
+%(\rho \geq 55947.691) \wedge
+%(v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
+%\Rightarrow \text{the score for COC is at most 1500}
 \end{array}
 \end{equation*}
 \end{block}
@@ -427,19 +428,19 @@ The fact that all vector types come annotated with their size means that it
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Property 1}
+\frametitle{Property 3}
 
-\footnotesize{\textbf{If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.}}
+
+\footnotesize{\textbf{If the intruder is directly ahead and is moving towards the
+ ownship, the score for COC will not be minimal.}}
 
 \pause
 
 \begin{minted}[fontsize=\footnotesize]{vehicle}
-
-intruderDistantAndSlower : UnnormalisedInputVector -> Bool
-intruderDistantAndSlower x =
-  x ! distanceToIntruder >= 55947.691 and
-  x ! speed              >= 1145      and
-  x ! intruderSpeed      <= 60
+directlyAhead : UnnormalisedInputVector -> Bool
+directlyAhead x =
+  1500  <= x ! distanceToIntruder <= 1800 and
+  -0.06 <= x ! angleToIntruder    <= 0.06
 \end{minted}
 \pause
 \begin{block}{Exercise!}
@@ -447,7 +448,33 @@ intruderDistantAndSlower x =
 \begin{enumerate}
 \item
 Can you identify whether the specification is written in terms of input space or problem space? How do you know?
-\item Can you spot more pre-defined \textbf{Vehicle} functions? What are they?
+\item Can you spot another pre-defined \textbf{Vehicle} function? What is it?
+\end{enumerate}}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Property 3}
+
+\footnotesize{\textbf{If the intruder is directly ahead and is moving towards the
+ ownship, the score for COC will not be minimal.}}
+
+\pause
+
+\begin{minted}[fontsize=\footnotesize]{vehicle}
+movingTowards : UnnormalisedInputVector -> Bool
+movingTowards x =
+  x ! intruderHeading >= 3.10  and
+  x ! speed           >= 980   and
+  x ! intruderSpeed   >= 960
+\end{minted}
+\pause
+\begin{block}{Exercise!}
+\footnotesize{
+\begin{enumerate}
+\item Can you spot one more pre-defined \textbf{Vehicle} function? What is it?
 \end{enumerate}}
 \end{block}
 
@@ -457,16 +484,18 @@ Can you identify whether the specification is written in terms of input space or
 \frametitle{There is little left to do!}
 
 \footnotesize{
-\textbf{If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.}}
+\textbf{If the intruder is directly ahead and is moving towards the
+ ownship, the score for COC will not be minimal.}}
 
 \pause
 
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 @property
-property1 : Bool
-property1 = forall x .
-   validInput x and intruderDistantAndSlower x =>
-           normAcasXu x ! clearOfConflict <= 1500
+property3 : Bool
+property3 = forall x . validInput x and 
+                       directlyAhead x and 
+                       movingTowards x =>
+  not (advises clearOfConflict x)
 \end{minted}
 \pause
 \begin{block}{Exercise!}
@@ -499,18 +528,20 @@ vehicle verify \
   --specification acasXu.vcl \
   --verifier Marabou \
   --network acasXu:acasXu_1_7.onnx \
-  --property property1
+  --property property3
 
---------------------------------------------------
 Verifying properties:
-  property1 [===========================] 1/1 queries complete
-Result: true
-   property1
+property3 [==========================================] 1/1 queries
+  result:  counterexample found
+  x: [1799.9886669999978, 1.9509286320000003e-2, 
+                        3.09999732192, 980.0, 1017.6036]
 \end{minted}
 \end{frame}
 
+
+
 \begin{frame}[fragile]
-\frametitle{Next Chapter Exercise: $\epsilon$-ball Robustness}
+\frametitle{Exercise  1 (moderate): $\epsilon$-ball Robustness}
  \begin{minted}[fontsize=\tiny]{vehicle}
 type Image = Tensor Rat [28, 28]
 type Label = Index 10
@@ -603,6 +634,18 @@ Which of the four PL problems we addressed?
 
 \item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level).
 \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exercise  2 (hard): ACAS Xu: Property 1}
+
+In the previous lecture, we introduced ACAS Xu property 1.
+
+\begin{itemize}
+\item Can you formalise that property in Vehicle?
+\item Can you spot the instance of the embedding gap, this time concerning the network's output?
+\end{itemize}
+
 \end{frame}
 
 \end{document}
