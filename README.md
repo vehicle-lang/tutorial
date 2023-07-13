@@ -192,7 +192,9 @@ You can also download already trained networks for our examples from the
 We recommend using [Visual Studio Code](https://code.visualstudio.com)
 with the [Vehicle Syntax
 Highlighting](https://marketplace.visualstudio.com/items?itemName=wenkokke.vehicle-syntax-highlighting)
-plugin.
+and
+[agda-mode](https://marketplace.visualstudio.com/items?itemName=banacorn.agda-mode)
+plugins.
 
 # Getting Started with the Vehicle Specification Language
 
