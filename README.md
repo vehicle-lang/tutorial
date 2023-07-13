@@ -38,29 +38,38 @@ al (Huang et al. 2017) and Katz et al. (Katz et al. 2017), on neural
 network verification appeared and both used specialised forms of
 SMT-solving. The later gave rise to Marabou (Katz et al. 2019), – a
 rapidly developing sound and complete neural network verifer, which we
-use in Vehicle.  
+use in Vehicle.
+
 In 2019, the ERAN verifier by Dingh et al. (Singh et al. 2019) appeared
 in POPL, and showed that performance of abstract interpretation methods
 compares favourably against those based on SMT solving. However, the
 range of properties they handled was limited to proving adversarial
 robustness of neural networks; moreover ERAN was incomplete. This line
 of research led to many subsequent extensions, e.g. by Muller et al.
-(Müller et al. 2022), (Müller et al. 2023) to mention a few.  
+(Müller et al. 2022), (Müller et al. 2023) to mention a few.
+
 Mixed Integer Linear Programming (MILP) methods were brought into this
 community by Bastani et al. (Bastani et al. 2016), and were further
-developed into working tools, e.g. Venus (Botoeva et al. 2020). Neural
-network verifier extensions followed two main directions: – scaling to
-larger networks (we can mention $\alpha\beta$-Crown (Wang et al. 2021)
-and GCP-Crown (Zhang et al. 2022) as VNN-COMP winners in 2021 and 2022);
-and – extending from piece-wise linear to non-linear activation
-functions. (An example are sigmoid neurons handled by Verisig using
-interval arithmetic (Ivanov et al. 2019).) At the time of writing, there
-exist over a hundred verifiers for neural networks. Several papers and
-monographs are dedicated to the survey of the landscape Huang et al.
-(2020). The community established the specification standards
-[VNNLib](https://www.vnnlib.org/), common benchmarks and annual
-competitions. Vehicle compiles down to the VNNLib standard, with a view
-to be compatible with the growing family of verifiers.
+developed into working tools, e.g. Venus (Botoeva et al. 2020).
+
+Neural network verifier extensions followed two main directions: \*
+scaling to larger networks (we can mention $\alpha\beta$-Crown (Wang et
+al. 2021) and GCP-Crown (Zhang et al. 2022) as VNN-COMP winners in 2021
+and 2022);
+
+and
+
+- extending from piece-wise linear to non-linear activation functions.
+  (An example are sigmoid neurons handled by Verisig using interval
+  arithmetic (Ivanov et al. 2019).)
+
+At the time of writing, there exist over a hundred verifiers for neural
+networks. Several papers and monographs are dedicated to the survey of
+the landscape Huang et al. (2020). The community established the
+specification standards [VNNLib](https://www.vnnlib.org/), common
+benchmarks and annual competitions. Vehicle compiles down to the VNNLib
+standard, with a view to be compatible with the growing family of
+verifiers.
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$.
 Verification of such functions most commonly boils down to specifying
