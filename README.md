@@ -182,31 +182,6 @@ You can also download already trained networks for our examples from the
 (We recommend using Visual Studio Code with the “Vehicle Syntax
 Highlighting” plugin installed)
 
-## Related work
-
-- Behzad Akbarpour and Lawrence C. Paulson. MetiTarski: An automatic
-  theorem prover for real valued special functions. Journal of Automated
-  Reasoning 44(3), 175–205, 2009.
-- Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen
-  Kokke, Guy Katz, Guy Amir, and Idan Refaeli. Neural network robustness
-  as a verification property: A principled case study. In Computer Aided
-  Verification (CAV 2022), Lecture Notes in Computer Science. Springer,
-  2022.
-- Guy Katz, Clarke Barrett, D. Dill, K. Julian, and M. Kochenderfer.
-  Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.
-  In CAV, 2017.
-- Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin T. Vechev. An
-  abstract domain for certifying neural networks. Proc. ACM Program.
-  Lang., 3(POPL):41:1–41:30, 2019.
-- Shiqi Wang, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh,
-  and J. Zico Kolter. Beta-crown: Efficient bound propagation with
-  per-neuron split constraints for neural network robustness
-  verification. In Marc’Aurelio Ranzato, Alina Beygelzimer, Yann N.
-  Dauphin, Percy Liang, and Jennifer Wortman Vaughan, editors, Advances
-  in Neural Information Processing Systems 34: Annual Conference on
-  Neural Information Processing Systems 2021, NeurIPS 2021, December
-  6-14, 2021, virtual, pages 29909–29921, 2021.
-
 # Getting Started: the Vehicle Language
 
 In this chapter we will introduce some basic features of the **Vehicle**
