@@ -284,7 +284,7 @@ It is assumed that the ACAS Xu inputs and outputs are normalised, i.e. the netwo
 \pause
 
 
-\item This is an instance of \emph{``problem space / input space mismatch"} 
+\item This is an instance of \emph{``problem space / input space mismatch"}
 
 \item ... that is very common in neural net verification
 
@@ -495,10 +495,10 @@ property1 = forall x .
 
 \pause
 \begin{minted}[fontsize=\footnotesize]{vehicle}
-vehicle --compileAndVerify
-  --specification acasXu.vcl
-  --verifier Marabou
-  --network acasXu:acasXu_1_7.onnx
+vehicle verify \
+  --specification acasXu.vcl \
+  --verifier Marabou \
+  --network acasXu:acasXu_1_7.onnx \
   --property property1
 
 --------------------------------------------------
