@@ -239,7 +239,7 @@ network is trained to analyse the relation of input and output variables
 within each subspace, using previous historic data. Therefore each
 individual neural network uses only the first five input variables, and
 outputs a score for each of the output instructions. The instruction
-with the highest score is then chosen.
+with the lowest score is then chosen.
 
 Therefore each pf the 45 ACASXu neural networks have the mathematical
 type $N_{AX} : R^5 \rightarrow R^5$. The exact architecture of the
@@ -247,10 +247,9 @@ neural networks and their training modes are not important for this
 example, and so we will omit the details for now.
 
 The original paper by Guy Katz lists ten properties, but for the sake of
-the illustration we will just consider the first of them as it applies
-to a single network: *If the intruder is distant and is significantly
-slower than the ownship, the score of a COC advisory will always be
-below a certain fixed threshold.*
+the illustration we will just consider the third property: *If the
+intruder is directly ahead and is moving towards the ownship, the score
+for COC will not be minimal.*
 
 ## Basic Building Blocks in Vehicle
 
@@ -372,33 +371,15 @@ to work over. Note that these values are in the *problem space*.
 
 ``` vehicle
 minimumInputValues : UnnormalisedInputVector
-minimumInputValues = [0,0,0,0,0]
+minimumInputValues = [0,pi,pi,100,0]
 
 maximumInputValues : UnnormalisedInputVector
-maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
+maximumInputValues = [60261, pi, pi, 1200, 1200]
 ```
 
 The above is the first instance of vector definition we encounter. The
 type-checker will ensure that all vectors written in this way are of the
-correct size (in this case, `5`). An alternative method for defining new
-vectors is to use the `foreach` constructor, which is used to provide a
-value for each index `i`. This method is useful if the vector has some
-regular structure. In fact, the vector `minimumInputValues` could be
-defined in this way:
-
-``` vehicle
-minimumInputValues : UnnormalisedInputVector
-minimumInputValues = foreach i . 0
-```
-
-Let us see how `foreach` works with vector indexing. Having defined the
-range of minimim and maximum values, we can define a simple predicate
-saying whether a given input vector is in the right range:
-
-``` vehicle
-validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
-```
+correct size (in this case, `5`).
 
 Then we define the mean values that will be used to scale the inputs:
 
@@ -407,13 +388,16 @@ meanScalingValues : UnnormalisedInputVector
 meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 ```
 
-We can now define the normalisation function that takes an unnormalised
+An alternative method for defining new vectors is to use the `foreach`
+constructor, which is used to provide a value for each index `i`. This
+method is useful if the vector has some regular structure. For example,
+we can now define the normalisation function that takes an unnormalised
 input vector and returns the normalised version.
 
 ``` vehicle
 normalise : UnnormalisedInputVector -> InputVector
 normalise x = foreach i .
-  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
+  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i  - minimumInputValues ! i))
 ```
 
 Using this we can define a new function that first normalises the input
@@ -481,13 +465,37 @@ have also seen the use of a pre-defined “less than or equal to”
 predicate `<=` in the definition of the function `validInput` (note its
 `Bool` type).
 
-## Property Definition in Vehicle
+### Quantifying over indices
 
-We now make up for the time invested into learning the **Vehicle**
-syntax, as stating a verification property becomes very easy. As ACASXu
-properties refer to certain elements of input and output vectors, let us
-give those vector indices some suggestive names. This will help us to
-write a more readable code:
+In the `normalise` declaration we saw the `foreach` construct which
+constructs a vector given the definition of the element at each index
+`i`. We can use the similar `forall` to quantify over all indices and
+return a `Bool` which is `true` if the predicate holds for all indices
+and `false` otherwise. For example, having defined the range of minimum
+and maximum values, we can define a simple predicate saying whether a
+given input vector is in the right range:
+
+``` vehicle
+validInput : UnnormalisedInputVector -> Bool
+validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+```
+
+Equally usefully, we can write a function that takes an output index `i`
+and an input `x` and returns true if output `i` has the minimal score,
+i.e. neural network outputs instruction `i`.
+
+    minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
+    minimalScore i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
+
+Here implication `=>` is used to denote logical implication, i.e. for
+every other output index `j` apart from `i` we want the score of action
+`i` to be smaller than the score of action `j`.
+
+### Naming indices
+
+As ACASXu properties refer to certain elements of input and output
+vectors, let us give those vector indices some suggestive names. This
+will help us to write a more readable code:
 
 ``` vehicle
 distanceToIntruder = 0   -- measured in metres
@@ -500,7 +508,8 @@ intruderSpeed      = 4   -- measured in meters/second
 The fact that all vector types come annotated with their size means that
 it is impossible to mess up indexing into vectors, e.g. if you changed
 `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification
-would fail to type-check.
+would fail to type-check as `5` is not a valid index into a `Vector` of
+length 5.
 
 Similarly, we define meaningful names for the indices into output
 vectors.
@@ -513,21 +522,29 @@ strongLeft      = 3
 strongRight     = 4
 ```
 
-Let us now look at the property again:
+## Property Definition in Vehicle
 
-*If the intruder is distant and is significantly slower than the
-ownship, the score of a COC advisory will always be below a certain
-fixed threshold.*
+We now make up for the time invested into learning the **Vehicle**
+syntax, as stating a verification property becomes very easy. Let us now
+look at the property again:
 
-We first need to define what it means to be *distant and significantly
-slower* The exact ACASXu definition can be written in **Vehicle** as:
+*If the intruder is directly ahead and is moving towards the ownship,
+the score for COC will not be minimal.*
+
+We first need to define what it means to be *directly ahead* and *moving
+towards*. The exact ACASXu definition can be written in **Vehicle** as:
 
 ``` vehicle
-intruderDistantAndSlower : UnnormalisedInputVector -> Bool
-intruderDistantAndSlower x =
-  x ! distanceToIntruder >= 55947.691 and
-  x ! speed              >= 1145      and
-  x ! intruderSpeed      <= 60
+directlyAhead : UnnormalisedInputVector -> Bool
+directlyAhead x =
+  1500  <= x ! distanceToIntruder <= 1800 and
+  -0.06 <= x ! angleToIntruder    <= 0.06
+
+movingTowards : UnnormalisedInputVector -> Bool
+movingTowards x =
+  x ! intruderHeading >= 3.10  and
+  x ! speed           >= 980   and
+  x ! intruderSpeed   >= 960
 ```
 
 Note the reasoning in terms of the “problem space”, i.e. the use of
@@ -541,30 +558,30 @@ the property statement:
 
 ``` vehicle
 @property
-property1 : Bool
-property1 = forall x . validInput x and intruderDistantAndSlower x =>
-  normAcasXu x ! clearOfConflict <= 1500
+property3 : Bool
+property3 = forall x .
+  validInput x and directlyAhead x and movingTowards x =>
+  not (minimalScore clearOfConflict x)
 ```
 
-To flag that this is the property we want Marabou to verify, we use the
-label `@property`, we have seen this notation before when we used
-`@network` to annotate the neural network declaration. The final new
-bits of syntax we have not yet discussed is implication `=>` and the
-quantifier `forall`.
+To flag that this is the property we want to verify, we use the label
+`@property`, we have seen this notation before when we used `@network`
+to annotate the neural network declaration. The final new bit of syntax
+we have not yet discussed is the quantifier `forall`.
 
-### Quantifiers
+### Infinite quantifiers
 
 One of the main advantages of **Vehicle** is that it can be used to
 state and prove specifications that describe the network’s behaviour
-over an infinite set of values. Actually, the `foreach` operator on
-vectors that we have already encountered was also a quantifier – over
-the finite domain of the vector indices. But `forall` is a very
-different beast.
+over an infinite set of values. We have already seen the `forall`
+operator used in the declaration `validInput` – however, there it was
+quantifying over a finite number of indices.
 
-The definition of `property1` brings a new variable `x` of type
-`Vector Rat 5` into scope. The variable `x` has no assigned value and
-therefore represents an arbitrary input of that type. The body of the
-`forall` must have type `Bool`.
+The `forall` in the property above is a very different beast as it is
+quantifying over an “infinite” number of `Vector Rat 5`s. The definition
+of `property1` brings a new variable `x` of type `Vector Rat 5` into
+scope. The variable `x` has no assigned value and therefore represents
+an arbitrary input of that type.
 
 Vehicle also has a matching quantifer `exists`.
 
@@ -588,19 +605,23 @@ the above specification):
   --specification acasXu.vcl \
   --verifier Marabou \
   --network acasXu:acasXu_1_7.onnx \
-  --property property1
+  --property property3
 ```
 
 **Vehicle** passes the network, as well as a translation of our
-specification, to Marabou, and we obtain the result – `property1` indeed
-holds for the given neural network, `acasXu_1_7.onnx`:
+specification, to Marabou, and we obtain the result – `property3` does
+not hold for the given neural network, `acasXu_1_7.onnx`:
 
 ``` vehicle
 Verifying properties:
-  property1 [=============================================] 1/1 queries complete
-Result: true
-  ✓ property1
+  property3 [======================================================] 1/1 queries
+    result: ✗ - counterexample found
+      x: [1799.9886669999978, 5.6950779776e-2, 3.09999732192, 980.0, 960.0]
 ```
+
+Furthermore, Vehicle gives us a counter-example in the problem space! In
+particular an assignment for the quantified variable `x` that falsifies
+the assignment.
 
 ## Exercises
 
