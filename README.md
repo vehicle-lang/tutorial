@@ -52,10 +52,11 @@ Mixed Integer Linear Programming (MILP) methods were brought into this
 community by Bastani et al. (Bastani et al. 2016), and were further
 developed into working tools, e.g. Venus (Botoeva et al. 2020).
 
-Neural network verifier extensions followed two main directions: \*
-scaling to larger networks (we can mention $\alpha\beta$-Crown (Wang et
-al. 2021) and GCP-Crown (Zhang et al. 2022) as VNN-COMP winners in 2021
-and 2022);
+Neural network verifier extensions followed two main directions:
+
+- scaling to larger networks (we can mention $\alpha\beta$-Crown (Wang
+  et al. 2021) and GCP-Crown (Zhang et al. 2022) as VNN-COMP winners in
+  2021 and 2022);
 
 and
 
@@ -482,10 +483,12 @@ validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues 
 
 Equally usefully, we can write a function that takes an output index `i`
 and an input `x` and returns true if output `i` has the minimal score,
-i.e. neural network outputs instruction `i`.
+i.e., neural network outputs instruction `i`.
 
-    minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
-    minimalScore i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
+``` vehicle
+minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
+minimalScore i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
+```
 
 Here implication `=>` is used to denote logical implication, i.e. for
 every other output index `j` apart from `i` we want the score of action
