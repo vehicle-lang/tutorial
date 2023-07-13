@@ -188,8 +188,8 @@ documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 You can also download already trained networks for our examples from the
 [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
 
-(We recommend using Visual Studio Code with the “Vehicle Syntax
-Highlighting” plugin installed)
+We recommend using Visual Studio Code with the “Vehicle Syntax
+Highlighting” plugin installed.
 
 # Getting Started: the Vehicle Language
 
@@ -234,16 +234,17 @@ instructions:
 - strong right.
 
 In practice, the domains of $\tau$ and $a_{prev}$ are used to partition
-the input space into 45 discrete subspaces, and a different neural
+the input space into 45 discrete subspaces. Next a different neural
 network is trained to analyse the relation of input and output variables
-within each subspace. Therefore each individual neural network uses only
-the first five input variables.
+within each subspace, using previous historic data. Therefore each
+individual neural network uses only the first five input variables, and
+outputs a score for each of the output instructions. The instruction
+with the highest score is then chosen.
 
-Given the five input parameters, and the five instructions above, each
-neural network $N_{AX} : R^5 \rightarrow R^5$ is trained, given the
-previous historic data. The exact architecture of the neural networks,
-or their training modes are not important for our argument, and so we
-will omit the details for now.
+Therefore each pf the 45 ACASXu neural networks have the mathematical
+type $N_{AX} : R^5 \rightarrow R^5$. The exact architecture of the
+neural networks and their training modes are not important for this
+example, and so we will omit the details for now.
 
 The original paper by Guy Katz lists ten properties, but for the sake of
 the illustration we will just consider the first of them as it applies
@@ -293,58 +294,73 @@ acasXu : InputVector -> OutputVector
 ```
 
 Networks are declared by adding a `@network` annotation to a function
-declaration, as shown above. Note that although no implementation for
-the network is provided directly in the specification, the name `acasXu`
-can still be used in the specification as any other declared function
-would be. This follows the **Vehicle** philosophy that specifications
-should be independent of any particular network, and should be able to
-be used to train/test/verify a range of candidate networks
-implementations.
+declaration, as shown above. Note that no implementation for the network
+is provided directly in the specification, and instead will be provided
+later at compile time. However, the name `acasXu` can still be used in
+the specification as any other declared function would be. This follows
+the **Vehicle** philosophy that specifications should be independent of
+any particular network, and should be able to be used to
+train/test/verify a range of candidate networks implementations.
 
 ### Values
 
-Types for values are automatically inferred by **Vehicle**. For example,
-we can declare the number $\pi$ and its type will be inferred as
-rational (note the minimalistic syntax required to do that in
-**Vehicle**):
+New values can be declared in Vehicle using the following syntax, where
+the first line provides the declaration’s type and the bottom line
+provides its definition.
+
+``` vehicle
+<name> : <type>
+<name> = <expr>
+```
+
+For example, as we’ll be working with radians, it useful to define a
+rational value called `pi`.
+
+``` vehicle
+pi : Rat
+pi = 3.141592
+```
+
+While in many cases, the types provide useful information to the reader,
+in general types can be omitted. For example, in this case it is cleaner
+to simply write the declaration as:
 
 ``` vehicle
 pi = 3.141592
 ```
 
-### Vector operations
+The Vehicle compiler will then automatically infer the correct `Rat`
+type.
 
-Often, some amount of input or output pre-processing is expected when
-defining a neural network. In our case, it is assumed that the `acasXu`
-neural network inputs and outputs are normalised, i.e. the network does
-not work directly with units like $m/s$. However, the specifications
-(and verification properties) we want to write should ideally concern
-the original units.
+### Problem Space versus Input Space
 
-#### Problem Space versus Input Space
+Neural networks nearly always assume some amount of pre-processing of
+the input and post-processing of the output. In our ACASXu example, the
+neural networks are trained to accept inputs in the range $[0, 1]$ and
+outputs are likewise in the range $[0,1]$, i.e. the network does not
+work directly with units like $m/s$ or radians, nor the 5 output
+instructions used in the description of the problem above. However, the
+specifications we write will be much more understandable if we can refer
+to values in the original units.
 
-When we encounter similar problems later, we will say we encountered an
-instance of *problem space / input space mismatch*. These occur because
-neural network models impose certain constraints on how a problem can be
-expressed. In the example above, values may need to be normalised. If we
-were to reason on input vectors directly, we would be writing
-specifications in terms of the *input space* (i.e. referring to the
-neural network inputs directly). However, when reasoning about
-properties of neural networks, one often needs to refer to the original
-problem. In this case specifications will be written in terms of the
-*problem space*. Being able to reason about problem space (alongside the
-input space) is a feature that distinguishes **Vehicle** from majority
-of the mainstream neural network verifiers, such as e.g. Marabou, ERAN,
-or $\alpha\beta$-Crown. Let us see how this happens in practice.
+When we encounter such problems, we will say we encountered an instance
+of *problem space / input space mismatch*. If we were to reason on input
+vectors directly, we would be writing specifications in terms of the
+*input space* (i.e. referring to the neural network inputs directly).
+However, when reasoning about properties of neural networks, it is much
+more convenient to to refer to the original problem. In this case
+specifications will be written in terms of the *problem space*. Being
+able to write specifications in the problem space (alongside the input
+space) is a feature that distinguishes **Vehicle** from majority of the
+mainstream neural network verifiers, such as e.g. Marabou, ERAN, or
+$\alpha\beta$-Crown. Let us see how this happens in practice.
 
-#### Vector Normalisation
-
-We start with introducing the full block of code that normalises
-vectors, and will explain significant features of Vehicle syntax
-featured in the code block afterwards.
+We start with introducing the full block of code that will normalise
+input vectors into the range $[0,1]$, and will explain significant
+features of Vehicle syntax featured in the code block afterwards.
 
 For clarity, we define a new type synonym for unnormalised input vectors
-which are in the problem space.
+in the problem space.
 
 ``` vehicle
 type UnnormalisedInputVector = Vector Rat 5
@@ -352,7 +368,7 @@ type UnnormalisedInputVector = Vector Rat 5
 
 Next we define the minimum and maximum values that each input can take.
 These correspond to the range of the inputs that the network is designed
-to work over.
+to work over. Note that these values are in the *problem space*.
 
 ``` vehicle
 minimumInputValues : UnnormalisedInputVector
@@ -362,11 +378,11 @@ maximumInputValues : UnnormalisedInputVector
 maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
 ```
 
-Note that above is the first instance of vector definition we encounter.
-The type-checker will ensure that all vectors written in this way are of
-the correct size (in this case, `5`). An alternative method to vector
-definition is to use the `foreach` constructor, which is used to provide
-a value for each `index i`. This method is useful if the vector has some
+The above is the first instance of vector definition we encounter. The
+type-checker will ensure that all vectors written in this way are of the
+correct size (in this case, `5`). An alternative method for defining new
+vectors is to use the `foreach` constructor, which is used to provide a
+value for each index `i`. This method is useful if the vector has some
 regular structure. In fact, the vector `minimumInputValues` could be
 defined in this way:
 
@@ -391,8 +407,8 @@ meanScalingValues : UnnormalisedInputVector
 meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 ```
 
-We can now define the normalisation function that takes an input vector
-and returns the unnormalised version.
+We can now define the normalisation function that takes an unnormalised
+input vector and returns the normalised version.
 
 ``` vehicle
 normalise : UnnormalisedInputVector -> InputVector
