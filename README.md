@@ -608,7 +608,7 @@ the above specification):
 
 ``` vehicle
  vehicle \
-  compileAndVerify \
+  verify \
   --specification acasXu.vcl \
   --verifier Marabou \
   --network acasXu:acasXu_1_7.onnx \
