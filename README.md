@@ -376,7 +376,7 @@ to work over. Note that these values are in the *problem space*.
 
 ``` vehicle
 minimumInputValues : UnnormalisedInputVector
-minimumInputValues = [0,pi,pi,100,0]
+minimumInputValues = [0, pi, pi, 100, 0]
 
 maximumInputValues : UnnormalisedInputVector
 maximumInputValues = [60261, pi, pi, 1200, 1200]
@@ -494,9 +494,11 @@ minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
 minimalScore i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 ```
 
-Here implication `=>` is used to denote logical implication, i.e. for
-every other output index `j` apart from `i` we want the score of action
-`i` to be smaller than the score of action `j`.
+Here the `Index 5` refers to the type of indices into `Vector`s of
+length 5, and implication `=>` is used to denote logical implication.
+Therefore this property says that for every other output index `j` apart
+from output index `i` we want the score of action `i` to be strictly
+smaller than the score of action `j`.
 
 ### Naming indices
 
