@@ -4,7 +4,7 @@ This file is a (semi-complete) example of a specification for the widely studied
 of the network. Although the example we consider here is specialised to image classification with MNIST data set, it should be relatively easy to tweak it to work with other domains.
 
 If you are familiar with proofs of robustness already, your job will be to complete the missing lines in the provided (incomplete) specification (file `mnist-robustness.vcl`). If you are not familiar with the subject, 
-please study this chapter:  https://vehicle-lang.github.io/tutorial/#Proving Neural Network Robustness
+please study this chapter:  https://vehicle-lang.github.io/tutorial/#"Proving Neural Network Robustness"
 
 If you want to check your solution, you can find a complete Vehicle spec for this exercise in the "examples" section on the [tutorial page](https://github.com/vehicle-lang/tutorial), in the code accompanying Chapter 3. Robustness. However, we recommend that, as a challenge, you firsttry to solve this exercise using only the code available for the ACAS Xu spec.
 
