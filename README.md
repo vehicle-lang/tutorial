@@ -186,8 +186,13 @@ dependent types.
 To follow the tutorial, you will need Vehicle, Marabou and Agda
 installed in your machine. For instructions, refer to [vehicle
 documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
-You can also download already trained networks for our examples from the
-[tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
+
+Whether you are using this tutorial for self-study or attending one of
+our live tutorials, all supporting exercises, code and infrastructure
+can be downloaded from the [tutorial
+repository](https://github.com/vehicle-lang/vehicle-tutorial). These
+include all relevant property specifications, trained neural networks in
+ONNX format, data in IDX format, and any necessary instructions.
 
 We recommend using [Visual Studio Code](https://code.visualstudio.com)
 with the [Vehicle Syntax
@@ -348,16 +353,17 @@ specifications we write will be much more understandable if we can refer
 to values in the original units.
 
 When we encounter such problems, we will say we encountered an instance
-of *problem space / input space mismatch*. If we were to reason on input
-vectors directly, we would be writing specifications in terms of the
-*input space* (i.e. referring to the neural network inputs directly).
-However, when reasoning about properties of neural networks, it is much
-more convenient to to refer to the original problem. In this case
-specifications will be written in terms of the *problem space*. Being
-able to write specifications in the problem space (alongside the input
-space) is a feature that distinguishes **Vehicle** from majority of the
-mainstream neural network verifiers, such as e.g. Marabou, ERAN, or
-$\alpha\beta$-Crown. Let us see how this happens in practice.
+of *problem space / input space mismatch*, also known as *the embedding
+gap*. If we were to reason on input vectors directly, we would be
+writing specifications in terms of the *input space* (i.e. referring to
+the neural network inputs directly). However, when reasoning about
+properties of neural networks, it is much more convenient to refer to
+the original problem. In this case specifications will be written in
+terms of the *problem space*. Being able to write specifications in the
+problem space (alongside the input space) is a feature that
+distinguishes **Vehicle** from majority of the mainstream neural network
+verifiers, such as e.g. Marabou, ERAN, or $\alpha\beta$-Crown. Let us
+see how this happens in practice.
 
 We start with introducing the full block of code that will normalise
 input vectors into the range $[0,1]$, and will explain significant
@@ -402,7 +408,7 @@ input vector and returns the normalised version.
 ``` vehicle
 normalise : UnnormalisedInputVector -> InputVector
 normalise x = foreach i .
-  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i  - minimumInputValues ! i))
+  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i  - minimumInputValues ! i)
 ```
 
 Using this we can define a new function that first normalises the input
@@ -557,10 +563,12 @@ movingTowards x =
 ```
 
 Note the reasoning in terms of the “problem space”, i.e. the use of
-unnormalised input vectors. We have already encountered the vector
-lookup `!` before; but now we have a new predefined comparison function,
-`>=`, “greater than or equal to”. The connective `and` is a usual
-Boolean connective (note the type of the function is `Bool`).
+unnormalised input vectors.
+
+We have already encountered the vector lookup `!` before; but now we
+have a new predefined comparison function, `>=`, “greater than or equal
+to”. The connective `and` is a usual Boolean connective (note the type
+of the function is `Bool`).
 
 There is little left to do, and we finish our mini-formalisation with
 the property statement:
@@ -632,14 +640,72 @@ Furthermore, Vehicle gives us a counter-example in the problem space! In
 particular an assignment for the quantified variable `x` that falsifies
 the assignment.
 
-## Exercises
+## Exercises.
 
-### Exercise 1. Your first Vehicle specification
+We will use symbols $(*)$, $(**)$ and $(***)$ to rate exercise
+difficulty: *easy, moderate and hard*.
 
-1.  On the tutorial pages, find the ONNX model, `iris_model.onnx`
-    trained on the famous Iris data set:
-    <https://en.wikipedia.org/wiki/Iris_flower_data_set> Find also the
-    data set in the `idx` format (cf. tutorial repository).
+You may want to start by simply downloading the code that was discussed
+in the above chapter from the `examples` section of the [tutorial
+repository](https://github.com/vehicle-lang/vehicle-tutorial)
+
+### Exercise 1 ($*$).
+
+Assuming you already installed *Vehicle* as described in [vehicle
+documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html),
+your first task is to repeat the steps described in this chapter:
+download the Vehicle specification and the network, and verify the ACAS
+Xu Property 3.
+
+Did it work? If yes, you are ready to experiment with your own
+specifications.
+
+### Exercise 2 ($**$). Problem Space versus Input/Output Space.
+
+We discussed an instance of the embedding gap when verifying Property 3.
+In particular, we reasoned in terms of the problem space, but verified
+the network trained on the input space.
+
+Property 1 in the Acas Xu library is an example where the problem space
+and the output space deviate, as well. This makes Property 1
+specification somewhat harder.
+
+For your first exercise, define Property 1 in Vehicle, paying attention
+to careful handling of the *embedding gap*.
+
+*ACAS Xu Propery 1*: *If the intruder is distant and is significantly
+slower than the ownship, the score of a COC advisory will always be
+below a certain fixed threshold.*
+
+Taking the original thresholds, this boils down to:
+
+$$ \rho \geq 55947.691) \wedge
+(v_{own} \geq 1145) \wedge (v_{int} \leq 60) 
+\Rightarrow \text{the score for COC is at most} 1500 $$
+
+*Note:* The ACAS Xu neural network outputs are scaled as follows: given
+an element $x$ of the output vector, we scale it as:
+$\frac{x - 7.518884}{373.94992}$.
+
+To run the verification queries, please use the networks available from
+the [tutorial
+repository](https://github.com/vehicle-lang/vehicle-tutorial).
+
+### Exercise 3 ($**$). The full ACAS Xu chellenge in one file.
+
+Why not trying to state all $10$ ACAS Xu properties in one `.vcl` file?
+Try running the verification query in *Vehicle* using all $10$
+properties. You can find them all here: *“Reluplex: An Efficient SMT
+Solver for Verifying – Deep Neural Networks”
+(<https://arxiv.org/pdf/1702.01135.pdf>)*
+
+### Exercise 4 ($***$). Your first independent Vehicle specification
+
+1.  On the [tutorial
+    repository](https://github.com/vehicle-lang/vehicle-tutorial), find
+    the ONNX model, `iris_model.onnx` trained on the famous Iris data
+    set: <https://en.wikipedia.org/wiki/Iris_flower_data_set> Find also
+    the data set in the `idx` format (cf. tutorial repository).
 2.  Using the Wikipedia page or other sources, examine the data set, and
     try to define a few “obvious properties” that should hold for a
     model that does its classification.
@@ -963,11 +1029,19 @@ robustness for larger $\epsilon$.
 
 ## Exercises
 
-### Exercise 1: Standard Robustness in Vehicle
+### Exercise 1 (\*): Run the Chapter code.
 
-Define and verify in Vehicle the propety of *Standard Robustness*, that
-requires, for all $\mathbf{x}$ in the $\epsilon$-ball of
-$\hat{\mathbf{x}}$, that
+As usual, your first task is to repeat the steps described in this
+chapter: download the Vehicle specification, the network, the data, and
+verify robustness of the given network on given data. All code is
+available from the `examples` section of the [tutorial
+repository](https://github.com/vehicle-lang/vehicle-tutorial)
+
+### Exercise 2 (\*): Standard Robustness in Vehicle
+
+Using the same `.vcl` file, define and verify in Vehicle the propety of
+*Standard Robustness*, that requires, for all $\mathbf{x}$ in the
+$\epsilon$-ball of $\hat{\mathbf{x}}$, that
 $|f(\hat{\mathbf{x}}) - f(\mathbf{x})| \leq \delta$, for some small
 $\delta$. We now assemble the desired *standard robustness* property
 definition:
@@ -992,18 +1066,18 @@ different robustness properties in:
   Adversarial Attack and Defence, and Interpretability. J. of Computer
   Science Review, 2018.
 
-### Exercise 2: Explore Other Definitions of Robustness
+### Exercise 3 ($**$): Explore Other Definitions of Robustness
 
 Use Vehicle to define other forms of Robustness property from Casadio et
 al.
 
-### Exercise 3: Other Distances in Vehicle
+### Exercise 4 ($**$): Other Distances in Vehicle
 
 Re-define the *classification* and *standard robustness* properties by
 using some different notion of distance, e.g. the Euclidean distance,
 instead of the $L_{\infty}$ norm.
 
-### Exercise 4: Conduct a complete “training - verification” experiment from start to finish
+### Exercise 5 ($***$): Conduct a complete “training - verification” experiment from start to finish
 
 Download the [Fashion MNIST data
 set](https://www.tensorflow.org/datasets/catalog/fashion_mnist), train
