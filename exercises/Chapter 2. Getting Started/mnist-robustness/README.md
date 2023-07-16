@@ -1,22 +1,19 @@
 # MNIST robustness example
 
-This file is a (semi-complete) example of a specification for the widely studied adversarial robustness problem. If you are familiar with proofs of robustness already, your job will be to complete the specification. If you are not familiar with the subject, 
+This file is a (semi-complete) example of a specification for the widely studied adversarial robustness problem. The specification states that any small small pertubation to the input, e.g. adjusting a few pixels, should not significantly change the output
+of the network. Although the example we consider here is specialised to image classification with MNIST data set, it should be relatively easy to tweak it to work with other domains.
+
+If you are familiar with proofs of robustness already, your job will be to complete the missing lines in the provided (incomplete) specification (file `mnist-robustness.vcl`). If you are not familiar with the subject, 
 please study this chapter:  https://vehicle-lang.github.io/tutorial/#Proving Neural Network Robustness
 
-If you want to check your solution, you can find a complete Vehicle spec for this exercise in the "examples" section on the [tutorial page](https://github.com/vehicle-lang/tutorial). However, we recommend that, as a challenge, you try to solve this exercise using only the code available for the ACAS Xu spec.
+If you want to check your solution, you can find a complete Vehicle spec for this exercise in the "examples" section on the [tutorial page](https://github.com/vehicle-lang/tutorial), in the code accompanying Chapter 3. Robustness. However, we recommend that, as a challenge, you firsttry to solve this exercise using only the code available for the ACAS Xu spec.
 
-At a high-level the specification states that any small small pertubation to the
-input, e.g. adjusting a few pixels, should not significantly change the output
-of the network.
-
-Although this example is specialised to image classification, in particular
-to the MNIST dataset, it should be relatively easy to tweak to other domains.
 
 This folder contains the following files:
 
 - `mnist-classifier.onnx` - the neural network used to implement the controller.
 
-- `mnist-robustness.vcl` - the specification describing the desired behaviour.
+- `mnist-robustness.vcl` - the specification describing the desired behaviour (with wholes left for you to complete).
 
 - `t2-images.idx` - a dataset of input images. Doubles between 0.0 and 1.0 inclusive.
 
