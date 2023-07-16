@@ -639,26 +639,35 @@ Which of the four PL problems we addressed?
 \begin{frame}[fragile]
 \frametitle{Exercise  2 (hard): ACAS Xu: Property 1}
 
-In the previous lecture, we introduced ACAS Xu property 1.
+\small{
+ACAS Xu Property 1 gives an idea how the {\it embedding gap} can arise not only when we reason about inputs, but also the outputs of networks!
+%In the previous lecture, we introduced ACAS Xu property 1.
 
 \begin{itemize}
-\item Can you formalise that property in Vehicle?
+\item Can you formalise Property 1 in Vehicle?
 \item Can you spot the instance of the embedding gap, this time concerning the network's output?
-\end{itemize}
+\end{itemize}}
+
+\pause
 
 \begin{definition}[ACAS Xu: Property 1]
-\emph{If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.}
-\end{definition}
+\small{\it If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold:}
 
-%\pause
-\begin{block}{}
+
+
 \begin{equation*}
 \begin{array}{l}
 (\rho \geq 55947.691) \wedge
 (v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
-\Rightarrow \text{the score for COC is at most 1500}
+\Rightarrow \text{the score for COC is at most} 1500
 \end{array}
 \end{equation*}
+\end{definition}
+
+\pause
+
+\begin{block}{Note:}
+The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$. 
 \end{block}
 
 \end{frame}

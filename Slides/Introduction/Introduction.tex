@@ -199,7 +199,9 @@
 \begin{block}{\footnotesize{Katya Komendantskaya}}
    \end{block}
 
-     
+\begin{block}{\footnotesize{Jeonghyeon Lee}}
+   \end{block}
+    
    
   \end{columns}
   \end{frame}
@@ -344,7 +346,7 @@ Outputs:
 The system was originally implemented as a 2Gb lookup table but was replaced with a neural network in order to improve size and latency requirements.
 
 \pause
-10 different specified properties in total.
+\alert{10 different specified properties in total.}
 
 \pause
 \begin{definition}[ACAS Xu: Property 1]
@@ -610,32 +612,33 @@ PACMPL, 3(POPL):41:1–41:30.}
         minimum size = 3cm}]
 
 % Set A
-\node[rectangle,draw] (A) at (1.5,5) {Property in Vehicle};
+\node[rectangle,draw] (A) at (1.5,5) {\alert<1->{Property in Vehicle}};
 
-\node[rectangle,draw] (B) at (-3,2) {Training};
-\node[text width=1cm, align=center] at (-3,0) {DL2 ACT etc.};
+\node[rectangle,draw] (B) at (-3,2) {\alert<4->{Training}};
+\node[text width=1cm, align=center] at (-3,0) {\alert<4->{DL2 or other DL (native)}};
 
-\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};
-\node[text width=1cm, align=center] at (0,0) {PGD FGSM etc.};
+\node[rectangle,draw, text width=1.4cm] (C) at (0,2) {\alert<5->{Counter-example search}};
+\node[text width=1cm, align=center] at (0,0) {\alert<5->{PGD FGSM etc.}};
 
-\node[rectangle,draw] (D) at (3,2) {Verification};
-\node[text width=1.4cm, align=center] at (3,0) {Marabou Eran etc.};
+\node[rectangle,draw] (D) at (3,2) {\alert<3->{Verification}};
+\node[text width=1.4cm, align=center] at (3,0) {\alert<3->{Marabou} Eran etc.};
 
-\node[rectangle,draw] (E) at (6,2) {Integration};
-\node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
+\node[rectangle,draw] (E) at (6,2) {\alert<6->{Integration}};
+\node[text width=2cm, align=center] at (6,-0.3) {\alert<6->{Agda} Imandra KeymaeraX etc.};
 
-\draw [->, dashed] (A) edge (B);
-\draw [->, dashed] (A) edge (C);
-\draw [->, dashed] (A) edge (D);
-\draw [->, dashed] (A) edge (E);
-
+\draw [->] (A) edge (B);
+\draw [->] (A) edge (C);
+\draw [->] (A) edge (D);
+\draw [->] (A) edge (E);
+%\draw [->, dashed] (A) edge (C);
 \draw [->] (B) edge (C);
 \draw [->] (C) edge (D);
 \draw [->] (D) edge (E);
 
 \onslide<1->{
-\node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {Analysis \& informative error messages};
+\node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {\alert<2->{Analysis \& informative error messages}};
 }
+
 
 \end{tikzpicture}
 \end{center}
@@ -698,7 +701,7 @@ Austria.}
 \end{frame}
 
   \begin{frame}
-  \frametitle{Which of the ``Grand Challenges" \textbf{Vehicle} addresses}
+  \frametitle{``Grand Challenges"  \& \textbf{Vehicle}}
   \footnotesize{
   \begin{itemize}
   \item Theory: finding appropriate verification properties
@@ -736,11 +739,13 @@ Logic of Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023.}
 
 \bibitem{3}{
  	Matthew L. Daggitt, Wen Kokke, Robert Atkey, Luca Arnaboldi, Ekaterina Komendantskaya:
-Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. FOMLAS}
+Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. FOMLAS 2022}
 
 \bibitem{4}{Vehicle Team: The Vehicle language: \url{https://github.com/vehicle-lang} 2023.}
 
 \bibitem{5}{M.Daggitt and W.Kokke: Vehicle User Manual. 2023.}
+
+\bibitem{6}{The Vehicle team: Vehicle Tutorial \url{https://vehicle-lang.github.io}. 2023. Tutorial code repository \url{https://github.com/vehicle-lang/vehicle-tutorial}. }
  \end{thebibliography}}
 
 \end{frame}
@@ -751,7 +756,7 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 \begin{block}{}
 \begin{itemize}
 \item Introduce \textbf{Vehicle} specification language at the user level
-\item Convince FOMLAS audience that it maybe a convenient tool to use (and develop)
+\item Discuss challenges in NN verification ("grand" and technical)
 \item Gather feedback and obtain community support
 \end{itemize}
 \end{block}
@@ -760,6 +765,37 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 ... to Marabou team and FOMLAS organisers for the continuing support!
 \end{block}
 \end{frame}
+
+\begin{frame}
+\frametitle{Plan for the rest of this tutorial}
+
+\begin{itemize}
+\item Before coffee break:
+\begin{itemize}
+\item Brief introduction to \textbf{Vehicle} specification language 
+\item \alert{Exercise session:} write and verify a spec (with possibility to extend over the break
+
+Requirements (see also "Prerequisites" \url{https://vehicle-lang.github.io}): 
+
+\begin{itemize}
+\item for writing a spec, install vehicle: just run 
+
+\texttt{pip install vehicle}
+
+\item for verifying a spec, you also need Marabou installed (see Marabou pages)
+\end{itemize}
+\end{itemize}
+\item After the break:
+\begin{itemize}
+\item Demo of property-driven training in Vehicle 
+\item Demo of large system integration in Vehicle
+\end{itemize}
+
+\item After this tutorial -- Natalia Slusarz: theory behind property-driven training
+\end{itemize}
+
+\end{frame}
+
 
 \end{document}
 
