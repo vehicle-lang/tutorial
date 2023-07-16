@@ -2,7 +2,14 @@
 
 # Introduction
 
-With contributions by
+Welcome to the *Vehicle* tutorial page! In this tutorial, you will learn
+about neural network verification with *Vehicle*. *Vehicle*’s complete
+documentation and installation instructions are available on the
+[vehicle
+documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html)
+page.
+
+The present tutorial contains contributions by:
 
 - Matthew Daggitt
 - Wen Kokke
@@ -13,6 +20,8 @@ With contributions by
 - Marco Casadio
 - Ben Coke
 - Jeonghyeon Lee
+
+*We hope you enjoy this course!*
 
 ## What is Neural Network Verification?
 
