@@ -1145,7 +1145,7 @@ robustness.
 Traditionally, translations from a given logical syntax to a loss
 function are known as “differentiable logics”, or DLs. One of the first
 attempts to translate propositional logic specifications to loss
-functions was given in (**Xu?** et al. 2018):
+functions was given in (Xu et al. 2018):
 
 - Jingyi Xu, Zilu Zhang, Tal Friedman, Yitao Liang, and Guy Van den
   Broeck. 2018. A Semantic Loss Function for Deep Learning with Symbolic
@@ -1155,8 +1155,8 @@ functions was given in (**Xu?** et al. 2018):
   Jennifer G. Dy and Andreas Krause (Eds.). PMLR, 5498–5507.
   <http://proceedings.mlr.press/v80/xu18h.html>
 
-and was generalised to a fragment of first-order logic in (**Fischer?**
-et al. 2019):
+and was generalised to a fragment of first-order logic in (Fischer et
+al. 2019):
 
 - Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce
   Zhang, and Martin T. Vechev. 2019. DL2: Training and Querying Neural
@@ -1167,15 +1167,16 @@ et al. 2019):
   <http://proceedings.mlr.press/v97/fischer19a.html>
 
 Later, this work was complemented by giving a fuzzy interpretation to DL
-by (**van?** Krieken et al. 2022):
+by (Krieken, Acar, and Harmelen 2022):
 
 - Emile van Krieken, Erman Acar, and Frank van Harmelen. 2022. Analyzing
   Differentiable Fuzzy Logic Operators. Artif. Intell. 302
   (2022), 103602. <https://doi.org/10.1016/j.artint.2021.103602>
 
-Slusarz et al. \[2023\] proposed generalisation for the syntax and
-semantics of DL, with a view of encoding all previously presented DLs in
-one formal system, and comparing their theoretical properties:
+Slusarz et al. (Slusarz et al. 2023) proposed generalisation for the
+syntax and semantics of DL, with a view of encoding all previously
+presented DLs in one formal system, and comparing their theoretical
+properties:
 
 - Natalia Slusarz, Ekaterina Komendantskaya, Matthew L. Daggitt,
   Robert J. Stewart, and Kathrin Stark. 2023. Logic of Differentiable
@@ -1185,6 +1186,9 @@ one formal system, and comparing their theoretical properties:
 
 Following this work, Vehicle contains translation to several loss
 functions available in the literature.
+
+The relevant exercises will be presented at FOMLAS’23 tutorial in Paris,
+18 July 2023.
 
 # References
 
@@ -1240,6 +1244,18 @@ You (n) Ever Wanted to Know About.” *arXiv Preprint arXiv:2104.01396*.
 
 </div>
 
+<div id="ref-FischerBDGZV19" class="csl-entry">
+
+Fischer, Marc, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce
+Zhang, and Martin T. Vechev. 2019. “DL2: Training and Querying Neural
+Networks with Logic.” In *Proceedings of the 36th International
+Conference on Machine Learning, ICML 2019, 9-15 June 2019, Long Beach,
+California, USA*, edited by Kamalika Chaudhuri and Ruslan Salakhutdinov,
+97:1931–41. Proceedings of Machine Learning Research. PMLR.
+<http://proceedings.mlr.press/v97/fischer19a.html>.
+
+</div>
+
 <div id="ref-HuangKRSSTWY20" class="csl-entry">
 
 Huang, Xiaowei, Daniel Kroening, Wenjie Ruan, James Sharp, Youcheng Sun,
@@ -1288,6 +1304,14 @@ Katz, Guy, Derek A Huang, Duligur Ibeling, Kyle Julian, Christopher
 Lazarus, Rachel Lim, Parth Shah, et al. 2019. “The Marabou Framework for
 Verification and Analysis of Deep Neural Networks.” In *International
 Conference on Computer Aided Verification*, 443–52. Springer.
+
+</div>
+
+<div id="ref-KriekenAH22" class="csl-entry">
+
+Krieken, Emile van, Erman Acar, and Frank van Harmelen. 2022. “Analyzing
+Differentiable Fuzzy Logic Operators.” *Artif. Intell.* 302: 103602.
+<https://doi.org/10.1016/j.artint.2021.103602>.
 
 </div>
 
@@ -1362,6 +1386,18 @@ Wang, Shiqi, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh,
 and J Zico Kolter. 2021. “Beta-CROWN: Efficient Bound Propagation with
 Per-Neuron Split Constraints for Complete and Incomplete Neural Network
 Verification.” *Advances in Neural Information Processing Systems* 34.
+
+</div>
+
+<div id="ref-XuZFLB18" class="csl-entry">
+
+Xu, Jingyi, Zilu Zhang, Tal Friedman, Yitao Liang, and Guy Van den
+Broeck. 2018. “A Semantic Loss Function for Deep Learning with Symbolic
+Knowledge.” In *Proceedings of the 35th International Conference on
+Machine Learning, ICML 2018, Stockholmsmässan, Stockholm, Sweden, July
+10-15, 2018*, edited by Jennifer G. Dy and Andreas Krause, 80:5498–5507.
+Proceedings of Machine Learning Research. PMLR.
+<http://proceedings.mlr.press/v80/xu18h.html>.
 
 </div>
 
