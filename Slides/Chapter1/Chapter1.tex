@@ -624,9 +624,9 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \draw [->] (A) edge (D);
 \draw [->] (A) edge (E);
 
-\draw [->, dotted] (B) edge (C);
-\draw [->, dotted] (C) edge (D);
-\draw [->, dotted] (D) edge (E);
+\draw [->] (B) edge (C);
+\draw [->] (C) edge (D);
+\draw [->] (D) edge (E);
 
 \onslide<1->{
 \node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {\alert{\textbf{Analysis \& informative error messages}}};
@@ -729,12 +729,12 @@ The ACAS Xu neural network outputs are scaled as follows: given an element $x$ o
 \url{https://github.com/vehicle-lang/tutorial}:\\
 \url{exercises/Chapter 2. Getting Started/mnist-robustness}
 
-\item Using neworks and data given in same folder, verify robustness via Vehicle.
+\item Using the given neworks and data, verify robustness via Vehicle.
 \end{itemize}}
 \end{block}
 
 \begin{alertblock}{Robustness (for those NOT familiar with the problem)}
-\footnotesize{Study the chapter "Proving Neural Network Robustness" here: \url{https://vehicle-lang.github.io/tutorial/}}
+\footnotesize{Study the chapter ``Proving Neural Network Robustness" here: \url{https://vehicle-lang.github.io/tutorial/}}
 \end{alertblock}
 
 \begin{block}{More ACAS Xu properties in the same spec}
@@ -744,7 +744,7 @@ The ACAS Xu neural network outputs are scaled as follows: given an element $x$ o
 The spec and network can be found at:  
 \url{https://github.com/vehicle-lang/tutorial}, at \\
 \url{examples/Chapter 2. Getting Started/acasXu}
-\item Using the neworks and data given in same folder, verify the properties via Vehicle.
+\item Using the given neworks and data, verify the properties via Vehicle.
 \end{itemize}}
 \end{block}
 
