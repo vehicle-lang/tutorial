@@ -6,7 +6,7 @@ of the network. Although the example we consider here is specialised to image cl
 If you are familiar with proofs of robustness already, your job will be to complete the missing lines in the provided (incomplete) specification (file `mnist-robustness.vcl`). If you are not familiar with the subject, 
 please study the chapter _"Proving Neural Network Robustness"_ here:  https://vehicle-lang.github.io/tutorial/
 
-If you want to check your solution, you can find a complete Vehicle spec for this exercise in the "examples" section on the [tutorial page](https://github.com/vehicle-lang/tutorial), in the code accompanying Chapter 3. Robustness. However, we recommend that, as a challenge, you firsttry to solve this exercise using only the code available for the ACAS Xu spec.
+If you want to check your solution, you can find a complete Vehicle spec for this exercise in the "examples" section on the [tutorial page](https://github.com/vehicle-lang/tutorial), in the code accompanying Chapter 3. Robustness. However, we recommend that, as a challenge, you first try to solve this exercise using only the code available for the ACAS Xu spec.
 
 
 This folder contains the following files:
