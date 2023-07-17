@@ -594,7 +594,7 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \node[rectangle,draw] (B) at (-3,2) {Training};
 \node[text width=1cm, align=center] at (-3,0) {DL2 ACT etc.};
 
-\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};
+\node[rectangle,draw, dashed, text width=1.4cm] (C) at (0,2) {Counter-example search};
 \node[text width=1cm, align=center] at (0,0) {PGD FGSM etc.};
 
 \node[rectangle,draw] (D) at (3,2) {\alert{\textbf{Verification}}};
@@ -603,14 +603,14 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \node[rectangle,draw] (E) at (6,2) {Integration};
 \node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
 
-\draw [->, dashed] (A) edge (B);
+\draw [->] (A) edge (B);
 \draw [->, dashed] (A) edge (C);
-\draw [->, dashed] (A) edge (D);
-\draw [->, dashed] (A) edge (E);
+\draw [->] (A) edge (D);
+\draw [->] (A) edge (E);
 
-\draw [->] (B) edge (C);
-\draw [->] (C) edge (D);
-\draw [->] (D) edge (E);
+\draw [->, dotted] (B) edge (C);
+\draw [->, dotted] (C) edge (D);
+\draw [->, dotted] (D) edge (E);
 
 \onslide<1->{
 \node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {\alert{\textbf{Analysis \& informative error messages}}};

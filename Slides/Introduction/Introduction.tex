@@ -619,7 +619,7 @@ PACMPL, 3(POPL):41:1–41:30.}
 \node[rectangle,draw] (B) at (-3,2) {\alert<4->{Training}};
 \node[text width=1cm, align=center] at (-3,0) {\alert<4->{DL2 or other DL (native)}};
 
-\node[rectangle,draw, text width=1.4cm] (C) at (0,2) {\alert<5->{Counter-example search}};
+\node[rectangle,draw, dashed,text width=1.4cm] (C) at (0,2) {\alert<5->{Counter-example search}};
 \node[text width=1cm, align=center] at (0,0) {\alert<5->{PGD FGSM etc.}};
 
 \node[rectangle,draw] (D) at (3,2) {\alert<3->{Verification}};
@@ -629,13 +629,13 @@ PACMPL, 3(POPL):41:1–41:30.}
 \node[text width=2cm, align=center] at (6,-0.3) {\alert<6->{Agda} Imandra KeymaeraX etc.};
 
 \draw [->] (A) edge (B);
-\draw [->] (A) edge (C);
+\draw [->, dashed] (A) edge (C);
 \draw [->] (A) edge (D);
 \draw [->] (A) edge (E);
 %\draw [->, dashed] (A) edge (C);
-\draw [->] (B) edge (C);
-\draw [->] (C) edge (D);
-\draw [->] (D) edge (E);
+\draw [->, dotted] (B) edge (C);
+\draw [->, dotted] (C) edge (D);
+\draw [->, dotted] (D) edge (E);
 
 \onslide<1->{
 \node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {\alert<2->{Analysis \& informative error messages}};
@@ -648,15 +648,15 @@ PACMPL, 3(POPL):41:1–41:30.}
 
 \begin{frame}
 \frametitle{Other Similar APIs}
-
+\footnotesize{
 \begin{itemize}%[<+->]
 
 \item Socrates [in Python]:  Given a spec and a network (in JSON), calls different NN verifiers.
   {\scriptsize
  \begin{thebibliography}{99}
  \beamertemplatearticlebibitems
-\bibitem{1}{Long H. Pham, Jiaying Li, and Jun Sun. 2020. SOCRATES: Towards a Unified Platform for Neural Network Verification.
-CoRR abs/2007.11206 (2020).}
+\bibitem{1}{L. H. Pham, J. Li, and J. Sun. 2020. SOCRATES: Towards a Unified Platform for Neural Network Verification.
+CoRR abs/2007.11206.}
  \end{thebibliography}}
 
  {\alert {\small Left unresolved: $I^O$, $I^P$, $I^{\int}$, $E^G$}}
@@ -666,12 +666,23 @@ CoRR abs/2007.11206 (2020).}
   {\scriptsize
  \begin{thebibliography}{99}
  \beamertemplatearticlebibitems
-\bibitem{1}{Dario Guidotti, Luca Pulina, and Armando Tacchella. 2020. NeVer 2.0: Learning, Verification and Repair of Deep Neural
-Networks. CoRR abs/2011.09933 (2020).}
+\bibitem{1}{D. Guidotti, L. Pulina, and A. Tacchella. 2020. NeVer 2.0: Learning, Verification and Repair of Deep Neural
+Networks. CoRR abs/2011.09933.}
  \end{thebibliography}}
 
   {\alert {\small Resolved: $I^O$ (partially). Left untesolved: $I^P$, $I^{\int}$, $E^G$ }}
 
+ \pause
+ 
+ \item CoCoNet [in Python]: NN format converter with GUI
+  {\scriptsize
+ \begin{thebibliography}{99}
+ \beamertemplatearticlebibitems
+\bibitem{1}{D. Guidotti, A. Tacchella, L. Pulina, S. Demarchi 2023. \url{http://neuralverification.org/}}
+ \end{thebibliography}}
+ 
+  {\alert {\small Resolved: $I^P$ (partially). Left untesolved: $I^O$, $I^{\int}$, $E^G$ }}
+ 
  \pause
 
  \item Caisar [in OCAML] -- general specification language and connection to several NN Verifiers
@@ -679,14 +690,13 @@ Networks. CoRR abs/2011.09933 (2020).}
 {\scriptsize
  \begin{thebibliography}{99}
  \beamertemplatearticlebibitems
-\bibitem{1}{Julien Girard-Satabin, Michele Alberti, François Bobot, Zakaria Chihani, and Augustin Lemesle. 2022. CAISAR: A platform
-for Characterizing Artificial Intelligence Safety and Robustness. In AISafety (CEUR-Workshop Proceedings). Vienne,
-Austria.}
+\bibitem{1}{J. Girard-Satabin, M. Alberti, F. Bobot, Z. Chihani, and A. Lemesle. 2022. CAISAR: A platform
+for Characterizing Artificial Intelligence Safety and Robustness. In AISafety.}
  \end{thebibliography}}
 
  {\alert {\small Resolved: $I^P$, $I^{\int}$. Left unresolved: $I^O$,  $E^G$ }}
 
-\end{itemize}
+\end{itemize}}
 
 \end{frame}
 
@@ -745,7 +755,7 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 
 \bibitem{4}{Vehicle Team: The Vehicle language: \url{https://github.com/vehicle-lang} 2023.}
 
-\bibitem{5}{M.Daggitt and W.Kokke: Vehicle User Manual. 2023.}
+\bibitem{5}{M.Daggitt and W.Kokke: Vehicle User Manual. \url{https://vehicle-lang.readthedocs.io} 2023.}
 
 \bibitem{6}{The Vehicle team: Vehicle Tutorial \url{https://vehicle-lang.github.io}. 2023. Tutorial code repository \url{https://github.com/vehicle-lang/vehicle-tutorial}. }
  \end{thebibliography}}
