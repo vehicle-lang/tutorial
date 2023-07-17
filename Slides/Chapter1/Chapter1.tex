@@ -240,6 +240,8 @@ v_{int} \geq 960 \ \Rightarrow \\
 
 \end{frame}
 
+%\end{document}
+
 
 \section{Vehicle' Syntax}
 
@@ -322,6 +324,8 @@ meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 \end{minted}
 \end{frame}
 
+
+
 \begin{frame}[fragile]
 \frametitle{Vector manipulation}
 An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`.
@@ -348,6 +352,8 @@ normalise x = foreach i .
 
 \end{frame}
 
+
+
 \begin{frame}[fragile]
 \frametitle{Functions and types}
 \begin{minted}[fontsize=\footnotesize]{vehicle}
@@ -372,6 +378,7 @@ validInput x = forall i .
 \end{block}
 
 \end{frame}
+
 
 
 \begin{frame}[fragile]
@@ -403,6 +410,8 @@ We have already used:
 \footnotesize{What do they stand for?}
 \end{block}
 \end{frame}
+
+
 
 \begin{frame}[fragile]
 \frametitle{Lets verify ACAS Xu!}
@@ -457,6 +466,8 @@ Can you identify whether the specification is written in terms of input space or
 \end{frame}
 
 
+
+
 \begin{frame}[fragile]
 \frametitle{Property 3}
 
@@ -481,6 +492,7 @@ movingTowards x =
 \end{block}
 
 \end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{There is little left to do!}
@@ -514,6 +526,8 @@ property3 = forall x . validInput x and
 
 \end{frame}
 
+
+
 \begin{frame}[fragile]
 \frametitle{How to run Vehicle}
 \begin{block}{Checklist}
@@ -543,7 +557,7 @@ property3 [==========================================] 1/1 queries
 
 
 \begin{frame}[fragile]
-\frametitle{Exercise  1 (moderate): $\epsilon$-ball Robustness}
+\frametitle{Exercise: $\epsilon$-ball Robustness}
  \begin{minted}[fontsize=\tiny]{vehicle}
 type Image = Tensor Rat [28, 28]
 type Label = Index 10
@@ -622,6 +636,8 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \end{center}
 \end{frame}
 
+
+
 \begin{frame}
 \frametitle{Concluding Exercise}
 
@@ -638,8 +654,10 @@ Which of the four PL problems we addressed?
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Exercise  2 (hard): ACAS Xu: Property 1}
+
+
+\begin{frame}
+\frametitle{Exercise: ACAS Xu Property 1}
 
 \small{
 ACAS Xu Property 1 gives an idea how the {\it embedding gap} can arise not only when we reason about inputs, but also the outputs of networks!
@@ -674,6 +692,8 @@ The ACAS Xu neural network outputs are scaled as follows: given an element $x$ o
 
 \end{frame}
 
+
+
 \begin{frame}
 \frametitle{Plan for the rest of this tutorial}
 
@@ -681,31 +701,55 @@ The ACAS Xu neural network outputs are scaled as follows: given an element $x$ o
 \item Before coffee break:
 \begin{itemize}
 %\item Brief introduction to \textbf{Vehicle} specification language 
-\item \alert{Exercise session:} write and verify a Robustness spec (with possibility to extend over the break
-
-\footnotesize{Find the necessary files via \url{https://vehicle-lang.github.io},  exercises for Chapter 2.}
+\item \alert{Exercise session:} write and verify your own specs (with possibility to extend over the break)
 
 \begin{itemize}
 \item for writing a spec, install vehicle: just run 
 
-\texttt{pip install vehicle}
+\texttt{pip install vehicle-lang}
 
 \item for verifying a spec, you also need Marabou installed 
 
-\texttt{pip install marabou}
+\texttt{pip install maraboupy}
 
 %(see Marabou pages)
 \end{itemize}
 \end{itemize}
-\item After the break:
-\begin{itemize}
-\item Demo of property-driven training in Vehicle 
-\item Demo of large system integration in Vehicle
 \end{itemize}
+\end{frame}
 
-\item After this tutorial -- Natalia Slusarz: theory behind property-driven training
-\end{itemize}
+
+\begin{frame}
+\frametitle{Exercises}
+
+\begin{block}{Robustness (for those familiar with the problem)}
+\footnotesize{
+\begin{itemize}
+\item Fill in missing code in the Robustness spec available at 
+\url{https://github.com/vehicle-lang/tutorial}:\\
+\url{exercises/Chapter 2. Getting Started/mnist-robustness}
+
+\item Using neworks and data given in same folder, verify robustness via Vehicle.
+\end{itemize}}
+\end{block}
+
+\begin{alertblock}{Robustness (for those NOT familiar with the problem)}
+\footnotesize{Study the chapter "Proving Neural Network Robustness" here: \url{https://vehicle-lang.github.io/tutorial/}}
+\end{alertblock}
+
+\begin{block}{More ACAS Xu properties in the same spec}
+\footnotesize{
+\begin{itemize}
+\item Extend the given ACAS Xu  specification with Property 1. 
+The spec and network can be found at:  
+\url{https://github.com/vehicle-lang/tutorial}, at \\
+\url{examples/Chapter 2. Getting Started/acasXu}
+\item Using the neworks and data given in same folder, verify the properties via Vehicle.
+\end{itemize}}
+\end{block}
 
 \end{frame}
+
+
 
 \end{document}
