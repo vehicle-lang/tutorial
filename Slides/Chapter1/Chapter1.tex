@@ -152,11 +152,11 @@
 We will:
 
 \begin{itemize}[<+->]
-\item  ... introduce Main building blocks of Vehicle as a Programming Language
-\item ... get to practice working with Vehicle
-\item ... use the famous ACAS Xu benchmark to show Vehicle's work flow --
+\item  ... introduce main building blocks of \textbf{Vehicle} as a programming language
+\item ... get to practice working with \textbf{Vehicle}
+\item ... use the famous ACAS Xu benchmark to show \textbf{Vehicle}'s work flow --
 from specification to verification
-\item ... identify PL problems (cf Introduction) that are resolved by Vehicle
+\item ... identify PL problems that are resolved by \textbf{Vehicle}
 
 \end{itemize}
 
@@ -225,10 +225,12 @@ Outputs:
 \begin{block}{}
 \begin{equation*}
 \begin{array}{l}
-1500 \leq \rho \leq 1800 \wedge -0.06 \leq \theta \leq 0.06 \\
- \wedge \psi \geq 3.10 \wedge v_{own} \geq 980 \wedge
-v_{int} \geq 960 \\
-\Rightarrow \text{the score for COC} \neq 0
+1500 \leq \rho \leq 1800 \ \wedge \\
+-0.06 \leq \theta \leq 0.06 \ \wedge \\ 
+\psi \geq 3.10 \ \wedge \\
+  v_{own} \geq 980 \ \wedge \\
+v_{int} \geq 960 \ \Rightarrow \\
+ \text{the score for COC} \neq 0
 %(\rho \geq 55947.691) \wedge
 %(v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
 %\Rightarrow \text{the score for COC is at most 1500}
@@ -669,6 +671,40 @@ ACAS Xu Property 1 gives an idea how the {\it embedding gap} can arise not only 
 \begin{block}{Note:}
 The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$. 
 \end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Plan for the rest of this tutorial}
+
+\begin{itemize}
+\item Before coffee break:
+\begin{itemize}
+%\item Brief introduction to \textbf{Vehicle} specification language 
+\item \alert{Exercise session:} write and verify a Robustness spec (with possibility to extend over the break
+
+\footnotesize{Find the necessary files via \url{https://vehicle-lang.github.io},  exercises for Chapter 2.}
+
+\begin{itemize}
+\item for writing a spec, install vehicle: just run 
+
+\texttt{pip install vehicle}
+
+\item for verifying a spec, you also need Marabou installed 
+
+\texttt{pip install marabou}
+
+%(see Marabou pages)
+\end{itemize}
+\end{itemize}
+\item After the break:
+\begin{itemize}
+\item Demo of property-driven training in Vehicle 
+\item Demo of large system integration in Vehicle
+\end{itemize}
+
+\item After this tutorial -- Natalia Slusarz: theory behind property-driven training
+\end{itemize}
 
 \end{frame}
 
