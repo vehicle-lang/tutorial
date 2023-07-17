@@ -654,17 +654,18 @@ the assignment.
 We will use symbols $(*)$, $(**)$ and $(***)$ to rate exercise
 difficulty: *easy, moderate and hard*.
 
-You may want to start by simply downloading the code that was discussed
-in the above chapter from the `examples` section of the [tutorial
-repository](https://github.com/vehicle-lang/vehicle-tutorial)
+The exercises assume that you already installed *Vehicle* as described
+in [vehicle
+documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
 ### Exercise 1 ($*$).
 
-Assuming you already installed *Vehicle* as described in [vehicle
-documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html),
-your first task is to repeat the steps described in this chapter:
-download the Vehicle specification and the network, and verify the ACAS
-Xu Property 3.
+Start by simply running the code that was discussed in the above
+chapter. It is available from the `examples` section of the [tutorial
+repository](https://github.com/vehicle-lang/vehicle-tutorial)
+
+Repeat the steps described in this chapter: download the Vehicle
+specification and the network, and verify the ACAS Xu Property 3.
 
 Did it work? If yes, you are ready to experiment with your own
 specifications.
