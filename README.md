@@ -1229,7 +1229,7 @@ for the property `robust`.
 This can then be used in a standard training loop:
 
 ``` python
-model = tf.Sequential([tf.Input(shape=(28,28)), tf.Dense(units=28), tf.Dense(units=28)])
+model = tf.Sequential([tf.Input(shape=(28,28)), tf.Dense(units=28), tf.Output(units=10)])
 
 for epoch in range(num_epochs):
     for x_batch_train, y_batch_train in train_dataset:
@@ -1243,8 +1243,8 @@ for epoch in range(num_epochs):
                 n=len(x_batch_train),
                 classifier=model,
                 epsilon=0.001,
-                trainingImages=(ZEROES_28X28,),
-                trainingLabels=(0,),
+                trainingImages=x_batch_train,
+                trainingLabels=y_batch_train,
             )
             weighted_loss = 0.5 * ce_loss_value + 0.5 * robust_loss_value
 
