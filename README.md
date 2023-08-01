@@ -212,22 +212,18 @@ plugins.
 
 # Getting Started with the Vehicle Specification Language
 
-In this chapter we will introduce some basic features of the **Vehicle**
-specification language. As an example, we will use the famous *ACAS Xu
-verification challenge*, first introduced in 2017 by Guy Katz et al. in
-*“Reluplex: An Efficient SMT Solver for Verifying – Deep Neural
-Networks” (<https://arxiv.org/pdf/1702.01135.pdf>)* ACAS Xu stands for
-*Airborne Collision Avoidance System for unmanned aircraft*. The
-objective of the system is to analyse the aircraft’s position and
-distance relative to other aircraft and give collision avoidance
-instructions.
+In this chapter we will introduce the basic features of the **Vehicle**
+specification language via the famous *ACAS Xu verification challenge*,
+first introduced in 2017 by Guy Katz et al. in *“Reluplex: An Efficient
+SMT Solver for Verifying – Deep Neural Networks”
+(<https://arxiv.org/pdf/1702.01135.pdf>)*.
 
-## Standard Components of a Verification Problem
+## ACAS Xu
 
-In the simplest verification scenario, we will need a neural network
-$N : R^m \rightarrow R^n$, and a property of the network we wish to
-verify. In this case the property can be formulated based on our
-understanding of the ACASXu domain.
+ACAS Xu stands for *Airborne Collision Avoidance System for unmanned
+aircraft*. The objective of the system is to analyse the aircraft’s
+position and distance relative to other aircraft and give collision
+avoidance instructions.
 
 In particular, the following measurements are of importance:
 
@@ -1096,7 +1092,7 @@ its robustness.
 
 # Property-Driven Training
 
-## Motivation and Problem Statement
+## Motivation
 
 We finished the last chapter with a conjecture concerning diminishing
 robustness verification success with increasing values of $\epsilon$.
@@ -1137,59 +1133,124 @@ $\epsilon$-balls. We once again refer the reader to
 
 for further discussion of these various methods.
 
-In this tutorial, however, our interest is in *specification-driven*
-neural network verification. Our interest is thus in generating suitable
-loss functions directly from specifications. Crucially, this will allow
-us to work with arbitrary properties of neural networks, not only
-robustness.
+However, many of these methods are specific only to robustness
+specifications. As a baseline we would like a method that works for any
+Vehicle specification. *Logical loss functions* are one such method.
+
+## Logical loss functions
+
+The main idea is that we would like to co-opt the same gradient-descent
+algorithm that is used to train the network to fit the data to also
+train the network to obey the specification.
+
+Consider the very simple example specification:
+
+``` vehicle
+@network
+f : Vector Rat 1 -> Vector Rat 1
+
+@property
+greaterThan2 : Bool
+greaterThan2 = f [ 0 ] ! 0 > 2
+```
+
+This statement is either true or false, as shown in the left graph
+below:
+
+<figure>
+<img src="images/boolean-loss.png" alt="Boolean loss" />
+<figcaption aria-hidden="true">Boolean loss</figcaption>
+</figure>
+
+However, what if instead, we converted all `Bool` values to `Rat`, where
+a value greater than `0` indicated false and a value less than `0`
+indicated true? We could then rewrite the specification as:
+
+``` vehicle
+greaterThan2 : Rat
+greaterThan2 = f [ 0 ] ! 0 - 2
+```
+
+If we then replot the graph we get the following:
+
+<figure>
+<img src="images/real-loss.png" alt="Rational loss" />
+<figcaption aria-hidden="true">Rational loss</figcaption>
+</figure>
+
+Now we have a useful gradient, as successfully minimising
+`f [ 0 ] ! 0 - 2` will result in the property `greaterThan2` becoming
+true.
+
+This is the essence of logical loss functions: convert all booleans and
+operations over booleans into equivalent numeric operations that are
+differentiable and whose gradient’s point in the right direction.
 
 Traditionally, translations from a given logical syntax to a loss
 function are known as “differentiable logics”, or DLs. One of the first
 attempts to translate propositional logic specifications to loss
-functions was given in (Xu et al. 2018):
-
-- Jingyi Xu, Zilu Zhang, Tal Friedman, Yitao Liang, and Guy Van den
-  Broeck. 2018. A Semantic Loss Function for Deep Learning with Symbolic
-  Knowledge. In Proceedings of the 35th International Conference on
-  Machine Learning, ICML 2018, Stockholmsmässan, Stockholm, Sweden, July
-  10-15, 2018 (Proceedings of Machine Learning Research, Vol. 80),
-  Jennifer G. Dy and Andreas Krause (Eds.). PMLR, 5498–5507.
-  <http://proceedings.mlr.press/v80/xu18h.html>
-
-and was generalised to a fragment of first-order logic in (Fischer et
-al. 2019):
-
-- Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce
-  Zhang, and Martin T. Vechev. 2019. DL2: Training and Querying Neural
-  Networks with Logic. In Proceedings of the 36th International
-  Conference on Machine Learning, ICML 2019, 9-15 June 2019, Long Beach,
-  California, USA (Proceedings of Machine Learning Research, Vol. 97),
-  Kamalika Chaudhuri and Ruslan Salakhutdinov (Eds.). PMLR, 1931–1941.
-  <http://proceedings.mlr.press/v97/fischer19a.html>
-
-Later, this work was complemented by giving a fuzzy interpretation to DL
-by (Krieken, Acar, and Harmelen 2022):
-
-- Emile van Krieken, Erman Acar, and Frank van Harmelen. 2022. Analyzing
-  Differentiable Fuzzy Logic Operators. Artif. Intell. 302
-  (2022), 103602. <https://doi.org/10.1016/j.artint.2021.103602>
-
-Slusarz et al. (Slusarz et al. 2023) proposed generalisation for the
-syntax and semantics of DL, with a view of encoding all previously
+functions was given in [(Xu et al.
+2018)](http://proceedings.mlr.press/v80/xu18h.html) and was generalised
+to a fragment of first-order logic in [(Fischer et al.
+2019)](http://proceedings.mlr.press/v97/fischer19a.html). Later, this
+work was complemented by giving a fuzzy interpretation to DL by
+[(Krieken, Acar, and Harmelen
+2022)](https://doi.org/10.1016/j.artint.2021.103602) and [(Slusarz et
+al. 2023)](https://arxiv.org/abs/2303.10650) proposed generalisation for
+the syntax and semantics of DL, with a view of encoding all previously
 presented DLs in one formal system, and comparing their theoretical
-properties:
+properties.
 
-- Natalia Slusarz, Ekaterina Komendantskaya, Matthew L. Daggitt,
-  Robert J. Stewart, and Kathrin Stark. 2023. Logic of Differentiable
-  Logics: Towards a Uniform Semantics of DL. In LPAR-24: The
-  International Conference on Logic for Programming, Artificial
-  Intelligence and Reasoning.
+Vehicle has several different differentiable logics from the literature
+available, but will not go into detail about how they work here.
 
-Following this work, Vehicle contains translation to several loss
-functions available in the literature.
+## Generating a logical loss functions for mnist-robustness
 
-The relevant exercises will be presented at FOMLAS’23 tutorial in Paris,
-18 July 2023.
+To generate a logical loss function usable in Python, we will use
+Vehicle’s Python bindings that come pre-installed.
+
+We open a new Python file and write:
+
+``` python
+from vehicle_lang.compile import Target, to_python
+
+spec = to_python(
+    "mnist-robustness.vcl",
+    target=Target.LOSS_DL2,
+    samplers={"pertubation": sampler_for_pertubation},
+)
+
+robust_loss_fn = spec["robust"]
+```
+
+which generates the loss function representing the logical loss function
+for the property `robust`.
+
+This can then be used in a standard training loop:
+
+``` python
+model = tf.Sequential([tf.Input(shape=(28,28)), tf.Dense(units=28), tf.Output(units=10)])
+
+for epoch in range(num_epochs):
+    for x_batch_train, y_batch_train in train_dataset:
+        with tf.GradientTape() as tape:
+            # Calculate standard cross entropy loss
+            outputs = model(x_batch_train, training=True)
+            ce_loss_value = ce_batch_loss(y_batch_train, outputs)
+
+            # Calculate the robustness loss
+            robust_loss_value = robust_loss_fn(
+                n=len(x_batch_train),
+                classifier=model,
+                epsilon=0.001,
+                trainingImages=x_batch_train,
+                trainingLabels=y_batch_train,
+            )
+            weighted_loss = 0.5 * ce_loss_value + 0.5 * robust_loss_value
+
+        grads = tape.gradient(weighted_loss, model.trainable_weights)
+        optimizer.apply_gradients(zip(grads, model.trainable_weights))
+```
 
 # References
 
