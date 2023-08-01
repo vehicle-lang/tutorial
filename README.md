@@ -177,7 +177,13 @@ including:
     systems.
 
 Currently, Vehicle supports the verifier Marabou, the ITP Agda, and the
-ONNX format for neural networks.
+ONNX format for neural networks. The below figure illustrates the
+existing user backends in Vehicle.
+
+<figure>
+<img src="images/vehicle-structure.png" alt="Vehicle Backends" />
+<figcaption aria-hidden="true">Vehicle Backends</figcaption>
+</figure>
 
 ## Objectives of this Tutorial
 
