@@ -281,7 +281,7 @@ individual neural network uses only the first five input variables, and
 outputs a score for each of the output instructions. The instruction
 with the lowest score is then chosen.
 
-Therefore each pf the 45 ACASXu neural networks have the mathematical
+Therefore each of the 45 ACASXu neural networks have the mathematical
 type $N_{AX} : R^5 \rightarrow R^5$. The exact architecture of the
 neural networks and their training modes are not important for this
 example, and so we will omit the details for now.
@@ -352,7 +352,7 @@ provides its definition.
 <name> = <expr>
 ```
 
-For example, as we’ll be working with radians, it useful to define a
+For example, as we’ll be working with radians, it is useful to define a
 rational value called `pi`.
 
 ``` vehicle
@@ -486,7 +486,7 @@ As in most functional languages, function application is written by
 juxtaposition of the function with its arguments. For example, given a
 function `f` of type `Rat -> Bool -> Rat` and arguments `x` of type
 `Rat` and `y` of type `Bool`, the application of `f` to `x` and `y` is
-written `f x y` and this expression has type `Bool`. This is unlike
+written `f x y` and this expression has type `Rat`. This is unlike
 imperative languages such as Python, C or Java where you would write
 `f(x,y)`.
 
@@ -626,7 +626,7 @@ quantifying over a finite number of indices.
 
 The `forall` in the property above is a very different beast as it is
 quantifying over an “infinite” number of `Vector Rat 5`s. The definition
-of `property1` brings a new variable `x` of type `Vector Rat 5` into
+of `property3` brings a new variable `x` of type `Vector Rat 5` into
 scope. The variable `x` has no assigned value and therefore represents
 an arbitrary input of that type.
 
@@ -710,7 +710,7 @@ below a certain fixed threshold.*
 
 Taking the original thresholds, this boils down to:
 
-$$ \rho \geq 55947.691) \wedge
+$$ (\rho \geq 55947.691) \wedge
 (v_{own} \geq 1145) \wedge (v_{int} \leq 60) 
 \Rightarrow \text{the score for COC is at most} 1500 $$
 
@@ -735,7 +735,7 @@ Solver for Verifying – Deep Neural Networks”
 1.  On the [tutorial
     repository](https://github.com/vehicle-lang/vehicle-tutorial), find
     the ONNX model, `iris_model.onnx` trained on the famous Iris data
-    set: <https://en.wikipedia.org/wiki/Iris_flower_data_set> Find also
+    set: <https://en.wikipedia.org/wiki/Iris_flower_data_set>. Find also
     the data set in the `idx` format (cf. tutorial repository).
 2.  Using the Wikipedia page or other sources, examine the data set, and
     try to define a few “obvious properties” that should hold for a
