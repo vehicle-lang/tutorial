@@ -752,7 +752,7 @@ Solver for Verifying – Deep Neural Networks”
 ## Neural Network Robustness as a Verification Property
 
 In this chapter we will learn about the problem that has received
-significanrt attention within the machine learning community: *the
+significant attention within the machine learning community: *the
 problem of robustness of neural networks to out-of-distribution shifts,
 also known as “robustness to adversarial attacks”.* The problem was
 famously raised by Christian Szegedy and his co-authors in 2013 in the
@@ -845,7 +845,7 @@ requires that all images within any given $\epsilon$-ball are classified
 as the same class. We will consider this property in detail, and will
 take a few other properties from Casadio et al. as an exercise.
 
-## Formalising $\epsilon$-ball robustness for MNIST networks in Vehicle
+## Formalising $\epsilon$-ball robustness for MNIST networks in *Vehicle*
 
 We note that $\epsilon$-ball robustness as a verification property bears
 some similarity to the ACAS Xu example that we have already covered in
@@ -860,13 +860,13 @@ two examples:
 
 - ACAS Xu did not have to refer to a dataset $\mathcal{X}$;
   $\epsilon$-ball robustness, however, is formulated relative to the
-  images given in the data set. We will see how Vehicle can be used to
+  images given in the data set. We will see how *Vehicle* can be used to
   handle properties that refer directly to the data sets.
 
 - MNIST, as many other data sets used in Computer Vision, has images
   represented as 2D arrays. Such data sets often require Convolutional
-  Neural Networks (NN) that are best desgned to deal with 2D and 3D
-  data. In terms of property specification, we will see Vehicle’s
+  Neural Networks (CNNs) that are best designed to deal with 2D and 3D
+  data. In terms of property specification, we will see *Vehicle*’s
   support for 2D arrays, which comes for free with its general type
   infrastructure.
 
@@ -875,9 +875,9 @@ two examples:
   within the spec. These are the $\epsilon$ and the number of data
   points ($\epsilon$-balls) we wish to check (the number is at most the
   size of the entire data set). We will see how such parameters are
-  defined and used in Vehicle.
+  defined and used in *Vehicle*.
 
-### 2D Arrays in Vehicle
+### 2D Arrays in *Vehicle*
 
 Starting a specification for MNIST data set follows the same pattern as
 we have seen in Chapter 1, only this time we declare inputs as 2D
@@ -904,7 +904,7 @@ classifier : Image -> Vector Rat 10
 ```
 
 We note again the use of the syntax for `@network`, marking the place
-where Vehicle interacts with an external tool (this time most likely
+where *Vehicle* interacts with an external tool (this time most likely
 with Python Tensorflow).
 
 The classifier advises that input image `x` has label `i` if the score
@@ -916,7 +916,8 @@ advises x i = forall j . j != i => classifier x ! i > classifier x ! j
 ```
 
 This completes the basic description if the data set and the model
-architecture in Vehicle. We are ready to define verification properties.
+architecture in *Vehicle*. We are ready to define verification
+properties.
 
 ### Definition of Robustness Around a Point
 
@@ -992,7 +993,7 @@ trainingImages : Vector Image n
 trainingLabels : Vector Label n
 ```
 
-Again we note the use of syntax that involves `@` flagging Vehicle’s
+Again we note the use of syntax that involves `@` flagging *Vehicle*’s
 connection with an external tool or object – in this case, the data set
 is defined externally.
 
@@ -1000,9 +1001,9 @@ We then say that the network is robust *for this data set* if it is
 robust around every pair of input images and output labels. Note once
 again the use of the `foreach` keyword when quantifying over the index
 `i` in the dataset. Whereas `forall` would return a single `Bool`,
-`foreach` constructs a `Vector` of booleans, ensuring that Vehicle will
-report on the verification status of each image in the dataset
-separately. If `forall` was omitted, Vehicle would only report if the
+`foreach` constructs a `Vector` of booleans, ensuring that *Vehicle*
+will report on the verification status of each image in the dataset
+separately. If `forall` was omitted, *Vehicle* would only report if the
 network was robust around *every* image in the dataset, a state of
 affairs which is unlikely to be true.
 
@@ -1014,7 +1015,7 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 
 ## Running the Verification Query
 
-In order to run Vehicle, we need to provide:
+In order to run *Vehicle*, we need to provide:
 
 - the specification file,
 - the network in ONNX format,
@@ -1023,7 +1024,7 @@ In order to run Vehicle, we need to provide:
 
 The tutorial files contain two Python scripts that show how to convert
 Tensorflow Neural Networks into *ONNX* format; and images – into `.idx`
-files. These are the formats expected by Vehicle. You can use the ones
+files. These are the formats expected by *Vehicle*. You can use the ones
 we provide, or generate your own. Having obtained these, the following
 command line will take care of verification of the network
 `mnist-classifier.onnx`, for data sets `images.idx` and `labels.idx` and
@@ -1063,15 +1064,15 @@ robustness for larger $\epsilon$.
 ### Exercise 1 (\*): Run the Chapter code.
 
 As usual, your first task is to repeat the steps described in this
-chapter: download the Vehicle specification, the network, the data, and
-verify robustness of the given network on given data. All code is
+chapter: download the *Vehicle* specification, the network, the data,
+and verify robustness of the given network on given data. All code is
 available from the `examples` section of the [tutorial
 repository](https://github.com/vehicle-lang/vehicle-tutorial)
 
-### Exercise 2 (\*): Standard Robustness in Vehicle
+### Exercise 2 (*): Standard Robustness in *Vehicle\*
 
-Using the same `.vcl` file, define and verify in Vehicle the propety of
-*Standard Robustness*, that requires, for all $\mathbf{x}$ in the
+Using the same `.vcl` file, define and verify in *Vehicle* the propety
+of *Standard Robustness*, that requires, for all $\mathbf{x}$ in the
 $\epsilon$-ball of $\hat{\mathbf{x}}$, that
 $|f(\hat{\mathbf{x}}) - f(\mathbf{x})| \leq \delta$, for some small
 $\delta$. We now assemble the desired *standard robustness* property
@@ -1099,10 +1100,10 @@ different robustness properties in:
 
 ### Exercise 3 ($**$): Explore Other Definitions of Robustness
 
-Use Vehicle to define other forms of Robustness property from Casadio et
-al.
+Use *Vehicle* to define other forms of Robustness property from Casadio
+et al.
 
-### Exercise 4 ($**$): Other Distances in Vehicle
+### Exercise 4 ($**$): Other Distances in *Vehicle*
 
 Re-define the *classification* and *standard robustness* properties by
 using some different notion of distance, e.g. the Euclidean distance,
