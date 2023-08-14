@@ -35,8 +35,8 @@ This tutorial has been run live and adapted for different audiences at:
   September 2023.
 
 We thank all our readers and attendees for their feedback and
-contribution. If you have any questions about the Vehicle tutorial, you
-are invited to join [this Slack
+contribution. If you have any questions about the *Vehicle* tutorial,
+you are invited to join [this Slack
 Channel](https://join.slack.com/t/newworkspace-q484682/shared_invite/zt-1zhh8ql35-arcDaG0961BsI1nCcOWyEQ)
 for questions and discussions.
 
@@ -66,7 +66,7 @@ al (Huang et al. 2017) and Katz et al. (Katz et al. 2017), on neural
 network verification appeared and both used specialised forms of
 SMT-solving. The later gave rise to Marabou (Katz et al. 2019), – a
 rapidly developing sound and complete neural network verifer, which we
-use in Vehicle.
+use in *Vehicle*.
 
 In 2019, the ERAN verifier by Dingh et al. (Singh et al. 2019) appeared
 in POPL, and showed that performance of abstract interpretation methods
@@ -96,8 +96,8 @@ At the time of writing, there exist over a hundred verifiers for neural
 networks. Several papers and monographs are dedicated to the survey of
 the landscape Huang et al. (2020). The community established the
 specification standards [VNNLib](https://www.vnnlib.org/), common
-benchmarks and annual competitions. Vehicle compiles down to the VNNLib
-standard, with a view to be compatible with the growing family of
+benchmarks and annual competitions. *Vehicle* compiles down to the
+VNNLib standard, with a view to be compatible with the growing family of
 verifiers.
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$.
@@ -165,23 +165,23 @@ verification:
     of existing neural network solvers with other theorem provers
     requires resolution.
 
-This tutorial will focus on problems 3 – 5, and will present Vehicle, a
-tool that provides support in alleviating them. In particular, Vehicle
-is equipped with a specification language that allows one to express
-neural network properties in a high-level, human-readable format (thus
-opening the way to reasoning about a wider space of properties, and
-reasoning in terms of the problem space). Then it compiles the
+This tutorial will focus on problems 3 – 5, and will present *Vehicle*,
+a tool that provides support in alleviating them. In particular,
+*Vehicle* is equipped with a specification language that allows one to
+express neural network properties in a high-level, human-readable format
+(thus opening the way to reasoning about a wider space of properties,
+and reasoning in terms of the problem space). Then it compiles the
 specification down into low-level queries and passes them automatically
 to existing neural network solvers. If the specification cannot be
-verified, Vehicle gives one an option to automatically generate a new
+verified, *Vehicle* gives one an option to automatically generate a new
 loss function that can be used to train the model to satisfy the stated
 property. Once a specification has been verified (possibly after
-property-driven re-training), Vehicle allows one to export the proof to
-an interactive theorem prover, and reason about the behavior of the
+property-driven re-training), *Vehicle* allows one to export the proof
+to an interactive theorem prover, and reason about the behavior of the
 complex system that embeds the machine learning model.
 
-Vehicle programs can be compiled to an unusually broad set of backends,
-including:
+*Vehicle* programs can be compiled to an unusually broad set of
+backends, including:
 
 1)  loss functions for Tensorflow which can be used to guide both
     specification-directed training and gradient-based counter-example
@@ -195,9 +195,9 @@ including:
     maintainably construct larger proofs about machine learning-enhanced
     systems.
 
-Currently, Vehicle supports the verifier Marabou, the ITP Agda, and the
-ONNX format for neural networks. The below figure illustrates the
-existing user backends in Vehicle.
+Currently, *Vehicle* supports the verifier Marabou, the ITP Agda, and
+the ONNX format for neural networks. The below figure illustrates the
+existing user backends in *Vehicle*.
 
 <figure>
 <img src="images/vehicle-structure.png" alt="Vehicle Backends" />
@@ -206,7 +206,7 @@ existing user backends in Vehicle.
 
 ## Objectives of this Tutorial
 
-This tutorial will give an introduction to the Vehicle tool
+This tutorial will give an introduction to the *Vehicle* tool
 (<https://github.com/vehicle-lang/vehicle>) and its conceptual approach
 to modelling specifications for machine learning systems via functional
 programming. It will teach the participants to understand the range of
@@ -217,7 +217,7 @@ dependent types.
 
 ## Prerequisites
 
-To follow the tutorial, you will need Vehicle, Marabou and Agda
+To follow the tutorial, you will need *Vehicle*, Marabou and Agda
 installed in your machine. For instructions, refer to [vehicle
 documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
@@ -235,9 +235,9 @@ and
 [agda-mode](https://marketplace.visualstudio.com/items?itemName=banacorn.agda-mode)
 plugins.
 
-# Getting Started with the Vehicle Specification Language
+# Getting Started with the *Vehicle* Specification Language
 
-In this chapter we will introduce the basic features of the **Vehicle**
+In this chapter we will introduce the basic features of the *Vehicle*
 specification language via the famous *ACAS Xu verification challenge*,
 first introduced in 2017 by Guy Katz et al. in *“Reluplex: An Efficient
 SMT Solver for Verifying – Deep Neural Networks”
@@ -291,11 +291,11 @@ the illustration we will just consider the third property: *If the
 intruder is directly ahead and is moving towards the ownship, the score
 for COC will not be minimal.*
 
-## Basic Building Blocks in Vehicle
+## Basic Building Blocks in *Vehicle*
 
 ### Types
 
-Unlike many Neural Network verifier input formats, Vehicle is a typed
+Unlike many Neural Network verifier input formats, *Vehicle* is a typed
 language, and it is common for each specification file starts with
 declaring the types. In the ACAS Xu case, these are the types of vectors
 of rational numbers that the network will be taking as inputs and giving
@@ -308,9 +308,9 @@ type OutputVector = Vector Rat 5
 
 The `Vector` type represents a mathematical vector, or in programming
 terms can be thought of as a fixed-length array. One potentially unusual
-aspect in Vehicle is that the size of the vector (i.e the number of
+aspect in *Vehicle* is that the size of the vector (i.e the number of
 items it contains) must be known statically at compile time. This allows
-Vehicle to check for the presence of out-of-bounds errors at compile
+*Vehicle* to check for the presence of out-of-bounds errors at compile
 time rather than run time.
 
 The most general `Vector` type is therefore written as `Vector A n`,
@@ -318,7 +318,7 @@ which represents the type of vectors containing `n` elements of type
 `A`. For example, in this case `Vector Rat 5` is a vector of length $5$
 that contains rational numbers.
 
-**Vehicle** in fact has a comprehensive support for programming with
+*Vehicle* in fact has a comprehensive support for programming with
 vectors, which we will see throughout this tutorial. But the interested
 reader may go ahead and check the documentation pages for vectors:
 <https://vehicle-lang.readthedocs.io/en/stable/language/vectors.html>.
@@ -337,14 +337,14 @@ declaration, as shown above. Note that no implementation for the network
 is provided directly in the specification, and instead will be provided
 later at compile time. However, the name `acasXu` can still be used in
 the specification as any other declared function would be. This follows
-the **Vehicle** philosophy that specifications should be independent of
+the *Vehicle* philosophy that specifications should be independent of
 any particular network, and should be able to be used to
 train/test/verify a range of candidate networks implementations.
 
 ### Values
 
-New values can be declared in Vehicle using the following syntax, where
-the first line provides the declaration’s type and the bottom line
+New values can be declared in *Vehicle* using the following syntax,
+where the first line provides the declaration’s type and the bottom line
 provides its definition.
 
 ``` vehicle
@@ -368,7 +368,7 @@ to simply write the declaration as:
 pi = 3.141592
 ```
 
-The Vehicle compiler will then automatically infer the correct `Rat`
+The *Vehicle* compiler will then automatically infer the correct `Rat`
 type.
 
 ### Problem Space versus Input Space
@@ -391,13 +391,13 @@ properties of neural networks, it is much more convenient to refer to
 the original problem. In this case specifications will be written in
 terms of the *problem space*. Being able to write specifications in the
 problem space (alongside the input space) is a feature that
-distinguishes **Vehicle** from majority of the mainstream neural network
+distinguishes *Vehicle* from majority of the mainstream neural network
 verifiers, such as e.g. Marabou, ERAN, or $\alpha\beta$-Crown. Let us
 see how this happens in practice.
 
 We start with introducing the full block of code that will normalise
 input vectors into the range $[0,1]$, and will explain significant
-features of Vehicle syntax featured in the code block afterwards.
+features of *Vehicle* syntax featured in the code block afterwards.
 
 For clarity, we define a new type synonym for unnormalised input vectors
 in the problem space.
@@ -452,7 +452,7 @@ normAcasXu x = acasXu (normalise x)
 ### Functions
 
 In the above block, we saw function definitions for the first time, so
-let us highlight the important features of the **Vehicle** language
+let us highlight the important features of the *Vehicle* language
 concerning functions.
 
 #### Function declarations
@@ -469,7 +469,7 @@ Observe how all functions above fit within this declaration scheme.
 
 #### Function types
 
-Functions make up the backbone of the **Vehicle** language. The function
+Functions make up the backbone of the *Vehicle* language. The function
 type is written `A -> B` where `A` is the input type and `B` is the
 output type. For example, the function `validInput` above takes values
 of the (defined) type of `UnnormalisedInputVector` and returns values of
@@ -500,7 +500,7 @@ written as `acasXu (normalise x)`, and this expression has type
 
 #### Pre-defined functions and predicates
 
-Some functions are pre-defined in **Vehicle**. For example, the above
+Some functions are pre-defined in *Vehicle*. For example, the above
 block uses multiplication `*`, division `/` and vector lookup `!`. We
 have also seen the use of a pre-defined “less than or equal to”
 predicate `<=` in the definition of the function `validInput` (note its
@@ -567,17 +567,17 @@ strongLeft      = 3
 strongRight     = 4
 ```
 
-## Property Definition in Vehicle
+## Property Definition in *Vehicle*
 
-We now make up for the time invested into learning the **Vehicle**
-syntax, as stating a verification property becomes very easy. Let us now
-look at the property again:
+We now make up for the time invested into learning the *Vehicle* syntax,
+as stating a verification property becomes very easy. Let us now look at
+the property again:
 
 *If the intruder is directly ahead and is moving towards the ownship,
 the score for COC will not be minimal.*
 
 We first need to define what it means to be *directly ahead* and *moving
-towards*. The exact ACASXu definition can be written in **Vehicle** as:
+towards*. The exact ACASXu definition can be written in *Vehicle* as:
 
 ``` vehicle
 directlyAhead : UnnormalisedInputVector -> Bool
@@ -618,11 +618,11 @@ we have not yet discussed is the quantifier `forall`.
 
 ### Infinite quantifiers
 
-One of the main advantages of **Vehicle** is that it can be used to
-state and prove specifications that describe the network’s behaviour
-over an infinite set of values. We have already seen the `forall`
-operator used in the declaration `validInput` – however, there it was
-quantifying over a finite number of indices.
+One of the main advantages of *Vehicle* is that it can be used to state
+and prove specifications that describe the network’s behaviour over an
+infinite set of values. We have already seen the `forall` operator used
+in the declaration `validInput` – however, there it was quantifying over
+a finite number of indices.
 
 The `forall` in the property above is a very different beast as it is
 quantifying over an “infinite” number of `Vector Rat 5`s. The definition
@@ -630,14 +630,14 @@ of `property3` brings a new variable `x` of type `Vector Rat 5` into
 scope. The variable `x` has no assigned value and therefore represents
 an arbitrary input of that type.
 
-Vehicle also has a matching quantifer `exists`.
+*Vehicle* also has a matching quantifer `exists`.
 
-## How to run **Vehicle**
+## How to run *Vehicle*
 
 To verify this property, we only need to have:
 
-- a verifier installed (at the moment of writing Vehicle has integration
-  with Marabou);
+- a verifier installed (at the moment of writing *Vehicle* has
+  integration with Marabou);
 - the actual network or networks that we wish to verify. These need to
   be supplied in an ONNX format, one of the standard formats for
   representing trained neural networks.
@@ -655,7 +655,7 @@ the above specification):
   --property property3
 ```
 
-**Vehicle** passes the network, as well as a translation of our
+*Vehicle* passes the network, as well as a translation of our
 specification, to Marabou, and we obtain the result – `property3` does
 not hold for the given neural network, `acasXu_1_7.onnx`:
 
@@ -666,9 +666,9 @@ Verifying properties:
       x: [1799.9886669999978, 5.6950779776e-2, 3.09999732192, 980.0, 960.0]
 ```
 
-Furthermore, Vehicle gives us a counter-example in the problem space! In
-particular an assignment for the quantified variable `x` that falsifies
-the assignment.
+Furthermore, *Vehicle* gives us a counter-example in the problem space!
+In particular an assignment for the quantified variable `x` that
+falsifies the assignment.
 
 ## Exercises.
 
@@ -685,7 +685,7 @@ Start by simply running the code that was discussed in the above
 chapter. It is available from the `examples` section of the [tutorial
 repository](https://github.com/vehicle-lang/vehicle-tutorial)
 
-Repeat the steps described in this chapter: download the Vehicle
+Repeat the steps described in this chapter: download the *Vehicle*
 specification and the network, and verify the ACAS Xu Property 3.
 
 Did it work? If yes, you are ready to experiment with your own
@@ -701,8 +701,8 @@ Property 1 in the Acas Xu library is an example where the problem space
 and the output space deviate, as well. This makes Property 1
 specification somewhat harder.
 
-For your first exercise, define Property 1 in Vehicle, paying attention
-to careful handling of the *embedding gap*.
+For your first exercise, define Property 1 in *Vehicle*, paying
+attention to careful handling of the *embedding gap*.
 
 *ACAS Xu Propery 1*: *If the intruder is distant and is significantly
 slower than the ownship, the score of a COC advisory will always be
@@ -730,7 +730,7 @@ properties. You can find them all here: *“Reluplex: An Efficient SMT
 Solver for Verifying – Deep Neural Networks”
 (<https://arxiv.org/pdf/1702.01135.pdf>)*
 
-### Exercise 4 ($***$). Your first independent Vehicle specification
+### Exercise 4 ($***$). Your first independent *Vehicle* specification
 
 1.  On the [tutorial
     repository](https://github.com/vehicle-lang/vehicle-tutorial), find
@@ -740,11 +740,11 @@ Solver for Verifying – Deep Neural Networks”
 2.  Using the Wikipedia page or other sources, examine the data set, and
     try to define a few “obvious properties” that should hold for a
     model that does its classification.
-3.  Write those properties as a Vehicle specification, ensure it type
+3.  Write those properties as a *Vehicle* specification, ensure it type
     checks. See the [Vehicle
     Manual](https://vehicle-lang.readthedocs.io/en/stable/) for how to
     run type checking.
-4.  Using the Vehicle command line, verify your specification,
+4.  Using the *Vehicle* command line, verify your specification,
     i.e. check whether the properties hold.
 
 # Proving Neural Network Robustness
