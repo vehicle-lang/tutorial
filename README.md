@@ -30,7 +30,7 @@ This tutorial has been run live and adapted for different audiences at:
 - [VETSS Summer School](https://wp.doc.ic.ac.uk/vss/) at the University
   of Surrey, UK; 23 August 2023;
 
-- [ICFP’23 International Conference on Functional
+- [ICFP’23 the International Conference on Functional
   Programming](https://icfp23.sigplan.org/) in Seattle, USA; 08
   September 2023.
 
