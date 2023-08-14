@@ -94,8 +94,8 @@ and
 
 At the time of writing, there exist over a hundred verifiers for neural
 networks. Several papers and monographs are dedicated to the survey of
-the landscape, see for example (Liu et al. 2021), (Albarghouthi
-2021),(Huang et al. 2020). The community established the specification
+the landscape, see for example (Liu et al. 2021), (Albarghouthi 2021),
+(Huang et al. 2020). The community established the specification
 standards [VNNLib](https://www.vnnlib.org/), common benchmarks and
 annual competitions. *Vehicle* compiles down to the VNNLib standard,
 with a view to be compatible with the growing family of verifiers.
