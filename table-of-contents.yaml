@@ -5,6 +5,7 @@ input-files:
   - "chapters/2. Vehicle Language.md"
   - "chapters/3. Proving Robustness.md"
   - "chapters/4. Property-Driven Training.md"
+  - "chapters/6. Conclusions.md"
   - "templates/footer.md"
 
 # Configure Pandoc to typeset citations using the bibliography.
