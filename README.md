@@ -35,7 +35,7 @@ This tutorial has been run live and adapted for different audiences at:
   September 2023.
 
 We thank all our readers and attendees for their feedback and
-contribution. This ![FOMLAS’23 tutorial outline](FoMLAS2023.pdf) gives a
+contribution. This [FOMLAS’23 tutorial outline](FoMLAS2023.pdf) gives a
 summary of all tutorial resorces.
 
 If you have any questions about the *Vehicle* tutorial, you are invited
