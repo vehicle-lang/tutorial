@@ -1310,6 +1310,16 @@ for epoch in range(num_epochs):
         optimizer.apply_gradients(zip(grads, model.trainable_weights))
 ```
 
+# Conclusions and Future Directions
+
+The tutorial introduced basic concepts in neural network verification,
+and thereby introduced Vehicle’s architecture:
+
+<figure>
+<embed src="images/architecture.pdf" />
+<figcaption aria-hidden="true">Vehicle Architecture</figcaption>
+</figure>
+
 # References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
