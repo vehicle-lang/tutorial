@@ -150,7 +150,7 @@ verification:
     integrating training with verification. Several approaches exist,
     including the recently introduced method of *“differentiable
     logics”* that translate logical properties into loss functions. But
-    they all have pitfalls, see (Slusarz et al. 2023a) for a discussion.
+    they all have pitfalls, see (Slusarz et al. 2023) for a discussion.
 
 4.  *Programming: finding the right languages to support these
     developments* Many existing solvers have low-level syntax that is
@@ -260,7 +260,7 @@ of Vehicle design, we recommend the following papers:
   Conference on Certified Programs and Proofs, CPP 2023, Boston, MA,
   USA, January 16-17, 2023. pp. 102–120. ACM (2023).
 
-- (Slusarz et al. 2023b) Natalia Slusarz, Ekaterina Komendantskaya,
+- (Slusarz et al. 2023) Natalia Slusarz, Ekaterina Komendantskaya,
   Matthew L. Daggitt, Robert J. Stewart, Kathrin Stark: Logic of
   Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023.
   Proceedings of 24th International Conference on Logic for Programming,
@@ -1254,10 +1254,10 @@ to a fragment of first-order logic in [(Fischer et al.
 work was complemented by giving a fuzzy interpretation to DL by
 [(Krieken, Acar, and Harmelen
 2022)](https://doi.org/10.1016/j.artint.2021.103602) and [(Slusarz et
-al. 2023a)](https://arxiv.org/abs/2303.10650) proposed generalisation
-for the syntax and semantics of DL, with a view of encoding all
-previously presented DLs in one formal system, and comparing their
-theoretical properties.
+al. 2023)](https://arxiv.org/abs/2303.10650) proposed generalisation for
+the syntax and semantics of DL, with a view of encoding all previously
+presented DLs in one formal system, and comparing their theoretical
+properties.
 
 Vehicle has several different differentiable logics from the literature
 available, but will not go into detail about how they work here.
@@ -1508,20 +1508,12 @@ ACM on Programming Languages* 3 (POPL): 1–30.
 <div id="ref-SlusarzKDSS23" class="csl-entry">
 
 Slusarz, Natalia, Ekaterina Komendantskaya, Matthew L. Daggitt, Robert
-J. Stewart, and Kathrin Stark. 2023b. “Logic of Differentiable Logics:
+J. Stewart, and Kathrin Stark. 2023. “Logic of Differentiable Logics:
 Towards a Uniform Semantics of DL.” In *LPAR 2023: Proceedings of 24th
 International Conference on Logic for Programming, Artificial
 Intelligence and Reasoning, Manizales, Colombia, 4-9th June 2023*,
 edited by Ruzica Piskac and Andrei Voronkov, 94:473–93. EPiC Series in
 Computing. EasyChair. <https://doi.org/10.29007/c1nt>.
-
-</div>
-
-<div id="ref-SKDSS23" class="csl-entry">
-
-———. 2023a. “Logic of Differentiable Logics: Towards a Uniform Semantics
-of DL.” In *LPAR-24: The International Conference on Logic for
-Programming, Artificial Intelligence and Reasoning*.
 
 </div>
 
