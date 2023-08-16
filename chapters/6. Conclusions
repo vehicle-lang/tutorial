@@ -1,1 +1,5 @@
 # Conclusions and Future Directions
+
+The tutorial introduced basic concepts in neural network verification, and thereby introduced Vehicle's architecture:
+
+![Vehicle Architecture](images/architecture.pdf)
