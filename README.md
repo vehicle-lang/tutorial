@@ -1316,7 +1316,7 @@ The tutorial introduced basic concepts in neural network verification,
 and thereby introduced Vehicle’s architecture:
 
 <figure>
-<embed src="images/architecture.pdf" />
+<img src="images/architecture.png" alt="Vehicle Architecture" />
 <figcaption aria-hidden="true">Vehicle Architecture</figcaption>
 </figure>
 
