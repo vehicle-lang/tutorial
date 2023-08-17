@@ -242,7 +242,7 @@ plugins.
 ## Further Reading
 
 If you are interested to know more about the theoretical underpinnings
-of Vehicle design, we recommend the following papers:
+of *Vehicle* design, we recommend the following papers:
 
 - (Casadio et al. 2022) Casadio, M., Komendantskaya, E., Daggitt, M.L.,
   Kokke, W., Katz, G., Amir, G., Refaeli, I.: Neural network robustness
