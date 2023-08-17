@@ -314,10 +314,10 @@ to work over.
 \begin{minted}[fontsize=\footnotesize]{vehicle}
 
 minimumInputValues : UnnormalisedInputVector
-minimumInputValues = [0,0,0,0,0]
+minimumInputValues = [0.0, -pi , -pi , 100.0, 0.0]
 
 maximumInputValues : UnnormalisedInputVector
-maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
+maximumInputValues = [60261.0, pi, pi, 1200.0, 1200.0]
 
 meanScalingValues : UnnormalisedInputVector
 meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
@@ -442,7 +442,7 @@ The fact that all vector types come annotated with their size means that it
 \frametitle{Property 3}
 
 
-\footnotesize{\textbf{If the intruder is directly ahead and is moving towards the
+\footnotesize{\textbf{If the intruder is \emph{directly ahead} and is moving towards the
  ownship, the score for COC will not be minimal.}}
 
 \pause
@@ -471,7 +471,7 @@ Can you identify whether the specification is written in terms of input space or
 \begin{frame}[fragile]
 \frametitle{Property 3}
 
-\footnotesize{\textbf{If the intruder is directly ahead and is moving towards the
+\footnotesize{\textbf{If the intruder is directly ahead and is \emph{moving towards} the
  ownship, the score for COC will not be minimal.}}
 
 \pause
@@ -493,6 +493,30 @@ movingTowards x =
 
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{There is little left to do!}
+
+\footnotesize{
+\textbf{If the intruder is directly ahead and is moving towards the
+ ownship, the \emph{score for COC will not be minimal}.}}
+
+\pause
+
+\begin{minted}[fontsize=\footnotesize]{vehicle}
+minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
+minimalScore i x = 
+   forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
+\end{minted}
+\pause
+\begin{block}{Exercise!}
+\footnotesize{
+\begin{enumerate}
+\item What kind of domain  `forall` ranges over? Is it finite or infinite?
+\end{enumerate}}
+\end{block}
+
+\end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{There is little left to do!}
@@ -509,7 +533,7 @@ property3 : Bool
 property3 = forall x . validInput x and 
                        directlyAhead x and 
                        movingTowards x =>
-  not (advises clearOfConflict x)
+                       not (minimalScore clearOfConflict x)
 \end{minted}
 \pause
 \begin{block}{Exercise!}
@@ -556,43 +580,7 @@ property3 [==========================================] 1/1 queries
 
 
 
-\begin{frame}[fragile]
-\frametitle{Exercise: $\epsilon$-ball Robustness}
- \begin{minted}[fontsize=\tiny]{vehicle}
-type Image = Tensor Rat [28, 28]
-type Label = Index 10
-validImage : Image -> Bool
-validImage x = forall i j . 0 <= x ! i ! j <= 1
 
-@network
-classifier : Image -> Vector Rat 10
-
-advises : Image -> Label -> Bool
-advises x i = forall j . j != i => classifier x ! i > classifier x ! j
-
-@parameter
-epsilon : Rat
-
-boundedByEpsilon : Image -> Bool
-boundedByEpsilon x = forall i j . -epsilon <= x ! i ! j <= epsilon
-
-robustAround : Image -> Label -> Bool
-robustAround image label = forall pertubation .
-  let perturbedImage = image - pertubation in
-  boundedByEpsilon pertubation and validImage perturbedImage =>
-    advises perturbedImage label
-
-@dataset
-trainingImages : Vector Image n
-
-@dataset
-trainingLabels : Vector Label n
-
-@property
-robust : Vector Bool n
-robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
-\end{minted}
-\end{frame}
 
 \begin{frame}
 \frametitle{Vehicle ...}
@@ -657,10 +645,11 @@ Which of the four PL problems we addressed?
 
 
 \begin{frame}
-\frametitle{Exercise: ACAS Xu Property 1}
+\frametitle{Harder Exercise: ACAS Xu Property 1}
 
 \small{
-ACAS Xu Property 1 gives an idea how the {\it embedding gap} can arise not only when we reason about inputs, but also the outputs of networks!
+ACAS Xu Property 1 gives an idea how the {\it embedding gap}\\
+ can arise not only when we reason about inputs, but also \\ the outputs of networks!
 %In the previous lecture, we introduced ACAS Xu property 1.
 
 \begin{itemize}
@@ -692,6 +681,45 @@ The ACAS Xu neural network outputs are scaled as follows: given an element $x$ o
 
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Next Lecture: $\epsilon$-ball Robustness}
+ \begin{minted}[fontsize=\tiny]{vehicle}
+type Image = Tensor Rat [28, 28]
+type Label = Index 10
+validImage : Image -> Bool
+validImage x = forall i j . 0 <= x ! i ! j <= 1
+
+@network
+classifier : Image -> Vector Rat 10
+
+advises : Image -> Label -> Bool
+advises x i = forall j . j != i => classifier x ! i > classifier x ! j
+
+@parameter
+epsilon : Rat
+
+boundedByEpsilon : Image -> Bool
+boundedByEpsilon x = forall i j . -epsilon <= x ! i ! j <= epsilon
+
+robustAround : Image -> Label -> Bool
+robustAround image label = forall pertubation .
+  let perturbedImage = image - pertubation in
+  boundedByEpsilon pertubation and validImage perturbedImage =>
+    advises perturbedImage label
+
+@dataset
+trainingImages : Vector Image n
+
+@dataset
+trainingLabels : Vector Label n
+
+@property
+robust : Vector Bool n
+robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
+\end{minted}
+\end{frame}
+
+\end{document}
 
 
 \begin{frame}
