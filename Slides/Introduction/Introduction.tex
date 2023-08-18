@@ -124,7 +124,7 @@
 \mode<presentation>
 \title[Vehicle Tutorial Introduction]{Neural Network Verification with Vehicle}
 %\subtitle{in Neuro-Symbolic Landscape}
-\author[Vehicle]{Ekaterina Komendantskaya and Matthew Daggitt (today's presentors), on behalf of the Vehicle team}
+\author[Vehicle]{Today's presentors: Ekaterina Komendantskaya and Luca Arnaboldi  (live), Matthew Daggitt (online), on behalf of the Vehicle team}
 \institute[]{}
 
 \date[]{}
@@ -769,13 +769,10 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 \begin{itemize}
 \item Introduce \textbf{Vehicle} specification language at the user level
 \item Discuss challenges in NN verification ("grand" and technical)
-\item Gather feedback and obtain community support
+\item Gather feedback 
 \end{itemize}
 \end{block}
 
-\begin{block}{Thanks}
-... to Marabou team and FOMLAS organisers for the continuing support!
-\end{block}
 \end{frame}
 
 \begin{frame}
@@ -785,7 +782,16 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 \item Before coffee break:
 \begin{itemize}
 \item Brief introduction to \textbf{Vehicle} specification language 
-\item \alert{Exercise session:} write and verify a spec (with possibility to extend over the break)
+\item Neural Network Robustness: an iconic verification case
+
+
+\end{itemize}
+
+\item During and after the break:
+
+\begin{itemize}
+
+\item \alert{Exercise session:} write and verify a \textbf{Vehicle} spec 
 
 \footnotesize{Tutorial pages: \url{https://vehicle-lang.github.io}}
 
@@ -796,370 +802,25 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 %\texttt{pip install marabou}
 %\end{itemize}
 
-\item Join tutorial Slack channel via FOMLAS'23 page, to ask questions
+ Join tutorial Slack channel via the tutorial page, to ask questions
 
 \end{itemize}
+
 \item After the break:
 \begin{itemize}
-\item Demo of property-driven training in Vehicle 
-\item Demo of large system integration in Vehicle
+
+
+
+\item Poperty-driven training: theory and demo in Vehicle 
+%\item Demo of large system integration in Vehicle
+\item Application areas for NN Verifiction and large system integration
 \end{itemize}
 
-\item After this tutorial -- Natalia Slusarz: theory behind property-driven training
+
 \end{itemize}
 
 \end{frame}
 
 
 \end{document}
-
-
-\section{Introduction to Vehicle}
-
-\begin{frame}[fragile]
-\frametitle{Types}
-Let us build the ACAS Xu specification.
-
-We start with types of input and output vectors, as well as types of ACAS Xu networks
-
-\begin{minted}[fontsize=\small]{vehicle}
-
-type InputVector = Vector Rat 5
-type OutputVector = Vector Rat 5
-
-@network
-acasXu : InputVector -> OutputVector
-\end{minted}
-
-\begin{block}{}
-
-The Vector type represents a mathematical vector, or in programming terms can be thought of as a fixed-length array.
-\end{block}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Values}
-
-Types for values are automatically inferred by \textbf{Vehicle}. For example, we can declare the number $\pi$ and its type will be inferred as rational:
-
-\begin{minted}[fontsize=\small]{vehicle}
-
-pi = 3.141592
-\end{minted}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Working with vectors}
-\begin{itemize}
-\item some input or output pre-processing maybe expected when defining a neural network.
-
-\begin{example}
-It is assumed that the ACAS Xu inputs and outputs are normalised, i.e. the network does not work directly with units like $m/s$. However, the specifications  we want to write should ideally concern the original units.
-\end{example}
-
-\pause
-
-\item This is an instance of \emph{`` problem space / input space mismatch"}
-\item ... that is very common in neural net verification
-
-\item
-Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from
-majority of the mainstream neural network verifiers
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Vector normalisation}
-For clarity, we define a new type synonym for unnormalised input vectors which are in the problem space.
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-type UnnormalisedInputVector = Vector Rat 5
-
-\end{minted}
-
-Next we define the range of the inputs that the network is designed
-to work over.
-
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-minimumInputValues : UnnormalisedInputVector
-minimumInputValues = [0,0,0,0,0]
-
-maximumInputValues : UnnormalisedInputVector
-maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
-
-meanScalingValues : UnnormalisedInputVector
-meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
-\end{minted}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Vector manipulation}
-An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`.
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-minimumInputValues : UnnormalisedInputVector
-minimumInputValues = foreach i . 0
-
-\end{minted}
-Let us see how  `foreach` works with vector indexing.
-
-We can now define the normalisation function that takes an input vector and
-returns the unnormalised version.
-
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-normalise : UnnormalisedInputVector -> InputVector
-normalise x = foreach i .
-  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
-\end{minted}
-
-\pause
-... our first acquaintance with functions!
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Functions and types}
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-<name> : <type>
-<name> [<args>] = <expr>
-
-\end{minted}
-Functions make up the backbone of the \textbf{Vehicle} language.
-\pause
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i .
-  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
-
-\end{minted}
-
-\pause
-
-\begin{block}{Our first acquaintance with quantifiers!}
- One of the main advantages of \textbf{Vehicle} is that it can be used to state and prove specifications that describe the network’s behaviour over an infinite set of values.
-\end{block}
-
-\end{frame}
-
-
-\begin{frame}[fragile]
-\frametitle{Functions and types}
-
-\begin{block}{Function Composition: Exercise!}
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-normAcasXu : UnnormalisedInputVector -> OutputVector
-normAcasXu x = acasXu (normalise x)
-\end{minted}
-\end{block}
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Pre-defined functions and predicates}
-We have already used:
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-*
-/
-!
-<=
-\end{minted}
-
-\begin{block}{Exercise}
-\footnotesize{What do they stand for?}
-\end{block}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Lets verify ACAS Xu!}
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-distanceToIntruder = 0   -- measured in metres
-angleToIntruder    = 1   -- measured in radians
-intruderHeading    = 2   -- measured in radians
-speed              = 3   -- measured in metres/second
-intruderSpeed      = 4   -- measured in meters/second
-
-clearOfConflict = 0
-weakLeft        = 1
-weakRight       = 2
-strongLeft      = 3
-strongRight     = 4
-\end{minted}
-\footnotesize{
-The fact that all vector types come annotated with their size means that it
- is impossible to mess up indexing into vectors, e.g. if you changed
- `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification would
- fail to type-check.}
-
-
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Property 1}
-
-\footnotesize{\textbf{If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.}}
-
-\pause
-
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-intruderDistantAndSlower : UnnormalisedInputVector -> Bool
-intruderDistantAndSlower x =
-  x ! distanceToIntruder >= 55947.691 and
-  x ! speed              >= 1145      and
-  x ! intruderSpeed      <= 60
-\end{minted}
-\pause
-\begin{block}{Exercise!}
-\footnotesize{
-\begin{enumerate}
-\item
-Can you identify whether the specification is written in terms of input space or problem space? How do you know?
-\item Can you spot more pre-defined \textbf{Vehicle} functions? What are they?
-\end{enumerate}}
-\end{block}
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{There is little left to do!}
-
-\footnotesize{
-\textbf{If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.}}
-
-\pause
-
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-@property
-property1 : Bool
-property1 = forall x .
-   validInput x and intruderDistantAndSlower x =>
-           normAcasXu x ! clearOfConflict <= 1500
-\end{minted}
-\pause
-\begin{block}{Exercise!}
-\footnotesize{
-\begin{enumerate}
-\item Can you guess the purpose of the syntax
-\begin{minted}{vehicle}
-@property
-\end{minted}
-?
-\item What kind of domain  `forall` ranges over? Is it finite or infinite?
-\end{enumerate}}
-\end{block}
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{How to run Vehicle}
-\begin{block}{Checklist}
-\begin{enumerate}
-\item a verifier installed (Marabou);
-\item the actual network is supplied in an ONNX format
-\item \textbf{Vehicle} is installed.
-\end{enumerate}
-\end{block}
-
-\pause
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-vehicle --compileAndVerify
-  --specification acasXu.vcl
-  --verifier Marabou
-  --network acasXu:acasXu_1_7.onnx
-  --property property1
-
---------------------------------------------------
-Verifying properties:
-  property1 [===========================] 1/1 queries complete
-Result: true
-   property1
-\end{minted}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Exercise: $\epsilon$-ball Robustness}
- \begin{minted}[fontsize=\tiny]{vehicle}
-type Image = Tensor Rat [28, 28]
-type Label = Index 10
-validImage : Image -> Bool
-validImage x = forall i j . 0 <= x ! i ! j <= 1
-
-@network
-classifier : Image -> Vector Rat 10
-
-advises : Image -> Label -> Bool
-advises x i = forall j . j != i => classifier x ! i > classifier x ! j
-
-@parameter
-epsilon : Rat
-
-boundedByEpsilon : Image -> Bool
-boundedByEpsilon x = forall i j . -epsilon <= x ! i ! j <= epsilon
-
-robustAround : Image -> Label -> Bool
-robustAround image label = forall pertubation .
-  let perturbedImage = image - pertubation in
-  boundedByEpsilon pertubation and validImage perturbedImage =>
-    advises perturbedImage label
-
-@dataset
-trainingImages : Vector Image n
-
-@dataset
-trainingLabels : Vector Label n
-
-@property
-robust : Vector Bool n
-robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
-\end{minted}
-\end{frame}
-
-\begin{frame}
-\frametitle{Vehicle ...}
-
- \textbf{ is a domain-specific functional language for writing high-level property specifications for neural networks}
-
-\begin{center}
-\begin{tikzpicture}[thick,
-    set/.style = {circle,
-        minimum size = 3cm}]
-
-% Set A
-\node[rectangle,draw] (A) at (1.5,5) {\alert{\textbf{Property in Vehicle}}};
-
-\node[rectangle,draw] (B) at (-3,2) {Training};
-\node[text width=1cm, align=center] at (-3,0) {DL2 ACT etc.};
-
-\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};
-\node[text width=1cm, align=center] at (0,0) {PGD FGSM etc.};
-
-\node[rectangle,draw] (D) at (3,2) {\alert{\textbf{Verification}}};
-\node[text width=1.4cm, align=center] at (3,0) {\alert{\textbf{Marabou}} Eran etc.};
-
-\node[rectangle,draw] (E) at (6,2) {Integration};
-\node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
-
-\draw [->, dashed] (A) edge (B);
-\draw [->, dashed] (A) edge (C);
-\draw [->, dashed] (A) edge (D);
-\draw [->, dashed] (A) edge (E);
-
-\draw [->] (B) edge (C);
-\draw [->] (C) edge (D);
-\draw [->] (D) edge (E);
-
-\onslide<1->{
-\node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {\alert{\textbf{Analysis \& informative error messages}}};
-}
-
-\end{tikzpicture}
-\end{center}
-\end{frame}
-
-
-
-\end{document}
+\

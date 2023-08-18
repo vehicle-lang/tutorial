@@ -35,8 +35,12 @@ This tutorial has been run live and adapted for different audiences at:
   September 2023.
 
 We thank all our readers and attendees for their feedback and
-contribution. If you have any questions about the *Vehicle* tutorial,
-you are invited to join [this Slack
+contribution. This [FOMLAS’23 tutorial
+outline](https://github.com/vehicle-lang/tutorial/blob/source/FoMLAS2023.pdf)
+gives a summary of all tutorial resorces.
+
+If you have any questions about the *Vehicle* tutorial, you are invited
+to join [this Slack
 Channel](https://join.slack.com/t/newworkspace-q484682/shared_invite/zt-1zhh8ql35-arcDaG0961BsI1nCcOWyEQ)
 for questions and discussions.
 
@@ -234,6 +238,34 @@ Highlighting](https://marketplace.visualstudio.com/items?itemName=wenkokke.vehic
 and
 [agda-mode](https://marketplace.visualstudio.com/items?itemName=banacorn.agda-mode)
 plugins.
+
+## Further Reading
+
+If you are interested to know more about the theoretical underpinnings
+of *Vehicle* design, we recommend the following papers:
+
+- (Casadio et al. 2022) Casadio, M., Komendantskaya, E., Daggitt, M.L.,
+  Kokke, W., Katz, G., Amir, G., Refaeli, I.: Neural network robustness
+  as a verification property: A principled case study. In: Shoham, S.,
+  Vizel, Y. (eds.) Computer Aided Verification - 34th International
+  Conference, CAV 2022, Haifa, Israel, August 7-10, 2022, Proceedings,
+  Part I. Lecture Notes in Computer Science, vol. 13371, pp. 219–231.
+  Springer (2022)
+
+- (Daggitt et al. 2023) Daggitt, M.L., Atkey, R., Kokke, W.,
+  Komendantskaya, E., Arnaboldi, L.: Compiling higher-order
+  specifications to SMT solvers: How to deal with rejection
+  constructively. In: Krebbers, R., Traytel, D., Pientka, B.,
+  Zdancewic, S. (eds.) Proceedings of the 12th ACM SIGPLAN International
+  Conference on Certified Programs and Proofs, CPP 2023, Boston, MA,
+  USA, January 16-17, 2023. pp. 102–120. ACM (2023).
+
+- (Slusarz et al. 2023) Natalia Slusarz, Ekaterina Komendantskaya,
+  Matthew L. Daggitt, Robert J. Stewart, Kathrin Stark: Logic of
+  Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023.
+  Proceedings of 24th International Conference on Logic for Programming,
+  Artificial Intelligence and Reasoning, Manizales, Colombia, 4-9th June
+  2023, EPiC Series in Computing, vol. 94, pp. 473–493.
 
 # Getting Started with the *Vehicle* Specification Language
 
@@ -1278,6 +1310,16 @@ for epoch in range(num_epochs):
         optimizer.apply_gradients(zip(grads, model.trainable_weights))
 ```
 
+# Conclusions and Future Directions
+
+The tutorial introduced basic concepts in neural network verification,
+and thereby introduced Vehicle’s architecture:
+
+<figure>
+<img src="images/architecture.png" alt="Vehicle Architecture" />
+<figcaption aria-hidden="true">Vehicle Architecture</figcaption>
+</figure>
+
 # References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
@@ -1329,6 +1371,30 @@ AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI
 Casadio, Marco, Matthew L. Daggitt, Ekaterina Komendantskaya, Wen Kokke,
 Daniel Kienitz, and Rob Stewart. 2021. “Property-Driven Training: All
 You (n) Ever Wanted to Know About.” *arXiv Preprint arXiv:2104.01396*.
+
+</div>
+
+<div id="ref-CasadioKDKKAR22" class="csl-entry">
+
+Casadio, Marco, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen Kokke,
+Guy Katz, Guy Amir, and Idan Refaeli. 2022. “Neural Network Robustness
+as a Verification Property: A Principled Case Study.” In *Computer Aided
+Verification - 34th International Conference, CAV 2022, Haifa, Israel,
+August 7-10, 2022, Proceedings, Part I*, edited by Sharon Shoham and
+Yakir Vizel, 13371:219–31. Lecture Notes in Computer Science. Springer.
+[https://doi.org/10.1007/978-3-031-13185-1\\11](https://doi.org/10.1007/978-3-031-13185-1\_11).
+
+</div>
+
+<div id="ref-DaggittAKKA23" class="csl-entry">
+
+Daggitt, Matthew L., Robert Atkey, Wen Kokke, Ekaterina Komendantskaya,
+and Luca Arnaboldi. 2023. “Compiling Higher-Order Specifications to SMT
+Solvers: How to Deal with Rejection Constructively.” In *Proceedings of
+the 12th ACM SIGPLAN International Conference on Certified Programs and
+Proofs, CPP 2023, Boston, MA, USA, January 16-17, 2023*, edited by
+Robbert Krebbers, Dmitriy Traytel, Brigitte Pientka, and Steve
+Zdancewic, 102–20. ACM. <https://doi.org/10.1145/3573105.3575674>.
 
 </div>
 
@@ -1449,13 +1515,15 @@ ACM on Programming Languages* 3 (POPL): 1–30.
 
 </div>
 
-<div id="ref-SKDSS23" class="csl-entry">
+<div id="ref-SlusarzKDSS23" class="csl-entry">
 
 Slusarz, Natalia, Ekaterina Komendantskaya, Matthew L. Daggitt, Robert
 J. Stewart, and Kathrin Stark. 2023. “Logic of Differentiable Logics:
-Towards a Uniform Semantics of DL.” In *LPAR-24: The International
-Conference on Logic for Programming, Artificial Intelligence and
-Reasoning*.
+Towards a Uniform Semantics of DL.” In *LPAR 2023: Proceedings of 24th
+International Conference on Logic for Programming, Artificial
+Intelligence and Reasoning, Manizales, Colombia, 4-9th June 2023*,
+edited by Ruzica Piskac and Andrei Voronkov, 94:473–93. EPiC Series in
+Computing. EasyChair. <https://doi.org/10.29007/c1nt>.
 
 </div>
 
