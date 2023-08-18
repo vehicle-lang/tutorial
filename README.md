@@ -1106,29 +1106,36 @@ repository](https://github.com/vehicle-lang/vehicle-tutorial)
 Try experimenting with different values of $\epsilon$, for example, try
 $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. Make conclusions.
 
-### Exercise ($**$) : Getting a statistical evaluation of robustness with respect to the given data set for various $\epsilon$s.
+### Exercise ($**$) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s.
 
-(This exercise is technically very simple, but the required number of
+(*This exercise is technically very simple, but the required number of
 experiments may take a few hours to run. We recommend you run it at home
-rather than during the live exercise sessions).
+rather than during the live exercise sessions*).
 
-The above exercise could be transformed into a proper empirical
+The previous exercise could be transformed into a proper empirical
 evaluation of robustness of the model for the data set. To do this,
-include more than 2 images into your `idx` file. A sript for generating
-`idx` files is available
-[here](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/MNIST).
+include more than 2 images into your `idx` file. A script for generating
+`idx` files is available [in the supporting
+materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/MNIST).
+
 Assuming you created an `idx` file with, for example, 500 images, run
 *Vehicle* on this file, and collect statistics for
-$\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to obtain a
-table that looks like this:
+$\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate
+a table that looks like this:
 
-| $\epsilon = 0.01$ | $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
-|:-----------------:|:-----------------:|:-----------------:|:----------------:|:-----------------|
-| 100.0 % (500/500) |  ?? % (???/500)   |  ?? % (???/500)   |   ? % (??/500)   | 0 % (0/500)      |
+|               | $\epsilon = 0.01$ | $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
+|:-------------:|:-----------------:|:-----------------:|:-----------------:|:----------------:|:-----------------|
+| Success rate: | 100.0 % (500/500) |  ?? % (???/500)   |  ?? % (???/500)   |   ? % (??/500)   | 0 % (0/500)      |
 
-Make conclusion about feasibility of $\epsilon$-ball robustness, and the
-speed with which verification success deteriorates with the growing
-$\epsilon$.
+This is your first proper empirical evaluation of the given neural
+network for the given data set! This kind of evaluation is reported in
+international competitoions such as
+[VNNComp](https://github.com/stanleybak/vnncomp2023) and in research
+papers.
+
+Make conclusion about feasibility and success rates of $\epsilon$-ball
+robustness, and the speed with which verification success deteriorates
+with the growing $\epsilon$.
 
 ### Exercise ($*$) : Standard Robustness in *Vehicle*
 
