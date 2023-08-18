@@ -1139,9 +1139,9 @@ with the growing $\epsilon$.
 
 ### Exercise ($*$) : Standard Robustness in *Vehicle*
 
-Using the same `.vcl` file, define and verify in *Vehicle* the propety
-of *Standard Robustness*, that requires, for all $\mathbf{x}$ in the
-$\epsilon$-ball of $\hat{\mathbf{x}}$, that
+Using the same `.vcl` file as in all previous exercises, define and
+verify in *Vehicle* the propety of *Standard Robustness*, that requires,
+for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that
 $|f(\hat{\mathbf{x}}) - f(\mathbf{x})| \leq \delta$, for some small
 $\delta$. We now assemble the desired *standard robustness* property
 definition:
@@ -1169,7 +1169,7 @@ different robustness properties in:
 ### Exercise ($**$): Explore Other Definitions of Robustness
 
 Use *Vehicle* to define other forms of Robustness property from Casadio
-et al.
+et al. Check verification success rates for these properties.
 
 ### Exercise ($**$): Other Distances in *Vehicle*
 
@@ -1177,13 +1177,29 @@ Re-define the *classification* and *standard robustness* properties by
 using some different notion of distance, e.g. the Euclidean distance,
 instead of the $L_{\infty}$ norm.
 
+*Please note: although Vehicle language is rather rich to allow such
+extensions, not all specifications will be feasile for Marabou that
+works with linear real arithmetic.*
+
 ### Exercise ($***$): Conduct a complete “training - verification” experiment from start to finish
 
-Download the [Fashion MNIST data
-set](https://www.tensorflow.org/datasets/catalog/fashion_mnist), train a
-model, generate `onnx` and `idx` files, define the spec and verify its
-robustness. Experiment with different values of $\epsilon$ and different
-definitions of robustness.
+*This exercise can be hard or simple, depending how much help you get
+from the model solution provided as sources!*
+
+We will work with the [Fashion MNIST data
+set](https://www.tensorflow.org/datasets/catalog/fashion_mnist).
+
+Either:
+
+- download the data set, train a model from scratch, generate `onnx` and
+  `idx` files; or
+- obtain the model and `idx` files directly from the directory with [the
+  supporting
+  materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/FMNIST)
+
+Once this is done, define the spec and verify its robustness. Experiment
+with different values of $\epsilon$ and different definitions of
+robustness.
 
 # Property-Driven Training
 
