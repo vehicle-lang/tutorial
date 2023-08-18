@@ -34,15 +34,16 @@ robustAround image label = forall perturbation .
 		advises perturbedImage label
 
 
---Take two datasets one containing an image and one a label
-@dataset
-imageDataset : Vector Image 1
+--Take two datasets 
 
 @dataset
-labelDataset : Vector Label 1
+trainingImages : Vector Image n
+
+@dataset
+trainingLabels : Vector Label n
 
 --Test the image for robustness around the label
 @property
-robust : Bool
-robust = robustAround (imageDataset ! 0) (labelDataset ! 0)
+robust : Vector Bool n
+robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 
