@@ -711,7 +711,7 @@ The exercises assume that you already installed *Vehicle* as described
 in [vehicle
 documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
-### Exercise 1 ($*$).
+### Exercise ($*$).
 
 Start by simply running the code that was discussed in the above
 chapter. It is available from the `examples` section of the [tutorial
@@ -723,7 +723,7 @@ specification and the network, and verify the ACAS Xu Property 3.
 Did it work? If yes, you are ready to experiment with your own
 specifications.
 
-### Exercise 2 ($**$). Problem Space versus Input/Output Space.
+### Exercise ($**$). Problem Space versus Input/Output Space.
 
 We discussed an instance of the embedding gap when verifying Property 3.
 In particular, we reasoned in terms of the problem space, but verified
@@ -754,7 +754,7 @@ To run the verification queries, please use the networks available from
 the [tutorial
 repository](https://github.com/vehicle-lang/vehicle-tutorial).
 
-### Exercise 3 ($**$). The full ACAS Xu chellenge in one file.
+### Exercise ($**$). The full ACAS Xu chellenge in one file.
 
 Why not trying to state all $10$ ACAS Xu properties in one `.vcl` file?
 Try running the verification query in *Vehicle* using all $10$
@@ -762,7 +762,7 @@ properties. You can find them all here: *“Reluplex: An Efficient SMT
 Solver for Verifying – Deep Neural Networks”
 (<https://arxiv.org/pdf/1702.01135.pdf>)*
 
-### Exercise 4 ($***$). Your first independent *Vehicle* specification
+### Exercise ($***$). Your first independent *Vehicle* specification
 
 1.  On the [tutorial
     repository](https://github.com/vehicle-lang/vehicle-tutorial), find
@@ -1093,7 +1093,7 @@ robustness for larger $\epsilon$.
 
 ## Exercises
 
-### Exercise 1 (\*): Run the Chapter code.
+### Exercise ($*$): Run the Chapter code.
 
 As usual, your first task is to repeat the steps described in this
 chapter: download the *Vehicle* specification, the network, the data,
@@ -1101,11 +1101,47 @@ and verify robustness of the given network on given data. All code is
 available from the `examples` section of the [tutorial
 repository](https://github.com/vehicle-lang/vehicle-tutorial)
 
-### Exercise 2 (*): Standard Robustness in *Vehicle\*
+### Exercise ($*$) : Experimenting with $\epsilon$-balls of different size.
 
-Using the same `.vcl` file, define and verify in *Vehicle* the propety
-of *Standard Robustness*, that requires, for all $\mathbf{x}$ in the
-$\epsilon$-ball of $\hat{\mathbf{x}}$, that
+Try experimenting with different values of $\epsilon$, for example, try
+$\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. Make conclusions.
+
+### Exercise ($**$) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s.
+
+(*This exercise is technically very simple, but the required number of
+experiments may take a few hours to run. We recommend you run it at home
+rather than during the live exercise sessions*).
+
+The previous exercise could be transformed into a proper empirical
+evaluation of robustness of the model for the data set. To do this,
+include more than 2 images into your `idx` file. A script for generating
+`idx` files is available [in the supporting
+materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/MNIST).
+
+Assuming you created an `idx` file with, for example, 500 images, run
+*Vehicle* on this file, and collect statistics for
+$\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate
+a table that looks like this:
+
+|               | $\epsilon = 0.005$ | $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
+|:-------------:|:------------------:|:-----------------:|:-----------------:|:----------------:|:-----------------|
+| Success rate: | 100.0 % (500/500)  |  ?? % (???/500)   |  ?? % (???/500)   |   ? % (??/500)   | 0 % (0/500)      |
+
+This is your first proper empirical evaluation of the given neural
+network for the given data set! This kind of evaluation is reported in
+international competitoions such as
+[VNNComp](https://github.com/stanleybak/vnncomp2023) and in research
+papers.
+
+Make conclusion about feasibility and success rates of $\epsilon$-ball
+robustness, and the speed with which verification success deteriorates
+with the growing $\epsilon$.
+
+### Exercise ($*$) : Standard Robustness in *Vehicle*
+
+Using the same `.vcl` file as in all previous exercises, define and
+verify in *Vehicle* the propety of *Standard Robustness*, that requires,
+for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that
 $|f(\hat{\mathbf{x}}) - f(\mathbf{x})| \leq \delta$, for some small
 $\delta$. We now assemble the desired *standard robustness* property
 definition:
@@ -1130,23 +1166,40 @@ different robustness properties in:
   Adversarial Attack and Defence, and Interpretability. J. of Computer
   Science Review, 2018.
 
-### Exercise 3 ($**$): Explore Other Definitions of Robustness
+### Exercise ($**$): Explore Other Definitions of Robustness
 
 Use *Vehicle* to define other forms of Robustness property from Casadio
-et al.
+et al. Check verification success rates for these properties.
 
-### Exercise 4 ($**$): Other Distances in *Vehicle*
+### Exercise ($**$): Other Distances in *Vehicle*
 
 Re-define the *classification* and *standard robustness* properties by
 using some different notion of distance, e.g. the Euclidean distance,
 instead of the $L_{\infty}$ norm.
 
-### Exercise 5 ($***$): Conduct a complete “training - verification” experiment from start to finish
+*Please note: although Vehicle language is rather rich to allow such
+extensions, not all specifications will be feasile for Marabou that
+works with linear real arithmetic.*
 
-Download the [Fashion MNIST data
-set](https://www.tensorflow.org/datasets/catalog/fashion_mnist), train
-the model, generate `onnx` and `idx` files, define the spec and verify
-its robustness.
+### Exercise ($***$): Conduct a complete “training - verification” experiment from start to finish
+
+*This exercise can be hard or simple, depending how much help you get
+from the model solution provided as sources!*
+
+We will work with the [Fashion MNIST data
+set](https://www.tensorflow.org/datasets/catalog/fashion_mnist).
+
+Either:
+
+- download the data set, train a model from scratch, generate `onnx` and
+  `idx` files; or
+- obtain the model and `idx` files directly from the directory with [the
+  supporting
+  materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/FMNIST)
+
+Once this is done, define the spec and verify its robustness. Experiment
+with different values of $\epsilon$ and different definitions of
+robustness.
 
 # Property-Driven Training
 

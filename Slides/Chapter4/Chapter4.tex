@@ -122,7 +122,7 @@
 \setbeamertemplate{navigation symbols}{}
 
 \mode<presentation>
-\title[Vehicle Tutorial Chapter 2]{Vehicle Tutorial Chapter 2: Getting Started}
+\title[Vehicle Tutorial Chapter 4]{Vehicle Tutorial Chapter 4: Property-Driven Training}
 %\subtitle{in Neuro-Symbolic Landscape}
 \author[Vehicle]{Today's presentors: Ekaterina Komendantskaya and Luca Arnaboldi  (live), Matthew Daggitt (online), on behalf of the Vehicle team}
 \institute[]{}
@@ -149,15 +149,14 @@
 \begin{frame}
 \frametitle{In this chapter...}
 
-We will:
+We will discuss:
 
 \begin{itemize}[<+->]
-\item  ... introduce main building blocks of \textbf{Vehicle} as a programming language
-\item ... get to practice working with \textbf{Vehicle}
-\item ... use the famous ACAS Xu benchmark to show \textbf{Vehicle}'s work flow --
-from specification to verification
-\item ... identify PL problems that are resolved by \textbf{Vehicle}
-
+\item  ...  why training is part of verification of neural networks
+\item ... what choices exist for achieving this, generally
+\item ... what choice \textbf{Vehicle} makes in this respect
+\item ... theoretical and practical issues with the chosen methods, and \textbf{Vehicle}'s
+take on them
 \end{itemize}
 
 \end{frame}
@@ -168,7 +167,7 @@ from specification to verification
 
 \pause
 \begin{itemize}
-\item[$I^O$] Interoperability -- properties are not portable between training/counter-example search/ verification.
+\item[$I^O$] \alert{Interoperability -- properties are not portable between training/counter-example search/ verification.}
 
 \item[$I^{P}$] Interpretability -- code is not easy to understand.
 
@@ -179,92 +178,431 @@ from specification to verification
 \end{frame}
 
 
-    \begin{frame}
-\frametitle{Recap: ACAS Xu}
-A collision avoidance system for unmanned autonomous aircraft.
-\tikz [remember picture,overlay]{
-\node at ([xshift=3cm,yshift=3cm]current page.south) {\includegraphics[width=0.5\linewidth]{Images/acas_xu.png}};}
+    \begin{frame}[fragile]
+\frametitle{Why Training is a part of Verification?}
 
-{\small
-Inputs:
-\vspace{-0.7em}
-\begin{itemize}
-\setlength\itemsep{-0.1em}
-\item Distance to intruder, $\rho$
-\item Angle to intruder, $\theta$
-\item Intruder heading, $\varphi$
-\item Speed, $v_{own}$
-\item Intruder speed, $v_{int}$
-\end{itemize}
+\begin{minted}[fontsize=\footnotesize]{vehicle}
+vehicle verify \
+  --specification acasXu.vcl \
+  --verifier Marabou \
+  --network acasXu:acasXu_1_7.onnx \
+  --property property3
 
-
-Outputs:
-\vspace{-0.7em}
-\begin{itemize}
-\setlength\itemsep{-0.1em}
-\item Clear of conflict
-\item Strong left
-\item Weak left
-\item Weak right
-\item Strong right
-\end{itemize}}
+Verifying properties:
+property3 [==========================================] 1/1 queries
+  result:  counterexample found
+  x: [1799.9886669999978, 1.9509286320000003e-2, 
+                        3.09999732192, 980.0, 1017.6036]
+\end{minted}
 
 \end{frame}
+
+   \begin{frame}
+\frametitle{Why Training is a part of Verification?}
+
+For Chapter 3 exercise on verifying a small Fashion MNIST network, the answer would be:
+
+\footnotesize{
+\begin{tabular}{|p{0.2\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}| p{0.15\textwidth}|}
+		\hline
+& 	$\epsilon = 0.01$ & $\epsilon = 0.05$ & $\epsilon = 0.1$ & $\epsilon = 0.5$ \\ \hline \hline
+
+Success rate: & 82.6 \% (413/500) &	29.8 \% (149/500) &	3.8 \% (19/500) & 	0 \% (0/500)\\		
+		 \hline
+	\end{tabular}}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{A few words on the context}
+
+  \begin{itemize}
+  \item[1943] Perceptron by McCullogh and Pitts
+  \item[90-2000] Rise of machine learning applications
+  \item[2013]
+   {\scriptsize
+ \begin{thebibliography}{99}
+ \beamertemplatearticlebibitems
+  \bibitem{2}{C.~Szegedy, W.~Zaremba, I.~Sutskever, J.~Bruna, D.~Erhan,
+I.~Goodfellow, and R.~Fergus.  Intriguing properties of neural networks. 2013. (10000+ citations on GS)}
+\end{thebibliography}}
+
+\item[2013-..] Tens of thousands of papers on adversarial training
+
+  (in the attack-defence style)
+    {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+   \bibitem{3}{A.~C.~Serban, E.~Poll, J.~Visser.
+Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
+\end{thebibliography}}
+
+\pause
+
+\item[2017] First Neural network verification attempts
+    {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{4}{G.~Katz, C.W.~Barrett, D.L.~Dill, K.~Julian, M.J.~Kochenderfer:
+      Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks. CAV (1) 2017: 97-117.}
+    \bibitem{5}{ X. Huang, M. Kwiatkowska, S. Wang, M. Wu. Safety Verification of Deep Neural Networks. CAV (1) 2017: 3-29.}
+\end{thebibliography}}
+
+
+\item[2017-..] Hundreds of papers on neural network verification
+
+  \end{itemize}
+\end{frame}
+
+
 
 
 \begin{frame}
-\frametitle{ACAS Xu}
+  \frametitle{}
 
-%\pause
-\begin{definition}[ACAS Xu: Property 3]
-{\it If the intruder is directly ahead and is moving towards the
- ownship, the score for COC will not be minimal.}
-\end{definition}
 
-%\pause
-\begin{block}{}
-\begin{equation*}
-\begin{array}{l}
-1500 \leq \rho \leq 1800 \ \wedge \\
--0.06 \leq \theta \leq 0.06 \ \wedge \\ 
-\psi \geq 3.10 \ \wedge \\
-  v_{own} \geq 980 \ \wedge \\
-v_{int} \geq 960 \ \Rightarrow \\
- \text{the score for COC} \neq 0
-%(\rho \geq 55947.691) \wedge
-%(v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
-%\Rightarrow \text{the score for COC is at most 1500}
-\end{array}
-\end{equation*}
-\end{block}
 
+  \begin{block}{ Training for Robustness}
+   % \begin{center}
+
+    %  \end{center}
+    \end{block}
+
+    \pause
+    Training generally:
+
+    \begin{enumerate}
+    \item depends on data
+    \item depends on loss functions
+      \item some other parameters like shape of the functions
+      \end{enumerate}
+    
 \end{frame}
 
-%\end{document}
 
 
-\section{Vehicle' Syntax}
+
 
 \begin{frame}[fragile]
-\frametitle{Types}
-Let us build the ACAS Xu specification.
+  \frametitle{1. Data Augmentation}
+  Suppose we are given a data set $\mathcal{D} =  \{(\x_1, \y_1), \ldots , (\x_n, \y_n)\}$.
+  Prior to training, generate new training data samples close to existing data and label them with the same output as the original data.
+      {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar: 
+       A survey on image data augmentation for deep learning. J.
+Big Data 6, 60 (2019)}
+\end{thebibliography}}
 
-We start with types of input and output vectors, as well as types of ACAS Xu networks
+\pause
 
-\begin{minted}[fontsize=\small]{vehicle}
+\begin{center}
 
-type InputVector = Vector Rat 5
-type OutputVector = Vector Rat 5
+  \includegraphics[width=5cm]{Images/SR-vs-CR-1.png}
 
-@network
-acasXu : InputVector -> OutputVector
-\end{minted}
+  \end{center}
+  
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{1. Data Augmentation}
+  Suppose we are given a data set $\mathcal{D} =  \{(\x_1, \y_1), \ldots , (\x_n, \y_n)\}$.
+  Prior to training, generate new training data samples close to existing data and label them with the same output as the original data.
+      {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar: 
+       A survey on image data augmentation for deep learning. J.
+Big Data 6, 60 (2019)}
+\end{thebibliography}}
+
+
+\begin{center}
+
+  \includegraphics[width=5cm]{Images/SR-vs-CR-2.png}
+
+  \end{center}
+  
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+  \frametitle{However,}
+
+
+\begin{center}
+
+  \includegraphics[width=5cm]{Images/SR-vs-CR-4.png}
+
+  \end{center}
+  
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{However,}
+
+
+
+\begin{center}
+
+  \includegraphics[width=5cm]{Images/SR-vs-CR-5.png}
+
+  \end{center}
+  
+ \end{frame}
+
+ \begin{frame}[fragile]
+  \frametitle{Adversarial Training}
+
+
+
+\begin{center}
+
+  \includegraphics[width=5cm]{Images/SR-vs-CR-3.png}
+
+  \end{center}
+  
+ \end{frame}
+
+
+\begin{frame}
+  \frametitle{2. Solutions Involving Loss Functions}
+Given a data set $\mathcal{D} $,  a function  ${f: \Real^n \rightarrow \Real^m}$,
+	a loss function $\losssymbol: \Real^n \times \Real^m \rightarrow \Real$ computes a penalty proportional to the difference between the output of $f$ on a training input $x$ and a desired output $y$.\pause
+
+
+\begin{example}[Cross Entropy Loss Function]
+	\label{eq:cross-entropy}
+	Given a function  ${f: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as 
+	\begin{equation}\label{eq:ce}
+	\losssymbol_{ce}(\x, \y) = - \sum_{i=1}^{m} \y_i \; \log(f(\x)_i)
+	\end{equation}
+	where $\y_i$ is the true probability for class $i$ and $f(\x)_i$ the probability for class $i$ as predicted by $f$ when applied to $\x$.
+\end{example}
+
+\end{frame}
+
+ 
+
+\begin{frame}
+  \frametitle{2. Adversarial Training  for Robustness}
+
+  \begin{itemize}
+  \item  \emph{gradient descent}  minimises loss $\lossfn(\xt, \y)$ between the predicted value $f_{\theta}(\xt)$ and the true value $\y$, for each entry $(\xt, \y)$ in $\mathcal{D}$:  
+  $$ \min_{\theta} \lossfn(\xt, \y) $$
+  \pause
+  \item instead minimise the loss with respect to the worst-case perturbation of each sample in $\mathcal{D}$.
+\begin{itemize}
+     \item Replace the standard training objective with:
+%\begin{equation}
+$$\min_{\theta} \max_{\forall \xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)$$
+ \item often referred to as the method of \emph{``projected gradient descent"} (PGD)
+
+\end{itemize}
+\end{itemize}
+
+ {\scriptsize
+   \begin{thebibliography}{99}
+        \beamertemplatearticlebibitems
+    \bibitem{7}
+I.J. Goodfellow, J. Shlens, C. Szegedy: Explaining and harnessing adversarial examples. 3rd International Conference on Learning Representations,
+ICLR 2015, San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings (2015)
+ \end{thebibliography}}
+
+\end{frame}
+
+
+    \begin{frame}
+      \frametitle{3. Lipshitz Continuity}
+
+      Optimise for: 
+      
+  \begin{equation*}
+    \label{eq:lipschitz-robustness}
+    \forall \xs: \distance{\xs}{\xt} \leq \epsilon \Rightarrow \distance{f(\xs)}{f(\xt)} \leq L \distance{\xs}{\xt}
+  \end{equation*}
+
+   {\scriptsize
+   \begin{thebibliography}{99}
+        \beamertemplatearticlebibitems
+    \bibitem{7}
+P. Pauli, A. Koch, J. Berberich, P. Kohler, F. Allgower: Training robust neural networks
+using Lipschitz bounds. IEEE Control Systems Letters (2021)
+\bibitem{8} H. Gouk, E. Frank, B. Pfahringer, M.J. Cree: Regularisation of neural networks by enforcing Lipschitz continuity. Machine Learning 110(2), 393–416 (2021)
+\end{thebibliography}}
+
+
+and much more...
+
+    \end{frame}
+
+
+\begin{frame}
+\frametitle{}
+
+\begin{alertblock}{Ok, great!}
+ Machine Learning Community knows how to make our networks robust, and maybe even verifiable!
+\end{alertblock}
+\pause
+But remember: 
 
 \begin{block}{}
+\begin{itemize}
+\item[$I^O$] \alert{Interoperability -- properties are not portable between training/counter-example search/ verification.}
 
-The Vector type represents a mathematical vector, or in programming terms can be thought of as a fixed-length array.
+\item[$I^{P}$] \alert{Interpretability} $\ldots$
+
+\item[$I^{\int}$] Integration $\ldots$
+
+\item[$E^G$] Embedding gap $\ldots$
+\end{itemize}
 \end{block}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Interpretation of adversarial training in connection to verification properties}
+
+  
+    \begin{itemize}[<+-|alert@+>]
+      \item Recall the epsilon ball robustness:
+      
+       $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \alert{robust}(f(\x)) $
+
+        \item We can map different kinds of adversarial training to formal properties:
+          	\begin{tabular}{p{3.5cm}|p{5.5cm}} 
+		%\toprule
+		Training style & Definition of \textbf{$robust$}  \\ \hline \hline
+		%\midrule
+		Data Augmentation & 	$ argmax\ f(\x) = c$  \\ \hline
+		Adversarial Training & 	$ |f(\x) - f(\hat{\x})| \leq \delta$ \\ \hline
+          Lipschitz Continuity & 	$ |f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$  \\ \hline
+          ... & ... \\
+		%Approximate CR (ACR) & 	$\forall X: ||X-\hat{X}|| \leq \epsilon \Longrightarrow f(X)_c \geq \eta$  \\
+		%\bottomrule
+	\end{tabular}
+        \end{itemize}
+        
+        
+       {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{6}{M. Casadio, E. Komendantskaya, M. L. Daggitt, W. Kokke,
+G. Katz, G.~Amir, and I.~Rafaeli. 2022. Neural Network Robustness as a Verification Property:
+A Principled Case Study. CAV'22.}
+\end{thebibliography}}
+ 
+    
+  \end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Problem Recap}
+
+\begin{itemize}
+\item one kind of robustness does not necessarily imply another;
+
+\item It is easy to get it wrong, and,  while optimising for a \alert{wrong kind} of robustness, achieve little in verification success rates
+
+\item And what to do with properties that are not $\epsilon$-ball robustness? 
+\end{itemize}
+\pause
+
+\begin{block}{}
+\begin{itemize}
+\item[$I^O$] \alert{Interoperability -- properties are not portable between training/counter-example search/ verification.}
+
+\item[$I^{P}$] \alert{Interpretability} $\ldots$
+
+\item[$I^{\int}$] Integration $\ldots$
+
+\item[$E^G$] Embedding gap $\ldots$
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The solution we are looking for}
+	
+	
+	\begin{figure}[t]
+		\begin{center}
+			\begin{tikzpicture}[scale=.7]
+				
+				\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
+				\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+				\node (0,0) { };
+				\draw (-1,0) node {{\footnotesize \it Verifier} };
+				
+				\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
+				\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+				\draw (11.1,0) node{{\footnotesize \it Neural Network}};
+				
+				
+				\draw (5,0.2) node{\footnotesize{\textbf{The specification}:}};
+				\draw (5,-0.4) node{\footnotesize{desired properties}};
+				
+				
+				\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+				\draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{teal}{retrain}}}};
+				
+				\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
+				\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{teal}{verify properties}}}}; 
+			\end{tikzpicture}
+		\end{center}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{In Vehicle terms,}
+
+
+\begin{center}
+\begin{tikzpicture}[thick,
+    set/.style = {circle,
+        minimum size = 3cm}]
+
+% Set A
+\node[rectangle,draw] (A) at (1.5,5) {\alert{Property in Vehicle}};
+
+\node[rectangle,draw] (B) at (-3,2) {\alert{Training}};
+\node[text width=1cm, align=center] at (-3,0) {\alert{DL2 or other DL (native)}};
+
+\node[rectangle,draw, dashed,text width=1.4cm] (C) at (0,2) {\alert{Counter-example search}};
+\node[text width=1cm, align=center] at (0,0) {\alert{PGD FGSM etc.}};
+
+\node[rectangle,draw] (D) at (3,2) {Verification};
+\node[text width=1.4cm, align=center] at (3,0) {Marabou Eran etc.};
+
+\node[rectangle,draw] (E) at (6,2) {Integration};
+\node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
+
+\draw [->] (A) edge (B);
+\draw [->, dashed] (A) edge (C);
+\draw [->] (A) edge (D);
+\draw [->] (A) edge (E);
+%\draw [->, dashed] (A) edge (C);
+\draw [->] (B) edge (C);
+\draw [->] (C) edge (D);
+\draw [->] (D) edge (E);
+
+\onslide<1->{
+\node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {Analysis \& informative error messages};
+}
+
+
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\end{document}
 
 \begin{frame}[fragile]
 \frametitle{Values}
