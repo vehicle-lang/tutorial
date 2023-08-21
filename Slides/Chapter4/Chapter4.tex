@@ -15,7 +15,8 @@
 \usepackage{minted}
 
 \usepackage{stmaryrd}
-\usepackage{local-macros2}
+%\usepackage{local-macros2}
+\usepackage{local-macros}
 \newcommand{\distance}[2]{|#1 - #2|}
 \newcommand{\outputdistance}[2]{||#1 - #2||}
 %\newcommand{\x}{\vect{x}} 		% Arbitrary input
@@ -72,12 +73,14 @@
 
 \usepackage[all]{foreign}
 
-\newcommand{\fstar}{F$^\ast$\xspace}
-\newcommand{\starchild}{StarChild\xspace}
-\newcommand{\lazuli}{Lazuli\xspace}
-\newcommand{\sapphire}{Sapphire\xspace}
-\newcommand{\cL}{{\cal L}}
+
+
+
+\colorlet{MyColour}{teal}
+
+\newcommand{\coloured}[1]{\textcolor{MyColour}{#1}}
 %\newcommand{\Real}{{\mathbb R}}
+
 \usepackage{makecell}
 \DeclareMathOperator{\linear}{linear}
 \DeclareMathOperator{\relu}{relu}
@@ -292,8 +295,8 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
 
 \begin{frame}[fragile]
   \frametitle{1. Data Augmentation}
-  Suppose we are given a data set $\mathcal{D} =  \{(\x_1, \y_1), \ldots , (\x_n, \y_n)\}$.
-  Prior to training, generate new training data samples close to existing data and label them with the same output as the original data.
+  Suppose we are given a data set $\mathcal{D} =  \{(\x_1, \y_1), \ldots , (\x_n, \y_n)\}$. \\
+  Prior to training, generate new training data samples close to existing data\\ and label them with the same output as the original data.
       {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
@@ -379,17 +382,17 @@ Big Data 6, 60 (2019)}
 
 \begin{frame}
   \frametitle{2. Solutions Involving Loss Functions}
-Given a data set $\mathcal{D} $,  a function  ${f: \Real^n \rightarrow \Real^m}$,
-	a loss function $\losssymbol: \Real^n \times \Real^m \rightarrow \Real$ computes a penalty proportional to the difference between the output of $f$ on a training input $x$ and a desired output $y$.\pause
+Given a data set $\mathcal{D} $,\\  a function  ${f_{\theta}: \Real^n \rightarrow \Real^m}$ (with optimisation parameters $\theta$),\\
+	a \emph{loss function} $\losssymbol: \Real^n \times \Real^m \rightarrow \Real$ computes a penalty proportional to the difference between the output of $f_{\theta}$ on a training input $\xt$ and a desired output $\y$.\pause
 
 
 \begin{example}[Cross Entropy Loss Function]
 	\label{eq:cross-entropy}
-	Given a function  ${f: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as 
+	Given a function  ${f_{\theta}: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as 
 	\begin{equation}\label{eq:ce}
-	\losssymbol_{ce}(\x, \y) = - \sum_{i=1}^{m} \y_i \; \log(f(\x)_i)
+	\losssymbol_{ce}(\xt, \y) = - \sum_{i=1}^{m} \y_i \; \log(f_{\theta}(\xt)_i)
 	\end{equation}
-	where $\y_i$ is the true probability for class $i$ and $f(\x)_i$ the probability for class $i$ as predicted by $f$ when applied to $\x$.
+	where $\y_i$ is the true probability for class $i$ and $f_{\theta}(\xt)_i$ is the probability for class $i$ as predicted by $f_{\theta}$ when applied to $\xt$.
 \end{example}
 
 \end{frame}
@@ -400,14 +403,14 @@ Given a data set $\mathcal{D} $,  a function  ${f: \Real^n \rightarrow \Real^m}$
   \frametitle{2. Adversarial Training  for Robustness}
 
   \begin{itemize}
-  \item  \emph{gradient descent}  minimises loss $\lossfn(\xt, \y)$ between the predicted value $f_{\theta}(\xt)$ and the true value $\y$, for each entry $(\xt, \y)$ in $\mathcal{D}$:  
+  \item  \emph{gradient descent}  minimises loss $\lossfn(\xt, \y)$ between\\ the predicted value $f_{\theta}(\xt)$ and\\ the true value $\y$, for each entry $(\xt, \y)$ in $\mathcal{D}$:  
   $$ \min_{\theta} \lossfn(\xt, \y) $$
   \pause
-  \item instead minimise the loss with respect to the worst-case perturbation of each sample in $\mathcal{D}$.
+  \item For \emph{adversarial training}, we instead minimise the loss with respect to the worst-case perturbation of each sample in $\mathcal{D}$.
 \begin{itemize}
      \item Replace the standard training objective with:
 %\begin{equation}
-$$\min_{\theta} \max_{\forall \xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)$$
+$$\min_{\theta} \max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)$$
  \item often referred to as the method of \emph{``projected gradient descent"} (PGD)
 
 \end{itemize}
@@ -453,7 +456,7 @@ and much more...
 \frametitle{}
 
 \begin{alertblock}{Ok, great!}
- Machine Learning Community knows how to make our networks robust, and maybe even verifiable!
+ Machine Learning Community knows how to make our networks more robust, and maybe even verifiable!
 \end{alertblock}
 \pause
 But remember: 
@@ -472,27 +475,28 @@ But remember:
 \end{frame}
 
 \begin{frame}
-  \frametitle{Interpretation of adversarial training in connection to verification properties}
+  \frametitle{Interpretation of adversarial training:}
 
   
-    \begin{itemize}[<+-|alert@+>]
-      \item Recall the epsilon ball robustness:
+   % \begin{itemize}[<+-|alert@+>]
+      \begin{block}{Recall the epsilon ball robustness:}
       
        $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \alert{robust}(f(\x)) $
+\end{block}
 
-        \item We can map different kinds of adversarial training to formal properties:
+     We can map different kinds of adversarial training to formal properties:
           	\begin{tabular}{p{3.5cm}|p{5.5cm}} 
 		%\toprule
-		Training style & Definition of \textbf{$robust$}  \\ \hline \hline
+		Training style & Definition of \alert{$robust$}  \\ \hline \hline
 		%\midrule
-		Data Augmentation & 	$ argmax\ f(\x) = c$  \\ \hline
+		Data Augmentation & 	$ argmax\ f(\x) = i$  \\ \hline
 		Adversarial Training & 	$ |f(\x) - f(\hat{\x})| \leq \delta$ \\ \hline
           Lipschitz Continuity & 	$ |f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$  \\ \hline
           ... & ... \\
 		%Approximate CR (ACR) & 	$\forall X: ||X-\hat{X}|| \leq \epsilon \Longrightarrow f(X)_c \geq \eta$  \\
 		%\bottomrule
 	\end{tabular}
-        \end{itemize}
+    %    \end{itemize}
         
         
        {\scriptsize
@@ -503,6 +507,8 @@ G. Katz, G.~Amir, and I.~Rafaeli. 2022. Neural Network Robustness as a Verificat
 A Principled Case Study. CAV'22.}
 \end{thebibliography}}
  
+ 
+
     
   \end{frame}
 
@@ -510,28 +516,22 @@ A Principled Case Study. CAV'22.}
 
 
 \begin{frame}[fragile]
-\frametitle{Problem Recap}
+\frametitle{Consequences of this finding:}
 
-\begin{itemize}
+\begin{itemize}[<+->]
 \item one kind of robustness does not necessarily imply another;
 
-\item It is easy to get it wrong, and,  while optimising for a \alert{wrong kind} of robustness, achieve little in verification success rates
+\item It is easy to get it wrong, and,  while optimising for \alert{one kind} of robustness, achieve little in verification success rates
 
-\item And what to do with properties that are not $\epsilon$-ball robustness? 
+\begin{example}
+In majority of ML + verification papers, adversarial robustness is used for training (it encourages \emph{standard robustness of networks}), while verification is done for \emph{classification robustness}. We show that these two types of robustness are not in any relation: i.e. increasing one does not generally increase the other.   
+\end{example}
+
+\item And what to do with properties that are not $\epsilon$-ball robustness? Out-of-the-box PGD training only works with $\epsilon$-balls around data points. 
 \end{itemize}
-\pause
 
-\begin{block}{}
-\begin{itemize}
-\item[$I^O$] \alert{Interoperability -- properties are not portable between training/counter-example search/ verification.}
 
-\item[$I^{P}$] \alert{Interpretability} $\ldots$
 
-\item[$I^{\int}$] Integration $\ldots$
-
-\item[$E^G$] Embedding gap $\ldots$
-\end{itemize}
-\end{block}
 \end{frame}
 
 \begin{frame}
@@ -564,6 +564,19 @@ A Principled Case Study. CAV'22.}
 			\end{tikzpicture}
 		\end{center}
 	\end{figure}
+	\pause
+	\begin{block}{NB}
+\begin{itemize}
+\item[$I^O$] \alert{Interoperability} $\ldots$
+
+\item[$I^{P}$] \alert{Interpretability} $\ldots$
+
+\item[$I^{\int}$] Integration $\ldots$
+
+\item[$E^G$] Embedding gap $\ldots$
+\end{itemize}
+\end{block}
+	
 \end{frame}
 
 \begin{frame}
@@ -608,18 +621,80 @@ A Principled Case Study. CAV'22.}
 \end{center}
 \end{frame}
 
-\end{document}
+
 
 \begin{frame}[fragile]
-\frametitle{Values}
+\frametitle{Vehicle's formula}
 
-Types for values are automatically inferred by \textbf{Vehicle}. For example, we can declare the number $\pi$ and its type will be inferred as rational:
 
-\begin{minted}[fontsize=\small]{vehicle}
+\begin{block}{Property-driven training =}
 
-pi = 3.141592
-\end{minted}
+Differentiable Logic + (PGD) optimisation
+\end{block}
 \end{frame}
+
+\begin{frame}
+\frametitle{Example - differentiable logic}
+	We define a very simple differentiable logic on a toy propositional language $$a := a\ |p\ \leq\ p|\ a \land a\ |\ a \Rightarrow a$$ based on G\"{o}del fuzzy logic~[van Krieken 2022].
+	\begin{align*}
+		\translation (\val_1 \leq \val_2) &:=1-\max(\frac{\translation(\val_1) -\translation(\val_2)}{\translation(\val_1) + \translation(\val_2)}, 0)\\
+		\translation (\val_1 \land \val_2)&:= \min(\translation(\val_1), \translation(\val_2))\\
+		\translation (\val_1 \Rightarrow \val_2) &:= \max (1 - \translation(\val_1), (\translation))
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example - translation}
+\begin{align*}
+\only<1-4>{\large{\translation (\coloured{\forall \x \in \Real^n} : ||\x - \hat{\x}|| \leq \epsilon \Rightarrow || f(\x) - f(\hat{\x})|| \leq \delta) }}\\
+\only<2-4>{\translation ( ||\x - \hat{\x}|| \leq \epsilon\ \coloured{\Rightarrow}\ || f(\x) - f(\hat{\x})|| \leq \delta) }\\
+\only<3-4>{\max({1 - \translation(||\x - \hat{\x}|| \coloured{\leq} \epsilon)}, || \translation(f(\x) - f(\hat{\x})|| \coloured{\leq} \delta))}\\
+\only<4>{ \max(\max(\dfrac{\translation (||\x - \hat{\x}|| - \epsilon)}{\translation (||\x - \hat{\x}|| + \epsilon)},0), 1 - \max(\dfrac{\translation(|| f(\x) - f(\hat{\x})|| - \delta)}{\translation (|| f(\x) - f(\hat{\x})|| + \delta)},0) }
+\end{align*}
+%\begin{align*}
+%\only<1>{&\text{First we are going to drop the quantifier as we are only using the propositional toy language.}}\\
+%\only<1>{&\text{This is however where a lot of the existing DLs differ, for example:}}
+%\only<2>{&\text{Second we are going to translate the implication.}}
+%\only<3>{&\text{Third we're going to focus on the comparisons}}
+%\only<4>{&\text{And this is the final formal of this constraint we can get to right now.} }\\
+%\only<4>{&\text{Next we would translate the  subtraction and result of the distance function.} }
+%\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Different existing DLs}
+	\begin{itemize}
+		\item DL2 
+		      {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{6}{Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce Zhang, and
+Martin Vechev. DL2: Training and querying neural networks with logic. In ICML'19,  pp. 1931–1941. }
+\end{thebibliography}}
+ 
+		
+		\item fuzzy DLs such as: Godel, Łukasiewicz, Yager, product and others 
+		
+		      {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{6}{Emile van Krieken, Erman Acar, and Frank van Harmelen. Analyzing differentiable fuzzy
+logic operators. Artificial Intelligence, 302:103602, 2022. }
+\end{thebibliography}}
+ 
+		\item Signal Temporal Logic DL 
+		
+		      {\scriptsize
+ \begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{6}{Peter Varnai and Dimos V. Dimarogonas. On robustness metrics for learning stl tasks.
+In 2020 American Control Conference (ACC), pp. 5394–5399, 2020. }
+\end{thebibliography}}
+ 
+	\end{itemize}
+\end{frame}
+
+\end{document}
 
 \begin{frame}[fragile]
 \frametitle{Working with vectors}
