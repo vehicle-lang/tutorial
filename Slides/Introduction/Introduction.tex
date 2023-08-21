@@ -1,4 +1,5 @@
-\documentclass{beamer}
+%\documentclass{beamer}
+\documentclass[aspectratio=169]{beamer}
 %pdflatex -shell-escape my_document.tex
 
 \usetheme{default}
@@ -446,35 +447,35 @@ Marabou is our current choice as it is complete, and the set of expressible quer
 
 \onslide<2->{
 \node[rectangle,draw] (B) at (-3,2) {Training};}
-\onslide<3->{
+\onslide<2->{
 \node[text width=1cm, align=center] at (-3,-1) {DL2 ACT etc.};
 }
 
-\onslide<4->{\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};}
-\onslide<6->{
+\onslide<3->{\node[rectangle,draw,text width=1.4cm] (C) at (0,2) {Counter-example search};}
+\onslide<3->{
 \node[text width=1cm, align=center] at (0,-1) {PGD FGSM etc.};
 }
 
-\onslide<8->{\node[rectangle,draw] (D) at (3,2) {Verification};}
-\onslide<8->{
+\onslide<4->{\node[rectangle,draw] (D) at (3,2) {Verification};}
+\onslide<4->{
 \node[text width=1.4cm, align=center] at (3,-1) {Marabou Eran etc.};
 }
 
 
- \onslide<10->{\node[rectangle,draw,text width=2cm] (E) at (6.5,2) {Integration into larger properties about the entire system};
+ \onslide<5->{\node[rectangle,draw,text width=2cm] (E) at (6.5,2) {Integration into larger properties about the entire system};
 \draw [->] (D) edge (E);
 }
 
-\onslide<3->{\draw [->, dashed] (A) edge (B);}
-\onslide<6->{\draw [->, dashed] (A) edge (C);}
-\onslide<8->{\draw [->, dashed] (A) edge (D);}
+\onslide<2->{\draw [->, dashed] (A) edge (B);}
+\onslide<3->{\draw [->, dashed] (A) edge (C);}
+\onslide<4->{\draw [->, dashed] (A) edge (D);}
 
-\onslide<4->{\draw [->] (B) edge (C);}
-\onslide<8->{\draw [->] (C) edge (D);}
-\onslide<10->{\draw [->] (D) edge (E);}
+\onslide<6->{\draw [->] (B) edge (C);}
+\onslide<7->{\draw [->] (C) edge (D);}
+\onslide<8->{\draw [->] (D) edge (E);}
 
-\onslide<7->{\draw [->] (C) edge[bend left] (B);}
-\onslide<9->{\draw [->] (D) edge[bend left=45] (B);}
+\onslide<6->{\draw [->] (C) edge[bend left] (B);}
+\onslide<7->{\draw [->] (D) edge[bend left=45] (B);}
 \end{tikzpicture}
 \end{center}
 \end{frame}
@@ -606,7 +607,7 @@ PACMPL, 3(POPL):41:1–41:30.}
 \begin{frame}
 \frametitle{Vehicle ...}
 
- \textbf{ is a domain-specific functional language for writing high-level property specifications for neural networks}
+ \textbf{ is a domain-specific functional language for writing} \\ \textbf{ high-level property specifications for neural networks}
 
 \begin{center}
 \begin{tikzpicture}[thick,
@@ -700,7 +701,7 @@ for Characterizing Artificial Intelligence Safety and Robustness. In AISafety.}
 
 \end{frame}
 
-\section{Vehicle's Role and Purpose of this Tutorial}
+\section{\textbf{Vehicle}'s Role and Purpose of this Tutorial}
 
 \begin{frame}
 \frametitle{\textbf{Vehicle}'s Aim...}
@@ -730,7 +731,7 @@ for Characterizing Artificial Intelligence Safety and Robustness. In AISafety.}
 
 
  \begin{frame}
-  \frametitle{Vehicle Architecture}
+  \frametitle{\textbf{Vehicle} Architecture}
      \begin{center}
       \includegraphics[scale=0.25]{Images/full-architecture-fixed}
     \end{center}
@@ -823,4 +824,4 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 
 
 \end{document}
-\
+
