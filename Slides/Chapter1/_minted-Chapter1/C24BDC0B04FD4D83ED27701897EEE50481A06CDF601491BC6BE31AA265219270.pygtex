@@ -1,5 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{o}{\PYGZlt{}}\PYG{n}{name}\PYG{o}{\PYGZgt{}}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{o}{\PYGZlt{}}\PYG{k}{type}\PYG{o}{\PYGZgt{}}
-\PYG{o}{\PYGZlt{}}\PYG{n}{name}\PYG{o}{\PYGZgt{}}\PYG{Space}{ }\PYG{o}{[\PYGZlt{}}\PYG{n}{args}\PYG{o}{\PYGZgt{}]}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{o}{\PYGZlt{}}\PYG{n}{expr}\PYG{o}{\PYGZgt{}}
-
-\end{Verbatim}

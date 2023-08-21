@@ -1,4 +1,5 @@
-\documentclass{beamer}
+%\documentclass{beamer}
+\documentclass[aspectratio=169]{beamer}
 %pdflatex -shell-escape my_document.tex
 
 \usetheme{default}
@@ -152,9 +153,9 @@
 We will discuss:
 
 \begin{itemize}[<+->]
-\item  ...  why training is part of verification of neural networks
-\item ... what choices exist for achieving this, generally
-\item ... what choice \textbf{Vehicle} makes in this respect
+\item  ...  why and how training is a part of verification of neural networks
+\item ... what choices exist for implementing this, generally
+\item ... what choices \textbf{Vehicle} makes in this respect
 \item ... theoretical and practical issues with the chosen methods, and \textbf{Vehicle}'s
 take on them
 \end{itemize}
@@ -165,7 +166,6 @@ take on them
 \begin{frame}
 \frametitle{Recap: four PL problems}
 
-\pause
 \begin{itemize}
 \item[$I^O$] \alert{Interoperability -- properties are not portable between training/counter-example search/ verification.}
 
@@ -173,7 +173,7 @@ take on them
 
 \item[$I^{\int}$] Integration -- properties of networks cannot be linked to larger control system properties.
 
-\item[$E^G$] Embedding gap -- little support for translation between problem space (as in original spec) and input space (at neural network level).
+\item[$E^G$] Embedding gap -- little support for translation between problem space and input space.
 \end{itemize}
 \end{frame}
 
@@ -200,7 +200,13 @@ property3 [==========================================] 1/1 queries
    \begin{frame}
 \frametitle{Why Training is a part of Verification?}
 
-For Chapter 3 exercise on verifying a small Fashion MNIST network, the answer would be:
+Verifying a Fashion MNIST network on $500$ samples we get:
+ 
+ ~
+
+\hrule
+
+~
 
 \footnotesize{
 \begin{tabular}{|p{0.2\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}| p{0.15\textwidth}|}
