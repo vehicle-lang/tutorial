@@ -376,7 +376,13 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=5cm]{Images/SR-vs-CR-3.png}
 
   \end{center}
-  
+   {\scriptsize
+   \begin{thebibliography}{99}
+        \beamertemplatearticlebibitems
+    \bibitem{7}
+I.J. Goodfellow, J. Shlens, C. Szegedy: Explaining and harnessing adversarial examples. 3rd International Conference on Learning Representations,
+ICLR 2015, San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings (2015)
+ \end{thebibliography}}
  \end{frame}
 
 
@@ -410,8 +416,8 @@ Given a data set $\mathcal{D} $,\\  a function  ${f_{\theta}: \Real^n \rightarro
 \begin{itemize}
      \item Replace the standard training objective with:
 %\begin{equation}
-$$\min_{\theta} \max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)$$
- \item often referred to as the method of \emph{``projected gradient descent"} (PGD)
+$$\min_{\theta} [ \max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)]$$
+ \item the inner maximisation is done by \emph{``projected gradient descent"} (PGD), that ``projects" the gradient of $\mathcal{L}$ on $\xt$ in order to perturb it and get the worst $\xs$.  
 
 \end{itemize}
 \end{itemize}
@@ -420,8 +426,8 @@ $$\min_{\theta} \max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)$
    \begin{thebibliography}{99}
         \beamertemplatearticlebibitems
     \bibitem{7}
-I.J. Goodfellow, J. Shlens, C. Szegedy: Explaining and harnessing adversarial examples. 3rd International Conference on Learning Representations,
-ICLR 2015, San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings (2015)
+    Zico Kolter and Aleksander Madry. Adversarial Robustness - Theory and Practice. NeurIPS 2018 tutorial.
+
  \end{thebibliography}}
 
 \end{frame}
@@ -646,10 +652,8 @@ Differentiable Logic + (PGD) optimisation
 \begin{frame}
 \frametitle{Example - translation}
 \begin{align*}
-\only<1-4>{\large{\translation (\coloured{\forall \x \in \Real^n} : ||\x - \hat{\x}|| \leq \epsilon \Rightarrow || f(\x) - f(\hat{\x})|| \leq \delta) }}\\
-\only<2-4>{\translation ( ||\x - \hat{\x}|| \leq \epsilon\ \coloured{\Rightarrow}\ || f(\x) - f(\hat{\x})|| \leq \delta) }\\
-\only<3-4>{\max({1 - \translation(||\x - \hat{\x}|| \coloured{\leq} \epsilon)}, || \translation(f(\x) - f(\hat{\x})|| \coloured{\leq} \delta))}\\
-\only<4>{ \max(\max(\dfrac{\translation (||\x - \hat{\x}|| - \epsilon)}{\translation (||\x - \hat{\x}|| + \epsilon)},0), 1 - \max(\dfrac{\translation(|| f(\x) - f(\hat{\x})|| - \delta)}{\translation (|| f(\x) - f(\hat{\x})|| + \delta)},0) }
+\only<1-2>{\large{\translation (\coloured{ || f(\x) - f(\hat{\x})|| \leq \delta}) }=}\\
+\only<2>{1 - \max(\dfrac{\translation(|| f(\x) - f(\hat{\x})|| - \delta)}{\translation (|| f(\x) - f(\hat{\x})|| + \delta)},0) }
 \end{align*}
 %\begin{align*}
 %\only<1>{&\text{First we are going to drop the quantifier as we are only using the propositional toy language.}}\\
@@ -668,17 +672,17 @@ Differentiable Logic + (PGD) optimisation
 		      {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce Zhang, and
+    \bibitem{7}{Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce Zhang, and
 Martin Vechev. DL2: Training and querying neural networks with logic. In ICML'19,  pp. 1931–1941. }
 \end{thebibliography}}
  
 		
 		\item fuzzy DLs such as: Godel, Łukasiewicz, Yager, product and others 
 		
-		      {\scriptsize
+ {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{Emile van Krieken, Erman Acar, and Frank van Harmelen. Analyzing differentiable fuzzy
+    \bibitem{8}{Emile van Krieken, Erman Acar, and Frank van Harmelen. Analyzing differentiable fuzzy
 logic operators. Artificial Intelligence, 302:103602, 2022. }
 \end{thebibliography}}
  
@@ -687,116 +691,228 @@ logic operators. Artificial Intelligence, 302:103602, 2022. }
 		      {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{Peter Varnai and Dimos V. Dimarogonas. On robustness metrics for learning stl tasks.
+    \bibitem{9}{Peter Varnai and Dimos V. Dimarogonas. On robustness metrics for learning stl tasks.
 In 2020 American Control Conference (ACC), pp. 5394–5399, 2020. }
+\end{thebibliography}}
+
+\item Formalising and comparing them all 
+
+   {\scriptsize
+\begin{thebibliography}{99}
+   \beamertemplatearticlebibitems
+    \bibitem{10}{Natalia Slusarz, Ekaterina Komendantskaya, Matthew L. Daggitt, Robert J. Stewart, Kathrin Stark:
+Logic of Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023: 473-493 }
 \end{thebibliography}}
  
 	\end{itemize}
 \end{frame}
 
-\end{document}
+\begin{frame}
+	\frametitle{Design Space for Differentiable Logics}
+	\begin{table}[t]
+		\label{tab:properties}
+		\begin{tabular}{|p{0.28\textwidth}|c|c|c|c|c|c|}
+			\hline 
+			\textbf{Properties:}& DL2 &  G\"{o}del & Łukasiewicz& Yager & Product & STL\\ 
+			%\hline 
+			%& $ [0, \infty]$ &$ [0,1]$&$ [0,1]$&$[0,1]$&$[0,1]$& $ [-\infty, \infty] $\\ 
+			\hline \hline
+			%\textbf{Properties:} & &&&&&\\
+			%\hline \hline
+			\textbf{Geometric:} &  &  & & & & \\
+			Weak Smoothness & yes* & no &no &no &yes* & \textbf{yes}\\
+			\hline
+			Shadow-lifting  & yes & no &no&no&yes& \textbf{yes} \\
+			\hline 
+			%Min-max boundedness & no & yes &no&no&yes& yes \cite{varnai}\\
+			%\hline 
+			Scale invariance & yes & yes &no&no&no& \textbf{yes} \\
+			\hline \hline
+			\textbf{Logical:} &  &  & & & & \\
+			Idempotence & no & \textbf{yes}  &\textbf{no} &\textbf{no} &\textbf{no} & \textbf{yes}\\
+			\hline 
+			Commutativity & yes & \textbf{yes} &\textbf{yes} &\textbf{yes} &\textbf{yes} & \textbf{yes} \\
+			\hline 
+			Associativity &yes &\textbf{yes}&\textbf{yes} &\textbf{yes} &\textbf{yes} &\textbf{no} \\
+			\hline
+			Quantifier commutativity & no & yes & no & no& no & no \\
+			\hline 
+			Soundness & yes & yes & yes & yes & yes & no \\
+			\hline 
+			%has negation &no*&yes*&yes*&yes*&yes*&yes*\\
+			%\hline
+		\end{tabular}	
+	\end{table}
+\end{frame}
+
+
+
 
 \begin{frame}[fragile]
-\frametitle{Working with vectors}
+\frametitle{Optimisation}
+\begin{block}{Recall: With \emph{``projected gradient descent"} (PGD),}
+ we minimise the loss wrt the worst-case perturbation of each sample in $\mathcal{D}$.
 \begin{itemize}
-\item some input or output pre-processing maybe expected when defining a neural network.
-
-\begin{example}
-It is assumed that the ACAS Xu inputs and outputs are normalised, i.e. the network does not work directly with units like $m/s$. However, the specifications  we want to write should ideally concern the original units.
-\end{example}
-
+     \item Replace the standard training objective with:
+%\begin{equation}
+$$\min_{\theta} [\max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)]$$
+\end{itemize}
+\end{block}
 \pause
+\begin{itemize}
+     \item in Vehicle, we replace the above training objective with 
+%\begin{equation}
+$$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}}} \lossfn_{\mathcal{S}}(\xs, \y)]$$
+where $ \mathbb{H}_{\mathcal{P}}$ is a hyper-shape (usually a hyper-rectangle)
+that correponds to the pre-condition $\mathcal{P}$ of the property:
+$\forall \xs. \mathcal{P} \Rightarrow \mathcal{S}$; and $\lossfn_{\mathcal{S}}$ is obtained by DL-translation of $\mathcal{S}$. 
+
+\end{itemize}
+
+\end{frame}
 
 
-\item This is an instance of \emph{``problem space / input space mismatch"}
 
-\item ... that is very common in neural net verification
+\begin{frame}[fragile]
+\frametitle{Examples: AcasXU}
 
-\item
-Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from
-majority of the mainstream neural network verifiers
+\begin{itemize}
+\item In AcasXu, $\mathbb{H}_{\mathcal{P}}$ is given by (the normalised) vector bounds given by the property:
+
+\begin{equation*}
+\begin{array}{l}
+1500 \leq \rho \leq 1800 \  \\
+-0.06 \leq \theta \leq 0.06 \  \\ 
+\psi \geq 3.10 \  \\
+  v_{own} \geq 980 \ \\
+v_{int} \geq 960 \  \\
+
+\end{array}
+\end{equation*}
+
+
+
+\item  and $\lossfn_{\mathcal{S}} = \translation (not (minimalScore clearOfConflict x))$. 
+
+Recall:
+\begin{minted}[fontsize=\footnotesize]{vehicle}
+@property
+property3 : Bool
+property3 = forall x . validInput x and 
+                       directlyAhead x and 
+                       movingTowards x =>
+                       not (minimalScore clearOfConflict x)
+\end{minted}
+
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Vector normalisation}
-For clarity, we define a new type synonym for unnormalised input vectors which are in the problem space.
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-type UnnormalisedInputVector = Vector Rat 5
-
-\end{minted}
-
-Next we define the range of the inputs that the network is designed
-to work over.
-
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-minimumInputValues : UnnormalisedInputVector
-minimumInputValues = [0.0, -pi , -pi , 100.0, 0.0]
-
-maximumInputValues : UnnormalisedInputVector
-maximumInputValues = [60261.0, pi, pi, 1200.0, 1200.0]
-
-meanScalingValues : UnnormalisedInputVector
-meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
-\end{minted}
-\end{frame}
-
 
 
 \begin{frame}[fragile]
-\frametitle{Vector manipulation}
-An alternative method to vector definition is to use the `foreach` constructor, which is used to provide a value for each `index i`.
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-minimumInputValues : UnnormalisedInputVector
-minimumInputValues = foreach i . 0
-
-\end{minted}
-Let us see how  `foreach` works with vector indexing.
-
-We can now define the normalisation function that takes an input vector and
-returns the unnormalised version.
-
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-normalise : UnnormalisedInputVector -> InputVector
-normalise x = foreach i .
-  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
-\end{minted}
-
-\pause
-... our first acquaintance with functions!
-
-\end{frame}
-
-
-
-\begin{frame}[fragile]
-\frametitle{Functions and types}
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-<name> : <type>
-<name> [<args>] = <expr>
-
-\end{minted}
-Functions make up the backbone of the \textbf{Vehicle} language.
-\pause
-\begin{minted}[fontsize=\footnotesize]{vehicle}
-
-validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i .
-  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
-
-\end{minted}
-
-\pause
-
-\begin{block}{Our first acquaintance with predicates and quantifiers!}
- One of the main advantages of \textbf{Vehicle} is that it can be used to state and prove specifications that describe the network’s behaviour over an infinite set of values.
+\frametitle{Examples: Degenerate case}
+\begin{block}{}
+$$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}}} \lossfn_{\mathcal{S}}(\xs, \y)]$$
 \end{block}
+\begin{itemize}
+\item When we have $$\forall \xs. \mathcal{S}$$
+instead of 
+$\forall \xs. \mathcal{P} \Rightarrow \mathcal{S}$
+
+\item $\mathbb{H}_{\mathcal{P}}$ is only constrained by normalisation boundaries, e.g. by $[0, 0 , \ldots , 0]$ and $[1, 1 , \ldots , 1]$ if we normalise values between $0$ and $1$.
+
+
+
+\end{itemize}
 
 \end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Examples: standard robustness}
+\begin{block}{}
+$$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}}} \lossfn_{\mathcal{S}}(\xs, \y)]$$
+\end{block}
+\begin{itemize}
+\item When we have $$\forall \xs. |\xs - \xt| \leq \epsilon \Rightarrow |f(\x) - f(\hat{\x})| \leq \delta$$
+
+\item $\mathbb{H}_{\mathcal{P}}$ is the $\epsilon$-cube around $\xt$
+
+\item and, in case we use the G\"{o}del DL, we get the 
+ $\lossfn_{\mathcal{S}} = \large{\translation ( || f(\x) - f(\hat{\x})|| \leq \delta) }=
+1 - \max(\dfrac{\translation(|| f(\x) - f(\hat{\x})|| - \delta)}{\translation (|| f(\x) - f(\hat{\x})|| + \delta)},0) $
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Vehicle's way to implement this}
+
+\begin{itemize}[<+->]
+\item You use the same specification (``VCL file") as for verification
+\item You need a Tensorflow version of the network you wish to train
+\item Using provided Python template, you call the specification and the network when running the Python Script:
+
+\begin{itemize}
+\item the loss function $\lossfn_{\mathcal{S}}$ is automatically generated from the spec
+\item the hyper-shape  $\mathbb{H}_{\mathcal{P}} $ is currently provided by the user;
+\item PGD finds counter-examples within $\mathbb{H}_{\mathcal{P}} $
+\item Native Python training is used, given the loss function $\lossfn_{\mathcal{S}}$.
+\end{itemize}
+
+\end{itemize}
+\begin{alertblock}{}
+See the Demo next
+\end{alertblock}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{In Conclusion,}
+
+
+\begin{center}
+\begin{tikzpicture}[thick,
+    set/.style = {circle,
+        minimum size = 3cm}]
+
+% Set A
+\node[rectangle,draw] (A) at (1.5,5) {\alert{Property in Vehicle}};
+
+\node[rectangle,draw] (B) at (-3,2) {\alert{Training}};
+\node[text width=1cm, align=center] at (-3,0) {\alert{DL2 or other DL (native)}};
+
+\node[rectangle,draw, dashed,text width=1.4cm] (C) at (0,2) {\alert{Counter-example search}};
+\node[text width=1cm, align=center] at (0,0) {\alert{PGD FGSM etc.}};
+
+\node[rectangle,draw] (D) at (3,2) {Verification};
+\node[text width=1.4cm, align=center] at (3,0) {Marabou Eran etc.};
+
+\node[rectangle,draw] (E) at (6,2) {Integration};
+\node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
+
+\draw [->] (A) edge (B);
+\draw [->, dashed] (A) edge (C);
+\draw [->] (A) edge (D);
+\draw [->] (A) edge (E);
+%\draw [->, dashed] (A) edge (C);
+\draw [->] (B) edge (C);
+\draw [->] (C) edge (D);
+\draw [->] (D) edge (E);
+
+\onslide<1->{
+\node[rectangle,draw,fill=normal text.bg] (D) at (1.5,4) {Analysis \& informative error messages};
+}
+
+
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\end{document}
+
+
 
 
 
