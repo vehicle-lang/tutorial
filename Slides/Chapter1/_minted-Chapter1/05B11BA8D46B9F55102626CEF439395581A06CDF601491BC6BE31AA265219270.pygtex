@@ -1,4 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n}{normAcasXu}\PYG{Space}{ }\PYG{p}{:}\PYG{Space}{ }\PYG{n}{UnnormalisedInputVector}\PYG{Space}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{Space}{ }\PYG{n}{OutputVector}
-\PYG{n}{normAcasXu}\PYG{Space}{ }\PYG{n}{x}\PYG{Space}{ }\PYG{p}{=}\PYG{Space}{ }\PYG{n}{acasXu}\PYG{Space}{ }\PYG{p}{(}\PYG{n}{normalise}\PYG{Space}{ }\PYG{n}{x}\PYG{p}{)}
-\end{Verbatim}
