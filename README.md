@@ -1154,16 +1154,16 @@ with the growing $\epsilon$.
 ### Exercise ($*$) : Standard Robustness in *Vehicle*
 
 Using the same `.vcl` file as in all previous exercises, define and
-verify in *Vehicle* the propety of *Standard Robustness*, that requires,
-for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that
-$|f(\hat{\mathbf{x}}) - f(\mathbf{x})| \leq \delta$, for some small
-$\delta$. We now assemble the desired *standard robustness* property
-definition:
+verify in *Vehicle* the propety of *Strong Classification Robustness*,
+that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of
+$\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \leq \eta$, for some small
+$\eta$. We now assemble the desired *strong classification robustness*
+property definition:
 
 Given an $\hat{\mathbf{x}} \in \mathcal{X}$,
 
 $$
-\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow |f(\hat{\mathbf{x}}) -  f(\mathbf{x})| \leq \delta
+\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow f(\mathbf{x})_i \leq \eta
 $$
 
 We refer the interested reader for a more detailed discussion of
@@ -1183,7 +1183,12 @@ different robustness properties in:
 ### Exercise ($**$): Explore Other Definitions of Robustness
 
 Use *Vehicle* to define other forms of Robustness property from Casadio
-et al. Check verification success rates for these properties.
+et al. 
+
+*Please note: although the *Vehicle\* language is rich enough to compile
+all the robustness definitions, not all definitions will be feasible for
+Marabou that can have only one occurence of a neural network per
+specification.\*
 
 ### Exercise ($**$): Other Distances in *Vehicle*
 
@@ -1191,9 +1196,9 @@ Re-define the *classification* and *standard robustness* properties by
 using some different notion of distance, e.g. the Euclidean distance,
 instead of the $L_{\infty}$ norm.
 
-*Please note: although Vehicle language is rather rich to allow such
-extensions, not all specifications will be feasile for Marabou that
-works with linear real arithmetic.*
+*Please note: although the *Vehicle\* language is rather rich to allow
+such extensions, not all specifications will be feasible for Marabou
+that works with linear real arithmetic.\*
 
 ### Exercise ($***$): Conduct a complete “training - verification” experiment from start to finish
 
