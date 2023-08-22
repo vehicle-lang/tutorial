@@ -229,18 +229,11 @@ Quick installation instructions: \* For Chapters 1, 2 and 3 you only
 need to 1. Install *Vehicle* : just run `pip install vehicle-lang` 2.
 Install Marabou: just run `pip install maraboupy`
 
-- Python and Agda installation will only be needed to follow Chapters 4
-  and 5.
+- Python (Tensorflow) and Agda installation will only be needed to
+  follow Chapters 4 and 5.
 
 We suggest that you start this tutorial with just *Vehicle* and Marabou
 as tools.
-
-Whether you are using this tutorial for self-study or attending one of
-our live tutorials, all supporting exercises, code and infrastructure
-can be downloaded from the [tutorial
-repository](https://github.com/vehicle-lang/vehicle-tutorial). These
-include all relevant property specifications, trained neural networks in
-ONNX format, data in IDX format, and any necessary instructions.
 
 We recommend using [Visual Studio Code](https://code.visualstudio.com)
 with the [Vehicle Syntax
@@ -248,6 +241,13 @@ Highlighting](https://marketplace.visualstudio.com/items?itemName=wenkokke.vehic
 and
 [agda-mode](https://marketplace.visualstudio.com/items?itemName=banacorn.agda-mode)
 plugins.
+
+Whether you are using this tutorial for self-study or attending one of
+our live tutorials, all supporting exercises, code and infrastructure
+can be downloaded from the [tutorial
+repository](https://github.com/vehicle-lang/vehicle-tutorial). These
+include all relevant property specifications, trained neural networks in
+ONNX format, data in IDX format, and any necessary instructions.
 
 ## Further Reading
 
