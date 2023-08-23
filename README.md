@@ -1200,7 +1200,7 @@ instead of the $L_{\infty}$ norm.
 such extensions, not all specifications will be feasible for Marabou
 that works with linear real arithmetic.\*
 
-### Exercise ($*$)
+### Exercise ($*$) Practicing to write property specifications
 
 To test your understanding of the robustness property, try completing
 the robustness verification in [this
