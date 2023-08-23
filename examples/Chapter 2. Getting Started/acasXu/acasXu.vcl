@@ -132,5 +132,3 @@ movingTowards x =
 property3 : Bool
 property3 = forall x . validInput x and directlyAhead x and movingTowards x =>
   not (advises clearOfConflict x)
-
-

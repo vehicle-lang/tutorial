@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 --- This file is an exercise that defines the property of "strong classification robustness" for MNIST ---
---- It contains a solution to one of Vehicle tutorial exercises ---  
+--- It contains a solution to one of Vehicle tutorial exercises ---
 
 -- Inputs and outputs
 
@@ -32,8 +32,8 @@ eta : Rat
 advises : Image -> Label -> Bool
 advises x i = classifier x ! i > eta
 
--- In fact, the above specification assumes that all outputs are scaled between 0 and 1. 
--- But that may or may not be the case in reality!!! 
+-- In fact, the above specification assumes that all outputs are scaled between 0 and 1.
+-- But that may or may not be the case in reality!!!
 -- You would rather scale the values directly in Vehicle, that is, define:
 
 scalingValue : Image -> Rat
@@ -44,13 +44,13 @@ normalisedClassifierOutput x i = ((classifier x) ! i)  / (scalingValue x)
 
 -- This will then give you an alternative definition for `advises`:
 -- advises : Image -> Label -> Bool
--- advises x i = normalisedClassifierOutput x i > eta 
+-- advises x i = normalisedClassifierOutput x i > eta
 
--- Unfortunately, this function will give you a type error: 
--- Marabou only accepts linear queries, and when Vehicle compiles the queries to Marabou, 
+-- Unfortunately, this function will give you a type error:
+-- Marabou only accepts linear queries, and when Vehicle compiles the queries to Marabou,
 -- its type system checks whether the given query satsifies the linearity constraints. This is explained in:
 
--- Matthew L. Daggitt, Robert Atkey, Wen Kokke, Ekaterina Komendantskaya, Luca Arnaboldi: 
+-- Matthew L. Daggitt, Robert Atkey, Wen Kokke, Ekaterina Komendantskaya, Luca Arnaboldi:
 -- Compiling Higher-Order Specifications to SMT Solvers: How to Deal with Rejection Constructively. CPP 2023: 102-120
 
 -- Try this definition and check the Vehicle error message!
