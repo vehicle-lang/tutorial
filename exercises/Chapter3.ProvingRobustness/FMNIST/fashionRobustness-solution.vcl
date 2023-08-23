@@ -34,7 +34,7 @@ robustAround image label = forall perturbation .
 		advises perturbedImage label
 
 
---Take two datasets 
+--Take two datasets
 
 @dataset
 trainingImages : Vector Image n
@@ -46,4 +46,3 @@ trainingLabels : Vector Label n
 @property
 robust : Vector Bool n
 robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
-
