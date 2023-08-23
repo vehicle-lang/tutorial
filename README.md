@@ -1382,6 +1382,145 @@ for epoch in range(num_epochs):
         optimizer.apply_gradients(zip(grads, model.trainable_weights))
 ```
 
+# Exporting to Agda
+
+## Motivation
+
+In this chapter, we will look at how to export a Vehicle specification
+to Agda. Why is this useful? In the previous chapters we’ve been
+studying about how to verify neural networks in isolation. However,
+frequently neural networks are used as a part of a larger program whose
+correctness we would also like to verify. Vehicle is clearly not
+designed to reason about the correctness of arbitrary programs, and
+therefore we need to link to tools that are. Agda, a powerful
+interactive theorem prover, is one such tool and by exporting Vehicle
+specifications to Agda code we can construct safety proofs for software
+systems whose correctness depends on the correctness of a neural
+network.
+
+## An example
+
+As an example we will use a modified version of the verification problem
+presented by Boyer, Green and Moore (Boyer, Green, and Moore 1990). In
+this scenario an autonomous vehicle is travelling along a straight road
+of width 6 parallel to the x-axis, with a varying cross-wind that blows
+perpendicular to the x-axis. The vehicle has an imperfect sensor that it
+can use to get a (possibly noisy) reading on its position on the y-axis,
+and can change its velocity on the y-axis in response. The car’s
+controller takes in both the current sensor reading and the previous
+sensor reading and its goal is to keep the car on the road.
+
+<figure>
+<img src="images/boolean-loss.png" alt="Boolean loss" />
+<figcaption aria-hidden="true">Boolean loss</figcaption>
+</figure>
+
+Given this, the aim is to prove the following theorem:
+
+*Theorem 1*: assuming that the wind-speed can shift by no more than 1
+m/s and that the sensor is never off by more than 0.25 m then the car
+will never leave the road.
+
+This safety property is not just a property of the neural network, but
+is instead a temporal property about the model of the entire system,
+e.g. the car, the road, the physics of the system.
+
+After analysing the system, it turns out that this theorem will be
+satisfied if the car controller $f$ satisfies the property that if the
+absolute value of the input sensor readings $x1$ and $x2$ are less than
+3.25 then the absolute value of $f [x1, x2] + 2 * x1 - x2$ should be
+less than 1.25.
+
+We can encode this property in Vehicle as follows:
+
+``` vehicle
+type InputVector = Tensor Rat [2]
+
+currentSensor  = 0
+previousSensor = 1
+
+@network
+controller : InputVector -> Tensor Rat [1]
+
+safeInput : InputVector -> Bool
+safeInput x = forall i . -3.25 <= x ! i <= 3.25
+
+safeOutput : InputVector -> Bool
+safeOutput x =
+  -1.25 < controller x ! 0 + 2 * (x ! currentSensor) - (x ! previousSensor) < 1.25
+
+@property
+safe : Bool
+safe = forall x . safeInput x => safeOutput x
+```
+
+A neural network controller `controller.onnx` can be verified against
+the specification by running the following command:
+
+``` bash
+vehicle verify \
+  --specification spec.vcl \
+  --network controller:controller.onnx \
+  --verifier Marabou \
+  --cache controller-result
+```
+
+where the last argument tells Vehicle where to write out the result of
+the verification which will be used by Agda in the next step.
+
+Assuming this property holds, we can export the specification from the
+cache as follows:
+
+``` bash
+vehicle export \
+  --target Agda \
+  --cache controller-result \
+  --outputFile WindControllerSpec.agda
+```
+
+which will generate an Agda file:
+
+    {-# OPTIONS --allow-exec #-}
+
+    open import Vehicle
+    open import Vehicle.Utils
+    open import Vehicle.Data.Tensor
+    open import Data.Product
+    open import Data.Integer as ℤ using (ℤ)
+    open import Data.Rational as ℚ using (ℚ)
+    open import Data.Fin as Fin using (Fin; #_)
+    open import Data.List.Base
+
+    module WindControllerSpec where
+
+    InputVector : Set
+    InputVector = Tensor ℚ (2 ∷ [])
+
+    currentSensor : Fin 2
+    currentSensor = # 0
+
+    previousSensor : Fin 2
+    previousSensor = # 1
+
+    postulate controller : InputVector → Tensor ℚ (1 ∷ [])
+
+    SafeInput : InputVector → Set
+    SafeInput x = ∀ i → ℚ.- (ℤ.+ 13 ℚ./ 4) ℚ.≤ x i × x i ℚ.≤ ℤ.+ 13 ℚ./ 4
+
+    SafeOutput : InputVector → Set
+    SafeOutput x = ℚ.- (ℤ.+ 5 ℚ./ 4) ℚ.< (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor) ⊖ x previousSensor × (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor) ⊖ x previousSensor ℚ.< ℤ.+ 5 ℚ./ 4
+
+    abstract
+      safe : ∀ x → SafeInput x → SafeOutput x
+      safe = checkSpecification record
+        { verificationFolder   = "examples/windController/verificationResult"
+        }
+
+This Agda file can then be imported and used by the larger proof of
+correctness for the whole system. There is not space to replicate the
+full proof here, but it can be found
+[here](https://github.com/vehicle-lang/vehicle/blob/dev/examples/windController/agdaProof/SafetyProof.agda).
+
 # Conclusions and Future Directions
 
 The tutorial introduced basic concepts in neural network verification,
@@ -1435,6 +1574,14 @@ Applications of Artificial Intelligence Conference, IAAI 2020, the Tenth
 AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI
 2020, New York, NY, USA, February 7-12, 2020*, 3291–99. AAAI Press.
 <https://ojs.aaai.org/index.php/AAAI/article/view/5729>.
+
+</div>
+
+<div id="ref-boyer1990use" class="csl-entry">
+
+Boyer, Robert S, Milton W Green, and J Strother Moore. 1990. “The Use of
+a Formal Simulator to Verify a Simple Real Time Control Program.” In
+*Beauty Is Our Business*, 54–66. Springer.
 
 </div>
 
