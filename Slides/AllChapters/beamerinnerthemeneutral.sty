@@ -1,0 +1,264 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerinnerthemeneutral}[2021/07/06 Neutral Beamer Theme (based on AAU Simple by Jesper Kjær Nielsen)]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theme options and definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{tikz}
+\usetikzlibrary{backgrounds,fit,positioning,calc,external}
+\RequirePackage{tikzpagenodes}
+\RequirePackage{pdfrender}
+\RequirePackage{shadowtext}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Contours
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newlength\nbt@contourray
+\newcommand\contourray[1]{\setlength\nbt@contourray{#1}}
+\contourray{0.035em}
+
+\newcommand\contourtext[2][white]%
+{%
+  \textpdfrender{
+    TextRenderingMode=FillStroke,
+    FillColor=,
+    StrokeColor=#1,
+    LineWidth=\nbt@contourray,
+  }{#2}
+}
+
+\definecolor{shadowcolordefault}{gray}{.667}
+\newcommand{\dropshadow}[2][shadowcolordefault]{%
+\let\tmpshadowcolor\sf@shadowcolor
+\shadowcolor{#1}\shadowtext{#2}
+\shadowcolor{\tmpshadowcolor}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To gain partially transparent blocks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfdeclareimage[interpolate=true,width=\paperwidth]{emptyimg}{graphics/empty.pdf}
+\pgfdeclareimage[interpolate=true,width=\paperwidth]{bottomtitle}{img/artwork-background.pdf}
+
+\newcommand{\bgimg}{bottomtitle}
+\def\whitebg{0}
+
+% Unknown option
+% \DeclareOption*{
+%   \PackageWarning{beamerinnerthemeneutral}{Unknown option '\CurrentOption'}
+% }
+% 
+% % Clear canvas
+% \def\whitebg{1}
+% \DeclareOption{nclbg}{
+% \def\whitebg{0}
+% }
+% 
+% % Clear canvas
+% \def\whitebg{1}
+% \DeclareOption{nclbghead}{
+% \def\whitebg{0}
+% \renewcommand{\bgimg}{bottomtitlehead}
+% }
+% 
+% 
+\newcommand{\logobg}[1]{
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [anchor=north east, inner sep=0pt]  at (current page.north east)
+      {\pgfuseimage{#1} };
+  \end{tikzpicture}
+}
+
+\setbeamertemplate{background}{
+  \ifnumequal{\whitebg}{1}{}{
+    \ifnumequal{\c@framenumber}{0}{%
+      % First frame
+      \logobg{emptyimg}
+    }{%
+      \ifnumequal{\c@framenumber}{\inserttotalframenumber}{
+        % Last frame
+        \logobg{emptyimg}
+      }{%
+        % Other frames
+        \logobg{emptyimg}
+      }
+    }%
+  }
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Full page images
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\fullpageimg}[1]{
+\begin{tikzpicture}[overlay,remember picture]
+  \node[anchor=south west,inner sep=0] (picture) at (current page.south west) {
+\includegraphics[width=\paperwidth]{#1}
+  };
+\end{tikzpicture}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To gain partially transparent blocks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Block transparency
+\newcommand{\setblockbodyopacity}[1]{\def\blockbodyopacity{#1}}
+
+\ifx\blockbodyopacity\@empty\else
+  \def\blockbodyopacity{1}
+\fi
+\newlength{\blockheightcorr}
+\setlength{\blockheightcorr}{-3.16mm}
+\newlength{\blockwidthcorr}
+\setlength{\blockwidthcorr}{2.48mm}
+\newlength{\blockyshcorr}
+\setlength{\blockyshcorr}{-0.53mm}
+\newenvironment{blockminipage}[2]{%
+\colorlet{bodycolour}{#1}%
+\@ifundefined{bodyopacity}{\newcommand{\bodyopacity}{#2}}{\renewcommand{\bodyopacity}{#2}}%
+\begin{tikzpicture}[every node/.style={inner sep=0,outer sep=0}]%
+\node [text width=\textwidth] (childblock) \bgroup%
+\begin{minipage}{\textwidth}%
+}{%
+\end{minipage}%
+\egroup;%
+\begin{scope}[on background layer]
+  \path
+  let
+    \p{n}=(childblock.north),
+    \p{s}=(childblock.south),
+    \p{w}=(childblock.west),
+    \p{e}=(childblock.east),
+    \n{h}={\y{n}-\y{s}+(\blockheightcorr)},
+    \n{w}={\x{e}-\x{w}+\blockwidthcorr}
+  in
+  node [rectangle, draw=none, fill=bodycolour, yshift=\blockyshcorr, fill opacity=\bodyopacity, overlay, anchor=center, minimum width=\n{w}, minimum height=\n{h}] {};
+\end{scope}
+\end{tikzpicture}%
+}
+
+\newlength{\blockbottommargin}
+\setlength{\blockbottommargin}{2mm}
+\newlength{\blocktopmargin}
+\setlength{\blocktopmargin}{0mm}
+\newenvironment<>{tbox}[1][beamer@headercolor]{%
+  \vskip \blocktopmargin%
+  \begin{blockminipage}{#1}{\blockbodyopacity}%
+  \begin{actionenv}#2%
+    \def\insertblocktitle{}%
+    \par%
+    \mode<presentation>{%
+      \setbeamercolor{block title}{fg=black!20!white,bg=}
+      \setbeamercolor{block body}{fg=black!10!white,bg=}
+      \setbeamercolor{itemize item}{fg=#1}
+      \setbeamercolor{itemize subitem}{fg=#1}
+      \setbeamertemplate{itemize item}[triangle]
+      \setbeamertemplate{itemize subitem}[circle]
+      \setbeamercolor{local structure}{fg=block title.bg}}%
+    \usebeamertemplate{block begin}\centering}
+  {\par%
+    \usebeamertemplate{block end}%
+  \end{actionenv}\vskip \blockbottommargin%
+  \end{blockminipage}%
+  }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%beamer specific options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mode<presentation>%refers to the first four modes (beamer,handout,second and trans). That is, to all modes except the article mode
+{
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %templates
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %title page
+  \setbeamertemplate{title page}{%
+    \begin{minipage}[c][\textheight][c]{\textwidth}
+          \setblockbodyopacity{.8}
+      \begin{tbox}[black]%7
+            \vspace*{\baselineskip}
+
+      \vfill
+      \centering
+      \dropshadow[title.fg]{
+       \begin{minipage}{0.8\textwidth}
+        \centering
+        \usebeamerfont{title}\usebeamercolor[bg]{title}
+        \bfseries\textsc\inserttitle
+      \end{minipage}
+      }
+
+      \vspace*{\baselineskip}
+      \usebeamerfont{subtitle}\usebeamercolor[fg!50!white]{subtitle}
+      \contourtext[subtitle.fg!50!black]{\bfseries\textsc\insertsubtitle}
+      \vspace*{\baselineskip}
+      
+
+%         {\centering\usebeamerfont{date}\insertdate}
+        
+        \vspace*{\baselineskip}
+        {\centering\usebeamerfont{date}\insertauthor}
+        \vspace*{\baselineskip}
+        
+        {\centering\usebeamerfont{institute}\insertinstitute}
+        \vspace*{\baselineskip}
+      \end{tbox}
+
+
+%       \begin{beamercolorbox}[wd=\textwidth,center,sep=\baselineskip]{frametitle}%
+%         {\usebeamerfont{date}\insertdate}\vspace*{\baselineskip}
+%         
+%         {\usebeamerfont{author}\insertauthor}\vspace*{\baselineskip}
+%         
+%         {\usebeamerfont{institute}\insertinstitute}
+%       \end{beamercolorbox}\vspace*{\baselineskip}
+      
+      \vfill
+%       \vspace*{\baselineskip}
+      {\inserttitlegraphic}
+    \end{minipage}
+  }
+  
+  
+  %final page
+  \defbeamertemplate{final page}{text}[1]{%
+    \begin{minipage}[c][\textheight][c]{\textwidth}
+      \centering
+      \vfill
+      \setblockbodyopacity{.8}
+      \begin{tbox}[black]%
+        \vspace*{\baselineskip}
+        \large\strut\textsc{\bfseries\textsc #1}
+        \vspace*{\baselineskip}
+      \end{tbox}
+%       \begin{beamercolorbox}[wd=\textwidth,center,sep=2\baselineskip]{frametitle}
+%           \large\strut\textsc{\bfseries #1}
+%       \end{beamercolorbox}
+      \vfill
+      {\inserttitlegraphic}
+    \end{minipage}
+  }
+  \newcommand{\finalpage}[1]{%
+    \setbeamertemplate{final page}[text]{#1}
+    \usebeamertemplate{final page}
+  }
+  
+  % add the aau waves to the background
+  \newcommand{\setbackground}[1][\backgroundgraphics]{%
+    \setbeamertemplate{background canvas}{
+      \includegraphics[width=\paperwidth,height=\paperheight]{#1}%
+      \begin{tikzpicture}[remember picture,overlay]
+        \node[anchor=south west,rotate=90] at (current page.south east) { \ifthenelse{\equal{#1}{graphics/empty}}{}{\color{white!50!black} \tiny \backgroundgraphicscopy} };
+      \end{tikzpicture}%
+    }
+  }
+  \newcommand{\unsetbackground}{\setbackground[graphics/empty]}
+  
+  % use numbers instead of a picture for the references
+  \setbeamertemplate{bibliography item}[text]
+
+}%end of beamer specific options
+
+\mode<all>

@@ -1,0 +1,195 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerouterthemeneutral}[2021/07/06 Neutral Beamer Theme (based on AAU Simple by Jesper Kjær Nielsen)]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Load required packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{tikz}
+\usetikzlibrary{external}
+\RequirePackage{calc}
+\RequirePackage{fp}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theme options and definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%theme options
+% options for the progress bar/circle
+\def\beamer@progressfixedCircCnt{fixedCircCnt} % fixed circular counter
+\def\beamer@progressmovCircCnt{movCircCnt} % moving circular counter
+\def\beamer@progresscorner{corner} % a counter in the lower right corner
+%\def\beamer@progressmovCnt{movCnt} % 
+\def\beamer@progressstyle{fixedCircCnt} % default
+\DeclareOptionBeamer{progressstyle}{\def\beamer@progressstyle{#1}}
+\DeclareOptionBeamer{rotationcw}{\def\beamer@rotationcw{true}}
+\DeclareOptionBeamer{shownavsym}{\def\beamer@shownavsym{true}}
+\ProcessOptionsBeamer
+
+% Pictures
+\newcommand{\backgroundgraphics}{graphics/artwork-background}
+\newcommand{\setbackgroundgraphics}[1]{\renewcommand{\backgroundgraphics}{#1}}
+\newcommand{\backgroundgraphicscopy}{Copyright \copyright 2022 Luca Arnaboldi}
+\newcommand{\setbackgroundgraphicscopy}[1]{\renewcommand{\backgroundgraphicscopy}{#1}}
+
+
+\newcommand{\logographics}{graphics/artwork-logo}
+\newcommand{\setlogographics}[1]{\renewcommand{\logographics}{#1}}
+
+\newcommand{\titlegraphics}{graphics/cloud}
+\newcommand{\settitlegraphics}[1]{\renewcommand{\titlegraphics}{#1}}
+
+\newcommand{\circlelogographics}{graphics/artwork-logo-circle}
+\newcommand{\setcirclelogographics}[1]{\renewcommand{\circlelogographics}{#1}}
+
+%the height of the header is 2.5 times the lineheight of the frame title
+\newlength{\beamer@height}
+\usebeamerfont{frametitle} %use the frame title font
+\setlength{\beamer@height}{2.5\baselineskip}
+% reset fonts
+\reset@font
+% radius of the logo
+\newlength{\beamer@logoradius}
+\setlength{\beamer@logoradius}{0.95\beamer@height/2}
+% width of the border
+\newlength{\beamer@borderwidth}
+\setlength{\beamer@borderwidth}{2mm}
+% inner radius of border of the logo frame
+\newlength{\beamer@logoinnerradius}
+\setlength{\beamer@logoinnerradius}{1.1\beamer@logoradius}
+% radius of the outer border of the logo frame
+\newlength{\beamer@logoouterradius}
+\setlength{\beamer@logoouterradius}{\beamer@logoinnerradius+\beamer@borderwidth}
+% radius of the counters
+\newlength{\beamer@counterradius}
+\setlength{\beamer@counterradius}{\beamer@logoinnerradius/2+\beamer@logoouterradius/2}
+% the progress
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%beamer specific options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mode<presentation>%refers to the first four modes (beamer,handout,second and trans). That is, to all modes except the article mode
+{
+  \ifbeamercolorempty[fg]{neutral}{%
+    %define the neutral color if it is not defined (which may be due to that the neutral color theme is not loaded)
+    \setbeamercolor{neutral}{use={structure,palette sidebar primary},fg=palette sidebar primary.fg,bg=structure.fg}
+  }{%
+    %aau header is defined - nothing to do
+  }
+ 
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %templates
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  %headline
+  \setbeamertemplate{headline}{%
+    \begin{beamercolorbox}[wd=1.0\paperwidth,ht=2.25ex,dp=1ex,left]{headfooty}%
+        \usebeamerfont{section in head/foot}\hspace*{3.5ex}%
+        \insertshortauthor\ $\bullet$\ %
+                \insertshorttitle%
+    \end{beamercolorbox}%
+    \neutralheaderbackground%
+  }
+  
+  %frame title
+  \setbeamertemplate{frametitle}{%
+    \begin{minipage}[t][\beamer@height][t]{\textwidth-1.5\beamer@logoouterradius}
+      {\usebeamercolor[fg]{frametitle}\usebeamerfont{frametitle}\insertframetitle\par}%
+      {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}\insertframesubtitle\par}%
+    \end{minipage}
+  }
+  
+  \ifx\beamer@shownavsym\undefined% insert navigation symbols
+    \setbeamertemplate{navigation symbols}{%
+      %disable navigation symbols
+    }
+  \fi
+  
+  \ifx\beamer@progressstyle\beamer@progresscorner% the progress in the lower right corner
+    \setbeamertemplate{footline}[frame number]
+  \fi
+}%end of beamer specific options
+
+% Other macros
+\usepackage{xifthen}
+\newcommand{\iconsize}{1.3em}
+\newcommand{\icon}[2][inline]{%
+\ifthenelse{\equal{#1}{inline}}{% THEN
+\hspace{1.4em}%
+\begin{tikzpicture}[remember picture,overlay]
+  \node[] at (-0.9em,0.4em) { \includegraphics[width=\iconsize]{#2} };
+\end{tikzpicture}%
+}{% ELSE
+\begin{tikzpicture}[remember picture,overlay]
+  \node[] at (#1) { \includegraphics[width=\iconsize]{#2} };
+\end{tikzpicture}%
+}}
+\newcommand{\titleframe}[1]{%
+\begin{frame}{}{}
+\centering\Huge\textsc{\color{beamer@headercolor}\bfseries #1}
+\end{frame}%
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Macros used in the theme 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the fancy header background
+\newcommand{\neutralheaderbackground}[1][\circlelogographics]{%
+  \tikzexternaldisable
+  \begin{tikzpicture}[overlay]
+    \coordinate (UL) at (0,0); %upper left corner of the slide
+    \coordinate (HLR) at (\paperwidth,-\beamer@height); %lower right of the header
+    \coordinate (logopos) at ([shift={(-\beamer@logoouterradius-\beamer@borderwidth,0.5\beamer@height)}] HLR);%coordinate of the logo
+    %draw the background of the header, the circle and the logo
+    {\usebeamercolor{neutral}%
+      \usebeamercolor{normal text}%
+      % draw the blue background rectangle of the header
+      \draw[draw=none,fill=aisecyellow!90!white] (UL) rectangle (HLR);
+      % draw the outer circle
+      \draw[color=aisecpurple,line width=\beamer@borderwidth] ([xshift=\beamer@counterradius] logopos) arc[radius=\beamer@counterradius, start angle=0, end angle=360];
+      % draw the inner circle
+      \fill[fill=normal text.bg,opacity=0.4] (logopos) circle (\beamer@logoinnerradius);
+      % place the logo
+      \node at (logopos) {\includegraphics[width=1.8\beamer@logoradius]{#1}};
+
+      %% draw progress circle/bar
+      \ifx\beamer@progressstyle\beamer@progressfixedCircCnt% the circular counter with a fixed counter
+        % calculate end position
+%        \ifx\beamer@rotationcw\undefined% counterclockwise rotation
+%          \pgfmathsetmacro{\progress}{360*\insertframenumber/\inserttotalframenumber};
+%        \else% clockwise rotation
+%          \pgfmathsetmacro{\progress}{-360*\insertframenumber/\inserttotalframenumber};
+%        \fi
+        \ifx\beamer@rotationcw\undefined% counterclockwise rotation
+          \FPeval\progress{360*\insertframenumber/\inserttotalframenumber}
+        \else% clockwise rotation
+          \FPeval\progress{(-360*\insertframenumber/\inserttotalframenumber)}
+        \fi
+        % draw the arc
+        \draw[color=aisecred,line width=0.5*\beamer@borderwidth] ([xshift=\beamer@counterradius] logopos) arc[radius=\beamer@counterradius, start angle=0, end angle=\progress];
+        \fill[fill=aisecyellow] ([shift={(\progress:\beamer@counterradius)}] logopos) circle (0.4\beamer@borderwidth);
+        % place the current frame number
+        \node[fill=aisecred,draw=neutral.fg,thick,circle,minimum width=2.4*\beamer@borderwidth] at ([xshift=\beamer@counterradius]logopos) {{\color{beamer@progresscolor}\small\bfseries\insertframenumber}};
+      \fi
+      
+      \ifx\beamer@progressstyle\beamer@progressmovCircCnt% the circular counter with a moving counter
+        % draw the current and total frame number
+%        \ifx\beamer@rotationcw\undefined% counterclockwise rotation
+%          \pgfmathsetmacro{\progress}{360*\insertframenumber/\inserttotalframenumber};
+%        \else% clockwise rotation
+%          \pgfmathsetmacro{\progress}{-360*\insertframenumber/\inserttotalframenumber};
+%        \fi
+        \ifx\beamer@rotationcw\undefined% counterclockwise rotation
+          \FPeval\progress{360*\insertframenumber/\inserttotalframenumber}
+        \else% clockwise rotation
+          \FPeval\progress{(-360*\insertframenumber/\inserttotalframenumber)}
+        \fi
+        % draw the arc
+        \draw[color=aisecyellow,line width=0.5*\beamer@borderwidth] ([xshift=\beamer@counterradius] logopos) arc (0:\progress:\beamer@counterradius);
+        % place the total number of frames
+        \node[fill=normal text.bg,draw=neutral.fg,circle,thick,minimum width=2*\beamer@borderwidth] at ([xshift=\beamer@counterradius] logopos) {{\usebeamercolor[fg]{normal text}\inserttotalframenumber}};
+        % place the current frame number
+        \node[fill=normal text.bg,draw=neutral.fg,circle,thick,minimum width=2*\beamer@borderwidth] at ([shift={(\progress:\beamer@counterradius)}] logopos) {{\usebeamercolor[fg]{normal text}\insertframenumber}};
+      \fi
+    }
+  \end{tikzpicture}%
+  \tikzexternalenable
+}
+\mode<all>
