@@ -72,3 +72,16 @@ README.md: $(SOURCES)
 		--defaults table-of-contents.yaml \
 		--to gfm                          \
 		--output README.md
+
+################################################################################
+# Clean
+################################################################################
+
+.PHONY: clean
+clean:
+	rm -rf _site/
+	rm -rf _minted-tutorial/
+	rm -rf svg-inkscape/
+	latexmk -C tutorial
+	rm tutorial.bbl
+	rm tutorial.tex
