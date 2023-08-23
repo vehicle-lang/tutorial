@@ -36,15 +36,15 @@ advises x i = classifier x ! i > eta
 -- But that may or may not be the case in reality!!! 
 -- You would rather scale the values directly in Vehicle, that is, define:
 
-scaler : Image -> Rat
-scaler x = fold (\x y -> x + y) 0 (classifier x)
+scalingValue : Image -> Rat
+scalingValue x = fold (\x y -> x + y) 0 (classifier x)
 
-scaleCOutput : Image -> Label -> Rat
-scaleCOutput x i = ((classifier x) ! i)  / (scaler x)
+normalisedClassifierOutput : Image -> Label -> Rat
+normalisedClassifierOutput x i = ((classifier x) ! i)  / (scalingValue x)
 
 -- This will then give you an alternative definition for `advises`:
 -- advises : Image -> Label -> Bool
--- advises x i = scaleCOutput x i > eta 
+-- advises x i = normalisedClassifierOutput x i > eta 
 
 -- Unfortunately, this function will give you a type error: 
 -- Marabou only accepts linear queries, and when Vehicle compiles the queries to Marabou, 
