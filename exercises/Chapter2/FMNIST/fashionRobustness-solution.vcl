@@ -45,4 +45,3 @@ labelDataset : Vector Label 1
 @property
 robust : Bool
 robust = robustAround (imageDataset ! 0) (labelDataset ! 0)
-

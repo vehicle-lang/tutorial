@@ -8,7 +8,7 @@
 \usepackage[UKenglish]{datetime}
 \usepackage{algpseudocode}
 \usepackage{fontawesome5}
-\usepackage{listings} 
+\usepackage{listings}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{soul}
@@ -76,7 +76,7 @@
 \newcommand{\LR}[2]{LR(#1, #2)} % Lipschitz robustness
 \newcommand{\CR}[1]{CR(#1)} % Classification robustness
 \newcommand{\SCR}[2]{SCR(#1,#2)} % Approximate class. robustness
-\usepackage{pifont} 
+\usepackage{pifont}
 \definecolor{forestgreen}{RGB}{35, 142, 35}
 \definecolor{lightaisecred}{RGB}{237, 41, 57}
 \newcommand{\yes}{\textcolor{forestgreen}{\ding{51}}}
@@ -190,7 +190,7 @@
 \usepackage{xcolor,colortbl}
 %\usepackage{listings}
 \definecolor{Gray}{gray}{0.85}
-  
+
 \newcommand{\question}[1]{\begin{description}
 		\item[\textbf{Question.}] #1
 \end{description}}
@@ -300,7 +300,7 @@ vehicle verify \
 Verifying properties:
 property3 [==========================================] 1/1 queries
   result:  counterexample found
-  x: [1799.9886669999978, 1.9509286320000003e-2, 
+  x: [1799.9886669999978, 1.9509286320000003e-2,
                         3.09999732192, 980.0, 1017.6036]
 \end{minted}
 
@@ -310,7 +310,7 @@ property3 [==========================================] 1/1 queries
 \frametitle{Why Training is a part of Verification?}
 
 Verifying a Fashion MNIST network on $500$ samples we get:
- 
+
  ~
 
 \hrule
@@ -322,7 +322,7 @@ Verifying a Fashion MNIST network on $500$ samples we get:
 		\hline
 & 	$\epsilon = 0.01$ & $\epsilon = 0.05$ & $\epsilon = 0.1$ & $\epsilon = 0.5$ \\ \hline \hline
 
-Success rate: & 82.6 \% (413/500) &	29.8 \% (149/500) &	3.8 \% (19/500) & 	0 \% (0/500)\\		
+Success rate: & 82.6 \% (413/500) &	29.8 \% (149/500) &	3.8 \% (19/500) & 	0 \% (0/500)\\
 		 \hline
 	\end{tabular}}
 
@@ -384,7 +384,7 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
     %  \end{center}
     \end{block}
 
-  
+
     Training generally:
 
     \begin{enumerate}
@@ -392,7 +392,7 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
     \item depends on loss functions
       \item some other parameters like shape of the functions
       \end{enumerate}
-    
+
 \end{frame}
 
 
@@ -407,7 +407,7 @@ Adversarial Examples - A Complete Characterisation of the Phenomenon. 2019.}
       {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar: 
+    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar:
        A survey on image data augmentation for deep learning. J.
 Big Data 6, 60 (2019)}
 \end{thebibliography}}
@@ -419,7 +419,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=4cm]{img/SR-vs-CR-1.png}
 
   \end{center}
-  
+
 \end{frame}
 
 
@@ -435,7 +435,7 @@ Big Data 6, 60 (2019)}
       {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
-    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar: 
+    \bibitem{6}{C. Shorten, T.M. Khoshgoftaar:
        A survey on image data augmentation for deep learning. J.
 Big Data 6, 60 (2019)}
 \end{thebibliography}}
@@ -446,7 +446,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=4cm]{img/SR-vs-CR-2.png}
 
   \end{center}
-  
+
 \end{frame}
 
 
@@ -462,7 +462,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=4cm]{img/SR-vs-CR-4.png}
 
   \end{center}
-  
+
 \end{frame}
 
 
@@ -477,7 +477,7 @@ Big Data 6, 60 (2019)}
   \includegraphics[width=4cm]{img/SR-vs-CR-5.png}
 
   \end{center}
-  
+
  \end{frame}
 
  \begin{frame}[fragile]
@@ -511,7 +511,7 @@ Given a data set $\mathcal{D} $,\\  a function  ${f_{\theta}: \Real^n \rightarro
 
 \begin{example}[Cross Entropy Loss Function]
 	\label{eq:cross-entropy}
-	Given a function  ${f_{\theta}: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as 
+	Given a function  ${f_{\theta}: \Real^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as
 	\begin{equation}\label{eq:ce}
 	\losssymbol_{ce}(\xt, \y) = - \sum_{i=1}^{m} \y_i \; \log(f_{\theta}(\xt)_i)
 	\end{equation}
@@ -520,7 +520,7 @@ Given a data set $\mathcal{D} $,\\  a function  ${f_{\theta}: \Real^n \rightarro
 
 \end{frame}
 
- 
+
 
 \begin{frame}
   \frametitle{2. Adversarial Training  for Robustness}
@@ -535,7 +535,7 @@ Given a data set $\mathcal{D} $,\\  a function  ${f_{\theta}: \Real^n \rightarro
      \item Replace the standard training objective with:
 %\begin{equation}
 $$\min_{\theta} [ \max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)]$$
- \item the inner maximisation is done by \emph{``projected gradient descent"} (PGD), that ``projects" the gradient of $\mathcal{L}$ on $\xt$ in order to perturb it and get the worst $\xs$.  
+ \item the inner maximisation is done by \emph{``projected gradient descent"} (PGD), that ``projects" the gradient of $\mathcal{L}$ on $\xt$ in order to perturb it and get the worst $\xs$.
 
 \end{itemize}
 \end{itemize}
@@ -554,8 +554,8 @@ $$\min_{\theta} [ \max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y
     \begin{frame}
       \frametitle{ Lipshitz Continuity}
 
-      Optimise for: 
-      
+      Optimise for:
+
   \begin{equation*}
     \label{eq:lipschitz-robustness}
     \forall \xs: \distance{\xs}{\xt} \leq \epsilon \Rightarrow \distance{f(\xs)}{f(\xt)} \leq L \distance{\xs}{\xt}
@@ -597,7 +597,7 @@ and much more...
     \bibitem{6}{Eleonora Giunchiglia, Mihaela Catalina Stoian, and Thomas Lukasiewicz. Deep learning
 with logical constraints. IJCAI 2022, pages 5478–5485. ijcai.org, 2022}
 \end{thebibliography}}
- 
+
 
 
 \end{frame}
@@ -609,7 +609,7 @@ with logical constraints. IJCAI 2022, pages 5478–5485. ijcai.org, 2022}
  Machine Learning Community knows how to make our networks more robust, and maybe even verifiable!
 \end{alertblock}
 \pause
-But remember: 
+But remember:
 
 \begin{block}{}
 \begin{itemize}
@@ -630,12 +630,12 @@ But remember:
   \vspace{-2em}
    % \begin{itemize}[<+-|alert@+>]
       \begin{block}{Recall the epsilon ball robustness:}
-      
+
        $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \alert{robust}(f(\x)) $
 \end{block}
 
      We can map different kinds of adversarial training to formal properties:
-          	\begin{tabular}{p{3.5cm}|p{5.5cm}} 
+          	\begin{tabular}{p{3.5cm}|p{5.5cm}}
 		%\toprule
 		Training style & Definition of \alert{$robust$}  \\ \hline \hline
 		%\midrule
@@ -644,12 +644,12 @@ But remember:
 		Adversarial Training & 	$ |f(\x) - f(\hat{\x})| \leq \delta$ \\ \hline
           Lipschitz Continuity & 	$ |f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$  \\ \hline
           ... & ... \\
-		
+
 		%\bottomrule
 	\end{tabular}
     %    \end{itemize}
-        
-        
+
+
        {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
@@ -657,10 +657,10 @@ But remember:
 G. Katz, G.~Amir, and I.~Rafaeli. 2022. Neural Network Robustness as a Verification Property:
 A Principled Case Study. CAV'22.}
 \end{thebibliography}}
- 
- 
 
-    
+
+
+
   \end{frame}
 
 
@@ -675,10 +675,10 @@ A Principled Case Study. CAV'22.}
 \item It is easy to get it wrong, and,  while optimising for \alert{one kind} of robustness, achieve little in verification success rates
 
 \begin{example}
-In majority of ML + verification papers, adversarial robustness is used for training (it encourages \emph{standard robustness of networks}), while verification is done for \emph{classification robustness}. We show that these two types of robustness are not in any relation: i.e. increasing one does not generally increase the other.   
+In majority of ML + verification papers, adversarial robustness is used for training (it encourages \emph{standard robustness of networks}), while verification is done for \emph{classification robustness}. We show that these two types of robustness are not in any relation: i.e. increasing one does not generally increase the other.
 \end{example}
 
-\item And what to do with properties that are not $\epsilon$-ball robustness? Out-of-the-box PGD training only works with $\epsilon$-balls around data points. 
+\item And what to do with properties that are not $\epsilon$-ball robustness? Out-of-the-box PGD training only works with $\epsilon$-balls around data points.
 \end{itemize}
 
 
@@ -687,31 +687,31 @@ In majority of ML + verification papers, adversarial robustness is used for trai
 
 \begin{frame}
 	\frametitle{The solution we are looking for}
-	
+
 	\vspace{-2em}
 	\begin{figure}[t]
 		\begin{center}
 			\begin{tikzpicture}[scale=.7]
-				
-				\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);  
-				\draw[fill=white] (-3,.5) rectangle (1,-.5); 
+
+				\draw[fill=gray,draw=gray] (-2.95,.45) rectangle (1.05,-.55);
+				\draw[fill=white] (-3,.5) rectangle (1,-.5);
 				\node (0,0) { };
 				\draw (-1,0) node {{\footnotesize \it Verifier} };
-				
-				\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);  
-				\draw[fill=white] (8.9,.5) rectangle (13.25,-.5); 
+
+				\draw[fill=gray,draw=gray] (8.95,.45) rectangle (13.30,-.55);
+				\draw[fill=white] (8.9,.5) rectangle (13.25,-.5);
 				\draw (11.1,0) node{{\footnotesize \it Neural Network}};
-				
-				
+
+
 				\draw (5,0.2) node{\footnotesize{\textbf{The specification}:}};
 				\draw (5,-0.4) node{\footnotesize{desired properties}};
-				
-				
-				\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4); 
+
+
+				\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (8.9,.4) .. controls (6,2) and (4,2) .. (1,.4);
 				\draw (5,2.3) node[anchor=north,fill=white]{\emph{\footnotesize{\textcolor{teal}{retrain}}}};
-				
-				\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4); 
-				\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{teal}{verify properties}}}}; 
+
+				\draw[latex-,shorten <=2pt,shorten >=2pt,dashed] (1,-.4) .. controls (4,-2) and (6,-2) .. (8.9,-.4);
+				\draw (5,-2.3) node[anchor=south,fill=white]{\emph{\footnotesize{\textcolor{teal}{verify properties}}}};
 			\end{tikzpicture}
 		\end{center}
 	\end{figure}
@@ -727,7 +727,7 @@ In majority of ML + verification papers, adversarial robustness is used for trai
 \item[$E^G$] Embedding gap $\ldots$
 \end{itemize}
 \end{block}
-	
+
 \end{frame}
 
 \begin{frame}
@@ -814,26 +814,26 @@ Differentiable Logic + (PGD) optimisation
 \begin{frame}
 	\frametitle{Different existing DLs}
 	\begin{itemize}
-		\item DL2 
+		\item DL2
 		      {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
     \bibitem{7}{Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce Zhang, and
 Martin Vechev. DL2: Training and querying neural networks with logic. In ICML'19,  pp. 1931–1941. }
 \end{thebibliography}}
- 
-		
-		\item fuzzy DLs such as: Godel, Łukasiewicz, Yager, product and others 
-		
+
+
+		\item fuzzy DLs such as: Godel, Łukasiewicz, Yager, product and others
+
  {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
     \bibitem{8}{Emile van Krieken, Erman Acar, and Frank van Harmelen. Analyzing differentiable fuzzy
 logic operators. Artificial Intelligence, 302:103602, 2022. }
 \end{thebibliography}}
- 
-		\item Signal Temporal Logic DL 
-		
+
+		\item Signal Temporal Logic DL
+
 		      {\scriptsize
  \begin{thebibliography}{99}
    \beamertemplatearticlebibitems
@@ -841,7 +841,7 @@ logic operators. Artificial Intelligence, 302:103602, 2022. }
 In 2020 American Control Conference (ACC), pp. 5394–5399, 2020. }
 \end{thebibliography}}
 
-\item Formalising and comparing them all 
+\item Formalising and comparing them all
 
    {\scriptsize
 \begin{thebibliography}{99}
@@ -849,7 +849,7 @@ In 2020 American Control Conference (ACC), pp. 5394–5399, 2020. }
     \bibitem{10}{Natalia Slusarz, Ekaterina Komendantskaya, Matthew L. Daggitt, Robert J. Stewart, Kathrin Stark:
 Logic of Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023: 473-493 }
 \end{thebibliography}}
- 
+
 	\end{itemize}
 \end{frame}
 
@@ -859,10 +859,10 @@ Logic of Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023: 47
 	\begin{table}[t]
 		\label{tab:properties}
 		\begin{tabular}{|p{0.28\textwidth}|c|c|c|c|c|c|}
-			\hline 
-			\textbf{Properties:}& DL2 &  G\"{o}del & Łukasiewicz& Yager & Product & STL\\ 
-			%\hline 
-			%& $ [0, \infty]$ &$ [0,1]$&$ [0,1]$&$[0,1]$&$[0,1]$& $ [-\infty, \infty] $\\ 
+			\hline
+			\textbf{Properties:}& DL2 &  G\"{o}del & Łukasiewicz& Yager & Product & STL\\
+			%\hline
+			%& $ [0, \infty]$ &$ [0,1]$&$ [0,1]$&$[0,1]$&$[0,1]$& $ [-\infty, \infty] $\\
 			\hline \hline
 			%\textbf{Properties:} & &&&&&\\
 			%\hline \hline
@@ -870,25 +870,25 @@ Logic of Differentiable Logics: Towards a Uniform Semantics of DL. LPAR 2023: 47
 			Weak Smoothness & yes* & no &no &no &yes* & \textbf{yes}\\
 			\hline
 			Shadow-lifting  & yes & no &no&no&yes& \textbf{yes} \\
-			\hline 
+			\hline
 			%Min-max boundedness & no & yes &no&no&yes& yes \cite{varnai}\\
-			%\hline 
+			%\hline
 			Scale invariance & yes & yes &no&no&no& \textbf{yes} \\
 			\hline \hline
 			\textbf{Logical:} &  &  & & & & \\
 			Idempotence & no & \textbf{yes}  &\textbf{no} &\textbf{no} &\textbf{no} & \textbf{yes}\\
-			\hline 
+			\hline
 			Commutativity & yes & \textbf{yes} &\textbf{yes} &\textbf{yes} &\textbf{yes} & \textbf{yes} \\
-			\hline 
+			\hline
 			Associativity &yes &\textbf{yes}&\textbf{yes} &\textbf{yes} &\textbf{yes} &\textbf{no} \\
 			\hline
 			Quantifier commutativity & no & yes & no & no& no & no \\
-			\hline 
+			\hline
 			Soundness & yes & yes & yes & yes & yes & no \\
-			\hline 
+			\hline
 			%has negation &no*&yes*&yes*&yes*&yes*&yes*\\
 			%\hline
-		\end{tabular}	
+		\end{tabular}
 	\end{table}
 \end{frame}
 
@@ -917,11 +917,11 @@ $$\min_{\theta} [\max_{\xs : \distance{\xs}{\xt} \leq \epsilon} \lossfn(\xs, \y)
 \end{block}
 \pause
 \begin{itemize}
-     \item in Vehicle, given a property $\forall \xs. \mathcal{P}(\xs) \Rightarrow \mathcal{S}(\xs)$, we replace the above training objective with 
+     \item in Vehicle, given a property $\forall \xs. \mathcal{P}(\xs) \Rightarrow \mathcal{S}(\xs)$, we replace the above training objective with
 %\begin{equation}
 $$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}(\xs)}} \lossfn_{\mathcal{S}(\xs)}(\xs, \y)]$$
 where $ \mathbb{H}_{\mathcal{P}(\xs)}$ is a hyper-shape (usually a hyper-rectangle)
-that corresponds to the pre-condition $\mathcal{P}(\xs)$ of the property and $\lossfn_{\mathcal{S}(\xs)}$ is obtained by DL-translation of $\mathcal{S}(\xs)$. 
+that corresponds to the pre-condition $\mathcal{P}(\xs)$ of the property and $\lossfn_{\mathcal{S}(\xs)}$ is obtained by DL-translation of $\mathcal{S}(\xs)$.
 
 \end{itemize}
 
@@ -937,8 +937,8 @@ that corresponds to the pre-condition $\mathcal{P}(\xs)$ of the property and $\l
 \begin{minted}[fontsize=\footnotesize]{haskell}
 @property
 property3 : Bool
-property3 = forall x . validInput x and 
-                       directlyAhead x and 
+property3 = forall x . validInput x and
+                       directlyAhead x and
                        movingTowards x =>
                        not (minimalScore clearOfConflict x)
 \end{minted}
@@ -950,7 +950,7 @@ property3 = forall x . validInput x and
 \begin{equation*}
 \begin{array}{l}
 1500 \leq \rho \leq 1800 \  \\
--0.06 \leq \theta \leq 0.06 \  \\ 
+-0.06 \leq \theta \leq 0.06 \  \\
 \psi \geq 3.10 \  \\
   v_{own} \geq 980 \ \\
 v_{int} \geq 960 \  \\
@@ -958,11 +958,11 @@ v_{int} \geq 960 \  \\
 \end{array}
 \end{equation*}
 
-\item Recall that for Acas Xu networks, $\x = [\rho, \theta, \psi, v_{own}, v_{int}]^{norm}$ 
+\item Recall that for Acas Xu networks, $\x = [\rho, \theta, \psi, v_{own}, v_{int}]^{norm}$
 
 \pause
 
-\item  and $\lossfn_{\mathcal{S}(\xs)} = \translation (\mathtt{not\ (minimalScore\ clearOfConflict}\ \xs))$. 
+\item  and $\lossfn_{\mathcal{S}(\xs)} = \translation (\mathtt{not\ (minimalScore\ clearOfConflict}\ \xs))$.
 
 
 \end{itemize}
@@ -974,7 +974,7 @@ v_{int} \geq 960 \  \\
 \frametitle{Examples: Degenerate case}
 \begin{itemize}
 \item When we have $$\forall \xs. \mathcal{S}(\xs)$$
-instead of 
+instead of
 $\forall \xs. \mathcal{P}(\xs) \Rightarrow \mathcal{S}(\xs)$
 \begin{block}{Recall we solve the optimisation problem}
 $$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}(\xs)}} \lossfn_{\mathcal{S}(\xs)}(\xs, \y)]$$
@@ -1234,7 +1234,7 @@ movingTowards x =
 
 \begin{minted}[fontsize=\footnotesize]{haskell}
 minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
-minimalScore i x = 
+minimalScore i x =
    forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 \end{minted}
 \pause
@@ -1260,8 +1260,8 @@ minimalScore i x =
 \begin{minted}[fontsize=\footnotesize]{haskell}
 @property
 property3 : Bool
-property3 = forall x . validInput x and 
-                       directlyAhead x and 
+property3 = forall x . validInput x and
+                       directlyAhead x and
                        movingTowards x =>
                        not (minimalScore clearOfConflict x)
 \end{minted}
@@ -1303,7 +1303,7 @@ vehicle verify \
 Verifying properties:
 property3 [==========================================] 1/1 queries
   result:  counterexample found
-  x: [1799.9886669999978, 1.9509286320000003e-2, 
+  x: [1799.9886669999978, 1.9509286320000003e-2,
                         3.09999732192, 980.0, 1017.6036]
 \end{minted}
 \end{frame}
@@ -1406,7 +1406,7 @@ ACAS Xu Property 1 gives an idea how the {\it embedding gap}\\
 \pause
 
 \begin{block}{Note:}
-The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$. 
+The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$.
 \end{block}
 
 \end{frame}
@@ -1458,15 +1458,15 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{itemize}
 \item Before coffee break:
 \begin{itemize}
-%\item Brief introduction to \textbf{Vehicle} specification language 
+%\item Brief introduction to \textbf{Vehicle} specification language
 \item \alert{Exercise session:} write and verify your own specs (with possibility to extend over the break)
 
 \begin{itemize}
-\item for writing a spec, install vehicle: just run 
+\item for writing a spec, install vehicle: just run
 
 \texttt{pip install vehicle-lang}
 
-\item for verifying a spec, you also need Marabou installed 
+\item for verifying a spec, you also need Marabou installed
 
 \texttt{pip install maraboupy}
 
@@ -1483,7 +1483,7 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{block}{Robustness (for those familiar with the problem)}
 \footnotesize{
 \begin{itemize}
-\item Fill in missing code in the Robustness spec available at 
+\item Fill in missing code in the Robustness spec available at
 \url{https://github.com/vehicle-lang/tutorial}:\\
 \url{exercises/Chapter 2. Getting Started/mnist-robustness}
 
@@ -1498,8 +1498,8 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{block}{More ACAS Xu properties in the same spec}
 \footnotesize{
 \begin{itemize}
-\item Extend the given ACAS Xu  specification with Property 1. 
-The spec and network can be found at:  
+\item Extend the given ACAS Xu  specification with Property 1.
+The spec and network can be found at:
 \url{https://github.com/vehicle-lang/tutorial}, at \\
 \url{examples/Chapter 2. Getting Started/acasXu}
 \item Using the given neworks and data, verify the properties via Vehicle.
