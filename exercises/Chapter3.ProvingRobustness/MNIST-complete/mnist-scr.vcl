@@ -32,7 +32,9 @@ eta : Rat
 advises : Image -> Label -> Bool
 advises x i = classifier x ! i > eta
 
--- In fact, the above specification assumes that all outputs are scaled between 0 and 1. But that may or may not be the case in reality!!! You would rather scale the values directly in Vehicle, that is, define:
+-- In fact, the above specification assumes that all outputs are scaled between 0 and 1. 
+-- But that may or may not be the case in reality!!! 
+-- You would rather scale the values directly in Vehicle, that is, define:
 
 scaler : Image -> Rat
 scaler x = fold (\x y -> x + y) 0 (classifier x)
@@ -44,9 +46,12 @@ scaleCOutput x i = ((classifier x) ! i)  / (scaler x)
 -- advises : Image -> Label -> Bool
 -- advises x i = scaleCOutput x i > eta 
 
--- Unfortunately, this function will give you a type error: Marabou only accepts linear queries, and when Vehicle compiles the queries to Marabou, its type system checks whether the given query satsifies the linearity constraints. This is explained in:
+-- Unfortunately, this function will give you a type error: 
+-- Marabou only accepts linear queries, and when Vehicle compiles the queries to Marabou, 
+-- its type system checks whether the given query satsifies the linearity constraints. This is explained in:
 
--- Matthew L. Daggitt, Robert Atkey, Wen Kokke, Ekaterina Komendantskaya, Luca Arnaboldi: Compiling Higher-Order Specifications to SMT Solvers: How to Deal with Rejection Constructively. CPP 2023: 102-120
+-- Matthew L. Daggitt, Robert Atkey, Wen Kokke, Ekaterina Komendantskaya, Luca Arnaboldi: 
+-- Compiling Higher-Order Specifications to SMT Solvers: How to Deal with Rejection Constructively. CPP 2023: 102-120
 
 -- Try this definition and check the Vehicle error message!
 
