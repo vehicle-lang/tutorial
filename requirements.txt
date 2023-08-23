@@ -1,2 +1,2 @@
 pygments>=2.15
-vehicle-lang>=0.7.0
+vehicle-lang>=0.10.0
