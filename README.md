@@ -1411,7 +1411,7 @@ controller takes in both the current sensor reading and the previous
 sensor reading and its goal is to keep the car on the road.
 
 <figure>
-<img src="images/boolean-loss.png" alt="Boolean loss" />
+<img src="images/car-model.png" alt="Boolean loss" />
 <figcaption aria-hidden="true">Boolean loss</figcaption>
 </figure>
 
