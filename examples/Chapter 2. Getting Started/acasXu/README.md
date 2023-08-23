@@ -17,6 +17,7 @@ Unlike the equivalent low-level Marabou queries, the specification is written at
 ## Verifying using Marabou
 
 The following command verifies `property3` for the network `acasXu_1_7.onnx`:
+
 ```bash
 vehicle \
   verify \
@@ -25,6 +26,7 @@ vehicle \
   --network acasXu:examples/acasXu/acasXu_1_7.onnx \
   --property property3
 ```
+
 The same property can be verified for the other two networks in the folder. The remaining
 properties apply to other network components
 
