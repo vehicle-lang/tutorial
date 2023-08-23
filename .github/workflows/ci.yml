@@ -96,7 +96,9 @@ jobs:
         with:
           latexmk_use_lualatex: true
           latexmk_shell_escape: true
-          extra_system_packages: python3
+          extra_system_packages: |
+            inkscape
+            python3
           pre_compile: |
             python -m ensurepip --default-pip
             pip install pygments
