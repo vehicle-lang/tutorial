@@ -41,7 +41,7 @@ gives a summary of all tutorial resorces.
 
 If you have any questions about the *Vehicle* tutorial, you are invited
 to join [this Slack
-Channel](https://join.slack.com/t/newworkspace-q484682/shared_invite/zt-1zhh8ql35-arcDaG0961BsI1nCcOWyEQ)
+Channel](https://join.slack.com/t/vehicle-tutorial/shared_invite/zt-21nkefo9j-bcfDNwQbyBDAoFDzFDbVnw)
 for questions and discussions.
 
 *We hope you enjoy this course!*
