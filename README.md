@@ -1411,8 +1411,8 @@ controller takes in both the current sensor reading and the previous
 sensor reading and its goal is to keep the car on the road.
 
 <figure>
-<img src="images/car-model.png" alt="Boolean loss" />
-<figcaption aria-hidden="true">Boolean loss</figcaption>
+<embed src="images/car-model.pdf" />
+<figcaption aria-hidden="true">Car model</figcaption>
 </figure>
 
 Given this, the aim is to prove the following theorem:
