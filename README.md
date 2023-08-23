@@ -1411,7 +1411,7 @@ controller takes in both the current sensor reading and the previous
 sensor reading and its goal is to keep the car on the road.
 
 <figure>
-<embed src="images/car-model.pdf" />
+<img src="images/car-model.svg" alt="Car model" />
 <figcaption aria-hidden="true">Car model</figcaption>
 </figure>
 
