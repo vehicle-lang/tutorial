@@ -47,21 +47,21 @@
 % \DeclareOption*{
 %   \PackageWarning{beamerinnerthemeneutral}{Unknown option '\CurrentOption'}
 % }
-% 
+%
 % % Clear canvas
 % \def\whitebg{1}
 % \DeclareOption{nclbg}{
 % \def\whitebg{0}
 % }
-% 
+%
 % % Clear canvas
 % \def\whitebg{1}
 % \DeclareOption{nclbghead}{
 % \def\whitebg{0}
 % \renewcommand{\bgimg}{bottomtitlehead}
 % }
-% 
-% 
+%
+%
 \newcommand{\logobg}[1]{
   \begin{tikzpicture}[remember picture, overlay]
     \node [anchor=north east, inner sep=0pt]  at (current page.north east)
@@ -194,14 +194,14 @@
       \usebeamerfont{subtitle}\usebeamercolor[fg!50!white]{subtitle}
       \contourtext[subtitle.fg!50!black]{\bfseries\textsc\insertsubtitle}
       \vspace*{\baselineskip}
-      
+
 
 %         {\centering\usebeamerfont{date}\insertdate}
-        
+
         \vspace*{\baselineskip}
         {\centering\usebeamerfont{date}\insertauthor}
         \vspace*{\baselineskip}
-        
+
         {\centering\usebeamerfont{institute}\insertinstitute}
         \vspace*{\baselineskip}
       \end{tbox}
@@ -209,19 +209,19 @@
 
 %       \begin{beamercolorbox}[wd=\textwidth,center,sep=\baselineskip]{frametitle}%
 %         {\usebeamerfont{date}\insertdate}\vspace*{\baselineskip}
-%         
+%
 %         {\usebeamerfont{author}\insertauthor}\vspace*{\baselineskip}
-%         
+%
 %         {\usebeamerfont{institute}\insertinstitute}
 %       \end{beamercolorbox}\vspace*{\baselineskip}
-      
+
       \vfill
 %       \vspace*{\baselineskip}
       {\inserttitlegraphic}
     \end{minipage}
   }
-  
-  
+
+
   %final page
   \defbeamertemplate{final page}{text}[1]{%
     \begin{minipage}[c][\textheight][c]{\textwidth}
@@ -244,7 +244,7 @@
     \setbeamertemplate{final page}[text]{#1}
     \usebeamertemplate{final page}
   }
-  
+
   % add the aau waves to the background
   \newcommand{\setbackground}[1][\backgroundgraphics]{%
     \setbeamertemplate{background canvas}{
@@ -255,7 +255,7 @@
     }
   }
   \newcommand{\unsetbackground}{\setbackground[graphics/empty]}
-  
+
   % use numbers instead of a picture for the references
   \setbeamertemplate{bibliography item}[text]
 
