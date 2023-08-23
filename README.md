@@ -1200,6 +1200,12 @@ instead of the $L_{\infty}$ norm.
 such extensions, not all specifications will be feasible for Marabou
 that works with linear real arithmetic.\*
 
+### Exercise ($*$)
+
+To test your understanding of the robustness property, try completing
+the robustness verification in [this
+file](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter3.ProvingRobustness/MNIST-incomplete).
+
 ### Exercise ($***$): Conduct a complete “training - verification” experiment from start to finish
 
 *This exercise can be hard or simple, depending how much help you get
