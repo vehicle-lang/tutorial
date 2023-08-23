@@ -117,7 +117,7 @@ advises i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 
 -- Tested on: all networks except N_{1,7}, N_{1,8}, and N_{1,9}.
 
-directlyAhead : TODO 
+directlyAhead : TODO
 
 movingTowards : UnnormalisedInputVector -> Bool
 movingTowards x = TODO

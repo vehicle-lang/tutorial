@@ -37,7 +37,7 @@ epsilon : Rat
 
 -- Next we define what it means for an image `x` to be in a ball of
 -- size epsilon around 0.
-boundedByEpsilon : Image -> Bool 
+boundedByEpsilon : Image -> Bool
 boundedByEpsilon x =  forall i j . -epsilon <= x ! i ! j <=epsilon
 
 -- We now define what it means for the network to be robust around an image `x`
@@ -48,7 +48,7 @@ robustAround : Image -> Label -> Bool
 robustAround image label = forall perturbations .
     let perturbedImage = image - perturbation in
         boundedByEpsilon perturbation and validImage perturbedImage =>
-            advises perturbedImage label 
+            advises perturbedImage label
 
 --------------------------------------------------------------------------------
 -- Robustness with respect to a dataset
