@@ -1,4 +1,7 @@
 --------------------------------------------------------------------------------
+--- This file is an exercise that defines the property of "strong classification robustness" for MNIST ---
+--- It contains a solution to one of Vehicle tutorial exercises ---  
+
 -- Inputs and outputs
 
 -- Define the type for our input images
@@ -21,12 +24,6 @@ validImage x = forall i j . 0 <= x ! i ! j <= 1
 @network
 classifier : Image -> Vector Rat 10
 
-scaler : Image -> Rat
-scaler x = classifier x ! 0 + classifier x ! 1 + classifier x ! 2 + classifier x ! 3 + classifier x ! 4 + classifier x ! 5 + classifier x ! 6 +     classifier x ! 7 + classifier x ! 8 + classifier x ! 9 
-
-scaleCOutput : Image -> Label -> Rat
-scaleCOutput x i = ((classifier x) ! i)  / (scaler x)
-
 @parameter
 eta : Rat
 
@@ -35,10 +32,23 @@ eta : Rat
 advises : Image -> Label -> Bool
 advises x i = classifier x ! i > eta
 
---- scaleCOutput x i > eta
+-- In fact, the above specification assumes that all outputs are scaled between 0 and 1. But that may or may not be the case in reality!!! You would rather scale the values directly in Vehicle, that is, define:
 
--- scaleCOutput x i > eta -- this gives type error
---classifier x ! i > eta --- this gives no error
+scaler : Image -> Rat
+scaler x = fold (\x y -> x + y) 0 (classifier x)
+
+scaleCOutput : Image -> Label -> Rat
+scaleCOutput x i = ((classifier x) ! i)  / (scaler x)
+
+-- This will then give you an alternative definition for `advises`:
+-- advises : Image -> Label -> Bool
+-- advises x i = scaleCOutput x i > eta 
+
+-- Unfortunately, this function will give you a type error: Marabou only accepts linear queries, and when Vehicle compiles the queries to Marabou, its type system checks whether the given query satsifies the linearity constraints. This is explained in:
+
+-- Matthew L. Daggitt, Robert Atkey, Wen Kokke, Ekaterina Komendantskaya, Luca Arnaboldi: Compiling Higher-Order Specifications to SMT Solvers: How to Deal with Rejection Constructively. CPP 2023: 102-120
+
+-- Try this definition and check the Vehicle error message!
 
 --------------------------------------------------------------------------------
 -- Definition of robustness around a point
