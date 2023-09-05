@@ -8,7 +8,7 @@
 \usepackage[UKenglish]{datetime}
 \usepackage{algpseudocode}
 \usepackage{fontawesome5}
-\usepackage{listings} 
+\usepackage{listings}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{soul}
@@ -63,7 +63,7 @@
 \newcommand{\LR}[2]{LR(#1, #2)} % Lipschitz robustness
 \newcommand{\CR}[1]{CR(#1)} % Classification robustness
 \newcommand{\SCR}[2]{SCR(#1,#2)} % Approximate class. robustness
-\usepackage{pifont} 
+\usepackage{pifont}
 \definecolor{forestgreen}{RGB}{35, 142, 35}
 \definecolor{lightaisecred}{RGB}{237, 41, 57}
 \newcommand{\yes}{\textcolor{forestgreen}{\ding{51}}}
@@ -170,7 +170,7 @@
 \usepackage{xcolor,colortbl}
 %\usepackage{listings}
 \definecolor{Gray}{gray}{0.85}
-  
+
 \newcommand{\question}[1]{\begin{description}
 		\item[\textbf{Question.}] #1
 \end{description}}
@@ -240,7 +240,7 @@
 \begin{quote}
 		\tiny Goodfellow, I. J., Shlens, J., \& Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
 
-		
+
 	\end{quote}
 \end{frame}
 
@@ -251,7 +251,7 @@
 % 	\vspace{-1em}
 % 	\begin{quote}
 % 		\tiny Eykholt, K., Evtimov, I., Fernandes, E., Li, B., Rahmati, A., Xiao, C., ... \& Song, D. (2018). Robust physical-world attacks on deep learning visual classification. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 1625-1634).
-		
+
 % 	\end{quote}
 % \end{frame}
 
@@ -273,9 +273,9 @@ Then \[\forall x : | x - \hat{x}| \leq \epsilon \implies | f(x) - f(\hat{x})| \l
 \end{frame}
 
 \begin{frame}{In Practice - Robustness of MNIST}
-    
+
     Let us take as an example the famous MNIST data set by LeCun etal. The images look like this:
-    
+
     \centering
     \includegraphics[width=0.6\textwidth]{img/MNIST.jpeg}
 
@@ -302,7 +302,7 @@ Then \[\forall x : | x - \hat{x}| \leq \epsilon \implies | f(x) - f(\hat{x})| \l
 
 
 \begin{frame}{In Practice - Robustness of MNIST}
-    
+
    \begin{columns}
         \begin{column}{0.3\textwidth}
             \begin{center}
@@ -339,7 +339,7 @@ Then \[\forall x : | x - \hat{x}| \leq \epsilon \implies | f(x) - f(\hat{x})| \l
 	\end{alertblock}
 		\vspace{1em}
 	\begin{itemize}
-		
+
 		\item $P(\hat{x})$ characterises inputs checked
 		\item $Q(\hat{y})$ characterises the behaviour we \textcolor{aisecred}{DO NOT} wish for
 		\item if satisfied, counterexample is returned, else property holds
@@ -361,7 +361,7 @@ Formally, we define an $\epsilon$-ball around an image $\hat{\mathbf{x}}$ as:
     \item[] $$\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = \{ \mathbf{x} \in \mathbb{R}^n: |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon \}$$
     \item [] where $| ... |$ is a distance function (or $L$-norm) in $\mathbb{R}^n$,
 such as Euclidean distance or $L_{\infty}$-norm.
-%\item[] so as above $\mathbb{B}%(\hat{\mathbf{x}}, \epsilon)$ := 
+%\item[] so as above $\mathbb{B}%(\hat{\mathbf{x}}, \epsilon)$ :=
 %$$\|\hat{x} - \hat{x_0}\| _{ L_{\infty}} \leq \epsilon$$
 \end{itemize}
 \end{alertblock}
@@ -382,13 +382,13 @@ such as Euclidean distance or $L_{\infty}$-norm.
              \begin{center}
              \vspace{-1em}
     \centering\includegraphics[width=0.45\textwidth]{img/epsballmnist.png}
-                 
+
              \end{center}
         \end{column}
 \end{columns}
- 
 
-    
+
+
 \end{frame}
 
 \begin{frame}
@@ -419,24 +419,24 @@ The Vehicle language contains the following basic types:
 \item \vehicle{Bool} - booleans
 \begin{itemize}
 \item Operations: \vehicle{and}, \vehicle{or}, \vehicle{=>}, \vehicle{not}, \vehicle{if ... then ... else ..., ==, !=}
-\end{itemize} 
+\end{itemize}
 \item \vehicle{Index n} - natural numbers between 0 (inclusive) and n (exclusive).
 \begin{itemize}
 \item Used for safe indexing into tensors. For example, only the values 0 and 1 have type \vehicle{Index 2}.
 \item Operations: \vehicle{==}, \vehicle{!=}, \vehicle{<=}, \vehicle{>=}, \vehicle{<}, \vehicle{>}
-\end{itemize} 
+\end{itemize}
 \item \vehicle{Nat} - natural numbers
 \begin{itemize}
 \item Operations: \vehicle{==}, \vehicle{!=}, \vehicle{<=}, \vehicle{>=}, \vehicle{<}, \vehicle{>}, \vehicle{+}, \vehicle{*}
-\end{itemize} 
+\end{itemize}
 \item \vehicle{Int} - integer numbers
 \begin{itemize}
 \item Operations: \vehicle{==}, \vehicle{!=}, \vehicle{<=}, \vehicle{>=}, \vehicle{<}, \vehicle{>}, \vehicle{+}, \vehicle{*}, \vehicle{-}
-\end{itemize} 
+\end{itemize}
 \item \vehicle{Rat} - rational numbers
 \begin{itemize}
 \item Operations: \vehicle{==}, \vehicle{!=}, \vehicle{<=}, \vehicle{>=}, \vehicle{<}, \vehicle{>}, \vehicle{+}, \vehicle{*}, \vehicle{-}, \vehicle{/}
-\end{itemize} 
+\end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -444,7 +444,7 @@ The Vehicle language contains the following basic types:
 \begin{frame}{Vehicle Language Overview}{Language Overview (continued)}
 Next there are two container types:
 \begin{itemize}
-\item \vehicle{List A} - a list of elements of type \vehicle{A} 
+\item \vehicle{List A} - a list of elements of type \vehicle{A}
 \begin{itemize}
 \item Used for sequences of data for which one either doesn't care about or don't know the length of.
 \item Operations: \vehicle{==}, \vehicle{!=}, \vehicle{map}, \vehicle{fold}
@@ -491,15 +491,15 @@ dataset myDataset : Tensor Rat [10, 784]
 
 %passed throguh command line
 \begin{itemize}
-    \item Sometimes the user may not want to hard-code a specific value but rather provide a compile time variable:    
+    \item Sometimes the user may not want to hard-code a specific value but rather provide a compile time variable:
     \item[]\begin{minted}{haskell}
 @parameter
 parameter myParameter : Rat
-\end{minted} 
+\end{minted}
 \end{itemize}
 
 \begin{itemize}
-    \item universal (\vehicle{forall}) and existential (\vehicle{exists}) quantifiers e.g. 
+    \item universal (\vehicle{forall}) and existential (\vehicle{exists}) quantifiers e.g.
 \item[]\begin{minted}{haskell}
 condition : Bool
 condition = forall x . lastOutputPositive x
@@ -581,7 +581,7 @@ The classifier advises that input image x has label i if the score for label i i
 \begin{minted}{haskell}
 
 advises : Image -> Label -> Bool
-advises x i = forall j . 
+advises x i = forall j .
    j != i => classifier x ! i > classifier x ! j
 
 \end{minted}
@@ -603,7 +603,7 @@ epsilon : Rat
 \begin{minted}{haskell}
 
 boundedByEpsilon : Image -> Bool
-boundedByEpsilon x = forall i j . 
+boundedByEpsilon x = forall i j .
     -epsilon <= x ! i ! j <= epsilon
 
 \end{minted}
@@ -655,13 +655,13 @@ trainingLabels : Vector Label n
 
 \begin{frame}[fragile]{Case Study: Robustness - Robust Image Classification (continued)}
 
-We then say that the network is robust for this data set if it is robust around every pair of input images and output labels. 
+We then say that the network is robust for this data set if it is robust around every pair of input images and output labels.
 
 \begin{minted}{haskell}
 
 @property
 robust : Vector Bool n
-robust = foreach i . 
+robust = foreach i .
     robustAround (trainingImages ! i)(trainingLabels ! i)
 \end{minted}
 
@@ -768,12 +768,12 @@ vehicle verify \
             \item \textcolor{aisecred}{Exercise session:} write and verify your own specs (with possibility to extend over the break)
 
             \begin{itemize}
-            \item for writing a spec, install Vehicle: just run 
-            
+            \item for writing a spec, install Vehicle: just run
+
             \texttt{pip install vehicle-lang}
-            
-            \item for verifying a spec, you also need Marabou installed 
-            
+
+            \item for verifying a spec, you also need Marabou installed
+
             \texttt{pip install maraboupy}
             \end{itemize}
             \item Property driven training in Vehicle
@@ -781,7 +781,7 @@ vehicle verify \
             \item Practical applications of AI verification
         \end{enumerate}
 
-%		\item Let me know if you want 
+%		\item Let me know if you want
 	\end{itemize}
 
 \vspace{1em}
@@ -801,7 +801,7 @@ vehicle verify \
 \footnotesize{
 \begin{itemize}
 \item Run and try a variety of $\epsilon$-values
-The spec and network can be found at: 
+The spec and network can be found at:
 \url{https://github.com/vehicle-lang/tutorial}:\\
 \url{exercises/Chapter 2. Getting Started/mnist-robustness}
 
@@ -820,7 +820,7 @@ The spec and network can be found at:
 \begin{block}{More Robustness properties in the same spec}
 
 \begin{itemize}
-\item Fill in missing code in the Robustness spec available at   
+\item Fill in missing code in the Robustness spec available at
 \url{https://github.com/vehicle-lang/tutorial}, at \\
 \url{examples/Chapter 3. Robustness/}
  \item \textcolor{aisecred}{Exercises 3.5.4, 3.5.5 and 3.5.6}
@@ -839,7 +839,7 @@ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \textbf{robust}(f(\x))$
 
 \begin{center}
 
-\begin{tabular}{l|l} 
+\begin{tabular}{l|l}
 		\toprule
 		 \textbf{Property} & \textbf{Definition of Robust}  \\
 		\midrule \midrule
@@ -847,9 +847,9 @@ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \textbf{robust}(f(\x))$
 		\midrule
 		 SCR (Strong Classification Robustness) & $f(\x)_c \geq \eta$  \\
 		\midrule
-		 SR (Standard Robustness) &	$|f(\x) - f(\hat{\x})| \leq \delta$ \\ 
+		 SR (Standard Robustness) &	$|f(\x) - f(\hat{\x})| \leq \delta$ \\
 		\midrule
-         LR (Lipschitz Robustness) & $|f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$  \\ 
+         LR (Lipschitz Robustness) & $|f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$  \\
 		\bottomrule
 \end{tabular}
 \end{center}
@@ -865,7 +865,7 @@ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \textbf{robust}(f(\x))$
 \begin{block}{Train your own network, different distances, more datasets!}
 
 \begin{itemize}
-\item Try  out all other Exercises in: 
+\item Try  out all other Exercises in:
 \url{https://vehicle-lang.github.io/tutorial/\#exercises}
 \item \textcolor{aisecred}{Exercise 3.5.7}
 \end{itemize}
@@ -877,7 +877,7 @@ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \textbf{robust}(f(\x))$
 
 \end{frame}
 
-% (a) run MNIST robustness as given here: https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/MNIST and (b) extend this file with other definitions of robustness; (c) try different values of epsilon. These are exercises 3.5.2, 3.5.4 and 3.5.5 here: https://vehicle-lang.github.io/tutorial/ Could you incorporate these? (edited) 
+% (a) run MNIST robustness as given here: https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/Chapter%203.%20Proving%20Robustness/MNIST and (b) extend this file with other definitions of robustness; (c) try different values of epsilon. These are exercises 3.5.2, 3.5.4 and 3.5.5 here: https://vehicle-lang.github.io/tutorial/ Could you incorporate these? (edited)
 
 
 % \begin{frame}
@@ -914,7 +914,7 @@ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \textbf{robust}(f(\x))$
 % \begin{center}
 
 % \includegraphics[width=3cm]{img/SR-vs-CR-3.png}
-% \includegraphics[width=3cm]{img/SR-vs-CR-4.png} 
+% \includegraphics[width=3cm]{img/SR-vs-CR-4.png}
 
 % \end{center}
 
@@ -986,6 +986,6 @@ $\forall \x \in \mathbb{B}(\hat{\x}, \epsilon). \ \textbf{robust}(f(\x))$
 %     \begin{center}
 %         \Huge{\textcolor{aisecred}{\textbf{End Extra Material}}}
 %     \end{center}
-% \end{frame}   
+% \end{frame}
 
 \end{document}

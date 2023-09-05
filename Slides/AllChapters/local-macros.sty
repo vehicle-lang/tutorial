@@ -658,7 +658,7 @@
 % sequent in Coinductive Uniform Proof
 % \sequentUP{<signature field>}{<program field>}{<succedent>}
 \newcommand*{\sequentCUP}[3]{#1 ; #2 \CUParrow #3 }
-% gaurded uniform proof entailment 
+% gaurded uniform proof entailment
 \newcommand*{\sequentUPg}[4]{#1 ; #2 ; #3 \UParrow \guardCUP{#4} }
 % sequent with default values
 \DeclareDocumentCommand{\SequentUP}{ D(){\TSig} O{P} O{\Delta_A} O{\Delta_C} m }{%
@@ -790,8 +790,8 @@
 % Uniform Proof rules
 \newcommand*{\TopR}{{\top} R}
 \newcommand*{\TopL}{{\top} L}
-\newcommand*{\ExistsR}{{\exists} R}	
-\newcommand*{\OrR}{{\disj} R}	
+\newcommand*{\ExistsR}{{\exists} R}
+\newcommand*{\OrR}{{\disj} R}
 \newcommand*{\AndR}{{\conj} R}
 \newcommand*{\AndL}{{\conj} L}
 \newcommand*{\AllR}{\forall R}
@@ -810,13 +810,13 @@
 
 %% Notations in heuristics
 % see also: Frequently used contants
-% empty list in tree language		
+% empty list in tree language
 \newcommand*{\rewTreeRoot}{\epsilon}
 % Free Var
 \newcommand*{\FVar}[1]{\mathrm{FVar}(#1)}
 % Function symbols in atom
 \newcommand*{\FunSym}[1]{\TSig(#1)}
-% unifing relation 
+% unifing relation
 \newcommand*{\unifies}[1][\sigma]{\sim_{#1}}
 % term matching relation
 \newcommand*{\matches}[1][\sigma]{\prec_{#1}}
@@ -825,7 +825,7 @@
 % rewriting reduction
 \newcommand*{\rewRed}{\rightarrowtail}
 % rewriting tree transition
-\newcommand*{\rewTreeTran}[1][\theta]{\stackrel{#1}{\leadsto}} 
+\newcommand*{\rewTreeTran}[1][\theta]{\stackrel{#1}{\leadsto}}
 % loop
 \DeclarePairedDelimiter{\loopHeu}{\langle}{\rangle}
 \DeclarePairedDelimiter{\critPairHeu}{\langle}{\rangle}
@@ -840,4 +840,3 @@
 %%% TeX-master: "uniform-corec"
 %%% ispell-local-dictionary: "british"
 %%% End:
-

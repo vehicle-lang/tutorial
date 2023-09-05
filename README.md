@@ -757,7 +757,7 @@ below a certain fixed threshold.*
 Taking the original thresholds, this boils down to:
 
 $$ (\rho \geq 55947.691) \wedge
-(v_{own} \geq 1145) \wedge (v_{int} \leq 60) 
+(v_{own} \geq 1145) \wedge (v_{int} \leq 60)
 \Rightarrow \text{the score for COC is at most} 1500 $$
 
 *Note:* The ACAS Xu neural network outputs are scaled as follows: given

@@ -16,7 +16,7 @@
 \def\beamer@progressfixedCircCnt{fixedCircCnt} % fixed circular counter
 \def\beamer@progressmovCircCnt{movCircCnt} % moving circular counter
 \def\beamer@progresscorner{corner} % a counter in the lower right corner
-%\def\beamer@progressmovCnt{movCnt} % 
+%\def\beamer@progressmovCnt{movCnt} %
 \def\beamer@progressstyle{fixedCircCnt} % default
 \DeclareOptionBeamer{progressstyle}{\def\beamer@progressstyle{#1}}
 \DeclareOptionBeamer{rotationcw}{\def\beamer@rotationcw{true}}
@@ -72,7 +72,7 @@
   }{%
     %aau header is defined - nothing to do
   }
- 
+
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %templates
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@
     \end{beamercolorbox}%
     \neutralheaderbackground%
   }
-  
+
   %frame title
   \setbeamertemplate{frametitle}{%
     \begin{minipage}[t][\beamer@height][t]{\textwidth-1.5\beamer@logoouterradius}
@@ -93,13 +93,13 @@
       {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}\insertframesubtitle\par}%
     \end{minipage}
   }
-  
+
   \ifx\beamer@shownavsym\undefined% insert navigation symbols
     \setbeamertemplate{navigation symbols}{%
       %disable navigation symbols
     }
   \fi
-  
+
   \ifx\beamer@progressstyle\beamer@progresscorner% the progress in the lower right corner
     \setbeamertemplate{footline}[frame number]
   \fi
@@ -128,7 +128,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Macros used in the theme 
+%Macros used in the theme
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % the fancy header background
 \newcommand{\neutralheaderbackground}[1][\circlelogographics]{%
@@ -168,7 +168,7 @@
         % place the current frame number
         \node[fill=aisecred,draw=neutral.fg,thick,circle,minimum width=2.4*\beamer@borderwidth] at ([xshift=\beamer@counterradius]logopos) {{\color{beamer@progresscolor}\small\bfseries\insertframenumber}};
       \fi
-      
+
       \ifx\beamer@progressstyle\beamer@progressmovCircCnt% the circular counter with a moving counter
         % draw the current and total frame number
 %        \ifx\beamer@rotationcw\undefined% counterclockwise rotation

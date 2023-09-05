@@ -8,7 +8,7 @@
 \usepackage[UKenglish]{datetime}
 \usepackage{algpseudocode}
 \usepackage{fontawesome5}
-\usepackage{listings} 
+\usepackage{listings}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{soul}
@@ -63,7 +63,7 @@
 \newcommand{\LR}[2]{LR(#1, #2)} % Lipschitz robustness
 \newcommand{\CR}[1]{CR(#1)} % Classification robustness
 \newcommand{\SCR}[2]{SCR(#1,#2)} % Approximate class. robustness
-\usepackage{pifont} 
+\usepackage{pifont}
 \definecolor{forestgreen}{RGB}{35, 142, 35}
 \definecolor{lightaisecred}{RGB}{237, 41, 57}
 \newcommand{\yes}{\textcolor{forestgreen}{\ding{51}}}
@@ -170,7 +170,7 @@
 \usepackage{xcolor,colortbl}
 %\usepackage{listings}
 \definecolor{Gray}{gray}{0.85}
-  
+
 \newcommand{\question}[1]{\begin{description}
 		\item[\textbf{Question.}] #1
 \end{description}}
@@ -311,7 +311,7 @@ Outputs:
 \begin{equation*}
 \begin{array}{l}
 1500 \leq \rho \leq 1800 \ \wedge \\
--0.06 \leq \theta \leq 0.06 \ \wedge \\ 
+-0.06 \leq \theta \leq 0.06 \ \wedge \\
 \psi \geq 3.10 \ \wedge \\
   v_{own} \geq 980 \ \wedge \\
 v_{int} \geq 960 \ \Rightarrow \\
@@ -585,7 +585,7 @@ movingTowards x =
 
 \begin{minted}[fontsize=\footnotesize]{haskell}
 minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
-minimalScore i x = 
+minimalScore i x =
    forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 \end{minted}
 \pause
@@ -611,8 +611,8 @@ minimalScore i x =
 \begin{minted}[fontsize=\footnotesize]{haskell}
 @property
 property3 : Bool
-property3 = forall x . validInput x and 
-                       directlyAhead x and 
+property3 = forall x . validInput x and
+                       directlyAhead x and
                        movingTowards x =>
                        not (minimalScore clearOfConflict x)
 \end{minted}
@@ -655,7 +655,7 @@ vehicle verify \
 Verifying properties:
 property3 [==========================================] 1/1 queries
   result:  counterexample found
-  x: [1799.9886669999978, 1.9509286320000003e-2, 
+  x: [1799.9886669999978, 1.9509286320000003e-2,
                         3.09999732192, 980.0, 1017.6036]
 \end{minted}
 \end{frame}
@@ -757,9 +757,9 @@ ACAS Xu Property 1 gives an idea how the {\it embedding gap}
 
 \pause
 
-\alert{Note:}
-The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$. 
-
+\begin{block}{Note:}
+The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$.
+\end{block}
 
 \end{frame}
 \end{document}
@@ -811,15 +811,15 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{itemize}
 \item Before coffee break:
 \begin{itemize}
-%\item Brief introduction to \textbf{vehicle} specification language 
+%\item Brief introduction to \textbf{Vehicle} specification language
 \item \alert{Exercise session:} write and verify your own specs (with possibility to extend over the break)
 
 \begin{itemize}
-\item for writing a spec, install vehicle: just run 
+\item for writing a spec, install vehicle: just run
 
 \texttt{pip install vehicle-lang}
 
-\item for verifying a spec, you also need Marabou installed 
+\item for verifying a spec, you also need Marabou installed
 
 \texttt{pip install maraboupy}
 
@@ -836,7 +836,7 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{block}{Robustness (for those familiar with the problem)}
 \footnotesize{
 \begin{itemize}
-\item Fill in missing code in the Robustness spec available at 
+\item Fill in missing code in the Robustness spec available at
 \url{https://github.com/vehicle-lang/tutorial}:\\
 \url{exercises/Chapter 2. Getting Started/mnist-robustness}
 
@@ -851,8 +851,8 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \begin{block}{More ACAS Xu properties in the same spec}
 \footnotesize{
 \begin{itemize}
-\item Extend the given ACAS Xu  specification with Property 1. 
-The spec and network can be found at:  
+\item Extend the given ACAS Xu  specification with Property 1.
+The spec and network can be found at:
 \url{https://github.com/vehicle-lang/tutorial}, at \\
 \url{examples/Chapter 2. Getting Started/acasXu}
 \item Using the given neworks and data, verify the properties via Vehicle.
