@@ -716,7 +716,7 @@ Furthermore, *Vehicle* gives us a counter-example in the problem space!
 In particular an assignment for the quantified variable `x` that
 falsifies the assignment.
 
-## Exercises.
+## Exercises
 
 We will use symbols $(*)$, $(**)$ and $(***)$ to rate exercise
 difficulty: *easy, moderate and hard*.
@@ -725,7 +725,7 @@ The exercises assume that you already installed *Vehicle* as described
 in [vehicle
 documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
-### Exercise ($*$).
+### Exercise ($*$)
 
 Start by simply running the code that was discussed in the above
 chapter. It is available from the `examples` section of the [tutorial
@@ -737,7 +737,7 @@ specification and the network, and verify the ACAS Xu Property 3.
 Did it work? If yes, you are ready to experiment with your own
 specifications.
 
-### Exercise ($**$). Problem Space versus Input/Output Space.
+### Exercise ($**$). Problem Space versus Input/Output Space
 
 We discussed an instance of the embedding gap when verifying Property 3.
 In particular, we reasoned in terms of the problem space, but verified
@@ -768,7 +768,7 @@ To run the verification queries, please use the networks available from
 the [tutorial
 repository](https://github.com/vehicle-lang/vehicle-tutorial).
 
-### Exercise ($**$). The full ACAS Xu chellenge in one file.
+### Exercise ($**$). The full ACAS Xu chellenge in one file
 
 Why not trying to state all $10$ ACAS Xu properties in one `.vcl` file?
 Try running the verification query in *Vehicle* using all $10$
@@ -1107,7 +1107,7 @@ robustness for larger $\epsilon$.
 
 ## Exercises
 
-### Exercise ($*$): Run the Chapter code.
+### Exercise ($*$): Run the Chapter code
 
 As usual, your first task is to repeat the steps described in this
 chapter: download the *Vehicle* specification, the network, the data,
@@ -1115,12 +1115,12 @@ and verify robustness of the given network on given data. All code is
 available from the `examples` section of the [tutorial
 repository](https://github.com/vehicle-lang/vehicle-tutorial)
 
-### Exercise ($*$) : Experimenting with $\epsilon$-balls of different size.
+### Exercise ($*$) : Experimenting with $\epsilon$-balls of different size
 
 Try experimenting with different values of $\epsilon$, for example, try
 $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. Make conclusions.
 
-### Exercise ($**$) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s.
+### Exercise ($**$) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s
 
 (*This exercise is technically very simple, but the required number of
 experiments may take a few hours to run. We recommend you run it at home
@@ -1151,13 +1151,13 @@ Make conclusion about feasibility and success rates of $\epsilon$-ball
 robustness, and the speed with which verification success deteriorates
 with the growing $\epsilon$.
 
-### Exercise ($*$) : Standard Robustness in *Vehicle*
+### Exercise ($*$) : Standard Robustness in*Vehicle*
 
 Using the same `.vcl` file as in all previous exercises, define and
 verify in *Vehicle* the propety of *Strong Classification Robustness*,
 that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of
 $\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \leq \eta$, for some small
-$\eta$. We now assemble the desired *strong classification robustness*
+$\eta$. We now assemble the desired_strong classification robustness\_
 property definition:
 
 Given an $\hat{\mathbf{x}} \in \mathcal{X}$,
@@ -1183,12 +1183,12 @@ different robustness properties in:
 ### Exercise ($**$): Explore Other Definitions of Robustness
 
 Use *Vehicle* to define other forms of Robustness property from Casadio
-et al. 
+et al.
 
-*Please note: although the *Vehicle\* language is rich enough to compile
+\*Please note: although the \_Vehicle*language is rich enough to compile
 all the robustness definitions, not all definitions will be feasible for
 Marabou that can have only one occurence of a neural network per
-specification.\*
+specification.*
 
 ### Exercise ($**$): Other Distances in *Vehicle*
 
@@ -1196,9 +1196,9 @@ Re-define the *classification* and *standard robustness* properties by
 using some different notion of distance, e.g. the Euclidean distance,
 instead of the $L_{\infty}$ norm.
 
-*Please note: although the *Vehicle\* language is rather rich to allow
+\*Please note: although the \_Vehicle*language is rather rich to allow
 such extensions, not all specifications will be feasible for Marabou
-that works with linear real arithmetic.\*
+that works with linear real arithmetic.*
 
 ### Exercise ($*$) Practicing to write property specifications
 
@@ -1481,46 +1481,48 @@ cache as follows:
 vehicle export \
   --target Agda \
   --cache controller-result \
-  --outputFile WindControllerSpec.agda
+  --output WindControllerSpec.agda
 ```
 
 which will generate an Agda file:
 
-    {-# OPTIONS --allow-exec #-}
+``` agda
+{-# OPTIONS --allow-exec #-}
 
-    open import Vehicle
-    open import Vehicle.Utils
-    open import Vehicle.Data.Tensor
-    open import Data.Product
-    open import Data.Integer as ℤ using (ℤ)
-    open import Data.Rational as ℚ using (ℚ)
-    open import Data.Fin as Fin using (Fin; #_)
-    open import Data.List.Base
+open import Vehicle
+open import Vehicle.Utils
+open import Vehicle.Data.Tensor
+open import Data.Product
+open import Data.Integer as ℤ using (ℤ)
+open import Data.Rational as ℚ using (ℚ)
+open import Data.Fin as Fin using (Fin; #_)
+open import Data.List.Base
 
-    module WindControllerSpec where
+module WindControllerSpec where
 
-    InputVector : Set
-    InputVector = Tensor ℚ (2 ∷ [])
+InputVector : Set
+InputVector = Tensor ℚ (2 ∷ [])
 
-    currentSensor : Fin 2
-    currentSensor = # 0
+currentSensor : Fin 2
+currentSensor = # 0
 
-    previousSensor : Fin 2
-    previousSensor = # 1
+previousSensor : Fin 2
+previousSensor = # 1
 
-    postulate controller : InputVector → Tensor ℚ (1 ∷ [])
+postulate controller : InputVector → Tensor ℚ (1 ∷ [])
 
-    SafeInput : InputVector → Set
-    SafeInput x = ∀ i → ℚ.- (ℤ.+ 13 ℚ./ 4) ℚ.≤ x i × x i ℚ.≤ ℤ.+ 13 ℚ./ 4
+SafeInput : InputVector → Set
+SafeInput x = ∀ i → ℚ.- (ℤ.+ 13 ℚ./ 4) ℚ.≤ x i × x i ℚ.≤ ℤ.+ 13 ℚ./ 4
 
-    SafeOutput : InputVector → Set
-    SafeOutput x = ℚ.- (ℤ.+ 5 ℚ./ 4) ℚ.< (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor) ⊖ x previousSensor × (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor) ⊖ x previousSensor ℚ.< ℤ.+ 5 ℚ./ 4
+SafeOutput : InputVector → Set
+SafeOutput x = ℚ.- (ℤ.+ 5 ℚ./ 4) ℚ.< (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor) ⊖ x previousSensor × (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor) ⊖ x previousSensor ℚ.< ℤ.+ 5 ℚ./ 4
 
-    abstract
-      safe : ∀ x → SafeInput x → SafeOutput x
-      safe = checkSpecification record
-        { verificationFolder   = "examples/windController/verificationResult"
-        }
+abstract
+  safe : ∀ x → SafeInput x → SafeOutput x
+  safe = checkSpecification record
+    { verificationFolder   = "examples/windController/verificationResult"
+    }
+```
 
 This Agda file can then be imported and used by the larger proof of
 correctness for the whole system. There is not space to replicate the
