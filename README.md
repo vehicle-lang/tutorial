@@ -1269,8 +1269,8 @@ Let us look closer into this.
 ### Data Augmentation
 
 Suppose we are given a data set
-$\mathcal{D} = \{(\x_1, \y_1), \ldots , (\x_n, \y_n)\}$. \\ Prior to
-training, we can generate new training data samples within
+$\mathcal{D} = \{(\mathbf{x}_1, y_1), \ldots , (\mathbf{x}_n, y_n)\}$.
+\\ Prior to training, we can generate new training data samples within
 $\epsilon$-balls of the existing data and label them with the same
 output as the original data. Then we can use our usual training methods
 with this new *augmented data set* ((Shorten and Khoshgoftaar 2019)).
@@ -1320,6 +1320,11 @@ its class:
 <img src="images/SR-vs-CR-3.png" alt="Data Manifold for D" />
 <figcaption aria-hidden="true">Data Manifold for D</figcaption>
 </figure>
+
+However, data sets contain labels for data points, and not
+probabilities. We cannot achieve the effect we are looking for with data
+augmentation. We have to modify our training algorithm instead
+(Goodfellow, Shlens, and Szegedy 2015).
 
 ### Further reading
 
@@ -1695,6 +1700,16 @@ Conference on Machine Learning, ICML 2019, 9-15 June 2019, Long Beach,
 California, USA*, edited by Kamalika Chaudhuri and Ruslan Salakhutdinov,
 97:1931–41. Proceedings of Machine Learning Research. PMLR.
 <http://proceedings.mlr.press/v97/fischer19a.html>.
+
+</div>
+
+<div id="ref-GoodfellowSS14" class="csl-entry">
+
+Goodfellow, Ian J., Jonathon Shlens, and Christian Szegedy. 2015.
+“Explaining and Harnessing Adversarial Examples.” In *3rd International
+Conference on Learning Representations, ICLR 2015, San Diego, CA, USA,
+May 7-9, 2015, Conference Track Proceedings*, edited by Yoshua Bengio
+and Yann LeCun.
 
 </div>
 
