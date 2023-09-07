@@ -1321,10 +1321,10 @@ its class:
 <figcaption aria-hidden="true">Data Manifold for D</figcaption>
 </figure>
 
-However, data sets contain labels for data points, and not
-probabilities. We cannot achieve the effect we are looking for with data
-augmentation. We have to modify our training algorithm instead
-(Goodfellow, Shlens, and Szegedy 2015).
+However, using data labels as a method is unfit for the task. We cannot
+achieve the effect we are looking for with data augmentation. We have to
+modify our training algorithm instead (Goodfellow, Shlens, and Szegedy
+2015).
 
 #### Loss Function
 
