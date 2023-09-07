@@ -1384,19 +1384,6 @@ $\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon). robust(f(\mathbf
 It turns out that adversarial training determines the definition of
 *robust* to be $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 
-Moreover, we can map different kinds of training known in the machine
-learning literature to the following definitions of *robust*:
-
-|    Training style    |   Definition of *robust*    |
-|:--------------------:|:---------------------------:|
-|  Data Augmentation   |   \$ argmax \[f()\] = i\$   |
-| Adversarial Training |             \$              |
-|     DL2 training     | $f(\mathbf{x})_i \geq \eta$ |
-| Lipschitz Continuity |             \$              |
-
-where DL2 training is presented in (Fischer et al. 2019) and Lipschitz
-Continuity in (Pauli et al. 2021).
-
 *Is there any way to generate neural network optimisers for any given
 logical property?*
 
@@ -1866,15 +1853,6 @@ Müller, Mark Niklas, Gleb Makarchuk, Gagandeep Singh, Markus Püschel,
 and Martin Vechev. 2022. “PRIMA: General and Precise Neural Network
 Certification via Scalable Convex Hull Approximations.” *Proceedings of
 the ACM on Programming Languages* 6 (POPL): 1–33.
-
-</div>
-
-<div id="ref-Pauli0BKA21" class="csl-entry">
-
-Pauli, Patricia, Anne Koch, Julian Berberich, Paul Kohler, and Frank
-Allgöwer. 2021. “Training Robust Neural Networks Using Lipschitz
-Bounds.” In *2021 American Control Conference, ACC 2021, New Orleans,
-LA, USA, May 25-28, 2021*, 2595–2600. IEEE.
 
 </div>
 
