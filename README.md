@@ -1436,6 +1436,8 @@ This is the essence of logical loss functions: convert all booleans and
 operations over booleans into equivalent numeric operations that are
 differentiable and whose gradient’s point in the right direction.
 
+### Differentiable Logics
+
 Traditionally, translations from a given logical syntax to a loss
 function are known as “differentiable logics”, or DLs. One of the first
 attempts to translate propositional logic specifications to loss
@@ -1454,7 +1456,29 @@ properties.
 Vehicle has several different differentiable logics from the literature
 available, but will not go into detail about how they work here.
 
-## Generating a logical loss functions for mnist-robustness
+Instead, we explain the main idea by means of example. We define a very
+simple differentiable logic on a toy language
+
+$$p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p$$
+
+One possible DL for it can be defined as:
+
+$$ \mathcal{I}(a_1 \leq a_2) := 1-max(\frac{a_1 -a_2}{a_1 + a_2}, 0)$$
+$$ \mathcal{I}(p_1 \land p_2) := \mathcal{I}(p_1) * \mathcal{I}(p_2)$$
+$$  \mathcal{I}(p_1 \Rightarrow p_2) := 1 - \mathcal{I}(p_1) + \mathcal{I}(p_1) * \mathcal{I}(p_2) $$
+
+So, an example of this translation is
+
+$\mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta) = 1 - max (\dfrac{\mathcal{I}(| f(\mathbf{x}) - f(\hat{\mathbf{x}})| - \delta)}{\mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| + \delta)},0)$
+
+## Vehicle Property Driven Training
+
+We now have all the necessary building blocks to define *Vehicle*
+approach to property-driven training,
+
+*Vehicle Training = Differentiable Logics + Projected Gradient Descent*
+
+## Generating a logical loss functions for mnist-robustness in *Vehicle*
 
 To generate a logical loss function usable in Python, we will use
 Vehicle’s Python bindings that come pre-installed.
