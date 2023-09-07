@@ -1338,6 +1338,9 @@ computes a penalty proportional to the difference between the output of
 $f_{\theta}$ on a training input $\hat{\mathbf{x}}$ and a desired output
 $\mathbf{y}$.
 
+The reader will find an excellent exposition of adversarial training in
+this tutorial: (Kolter and Madry 2018).
+
 #### Example: Cross-Entropy Loss
 
 Given a function ${f_{\theta}: \mathbb{R}^n \rightarrow [0,1]^m}$, the
@@ -1369,20 +1372,28 @@ The inner maximisation is done by *projected gradient descent* (PGD),
 that \`\`projects” the gradient of $\mathcal{L}$ on $\hat{\mathbf{x}}$
 in order to perturb it and get the worst $\mathbf{x}$.
 
-### Further reading
+### Adversarial Training and Verification
 
-Some of these problems are discussed more formally in
+Adversarial training is almost the right solution! Its main limitation
+turns out to be the logical property it optimises for. Recall that we
+may encode an arbitrary property in *Vehicle*. However, as we discovered
+in (Casadio et al. 2022), the projected gradient descent can only
+optimise for one concrete property. Recall the property of
+$\epsilon$-ball robustness was defined as:
+$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon). robust(f(\mathbf{x}))$.
+It turns out that adversarial training determines the definition of
+*robust* to be \$ \|f() - f()\| \$.
 
-- Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen
-  Kokke, Guy Katz, Guy Amir, Idan Refaeli: Neural Network Robustness as
-  a Verification Property: A Principled Case Study. CAV (1) 2022:
-  219-231.
+Moreover, we can map different kinds of training known in the machine
+learning literature to the following definitions of *robust*:
 
-However, many of these methods are specific only to robustness
-specifications. As a baseline we would like a method that works for any
-Vehicle specification. *Logical loss functions* are one such method.
+where DL2 training is presented in (Fischer et al. 2019) and Lipschitz
+Continuity in (Pauli et al. 2021).
 
-## Logical loss functions
+*Is there any way to generate neural network optimisers for any given
+logical property?*
+
+## Logical Loss Functions
 
 The main idea is that we would like to co-opt the same gradient-descent
 algorithm that is used to train the network to fit the data to also
@@ -1807,6 +1818,13 @@ Conference on Computer Aided Verification*, 443–52. Springer.
 
 </div>
 
+<div id="ref-KM18" class="csl-entry">
+
+Kolter, Zico, and Aleksander Madry. 2018. “Adversarial Robustness -
+Theory and Practice.”
+
+</div>
+
 <div id="ref-KriekenAH22" class="csl-entry">
 
 Krieken, Emile van, Erman Acar, and Frank van Harmelen. 2022. “Analyzing
@@ -1841,6 +1859,15 @@ Müller, Mark Niklas, Gleb Makarchuk, Gagandeep Singh, Markus Püschel,
 and Martin Vechev. 2022. “PRIMA: General and Precise Neural Network
 Certification via Scalable Convex Hull Approximations.” *Proceedings of
 the ACM on Programming Languages* 6 (POPL): 1–33.
+
+</div>
+
+<div id="ref-Pauli0BKA21" class="csl-entry">
+
+Pauli, Patricia, Anne Koch, Julian Berberich, Paul Kohler, and Frank
+Allgöwer. 2021. “Training Robust Neural Networks Using Lipschitz
+Bounds.” In *2021 American Control Conference, ACC 2021, New Orleans,
+LA, USA, May 25-28, 2021*, 2595–2600. IEEE.
 
 </div>
 
