@@ -1260,14 +1260,65 @@ machine learning has a few methods ready, for example, to re-train the
 networks with new data set that was augmented with images within the
 desired $\epsilon$-balls, or to generate adversarial examples (sample
 images closest to the decision boundary) within the given
-$\epsilon$-balls. We once again refer the reader to
+$\epsilon$-balls during training.
+
+Let us look closer into this.
+
+## Robustness Training
+
+### Data Augmentation
+
+Suppose we are given a data set
+$\mathcal{D} = \{(\x_1, \y_1), \ldots , (\x_n, \y_n)\}$. \\ Prior to
+training, we can generate new training data samples within
+$\epsilon$-balls of the existing data and label them with the same
+output as the original data. Then we can use our usual training methods
+with this new *augmented data set* ((Shorten and Khoshgoftaar 2019)).
+
+However, this method maybe problematic for verification purposes. Let us
+have a look at its effect, pictorially. Suppose this is the manifold
+that corresponds to $\mathcal{D}$ (crosses are the original data points,
+and circles are the $\epsilon$-balls around them):
+
+<figure>
+<img src="images/SR-vs-CR-2.png" alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+Remember that we sampled our new data from these $\epsilon$-balls. But
+suppose your true decision boundary runs over the manifold like this:
+
+<figure>
+<img src="images/SR-vs-CR-4.png" alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+We have a problem, because some of the data points we sampled from the
+suddenly have wrong labels!
+
+Actually, it maybe even worse. Depending how our data lies on the
+manifold, we may have even generated inconistent labelling. Here is the
+example when this happens:
+
+<figure>
+<img src="images/SR-vs-CR-5.png" alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+It seems data augmentation is not general enough for *Vehicle*, and only
+works correctly if strong assumptions about the underlying manifold are
+taken.
+
+### Adversarial Training
+
+### Further reading
+
+Some of these problems are discussed more formally in
 
 - Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen
   Kokke, Guy Katz, Guy Amir, Idan Refaeli: Neural Network Robustness as
   a Verification Property: A Principled Case Study. CAV (1) 2022:
   219-231.
-
-for further discussion of these various methods.
 
 However, many of these methods are specific only to robustness
 specifications. As a baseline we would like a method that works for any
@@ -1731,6 +1782,13 @@ Pulina, Luca, and Armando Tacchella. 2010. “An Abstraction-Refinement
 Approach to Verification of Artificial Neural Networks.” In *Computer
 Aided Verification (CAV’23)*, edited by Tayssir Touili, Byron Cook, and
 Paul Jackson, 243–57. Berlin, Heidelberg: Springer Berlin Heidelberg.
+
+</div>
+
+<div id="ref-SK19" class="csl-entry">
+
+Shorten, C., and T. M. Khoshgoftaar. 2019. “A Survey on Image Data
+Augmentation for Deep Learning.” *J. Big Data* 6 (60).
 
 </div>
 
