@@ -1382,10 +1382,17 @@ optimise for one concrete property. Recall the property of
 $\epsilon$-ball robustness was defined as:
 $\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon). robust(f(\mathbf{x}))$.
 It turns out that adversarial training determines the definition of
-*robust* to be \$ \|f() - f()\| \$.
+*robust* to be $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 
 Moreover, we can map different kinds of training known in the machine
 learning literature to the following definitions of *robust*:
+
+|    Training style    |   Definition of *robust*    |
+|:--------------------:|:---------------------------:|
+|  Data Augmentation   |   \$ argmax \[f()\] = i\$   |
+| Adversarial Training |             \$              |
+|     DL2 training     | $f(\mathbf{x})_i \geq \eta$ |
+| Lipschitz Continuity |             \$              |
 
 where DL2 training is presented in (Fischer et al. 2019) and Lipschitz
 Continuity in (Pauli et al. 2021).
