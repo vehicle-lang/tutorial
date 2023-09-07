@@ -1270,7 +1270,7 @@ Let us look closer into this.
 
 Suppose we are given a data set
 $\mathcal{D} = \{(\mathbf{x}_1, y_1), \ldots , (\mathbf{x}_n, y_n)\}$.
-\\ Prior to training, we can generate new training data samples within
+Prior to training, we can generate new training data samples within
 $\epsilon$-balls of the existing data and label them with the same
 output as the original data. Then we can use our usual training methods
 with this new *augmented data set* ((Shorten and Khoshgoftaar 2019)).
@@ -1361,12 +1361,11 @@ For *adversarial training*, we instead minimise the loss with respect to
 the worst-case perturbation of each sample in $\mathcal{D}$. We replace
 the standard training objective with:
 
-$$\min_{\theta} [ \max_{\mathbf{x} : \mathbf{x} - \hat{\mathbf{x}} \leq \epsilon} \mathcal{L}(\mathbf{x}, \mathbf{y})]$$
+$$\min_{\theta} [ \max_{\mathbf{x} : |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon} \mathcal{L}(\mathbf{x}, \mathbf{y})]$$
 
-The inner maximisation is done by
-\*`projected gradient descent"* (PGD), that`projects” the gradient of
-$\mathcal{L}$ on $\hat{\mathbf{x}}$ in order to perturb it and get the
-worst $\mathbf{x}$.
+The inner maximisation is done by *projected gradient descent* (PGD),
+that \`\`projects” the gradient of $\mathcal{L}$ on $\hat{\mathbf{x}}$
+in order to perturb it and get the worst $\mathbf{x}$.
 
 ### Further reading
 
