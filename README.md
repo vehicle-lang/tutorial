@@ -1311,6 +1311,16 @@ taken.
 
 ### Adversarial Training
 
+It would be nice to somehow reflect the fact of proximity to the
+decision boundary in our training! The closer the point is to the
+decision boundary, the less certain the neural network should be about
+its class:
+
+<figure>
+<img src="images/SR-vs-CR-3.png" alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
 ### Further reading
 
 Some of these problems are discussed more formally in
