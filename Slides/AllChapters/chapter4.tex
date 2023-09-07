@@ -780,8 +780,8 @@ Differentiable Logic + (PGD) optimisation
 \begin{frame}
 \frametitle{Example - translation}
 \begin{align*}
-\only<1-2>{\large{\translation (\coloured{ || f(\x) - f(\hat{\x})|| \leq \delta}) }=}\\
-\only<2>{1 - \max(\dfrac{\translation(|| f(\x) - f(\hat{\x})|| - \delta)}{\translation (|| f(\x) - f(\hat{\x})|| + \delta)},0) }
+\only<1-2>{\large{\translation (\coloured{ |f(\x) - f(\hat{\x})| \leq \delta}) }=}\\
+\only<2>{1 - \max(\dfrac{| f(\x) - f(\hat{\x})| - \delta}{|f(\x) - f(\hat{\x})| + \delta},0) }
 \end{align*}
 %\begin{align*}
 %\only<1>{&\text{First we are going to drop the quantifier as we are only using the propositional toy language.}}\\
