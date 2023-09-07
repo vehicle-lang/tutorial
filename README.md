@@ -1330,40 +1330,42 @@ augmentation. We have to modify our training algorithm instead
 
 Given a data set \$ \$, a function
 ${f_{\theta}: \mathbb{R}^n \rightarrow \mathbb{R}^m}$ (with optimisation
-parameters $\theta$), a
+parameters $\theta$), a *loss function*
 $\mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$
 computes a penalty proportional to the difference between the output of
-$f_{\theta}$ on a training input $\hat{\mathbb{x}}$ and a desired output
-$\mathbb{y}$.
+$f_{\theta}$ on a training input $\hat{\mathbf{x}}$ and a desired output
+$\mathbf{y}$.
 
 #### Example: Cross-Entropy Loss
 
 Given a function ${f_{\theta}: \mathbb{R}^n \rightarrow [0,1]^m}$, the
 cross-entropy loss is defined as
 
-    $$\mathcal{L}_{ce}(\hat{\mathbb{x}}, \mathbb{y}) = - \sum_{i=1}^{m} \mathbb{y}_i \; \log(f_{\theta}(\hat{\mathbb{x}})_i)$$
+$$\mathcal{L}_{ce}(\hat{\mathbf{x}}, \mathbf{y}) = - \sum_{i=1}^{m} \mathbf{y}_i \; \log(f_{\theta}(\hat{\mathbf{x}})_i)$$
 
-    where $\mathbb{y}_i$ is the true probability for class $i$ and $f_{\theta}(\hat{\mathbb{x}})_i$ is the probability for class $i$ as predicted by $f_{\theta}$ when applied to $\hat{\mathbb{x}}$.
+where $\mathbf{y}_i$ is the true probability for class $i$ and
+$f_{\theta}(\hat{\mathbf{x}})_i$ is the probability for class $i$ as
+predicted by $f_{\theta}$ when applied to $\hat{\mathbf{x}}$.
 
 #### Adversarial Training for Robustness
 
 *Gradient descent* minimises loss
-$\mathcal{L}(\hat{\mathbb{x}}, \mathbb{y})$ between the predicted value
-$f_{\theta}(\hat{\mathbb{x}})$ and the true value $\mathbb{y}$, for each
-entry $(\hat{\mathbb{x}}, \mathbb{y})$ in $\mathcal{D}$. It thus solves
+$\mathcal{L}(\hat{\mathbf{x}}, \mathbb{y})$ between the predicted value
+$f_{\theta}(\hat{\mathbf{x}})$ and the true value $\mathbf{y}$, for each
+entry $(\hat{\mathbf{x}}, \mathbf{y})$ in $\mathcal{D}$. It thus solves
 the optimisation problem:
-$$ \min_{\theta} \mathcal{L}(\hat{\mathbb{x}}, \mathbb{y}) $$
+$$ \min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y}) $$
 
 For *adversarial training*, we instead minimise the loss with respect to
 the worst-case perturbation of each sample in $\mathcal{D}$. We replace
 the standard training objective with:
 
-$$\min_{\theta} [ \max_{\mathbb{x} : \mathbb{x} - \hat{\mathbb{x}} \leq \epsilon} \lossfn(\mathbb{x}, \mathbb{y})]$$
+$$\min_{\theta} [ \max_{\mathbf{x} : \mathbf{x} - \hat{\mathbf{x}} \leq \epsilon} \lossfn(\mathbf{x}, \mathbf{y})]$$
 
 The inner maximisation is done by
 \*`projected gradient descent"* (PGD), that`projects” the gradient of
 $\mathcal{L}$ on $\xt$ in order to perturb it and get the worst
-$\mathbb{x}$.
+$\mathbf{x}$.
 
 ### Further reading
 
