@@ -1328,10 +1328,12 @@ modify our training algorithm instead (Goodfellow, Shlens, and Szegedy
 
 #### Loss Function
 
-Given a data set \$ \$, a function
+Given a data set $\mathcal{D}$ and a function  
 ${f_{\theta}: \mathbb{R}^n \rightarrow \mathbb{R}^m}$ (with optimisation
 parameters $\theta$), a *loss function*
-$\mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$
+
+$$\mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$$
+
 computes a penalty proportional to the difference between the output of
 $f_{\theta}$ on a training input $\hat{\mathbf{x}}$ and a desired output
 $\mathbf{y}$.
