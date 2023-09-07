@@ -1355,7 +1355,7 @@ $f_{\theta}(\hat{\mathbf{x}})$ and the true value $\mathbf{y}$, for each
 entry $(\hat{\mathbf{x}}, \mathbf{y})$ in $\mathcal{D}$. It thus solves
 the optimisation problem:
 
-$$ \min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y}) $$
+$$ min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y}) $$
 
 For *adversarial training*, we instead minimise the loss with respect to
 the worst-case perturbation of each sample in $\mathcal{D}$. We replace
@@ -1365,8 +1365,8 @@ $$\min_{\theta} [ \max_{\mathbf{x} : \mathbf{x} - \hat{\mathbf{x}} \leq \epsilon
 
 The inner maximisation is done by
 \*`projected gradient descent"* (PGD), that`projects” the gradient of
-$\mathcal{L}$ on $\xt$ in order to perturb it and get the worst
-$\mathbf{x}$.
+$\mathcal{L}$ on $\hat{\mathbf{x}}$ in order to perturb it and get the
+worst $\mathbf{x}$.
 
 ### Further reading
 
