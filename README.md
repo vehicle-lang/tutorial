@@ -1341,7 +1341,7 @@ $\mathbf{y}$.
 Given a function ${f_{\theta}: \mathbb{R}^n \rightarrow [0,1]^m}$, the
 cross-entropy loss is defined as
 
-$\mathcal{L}_{ce}(\hat{\mathbf{x}}, \mathbf{y}) = - \sum_{i=1}^{m} \mathbf{y}_i \; log(f_{\theta}(\hat{\mathbf{x}})_i)$
+$$\mathcal{L}_{ce}(\hat{\mathbf{x}}, \mathbf{y}) = - \Sigma_{i=1}^{m} \mathbf{y}_i \; log(f_{\theta}(\hat{\mathbf{x}})_i)$$
 
 where $\mathbf{y}_i$ is the true probability for class $i$ and
 $f_{\theta}(\hat{\mathbf{x}})_i$ is the probability for class $i$ as
@@ -1355,13 +1355,13 @@ $f_{\theta}(\hat{\mathbf{x}})$ and the true value $\mathbf{y}$, for each
 entry $(\hat{\mathbf{x}}, \mathbf{y})$ in $\mathcal{D}$. It thus solves
 the optimisation problem:
 
-\$ \_{} (, ) \$
+$$ \min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y}) $$
 
 For *adversarial training*, we instead minimise the loss with respect to
 the worst-case perturbation of each sample in $\mathcal{D}$. We replace
 the standard training objective with:
 
-$$\min_{\theta} [ \max_{\mathbf{x} : \mathbf{x} - \hat{\mathbf{x}} \leq \epsilon} \lossfn(\mathbf{x}, \mathbf{y})]$$
+$$\min_{\theta} [ \max_{\mathbf{x} : \mathbf{x} - \hat{\mathbf{x}} \leq \epsilon} \mathcal{L}(\mathbf{x}, \mathbf{y})]$$
 
 The inner maximisation is done by
 \*`projected gradient descent"* (PGD), that`projects” the gradient of
