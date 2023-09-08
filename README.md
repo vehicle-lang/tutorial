@@ -1706,6 +1706,35 @@ and thereby introduced Vehicle’s architecture:
 <figcaption aria-hidden="true">Vehicle Architecture</figcaption>
 </figure>
 
+Vehicle is a tool for the whole life-cycle of a neural network
+verification property:
+
+- Training
+
+- Verification
+
+- Integration
+
+Its possible applications are in proving properties of neural networks
+applied in different domains:
+
+1.  Robustness of:
+
+- Intrusion detection systems
+- Malware detection systems
+
+2.  Sanity of physics simulations:
+
+- Monotonicity
+- Conservation laws
+- Chatbot systems
+- Sensor fusion pipelines
+
+3.  Correctness of control systems:
+
+- Autonomous vehicles
+- Network traffic balancing
+
 # References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
