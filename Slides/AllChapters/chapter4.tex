@@ -618,15 +618,15 @@ But remember:
 \end{block}
 
      We can map different kinds of adversarial training to formal properties:
-          	\begin{tabular}{p{3.5cm}|p{5.5cm}}
-		%\toprule
-		Training style & Definition of \alert{$robust$}  \\ \hline \hline
-		%\midrule
-		Data Augmentation & 	$ argmax\ [f(\x)] = i$  \\ \hline
-		DL2 training & 	$f(\x)_i \geq \eta$  \\ \hline
-		Adversarial Training & 	$ |f(\x) - f(\hat{\x})| \leq \delta$ \\ \hline
-          Lipschitz Continuity & 	$ |f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$  \\ \hline
-          ... & ... \\
+\begin{tabular}{p{3.5cm}|p{4cm}| p{4cm}}
+%\toprule
+Training style & Definition of \alert{$robust$} & Property \\ \hline \hline
+%\midrule
+Data Augmentation & 	$ argmax\ [f(\x)] = i$  & Classification Robustness\\ \hline
+DL2 training & 	$f(\x)_i \geq \eta$  & Strong Classification Robustness \\ \hline
+Adversarial Training & 	$ |f(\x) - f(\hat{\x})| \leq \delta$ & Standard Robustness\\ \hline
+Lipschitz Continuity & 	$ |f(\x) - f(\hat{\x})| \leq L|\x-\hat{\x}|$ & Lipschitz Robustness \\ \hline
+          ... & ... &  ... \\
 
 		%\bottomrule
 	\end{tabular}
