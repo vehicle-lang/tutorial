@@ -21,9 +21,9 @@ The following command verifies `property3` for the network `acasXu_1_7.onnx`:
 ```bash
 vehicle \
   verify \
-  --specification examples/acasXu/acasXu.vcl \
+  --specification acasXu.vcl \
   --verifier Marabou \
-  --network acasXu:examples/acasXu/acasXu_1_7.onnx \
+  --network acasXu:acasXu_1_7.onnx \
   --property property3
 ```
 
