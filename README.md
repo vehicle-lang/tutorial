@@ -1393,6 +1393,8 @@ The main idea is that we would like to co-opt the same gradient-descent
 algorithm that is used to train the network to fit the data to also
 train the network to obey the specification.
 
+### Logical Loss Function: Simple Example
+
 Consider the very simple example specification:
 
 ``` vehicle
@@ -1456,12 +1458,13 @@ properties.
 Vehicle has several different differentiable logics from the literature
 available, but will not go into detail about how they work here.
 
-Instead, we explain the main idea by means of example. We define a very
-simple differentiable logic on a toy language
+Instead, we explain the main idea by means of an example. Let us define
+a very simple differentiable logic on a toy language
 
 $$p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p$$
 
-One possible DL for it can be defined as:
+One possible DL (called *Product DL* in (Krieken, Acar, and Harmelen
+2022)) for it can be defined as:
 
 $$ \mathcal{I}(a_1 \leq a_2) := 1-\max(\frac{a_1 -a_2}{a_1 + a_2}, 0)$$
 
@@ -1476,7 +1479,7 @@ $\mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta) = 1 - \max (\d
 ## Logical Loss Functions in Vehicle
 
 We now have all the necessary building blocks to define *Vehicle*
-approach to property-driven training,
+approach to property-driven training. We use the formula:
 
 *Vehicle Training = Differentiable Logics + Projected Gradient Descent*
 
@@ -1485,20 +1488,23 @@ $\forall \mathbf{x}. \mathcal{P}(\mathbf{x}) \Rightarrow \mathcal{S}(\mathbf{x})
 we replace the usual PGD training objective with
 
 $$\min_{\theta} [ \max_{\mathbf{x} \in \mathbb{H}_{\mathcal{P}(\mathbf{x})}} \mathcal{L}_{\mathcal{S}(\mathbf{x})}(\mathbf{x}, \mathbf{y})]$$
-where $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ is a hyper-shape that
-corresponds to the pre-condition $\mathcal{P}(\mathbf{x})$ of the
-property and $\mathcal{L}_{\mathcal{S}(\mathbf{x})}$ is obtained by
-DL-translation of $\mathcal{S}(\mathbf{x})$.
+where
+
+- $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ is a hyper-shape that
+  corresponds to the pre-condition $\mathcal{P}(\mathbf{x})$ and
+
+- $\mathcal{L}_{\mathcal{S}(\mathbf{x})}$ is obtained by DL-translation
+  of the post-condition $\mathcal{S}(\mathbf{x})$.
 
 Let us see how this works for the following definition of robustness:
 $$\forall \mathbf{x}. |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon \Rightarrow |f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$$
 
 The definition of the optimisation problem above instantiates by taking:
 
-- $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ is the $\epsilon$-cube around
-  $\hat{\mathbf{x}}$
+- $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ given by the $\epsilon$-cube
+  around $\hat{\mathbf{x}}$
 
-- and, given any DL translation $\mathcal{I}$,
+- and, given any DL translation $\mathcal{I}$, the loss function
   $$\mathcal{L}_{\mathcal{S}(\mathbf{x})} = \mathcal{I} ( || f(\mathbf{x}) - f(\hat{\mathbf{x}})|| \leq \delta)$$
 
 ## Coding Example: generating a logical loss functions for mnist-robustness in *Vehicle*
