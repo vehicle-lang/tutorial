@@ -1151,7 +1151,7 @@ Make conclusion about feasibility and success rates of $\epsilon$-ball
 robustness, and the speed with which verification success deteriorates
 with the growing $\epsilon$.
 
-### Exercise ($*$) : Standard Robustness in*Vehicle*
+### Exercise ($*$) : Strong Classification Robustness in *Vehicle*
 
 Using the same `.vcl` file as in all previous exercises, define and
 verify in *Vehicle* the propety of *Strong Classification Robustness*,
