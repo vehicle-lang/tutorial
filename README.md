@@ -1360,7 +1360,7 @@ $f_{\theta}(\hat{\mathbf{x}})$ and the true value $\mathbf{y}$, for each
 entry $(\hat{\mathbf{x}}, \mathbf{y})$ in $\mathcal{D}$. It thus solves
 the optimisation problem:
 
-$$ min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y}) $$
+$$ \min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y}) $$
 
 For *adversarial training*, we instead minimise the loss with respect to
 the worst-case perturbation of each sample in $\mathcal{D}$. We replace
@@ -1463,7 +1463,7 @@ $$p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p$$
 
 One possible DL for it can be defined as:
 
-$$ \mathcal{I}(a_1 \leq a_2) := 1-max(\frac{a_1 -a_2}{a_1 + a_2}, 0)$$
+$$ \mathcal{I}(a_1 \leq a_2) := 1-\max(\frac{a_1 -a_2}{a_1 + a_2}, 0)$$
 
 $$ \mathcal{I}(p_1 \land p_2) := \mathcal{I}(p_1) * \mathcal{I}(p_2)$$
 
@@ -1471,7 +1471,7 @@ $$  \mathcal{I}(p_1 \Rightarrow p_2) := 1 - \mathcal{I}(p_1) + \mathcal{I}(p_1) 
 
 So, an example of this translation is:
 
-$\mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta) = 1 - max (\dfrac{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| - \delta}{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| + \delta},0)$.
+$\mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta) = 1 - \max (\dfrac{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| - \delta}{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| + \delta},0)$.
 
 ## Logical Loss Functions in Vehicle
 
@@ -1485,12 +1485,23 @@ $\forall \mathbf{x}. \mathcal{P}(\mathbf{x}) \Rightarrow \mathcal{S}(\mathbf{x})
 we replace the usual PGD training objective with
 
 $$\min_{\theta} [ \max_{\mathbf{x} \in \mathbb{H}_{\mathcal{P}(\mathbf{x})}} \mathcal{L}_{\mathcal{S}(\mathbf{x})}(\mathbf{x}, \mathbf{y})]$$
-where \$ \_{()}\$ is a hyper-shape that corresponds to the pre-condition
-$\mathcal{P}(\mathbf{x})$ of the property and
-$\mathcal{L}_{\mathcal{S}(\mathbf{x})}$ is obtained by DL-translation of
-$\mathcal{S}(\mathbf{x})$.
+where $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ is a hyper-shape that
+corresponds to the pre-condition $\mathcal{P}(\mathbf{x})$ of the
+property and $\mathcal{L}_{\mathcal{S}(\mathbf{x})}$ is obtained by
+DL-translation of $\mathcal{S}(\mathbf{x})$.
 
-## Generating a logical loss functions for mnist-robustness in *Vehicle*
+Let us see how this works for the following definition of robustness:
+$$\forall \mathbf{x}. |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon \Rightarrow |f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$$
+
+The definition of the optimisation problem above instantiates by taking:
+
+- $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ is the $\epsilon$-cube around
+  $\hat{\mathbf{x}}$
+
+- and, given any DL translation $\mathcal{I}$,
+  $$\mathcal{L}_{\mathcal{S}(\mathbf{x})} = \mathcal{I} ( || f(\mathbf{x}) - f(\hat{\mathbf{x}})|| \leq \delta)$$
+
+## Coding Example: generating a logical loss functions for mnist-robustness in *Vehicle*
 
 To generate a logical loss function usable in Python, we will use
 Vehicle’s Python bindings that come pre-installed.
