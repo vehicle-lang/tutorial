@@ -231,17 +231,13 @@
 \end{frame}
 \unsetbackground
 
-\begin{frame}[fragile]{Again - The \st{elephant} ... \st{panda}... gibbon? in the room}
+\begin{frame}[fragile]
+\frametitle{Reminder - adversarial robustness}
 
- \centering\includegraphics[width=.9\textwidth]{img/attack.png}
- \vfill
- 	\vspace{-2em}
+\begin{center}
+\includegraphics[width=.7\textwidth]{img/adversarial-attack.png}
+\end{center}
 
-\begin{quote}
-		\tiny Goodfellow, I. J., Shlens, J., \& Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
-
-
-	\end{quote}
 \end{frame}
 
 % \begin{frame}[fragile]{Some Robustness Issues}
@@ -299,98 +295,6 @@ Then \[\forall x : | x - \hat{x}| \leq \epsilon \implies | f(x) - f(\hat{x})| \l
 %     Challenges: While the MNIST dataset has been immensely useful, it's worth noting that it is relatively simple compared to real-world scenarios. The images are well-centered, well-scaled, and the digits are written with a relatively uniform style. As a result, algorithms that perform well on MNIST might not necessarily generalize well to more complex datasets.
 
 
-
-
-\begin{frame}{In Practice - Robustness of MNIST}
-
-   \begin{columns}
-        \begin{column}{0.3\textwidth}
-            \begin{center}
-                        Predicted \textit{\textbf{"0"}} 99\%
-
-             \includegraphics[width=\textwidth]{img/true.png}
-             \end{center}
-        \end{column}
-        \begin{column}{0.3\textwidth}  %%<--- here
-
-            \begin{center}
-                        Small perturbation
-
-             \includegraphics[width=\textwidth]{img/eta.png}
-             \end{center}
-        \end{column}
-          \begin{column}{0.32\textwidth}  %%<--- here
-
-            \begin{center}
-                        Predicted \textit{\textbf{"5"}} 94\%
-
-             \includegraphics[width=\textwidth]{img/adv.png}
-             \end{center}
-        \end{column}
-    \end{columns}
-
-
-\end{frame}
-
-\begin{frame}[fragile]{Formal Verification of NN (more details)}
-	\vspace{-1em}
-	\begin{alertblock}{Definition of Verification for a Black Box Model}
-		For a neural network $N : \hat{x} \rightarrow \hat{y}$, the input property $P(\hat{x})$ and the output property $Q(\hat{y})$, does there exist an input $\hat{x_0}$ which satisfies $P(\hat{x_0})$ such that its corresponding output $\hat{y_0}$ satisfies $Q(\hat{y_0})$?
-	\end{alertblock}
-		\vspace{1em}
-	\begin{itemize}
-
-		\item $P(\hat{x})$ characterises inputs checked
-		\item $Q(\hat{y})$ characterises the behaviour we \textcolor{aisecred}{DO NOT} wish for
-		\item if satisfied, counterexample is returned, else property holds
-		%want to ensure that or a given input $\overline{x_i}$ (which represents our image) and given amount of noise $\delta$, classification remains the same
-		% x whose distance from x_i is at most delta, according to some distance matrix
-		\item the $P$ for robustness is $|\hat{x} - \hat{x_0}|_{ L_{\infty}} \leq \epsilon$ (more on this later)
-		\item the $Q$ is, $\bigvee_i(\hat{y}[i_0] \leq \hat{y}[i])$, where $\overline{y}[i_0]$ is the desired label
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Or More Simply: Robustness}
-
-\begin{alertblock}{$\epsilon$-ball robustness**}
-
-Formally, we define an $\epsilon$-ball around an image $\hat{\mathbf{x}}$ as:
-
-
-\begin{itemize}
-    \item[] $$\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = \{ \mathbf{x} \in \mathbb{R}^n: |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon \}$$
-    \item [] where $| ... |$ is a distance function (or $L$-norm) in $\mathbb{R}^n$,
-such as Euclidean distance or $L_{\infty}$-norm.
-%\item[] so as above $\mathbb{B}%(\hat{\mathbf{x}}, \epsilon)$ :=
-%$$\|\hat{x} - \hat{x_0}\| _{ L_{\infty}} \leq \epsilon$$
-\end{itemize}
-\end{alertblock}
- \vfill
- \footnotesize **There are various types of these
-\end{frame}
-
-\begin{frame}{$\epsilon$-ball Visualised}
-
- \begin{columns}
-        \begin{column}{0.35\textwidth}
-        \begin{center}
-                For every image in the dataset, we assume we can “draw” a small $\epsilon$-ball around it, and guarantee that within that $\epsilon$-ball classification of the network does not change much
-        \end{center}
-
-        \end{column}
-        \begin{column}{0.6\textwidth}
-             \begin{center}
-             \vspace{-1em}
-    \centering\includegraphics[width=0.45\textwidth]{img/epsballmnist.png}
-
-             \end{center}
-        \end{column}
-\end{columns}
-
-
-
-\end{frame}
-
 \begin{frame}
 \vspace {8em}
 
@@ -404,11 +308,12 @@ such as Euclidean distance or $L_{\infty}$-norm.
 
 \begin{frame}[fragile]{Formalising $\epsilon$-ball robustness for MNIST networks in Vehicle}
 
+New features of Vehicle we'll see:
 \begin{itemize}
-    \item We will see how Vehicle can be used to handle properties that refer directly to the data sets.
-    \item  How to specify images (represented as 2D arrays)
-    \item User defined parameters in Vehicle
-    \item Verification of properties
+    \item Explicit specification parameters.
+    \item Implicit specification parameters.
+    \item Datasets.
+    \item Multi-dimensional tensors
 \end{itemize}
 \end{frame}
 
@@ -634,7 +539,7 @@ robustAround image label = forall pertubation .
 
 \begin{frame}[fragile]{Case Study: Robustness - Robust Image Classification}
 
-Size of input automatically inferaisecred by tool at runtime
+Size of input automatically inferred by Vehicle at runtime
 \begin{minted}{haskell}
 
 @parameter(infer=True)
@@ -653,7 +558,7 @@ trainingLabels : Vector Label n
 \end{minted}
 \end{frame}
 
-\begin{frame}[fragile]{Case Study: Robustness - Robust Image Classification (continued)}
+\begin{frame}[fragile]{Case Study: Robustness - Robust Image Classification}
 
 We then say that the network is robust for this data set if it is robust around every pair of input images and output labels.
 
