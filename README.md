@@ -1710,10 +1710,8 @@ Vehicle is a tool for the whole life-cycle of a neural network
 verification property:
 
 - Training
-
 - Verification
-
-- Integration
+- Large System Integration
 
 Its possible applications are in proving properties of neural networks
 applied in different domains:
