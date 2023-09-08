@@ -430,14 +430,20 @@ Properties are derived from those of the original lookup table.
 \pause
 \vspace{1em}
 
-\begin{definition}[ACAS Xu: Property 1]
-If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.
+\begin{definition}[ACAS Xu: Property 3]
+{\it If the intruder is directly ahead and is moving towards the
+ ownship, the score for COC will not be minimal.}
 \end{definition}
 
-\pause
 \begin{equation*}
-(\rho \geq 55947.691) \wedge
-(v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \Rightarrow \text{COC score} \leq  1500
+\begin{array}{c}
+1500 \leq \rho \leq 1800 \ \wedge -0.06 \leq \theta \leq 0.06 \ \wedge \psi \geq 3.10 \ \wedge 
+  v_{own} \geq 980 \ \wedge v_{int} \geq 960 \
+  \\
+  \Rightarrow \\
+\qquad
+\exists a \in \{SL,L,R,SR\}. f(\theta, \rho, \varphi, v_{own}, v_{int})_{COC} < f(\theta, \rho, \varphi, v_{own}, v_{int})_a
+\end{array}
 \end{equation*}
 \end{frame}
 
@@ -857,36 +863,44 @@ Vehicle: Interfacing Neural Network Verifiers with Interactive Theorem Provers. 
 \item During and after the break:
 
 \begin{itemize}
-
 \item \alert{Exercise session:} write and verify a \textbf{Vehicle} spec
 
 \footnotesize{Tutorial pages: \url{https://vehicle-lang.github.io}}
 
-%\begin{itemize}
-%\item for writing a spec, install vehicle: just run
-%\texttt{pip install vehicle}
-%\item for verifying a spec, you also need Marabou installed
-%\texttt{pip install marabou}
-%\end{itemize}
-
- Join tutorial Slack channel via the tutorial page, to ask questions
-
+Join tutorial Slack channel via the tutorial page, to ask questions
 \end{itemize}
 
 \item After the break:
 \begin{itemize}
-
-
 \item Property-driven training in Vehicle
-%\item Demo of large system integration in Vehicle
 \item Large system integration
-
 \item Application areas for NN Verification
 \end{itemize}
+\end{itemize}
+\end{frame}
 
+\begin{frame}
+\frametitle{Setup}
+
+\begin{itemize}
+\item Download the tutorial repository:
+\begin{center}
+\texttt{git clone https://github.com/vehicle-lang/tutorial}
+\end{center}
+\vspace{1em}
+
+\item Install Vehicle:
+\begin{center}
+\texttt{pip install vehicle-lang}
+\end{center}
+\vspace{1em}
+
+\item Install Marabou verifier:
+\begin{center}
+\texttt{pip install marabou}
+\end{center}
 
 \end{itemize}
-
 \end{frame}
 
 \end{document}

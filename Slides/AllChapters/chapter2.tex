@@ -237,14 +237,12 @@
 
 We will:
 
-\begin{itemize}[<+->]
-\item  ... introduce main building blocks of \textbf{Vehicle} as a programming language
-\item ... get to practice working with \textbf{Vehicle}
-\item ... use the famous ACAS Xu benchmark to show \textbf{Vehicle}'s work flow --
-from specification to verification
-\item ... identify PL problems that are resolved by \textbf{Vehicle}
-
-\end{itemize}
+\begin{enumerate}[<+->]
+\item introduce main building blocks of \textbf{Vehicle} as a programming language
+\item get to practice working with \textbf{Vehicle}
+\item use the ACAS Xu benchmark to show \textbf{Vehicle}'s verification work flow
+\item identify PL problems that are resolved by \textbf{Vehicle}
+\end{enumerate}
 
 \end{frame}
 
@@ -264,15 +262,20 @@ from specification to verification
 \end{frame}
 
 
-    \begin{frame}
+\begin{frame}
 \frametitle{Recap: ACAS Xu}
-A collision avoidance system for unmanned autonomous aircraft.
-\tikz [remember picture,overlay]{
-\node at ([xshift=3cm,yshift=3cm]current page.south) {\includegraphics[width=0.5\linewidth]{img/acas_xu.png}};}
 
-{\small
+\vspace{-1em}
+
+A collision avoidance system for unmanned autonomous aircraft.
+
+\tikz [remember picture,overlay]{
+\node at ([xshift=3cm,yshift=3cm]current page.south) {\includegraphics[width=0.5\linewidth]{img/acas_xu.png}};
+}
+
+\vspace{-1em}
+
 Inputs:
-\vspace{-0.7em}
 \begin{itemize}
 \setlength\itemsep{-0.1em}
 \item Distance to intruder, $\rho$
@@ -282,9 +285,7 @@ Inputs:
 \item Intruder speed, $v_{int}$
 \end{itemize}
 
-
 Outputs:
-\vspace{-0.7em}
 \begin{itemize}
 \setlength\itemsep{-0.1em}
 \item Clear of conflict
@@ -292,7 +293,7 @@ Outputs:
 \item Weak left
 \item Weak right
 \item Strong right
-\end{itemize}}
+\end{itemize}
 
 \end{frame}
 
@@ -300,33 +301,23 @@ Outputs:
 \begin{frame}
 \frametitle{ACAS Xu}
 
-%\pause
 \begin{definition}[ACAS Xu: Property 3]
 {\it If the intruder is directly ahead and is moving towards the
  ownship, the score for COC will not be minimal.}
 \end{definition}
 
-%\pause
-\begin{block}{}
 \begin{equation*}
-\begin{array}{l}
-1500 \leq \rho \leq 1800 \ \wedge \\
--0.06 \leq \theta \leq 0.06 \ \wedge \\
-\psi \geq 3.10 \ \wedge \\
-  v_{own} \geq 980 \ \wedge \\
-v_{int} \geq 960 \ \Rightarrow \\
- \text{the score for COC} \neq 0
-%(\rho \geq 55947.691) \wedge
-%(v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
-%\Rightarrow \text{the score for COC is at most 1500}
+\begin{array}{c}
+1500 \leq \rho \leq 1800 \ \wedge -0.06 \leq \theta \leq 0.06 \ \wedge \psi \geq 3.10 \ \wedge 
+  v_{own} \geq 980 \ \wedge v_{int} \geq 960 \
+  \\
+  \Rightarrow \\
+\qquad
+\exists a \in \{SL,L,R,SR\}. f(\theta, \rho, \varphi, v_{own}, v_{int})_{COC} < f(\theta, \rho, \varphi, v_{own}, v_{int})_a
 \end{array}
 \end{equation*}
-\end{block}
 
 \end{frame}
-
-%\end{document}
-
 
 %\section{Vehicle' Syntax}
 
@@ -336,8 +327,9 @@ Let us build the ACAS Xu specification.
 
 We start with types of input and output vectors, as well as types of ACAS Xu networks
 
-\begin{minted}[fontsize=\small]{haskell}
+\vspace{1em}
 
+\begin{minted}[fontsize=\small]{haskell}
 type InputVector = Vector Rat 5
 type OutputVector = Vector Rat 5
 
@@ -345,11 +337,11 @@ type OutputVector = Vector Rat 5
 acasXu : InputVector -> OutputVector
 \end{minted}
 
-\begin{block}{}
+\vspace{1em}
 
 The Vector type represents a mathematical vector, or in programming terms can be thought of as a fixed-length array.
-\end{block}
 \end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{Values}
@@ -357,31 +349,31 @@ The Vector type represents a mathematical vector, or in programming terms can be
 Types for values are automatically inferred by \textbf{Vehicle}. For example, we can declare the number $\pi$ and its type will be inferred as rational:
 
 \begin{minted}[fontsize=\small]{haskell}
-
 pi = 3.141592
 \end{minted}
 \end{frame}
 
+
 \begin{frame}[fragile]
 \frametitle{Working with vectors}
-\begin{itemize}
-\item some input or output pre-processing maybe expected when defining a neural network.
 
-\begin{example}
-It is assumed that the ACAS Xu inputs and outputs are normalised, i.e. the network does not work directly with units like $m/s$. However, the specifications  we want to write should ideally concern the original units.
-\end{example}
+\underline{Problem}: The trained ACAS Xu network assumes that the inputs and outputs are normalised to values (roughly) between -2 and 2.
 
 \pause
+\vspace{1em}
 
+However, we want to write our specifications over the original units! (e.g. $m/s$)
 
-\item This is an instance of \emph{``problem space / input space mismatch"}
+\pause
+\vspace{1em}
 
-\item ... that is very common in neural net verification
+This is an instance of the common \emph{problem space / input space mismatch}
 
-\item
-Being able to reason about problem space (alongside the input space) is a feature that distinguishes \textbf{Vehicle} from
-majority of the mainstream neural network verifiers
-\end{itemize}
+\pause
+\vspace{1em}
+
+Being able to write specifications about the problem space is a feature that distinguishes \textbf{Vehicle} from
+other neural network verifiers platforms.
 \end{frame}
 
 \begin{frame}[fragile]
@@ -501,7 +493,7 @@ We have already used:
 
 
 \begin{frame}[fragile]
-\frametitle{Lets verify ACAS Xu!}
+\frametitle{Let's verify ACAS Xu!}
 \begin{minted}[fontsize=\footnotesize]{haskell}
 distanceToIntruder = 0   -- measured in metres
 angleToIntruder    = 1   -- measured in radians
@@ -546,7 +538,7 @@ directlyAhead x =
 \begin{enumerate}
 \item
 Can you identify whether the specification is written in terms of input space or problem space? How do you know?
-\item Can you spot another pre-defined \textbf{Vehicle} function? What is it?
+%\item Can you spot another pre-defined \textbf{Vehicle} function? What is it?
 \end{enumerate}}
 \end{block}
 
@@ -620,11 +612,7 @@ property3 = forall x . validInput x and
 \begin{block}{Exercise!}
 \footnotesize{
 \begin{enumerate}
-\item Can you guess the purpose of the syntax
-\begin{minted}{haskell}
-@property
-\end{minted}
-?
+\item Can you guess the purpose of the `@property` syntax?
 \item What kind of domain  `forall` ranges over? Is it finite or infinite?
 \end{enumerate}}
 \end{block}
@@ -638,9 +626,8 @@ property3 = forall x . validInput x and
 \vspace{-2em}
 \begin{block}{Checklist}
 \begin{enumerate}
-\item a verifier installed (Marabou);
-\item the actual network is supplied in an ONNX format
-\item \textbf{Vehicle} is installed.
+\item Vehicle and Marabou are installed.
+\item navigate to \texttt{examples/chapter2/acasXu} in the tutorial repo.
 \end{enumerate}
 \end{block}
 
@@ -663,11 +650,128 @@ property3 [==========================================] 1/1 queries
 
 
 
+\begin{frame}
+\frametitle{Verifier limitations}
+
+Vehicle is very expressive... \pause but most verifiers can only solve \textbf{linear} specifications with \textbf{non-alternating quantifiers}.
+
+\pause
+\vspace{1em}
+
+What does Vehicle do when you write such a specification?
+\end{frame}
+
 
 \begin{frame}
-\frametitle{Vehicle ...}
+\frametitle{Use the type-checker over and over...}
 
- \textbf{ the part that we have seen}
+\newcommand{\typebox}{aisecyellow}
+
+\begin{tikzpicture}
+\node (start) at (-1.5,3) {};
+
+\node[rectangle,draw] (scope) at (0,3) {\textbf{Scoping}};
+
+\node[rectangle,draw, fill=\typebox] (type) at (2.5,3) {\textbf{Type check}};
+
+\node[rectangle,draw] (normalise) at (6.5,3) {\textbf{Normalise}};
+
+\node[rectangle,draw] (queries) at (9,3) {\textbf{Queries}};
+
+\node(endqueries) at (11.5,3) {Marabou};
+
+\draw [->] (start) edge (scope);
+\draw [->] (scope) edge (type);
+\draw [->] (type) edge node [above]{verifiers} (normalise);
+\draw [->] (normalise) edge (queries);
+\draw [->] (queries) edge (endqueries);
+
+%% Linearity errors
+
+\onslide<3->{
+\node[rectangle,draw, fill=aisecred!50] (linerror) at (5,4.5) {\textbf{Linearity error}};
+
+\node[rectangle, fill=\typebox, draw, text width=2cm, align=center] (lintype) at (8.2,4.5) {\textbf{Linearity type check}};
+
+\node[rectangle,draw,text width=2cm, align=center] (linmessage) at (11,4.5) {\textbf{Error message}};
+
+\draw [->] (normalise) edge (linerror);
+\draw [->] (linerror) edge (lintype);
+\draw [->] (lintype) edge (linmessage);
+}
+
+%% Polarity errors
+
+\onslide<4->{
+\node[rectangle,draw,fill=aisecred!50] (polerror) at (5,1.5) {\textbf{Quantifier error}};
+
+\node[rectangle, fill=\typebox, draw,text width=2cm, align=center] (poltype) at (8.2,1.5) {\textbf{Quantifier type check}};
+
+\node[rectangle,draw,text width=2cm, align=center] (polmessage) at (11,1.5) {\textbf{Error message}};
+
+\draw [->] (normalise) edge (polerror);
+\draw [->] (polerror) edge (poltype);
+\draw [->] (poltype) edge (polmessage);
+}
+
+%% Training
+
+\onslide<5->{
+\node[rectangle, fill=\typebox, draw,text width=2.5cm, align=center] (difftype) at (1.5,5) {\textbf{Differentiable type check}};
+
+\node[rectangle,draw] (lossfunc) at (5,5.5) {\textbf{Loss function}};
+
+\node (endloss) at (11.2,5.5) {Tensorflow};
+
+\draw [->] (type) edge node [left]{training} (difftype);
+\draw [->] (difftype) edge (lossfunc);
+\draw [->] (lossfunc) edge (endloss);
+}
+
+%% Agda
+
+\onslide<6->{
+\node[rectangle, fill=\typebox, draw,text width=2.5cm, align=center] (booltype) at (1.5,1) {\textbf{Bool/Set type check}};
+
+\node[rectangle,draw] (agdacode) at (5,0.5) {\textbf{Agda code}};
+
+\node (endagda) at (11.8,0.5) {Agda};
+
+\draw [->] (type) edge node [left]{export} (booltype);
+\draw [->] (booltype) edge (agdacode);
+\draw [->] (agdacode) edge (endagda);
+
+}
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Secondary type systems...}
+
+These secondary type-systems not possible without:
+\begin{itemize}
+\item A modular type-checker that is generic over the set of builtin types.
+
+\item Backtracking instance search.
+
+\item Automatic generalisation over unsolved metas and instance constraints.
+
+\item Dependent types (for operations over provenance information stored in the types).
+\end{itemize}
+
+\vspace{2em}
+\pause
+
+The user is expected to make very little use of these features!
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What we've seen in this chapter ...}
+
+\vspace{-1em}
 
 \begin{center}
 \begin{tikzpicture}[thick,
@@ -687,7 +791,7 @@ property3 [==========================================] 1/1 queries
 \node[text width=1.4cm, align=center] at (3,0) {\alert{\textbf{Marabou}} Eran etc.};
 
 \node[rectangle,draw] (E) at (6,2) {Integration};
-\node[text width=2cm, align=center] at (6,-0.3) {Agda Imandra KeymaeraX etc.};
+\node[text width=2cm, align=center] at (6,0) {Agda, Coq, KeymaeraX etc.};
 
 \draw [->] (A) edge (B);
 \draw [->, dashed] (A) edge (C);
@@ -708,6 +812,7 @@ property3 [==========================================] 1/1 queries
 
 
 
+
 \begin{frame}
 \frametitle{Concluding Exercise}
 
@@ -725,44 +830,41 @@ Which of the four PL problems we addressed?
 \end{frame}
 
 
-
 \begin{frame}
 \frametitle{Harder Exercise: ACAS Xu Property 1}
 \vspace{-2em}
-\small{
 ACAS Xu Property 1 gives an idea how the {\it embedding gap}
  can arise not only when we reason about inputs, but also  the outputs of networks!
 %In the previous lecture, we introduced ACAS Xu property 1.
 
-\begin{itemize}
-\item Can you formalise Property 1 in Vehicle?
-\item Can you spot the embedding gap, this time concerning the network's output?
-\end{itemize}}
 
 \pause
 
 \begin{definition}[ACAS Xu: Property 1]
 \small{\it If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold:}
 
-
-
 \begin{equation*}
 \begin{array}{l}
 (\rho \geq 55947.691) \wedge
 (v_{own} \geq 1145) \wedge (v_{int} \leq 60)  \\
-\Rightarrow \text{the score for COC is at most} 1500
+\Rightarrow \text{the score for COC is at most } 1500
 \end{array}
 \end{equation*}
-\end{definition}
+where the neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$.
 
 \pause
 
-\begin{block}{Note:}
-The ACAS Xu neural network outputs are scaled as follows: given an element $x$ of the output vector, we scale it as: $\frac{x - 7.518884}{373.94992}$.
-\end{block}
 
+\end{definition}
+
+\begin{itemize}
+\item Can you formalise Property 1 in Vehicle?
+\item Can you spot the embedding gap, this time concerning the network's output?
+\end{itemize}
 \end{frame}
+
 \end{document}
+
 
 \begin{frame}[fragile]
 \frametitle{Next Lecture: $\epsilon$-ball Robustness}
@@ -802,8 +904,6 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \end{minted}
 \end{frame}
 
-\end{document}
-
 
 \begin{frame}
 \frametitle{Plan for the rest of this tutorial}
@@ -822,8 +922,6 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 \item for verifying a spec, you also need Marabou installed
 
 \texttt{pip install maraboupy}
-
-%(see Marabou pages)
 \end{itemize}
 \end{itemize}
 \end{itemize}
