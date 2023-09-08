@@ -769,11 +769,11 @@ Differentiable Logic + (PGD) optimisation
 
 \begin{frame}
 \frametitle{Example - differentiable logic}
-	We define a very simple differentiable logic on a toy language $$p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p$$ based on G\"{o}del fuzzy logic~[van Krieken 2022].
+	We define a very simple differentiable logic on a toy language $$p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p$$ based on Product fuzzy logic~[van Krieken 2022].
 	\begin{align*}
 		\translation (\val_1 \leq \val_2) &:=1-\max(\frac{\val_1 -\val_2}{\val_1 + \val_2}, 0)\\
-		\translation (p_1 \land p_2)&:= \min(\translation(p_1), \translation(p_2))\\
-		\translation (p_1 \Rightarrow p_2) &:= \max (1 - \translation(p_1), \translation(p_2))
+		\translation (p_1 \land p_2)&:= \translation(p_1) \times \translation(p_2)\\
+		\translation (p_1 \Rightarrow p_2) &:=  1 - \translation(p_1) + \translation(p_1) \times \translation(p_2)
 	\end{align*}
 \end{frame}
 
@@ -983,8 +983,8 @@ $$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}(\xs)}} \lossfn_{\mathcal
 
 \item $\mathbb{H}_{\mathcal{P}(x)}$ is the $\epsilon$-cube around $\xt$
 
-\item and, in case we use the G\"{o}del DL, we get \\
- $\lossfn_{\mathcal{S}(\xs)} = \large{\translation ( || f(\x) - f(\hat{\x})|| \leq \delta) }= $\\ $1 - \max(\dfrac{\translation(|| f(\x) - f(\hat{\x})|| - \delta)}{\translation (|| f(\x) - f(\hat{\x})|| + \delta)},0) $
+\item and, in case we use the Product DL, we get \\
+ $\lossfn_{\mathcal{S}(\xs)} = \large{\translation ( || f(\x) - f(\hat{\x})|| \leq \delta) }= 1 - \max(\dfrac{|| f(\x) - f(\hat{\x})|| - \delta}{|| f(\x) - f(\hat{\x})|| + \delta},0) $
 
 \end{itemize}
 
@@ -1001,8 +1001,8 @@ $$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}(\xs)}} \lossfn_{\mathcal
 \begin{itemize}[<+->]
 \item the loss function $\lossfn_{\mathcal{S}(\xs)}$ is automatically generated from the spec
 \item the hyper-shape  $\mathbb{H}_{\mathcal{P}(\xs)} $ is currently provided by the user;
-\item PGD finds counter-examples within $\mathbb{H}_{\mathcal{P}(\xs)} $
-\item native (SGD) training (in Tensorflow) is used, given the loss function $\lossfn_{\mathcal{S}(\xs)}$,
+\item PGD finds counter-examples within $\mathbb{H}_{\mathcal{P}(\xs)} $,
+\item native (SGD) training (in Tensorflow) is used, given the loss function $\lossfn_{\mathcal{S}(\xs)}$
 \begin{block}{...to solve the optimisation problem}
 $$\min_{\theta} [ \max_{\xs \in \mathbb{H}_{\mathcal{P}(\xs)}} \lossfn_{\mathcal{S}(\xs)}(\xs, \y)]$$
 \end{block}
