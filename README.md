@@ -275,6 +275,11 @@ ONNX format, data in IDX format, and any necessary instructions.
 If you are interested to know more about the theoretical underpinnings
 of *Vehicle* design, we recommend the following papers:
 
+- (Daggitt et al. 2024) Daggitt, M., Kokke. W., Atkey, R., Slusarz, N.,
+  Arnaboldi, L., Komendantskaya, E.: Vehicle: Bridging the Embedding Gap
+  in the Verification of Neuro-Symbolic Programs.
+  [ARXIV](https://arxiv.org/abs/2401.06379), 2024.
+
 - (Casadio et al. 2022) Casadio, M., Komendantskaya, E., Daggitt, M.L.,
   Kokke, W., Katz, G., Amir, G., Refaeli, I.: Neural network robustness
   as a verification property: A principled case study. In: Shoham, S.,
@@ -1833,6 +1838,15 @@ the 12th ACM SIGPLAN International Conference on Certified Programs and
 Proofs, CPP 2023, Boston, MA, USA, January 16-17, 2023*, edited by
 Robbert Krebbers, Dmitriy Traytel, Brigitte Pientka, and Steve
 Zdancewic, 102–20. ACM. <https://doi.org/10.1145/3573105.3575674>.
+
+</div>
+
+<div id="ref-daggitt2024vehicle" class="csl-entry">
+
+Daggitt, Matthew L., Wen Kokke, Robert Atkey, Natalia Slusarz, Luca
+Arnaboldi, and Ekaterina Komendantskaya. 2024. “Vehicle: Bridging the
+Embedding Gap in the Verification of Neuro-Symbolic Programs.”
+<https://arxiv.org/abs/2401.06379>.
 
 </div>
 
