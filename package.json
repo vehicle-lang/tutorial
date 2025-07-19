@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prettier": "npx prettier -w ."
+    "prettier": "npx prettier -w .",
+    "pdf": "pandoc -d book.pdf.yaml"
   },
   "dependencies": {
     "tufte-css": "^1.8.0"

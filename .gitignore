@@ -1,5 +1,6 @@
 # build output
 dist/
+vehicle-tutorial.pdf
 
 # generated types
 .astro/

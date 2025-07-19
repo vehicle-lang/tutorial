@@ -1,0 +1,28 @@
+reader: markdown
+writer: pdf
+
+input-file: "book.md"
+output-file: "vehicle-tutorial.pdf"
+
+include-in-header: "book.preamble.tex"
+
+standalone: true
+number-sections: true
+table-of-contents: true
+
+resource-path:
+  - "src/assets/"
+
+filters:
+  - "src/plugins/pandoc-include-files.lua"
+  - "src/plugins/pandoc-minted.lua"
+
+pdf-engine: "latexmk"
+pdf-engine-opts:
+  - "-pdflua"
+  - "-shell-escape"
+
+cite-method: natbib
+
+metadata:
+  bibliography: "src/assets/bibliography.bib"
