@@ -101,7 +101,7 @@ A regular figure renders in the main text column and its caption renders as a ma
 ![alt](url "caption")
 ```
 
-![Exports and Imports to and from Denmark & Norway from 1700 to 1780](../assets/exports-imports.png "From Edward Tufte, Visual Display of Quantitative Information, page 92.")
+![Exports and Imports to and from Denmark & Norway from 1700 to 1780](../assets/images/exports-imports.png "From Edward Tufte, Visual Display of Quantitative Information, page 92.")
 
 A margin figure renders as a margin note.
 
@@ -111,7 +111,7 @@ A margin figure renders as a margin note.
 This is the main text. [![alt](url "caption")]{.margin}
 ```
 
-This is the main text. [![Image of a Rhinoceros](../assets/rhino.png "This is a margin figure.")]{.margin}
+This is the main text. [![Image of a Rhinoceros](../assets/images/rhino.png "This is a margin figure.")]{.margin}
 
 A full-width figure renders across the full width of the page.
 
@@ -124,7 +124,7 @@ A full-width figure renders across the full width of the page.
 ```
 
 :::fullwidth
-![Figurative map of the successive losses of the French Army in the Russian campaign, 1812-1813](../assets/napoleons-march.png)
+![Figurative map of the successive losses of the French Army in the Russian campaign, 1812-1813](../assets/images/napoleons-march.png)
 :::
 
 An iframe figure can be used to embed external videos. It renders in the main text column and its caption renders as a margin note.
