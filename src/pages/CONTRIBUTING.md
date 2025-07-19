@@ -5,6 +5,8 @@ title: Getting Started
 
 # Building
 
+Building the Vehicle Tutorial requires [npm](https://www.npmjs.com).
+
 All commands are run from the root of the project, from a terminal:
 
 | Command           | Action                                              |
@@ -13,8 +15,12 @@ All commands are run from the root of the project, from a terminal:
 | `npm run dev`     | Starts local dev server at `localhost:4321`         |
 | `npm run build`   | Build the tutorial as HTML to `./dist/`             |
 | `npm run preview` | Preview your build locally, before deploying        |
-| `npm run gfm`     | Build the tutorial as GFM to `README.md`            |
+| `npm run gfm`     | Build the tutorial as GFM to `README.md`[^gfm]      |
 | `npm run pdf`     | Build the tutorial as PDF to `vehicle-tutorial.pdf` |
+
+The `gfm` command additionally requires [Pandoc](https://pandoc.org).
+
+The `pdf` command additionally requires [Pandoc](https://pandoc.org), [Python](https://www.python.org/downloads/) with the [Pygments](https://pypi.org/project/Pygments/) and [`vehicle_lang`](https://pypi.org/project/vehicle-lang/) packages, and a full LaTeX installation.
 
 # Markdown
 
