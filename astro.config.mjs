@@ -7,6 +7,7 @@
  * @typedef {import("hast").Text} HastText
  */
 import { defineConfig } from "astro/config";
+import astroMdx from "@astrojs/mdx";
 import remarkBehead from "remark-behead";
 import remarkBracketedSpans2 from "remark-bracketed-spans-2";
 import remarkCite from "./src/plugins/remark-cite.ts";
@@ -74,4 +75,7 @@ export default defineConfig({
     ],
     gfm: true,
   },
+  integrations: [
+    astroMdx(),
+  ]
 });

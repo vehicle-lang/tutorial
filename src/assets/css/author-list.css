@@ -1,0 +1,11 @@
+ul.author-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    row-gap: 1rem;
+    column-gap: 1.8rem;
+}
+ul.author-list > li {
+    display: block;
+}

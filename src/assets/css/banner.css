@@ -1,17 +1,32 @@
 /* Style for page banner */
 article > header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
-article > header > p {
+article > header > p.banner-title {
   width: 55%;
 }
 article > header > p.banner-title {
-  font-style: italic;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  font-size: 1.8rem;
+}
+article > header > p.banner-title > img {
+  height: 4.8rem;
+  width: auto;
+  margin-right: 2rem;
+}
+article > header > p.banner-title > a {
   display: block;
+  font-weight: 400;
+  font-size: 3.2rem;
   line-height: 1;
+}
+
+@media (max-width: 760px) {
+  article > header > p.banner-title {
+    width: 100%;
+  }
 }

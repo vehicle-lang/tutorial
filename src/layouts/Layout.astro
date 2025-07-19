@@ -1,5 +1,7 @@
 ---
 import "tufte-css/tufte.min.css";
+import { Image } from 'astro:assets';
+import friendlyPurpleOnLaptop from "../assets/images/software-purple-2500x2500.png";
 import CopyOnClick from "../components/CopyOnClick.astro";
 import { pageTitle } from "../site";
 const { frontmatter } = Astro.props;
@@ -17,6 +19,7 @@ const base = import.meta.env.BASE_URL;
     <article>
       <header>
         <p class="banner-title">
+          <Image alt="A friendly purple robot on their laptop." src={friendlyPurpleOnLaptop} />
           <a href={base}>{pageTitle}</a>
         </p>
       </header>
