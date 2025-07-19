@@ -7,6 +7,7 @@
  * @typedef {import("hast").Text} HastText
  */
 import { defineConfig } from "astro/config";
+import astroFavicons from "astro-favicons";
 import astroMdx from "@astrojs/mdx";
 import remarkBehead from "remark-behead";
 import remarkBracketedSpans2 from "remark-bracketed-spans-2";
@@ -76,6 +77,10 @@ export default defineConfig({
     gfm: true,
   },
   integrations: [
+    astroFavicons({
+      name: "Vehicle Tutorial",
+      short_name: "Vehicle Tutorial",
+    }),
     astroMdx(),
   ]
 });
