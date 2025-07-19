@@ -1,0 +1,304 @@
+---
+title: "Proving Neural Network Robustness"
+---
+
+# Neural Network Robustness as a Verification Property
+
+In this chapter we will learn about the problem that has received significant attention within the machine learning community:
+_the problem of robustness of neural networks to out-of-distribution shifts, also known as "robustness to adversarial attacks"._
+The problem was famously raised by Christian Szegedy and his co-authors in 2013 in the paper ["Intriguing properties of neural networks"](https://arxiv.org/pdf/1312.6199.pdf)
+
+So, here is the problem. Suppose we are given a data set $\mathcal{X}$ for classification of images, it consists of
+pairs $(\mathbf{x}, \mathbf{y})$, where $\mathbf{x} \in \mathbb{R}^n$ is an input, and $\mathbf{y} \in \mathbb{R}^m$ is the desired output.
+It is assumed that the outputs $\mathbf{y}$ are generated from $\mathbf{x}$ by some function $\mathcal{H} : \mathbb{R}^n → \mathbb{R}^m$
+and that $\mathbf{x}$ is drawn from some probability distribution over $\mathbb{R}^n$.
+
+Let us take as an example the famous [MNIST data set by LeCun et al.](https://www.tensorflow.org/datasets/catalog/mnist) The images look like this:
+
+![Images from the MNIST data set](../assets/images/MNIST.jpeg)
+
+As we have already discussed in the previous chapter, a neural network is a function $f : \mathbb{R}^n → \mathbb{R}^m$ parametrised by
+a set of weights $\mathbf{w}$.
+The goal of training is to use the dataset $\mathcal{X}$ to find weights $\mathbf{w}$ such that $f$ approximates $\mathcal{H}$ well
+over input regions with high probability density.
+
+When we train a neural network to be highly accurate on both the training and the test sets, we emprically test:
+
+- how well the neural network can in principle approximate $\mathcal{H}$ (we do this by measuring its accuracy on the training set);
+- how well that learnt hypothesis generalises to yet unseen data (we do this by measuring the accuracy on the test set).
+
+Coming to our example, if my neural network has a $99$ % accuracy on the MNIST data set, I should be satisfied that it learnt
+what a hand-written digit is. Szegedy et al were the first to show systematically that this is not the case:
+take the image on the left (below), which is classified with high confidence as "0", apply perturbation on the middle to get the image on the right,
+and your neural network will give a $94$ % confidence that it sees a "5" on the right, even despite the fact that the image did
+not change the class (for the human eye):
+
+|           Original MNIST Image           |          Perturbation           | Resulting Perturbed Image          |
+| :--------------------------------------: | :-----------------------------: | :--------------------------------- |
+| ![Original MNIST Image](../assets/images/true.png) | ![Perturbation](../assets/images/eta.png) | ![Perturbed Image](../assets/images/adv.png) |
+
+This experiment can be replicated for any data set and any neural network, no matter how accurate it is.
+
+The root of the problem is: the image on the right no longer belongs to the probability distribution that the network has learnt (whether or not the image looks the same to a human observer).
+We could phrase it differently: an ideal probability distribiution $\mathcal{H}$ that is "learnt" by a "human" accounts not only for the images we obtained as part of the dataset $\mathcal{X}$, but also involves an implicit assumption that "semantically" similar images belong to the same class.
+
+The simplest way to capture this implicit assumption is to formulate a _verification property_ that insists that all similar images (images within an $\epsilon$ distance of each other in $\mathbb{R}^n$) are classified similarly. This property is often called $\epsilon$-ball robusness. For every image in the dataset, we assume we can "draw" a small $\epsilon$-ball around it, and guarantee that within that $\epsilon$-ball classification of the network does not change much (the ball's radius below is given by the chosen $\epsilon$):
+
+|     $\epsilon$-ball around a number "7" in MNIST     |
+| :--------------------------------------------------: |
+| ![epsilon-ball](../assets/images/neighbourhood-robustness.png) |
+
+Formally, we define an $\epsilon$-ball around an image $\hat{\mathbf{x}}$ as:
+
+$$\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = [  \mathbf{x} \in \mathbb{R}^n: |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon ]$$
+
+where $| ... |$ is a distance function (or $L$-norm) in $\mathbb{R}^n$, such as Euclidean distance or $L_{\infty}$-norm.
+
+It now remains to define the property "classification of $f$ does not change much". The paper by [Casadio et al.](https://arxiv.org/abs/2104.01396)
+summarises a few options for this definition. The simplest is the _Classification Robustness_ that requires that all images within any given $\epsilon$-ball are classified as the same class. We will consider this property in detail, and will take a few other properties from Casadio et al. as an exercise.
+
+# Formalising $\epsilon$-ball robustness for MNIST networks in Vehicle
+
+We note that $\epsilon$-ball robustness as a verification property bears some similarity to the ACAS Xu example that we have already covered in Chapter 1. In particular, both verification properties impose constraints on the output regions of the neural networks, assuming some constraint on their input regions. (Both problems are therefore amenable to a range of interval propagation and abstract interpretation methods, see [this survey](https://arxiv.org/abs/1812.08342) for further details.) From the point of view of the property specification, which is our main concern here, there are three main differences between these two examples:
+
+- ACAS Xu did not have to refer to a dataset $\mathcal{X}$; $\epsilon$-ball robustness, however, is formulated relative to the images given in the data set. We will see how _Vehicle_ can be used to handle properties that refer directly to the data sets.
+
+- MNIST, as many other data sets used in Computer Vision, has images represented as 2D arrays. Such data sets often require Convolutional Neural Networks (CNNs) that are best designed to deal with 2D and 3D data. In terms of property specification, we will see _Vehicle_'s support for 2D arrays, which comes for free with its general type infrastructure.
+
+- Finally, the MNIST specification involves two parameters that we may want to pass or infer at the compilation time rather than hard-code within the spec. These are the $\epsilon$ and the number of data points ($\epsilon$-balls) we wish to check (the number is at most the size of the entire data set). We will see how such parameters are defined and used in _Vehicle_.
+
+## 2D Arrays in Vehicle
+
+Starting a specification for MNIST data set follows the same pattern as we have seen in Chapter 1, only this time we declare inputs as 2D arrays:
+
+```vehicle
+type Image = Tensor Rat [28, 28]
+type Label = Index 10
+```
+
+As before, we define valid inputs, this time making a mild adaptation to 2D arrays and assuming all pixel values are normalised between 0 and 1:
+
+```vehicle
+validImage : Image -> Bool
+validImage x = forall i j . 0 <= x ! i ! j <= 1
+```
+
+The output of the network is a
+score for each of the digits 0 to 9.
+
+```vehicle
+@network
+classifier : Image -> Vector Rat 10
+```
+
+We note again the use of the syntax for `@network`, marking the place where _Vehicle_ interacts with an external tool (this time most likely with Python Tensorflow).
+
+The classifier advises that input image `x` has label `i` if the score
+for label `i` is greater than the score of any other label `j`:
+
+```vehicle
+advises : Image -> Label -> Bool
+advises x i = forall j . j != i => classifier x ! i > classifier x ! j
+```
+
+This completes the basic description if the data set and the model architecture in _Vehicle_. We are ready to define verification properties.
+
+## Definition of Robustness Around a Point
+
+First we define the parameter `epsilon` that will represent the radius of the
+balls that we verify. Note that we declare this as
+a parameter which allows the value of `epsilon` to be specified at compile
+time rather than be fixed in the specification. We again use the syntax `@`
+to communicate this information externally:
+
+```vehicle
+@parameter
+epsilon : Rat
+```
+
+Next we define what it means for an image `x` to be in a ball of
+size epsilon. The definition below uses the $L_{\infty}$ norm, defined as:
+
+$$|\mathbf{x}|_{\infty} = max (\mathbf{x})$$
+
+where $max (\mathbf{x})$ computes the maximum element of $\mathbf{x}$.
+Below, we shortcut a bit the calculation of $|\mathbf{x}|_{\infty}$ being bounded by $\epsilon$
+and simply require that all vector elements are bounded by $\epsilon$:
+
+```vehicle
+boundedByEpsilon : Image -> Bool
+boundedByEpsilon x = forall i j . -epsilon <= x ! i ! j <= epsilon
+```
+
+Using the Eucledian distance would require a slightly more complicated
+definition, which we will do as an exercise.
+
+We now define what it means for the network to be robust around an image `x`
+that should be classified as `y`. Namely, we define that for any perturbation no greater
+than $\epsilon$, if the perturbed image is still a valid image then the
+network should still advise label `y` for the perturbed version of `x`.
+
+```vehicle
+robustAround : Image -> Label -> Bool
+robustAround image label = forall pertubation .
+  let perturbedImage = image - pertubation in
+  boundedByEpsilon pertubation and validImage perturbedImage =>
+    advises perturbedImage label
+```
+
+Again, note the use of a quantifier `forall` that ranges over an infinite domain of images of type `Image`.
+
+# Definition of Robustness with Respect to a Dataset
+
+We first specify parameter `n` , which stands for the size of the training dataset. Unlike
+the earlier parameter `epsilon`, we set the `infer` option of the
+parameter `n` to 'True'. This means that it does not need to be provided manually but instead will be automatically inferred by the compiler.
+In this case it will be inferred from the training datasets.
+
+```vehicle
+@parameter(infer=True)
+n : Nat
+```
+
+We next declare two datasets, the training images and the corresponding
+training labels. Note that we use the previously declared parameter `n`
+to enforce that they are of the same size:
+
+```vehicle
+@dataset
+trainingImages : Vector Image n
+
+@dataset
+trainingLabels : Vector Label n
+```
+
+Again we note the use of syntax that involves `@` flagging _Vehicle_'s connection with an external tool or object -- in this case, the data set is defined externally.
+
+We then say that the network is robust _for this data set_ if it is robust around every pair
+of input images and output labels. Note once again the use of the `foreach`
+keyword when quantifying over the index `i` in the dataset. Whereas `forall`
+would return a single `Bool`, `foreach` constructs a `Vector` of booleans,
+ensuring that _Vehicle_ will report on the verification status of each image in
+the dataset separately. If `forall` was omitted, _Vehicle_ would only
+report if the network was robust around _every_ image in the dataset, a
+state of affairs which is unlikely to be true.
+
+```vehicle
+@property
+robust : Vector Bool n
+robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
+```
+
+# Running the Verification Query
+
+In order to run _Vehicle_, we need to provide:
+
+- the specification file,
+- the network in ONNX format,
+- the data in idx format,
+- and the desired $\epsilon$ value.
+
+The tutorial files contain two Python scripts that show how to convert Tensorflow Neural Networks into _ONNX_ format; and images -- into `.idx` files. These are the formats expected by _Vehicle_. You can use the ones we provide, or generate your own. Having obtained these, the following command line will take care of verification of the network `mnist-classifier.onnx`,
+for data sets `images.idx` and `labels.idx` and $\epsilon = 0.005$:
+
+```vehicle
+vehicle verify \
+  --specification examples/mnist-robustness/mnist-robustness.vcl \
+  --network classifier:examples/mnist-robustness/mnist-classifier.onnx \
+  --parameter epsilon:0.005 \
+  --dataset trainingImages:examples/mnist-robustness/images.idx \
+  --dataset trainingLabels:examples/mnist-robustness/labels.idx \
+  --verifier Marabou
+```
+
+For the first two images in your data set, the output will look as follows:
+
+```vehicle
+Verifying properties:
+  robust [================================================] 9/9 queries complete
+  robust [================================================] 9/9 queries complete
+Result: true
+  robust: 2/2 verified
+    ✓ robust!0
+
+    ✓ robust!1
+```
+
+The reader may have guessed at this pont that, as we make $\epsilon$ larger, fewer and fewer examples will staisfy the property. Chapter 3 will look into methods that can be used to train networks to satisfy robustness for larger $\epsilon$.
+
+# Exercises
+
+## Exercise (⭑): Run the Chapter code
+
+As usual, your first task is to repeat the steps described in this chapter: download the _Vehicle_ specification, the network,  the data, and verify robustness of the given network on given data.
+All code is available from the `examples` section of the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial)
+
+## Exercise (⭑) : Experimenting with $\epsilon$-balls of different size
+
+Try experimenting with different values of $\epsilon$, for example, try
+  $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$.
+  Make conclusions.
+
+## Exercise (⭑⭑) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s
+
+(_This exercise is technically very simple, but the required number of experiments may take a few hours to run. We recommend you run it at home rather than during the live exercise sessions_).
+
+The previous exercise could be transformed into a proper empirical evaluation of robustness of the model for the data set.
+To do this, include more than 2 images into your `idx` file.  A script for generating `idx` files is available [in the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-complete).
+
+Assuming you created an `idx` file with, for example, 500 images, run _Vehicle_ on this file, and collect statistics for $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate a table that looks like this:
+
+| | $\epsilon = 0.005$ | $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
+| :---------------:| :---------------: | :---------------: | :---------------: | :--------------: | :--------------- |
+Success rate: | 100.0 % (500/500)  | ?? % (???/500)  | ?? % (???/500)  |  ? % (??/500)  | 0 % (0/500)      |
+
+This is your first proper empirical evaluation of the given neural network for the given data set! This kind of evaluation is reported in international competitoions such as [VNNComp](https://github.com/stanleybak/vnncomp2023) and in research papers.
+
+Make conclusion about feasibility and success rates of $\epsilon$-ball robustness, and the speed with which verification success deteriorates with the growing $\epsilon$.
+
+## Exercise (⭑) : Strong Classification Robustness in Vehicle
+
+Using the same `.vcl` file as in all previous exercises, define and verify in _Vehicle_ the propety of _Strong Classification Robustness_,
+that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \leq \eta$, for some small $\eta$.
+We now assemble the desired_strong classification robustness_ property definition:
+
+Given an $\hat{\mathbf{x}} \in \mathcal{X}$,
+
+$$
+\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow f(\mathbf{x})_i \leq \eta
+$$
+
+We refer the interested reader for a more detailed discussion of different robustness properties in:
+
+- Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen Kokke, Guy Katz, Guy Amir, Idan Refaeli: Neural Network Robustness as a Verification Property: A Principled Case Study. CAV (1) 2022: 219-231.
+
+- Xiaowei Huang, Daniel Kroening, Wenjie Ruan, James Sharp, Youcheng Sun, Emese Thamo, Min Wu, Xinping Yi. A Survey of Safety and Trustworthiness of Deep Neural Networks: Verification, Testing, Adversarial Attack and Defence, and Interpretability. J. of Computer Science Review, 2018.
+
+## Exercise (⭑⭑): Explore Other Definitions of Robustness
+
+Use _Vehicle_ to define other forms of Robustness property from Casadio et al.
+
+*Please note: although the _Vehicle_ language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurence of a neural network per specification.*
+
+## Exercise (⭑⭑): Other Distances in Vehicle
+
+Re-define the _classification_ and _standard robustness_ properties by using some different notion of distance, e.g. the Euclidean distance, instead of the $L_{\infty}$ norm.
+
+*Please note: although the _Vehicle_ language is rich and allows such extensions, not all specifications will be feasible for Marabou that works with linear real arithmetic.*
+
+## Exercise (⭑) Practicing to write property specifications
+
+To test your understanding of the robustness property, try completing the robustness verification in [this file](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-incomplete).
+
+## Exercise (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
+
+*This exercise can be hard or simple, depending how much help you get from the model solution provided as sources!*
+
+We will work with the [Fashion MNIST data set](https://www.tensorflow.org/datasets/catalog/fashion_mnist).
+
+Either:
+
+- download the data set, train a model from scratch, generate `onnx` and `idx` files; or
+- obtain the model and `idx` files directly from the directory with [the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/FMNIST)
+
+Once this is done, define the spec and verify its robustness. Experiment with different values of $\epsilon$ and different definitions of robustness.
