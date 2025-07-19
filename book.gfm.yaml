@@ -1,0 +1,12 @@
+reader: markdown
+writer: gfm
+
+input-file: "book.md"
+output-file: "README.md"
+
+filters:
+  - "src/plugins/pandoc-include-files.lua"
+  - "citeproc"
+
+metadata:
+  bibliography: "src/assets/bibliography.bib"

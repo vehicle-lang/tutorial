@@ -1,0 +1,2027 @@
+# Vehicle Tutorial
+
+Welcome to the *Vehicle Tutorial*! In this tutorial, you will learn
+about neural network verification with Vehicle. Vehicle’s installation
+instructions and user guide are available
+[here](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
+This tutorial was created by Matthew Daggitt, Wen Kokke, Ekaterina
+Komendantskaya, Bob Atkey, Luca Arnaboldi, Natalia Slusarz, Marco
+Casadio, Ben Coke, and Jeonghyeon Lee.
+
+If you have any questions about the Vehicle Tutorial, you are invited to
+join [our
+Slack](https://join.slack.com/t/vehicle-tutorial/shared_invite/zt-21nkefo9j-bcfDNwQbyBDAoFDzFDbVnw)
+for questions and discussions.
+
+*We hope you enjoy this tutorial!*
+
+# Introduction
+
+## What is Neural Network Verification?
+
+Neural networks are widely used in the field of machine learning; and
+are often embedded as *pattern-recognition* or *signal processing*
+components into complex software. Below we see a schematic depiction of
+a neural network trained to classify hand-written digits: ![Neural
+Network](src/chapters/../assets/images/mnist_classification.png)
+
+The image is represented as a vector of real numbers, each vector
+element standing for a pixel value. Each arrow in the picture bears a
+*weight* that is used to multiply the input signal; each neuron computes
+the sum of its inputs.
+
+In some scenarios, it becomes important to establish formal guarantees
+about neural network behaviour. One of the first known attempts to
+verify neural networks, by (Pulina and Tacchella 2010), was based on
+abstract interpretation. The famous paper by Szegedy (Szegedy et al.
+2013) that highlighted the problem of neural network vulnerability to
+small-norm input perturbations (“adversarial attacks”) gave additional
+impulse to this line of research. In CAV’2017, two papers, by Huang et
+al (Huang et al. 2017) and Katz et al. (Katz et al. 2017), on neural
+network verification appeared and both used specialised forms of
+SMT-solving. The later gave rise to Marabou (Katz et al. 2019), a
+rapidly developing sound and complete neural network verifer, which we
+use in Vehicle.
+
+In 2019, the ERAN verifier by Dingh et al. (Singh et al. 2019) appeared
+in POPL, and showed that performance of abstract interpretation methods
+compares favourably against those based on SMT solving. However, the
+range of properties they handled was limited to proving adversarial
+robustness of neural networks; moreover ERAN was incomplete. This line
+of research led to many subsequent extensions, e.g. by Muller et al.
+(Müller et al. 2022, 2023) to mention a few.
+
+Mixed Integer Linear Programming (MILP) methods were brought into this
+community by Bastani et al. (Bastani et al. 2016), and were further
+developed into working tools, e.g. Venus (Botoeva et al. 2020).
+
+Neural network verifier extensions followed two main directions:
+
+- scaling to larger networks (we can mention $`\alpha\beta`$-Crown (Wang
+  et al. 2021) and GCP-Crown (Zhang et al. 2022) as VNN-COMP winners in
+  2021 and 2022);
+
+and
+
+- extending from piece-wise linear to non-linear activation functions.
+  (An example are sigmoid neurons handled by Verisig using interval
+  arithmetic (Ivanov et al. 2019).)
+
+At the time of writing, there exist over a hundred verifiers for neural
+networks. Several papers and monographs are dedicated to the survey of
+the landscape (e.g., Albarghouthi 2021; Huang et al. 2020; Liu et al.
+2021). The community established the specification standards
+[VNNLib](src/chapters/https:/www.vnnlib.org/), common benchmarks and
+annual competitions. Vehicle compiles down to the VNNLib standard, with
+a view to be compatible with the growing family of verifiers.
+
+Formally, a neural network is a function $`N : R^m \rightarrow R^n`$.
+Verification of such functions most commonly boils down to specifying
+admissible intervals for the function’s output given an interval for its
+inputs. For example, one can specify a set of inputs to belong to an
+$`\epsilon`$- neighborhood of some given input $`\mathbf{x}`$, and
+verify that for such inputs, the outputs of $`N`$ will be in $`\delta`$
+distance to $`N(\mathbf{x})`$. This property is often called
+$`\epsilon`$*-ball robustness* (or just *robustness*), as it proves the
+network’s output is robust (does not change drastically) in the
+neighborhood of certain inputs.
+
+Seen as functions, neural networks have particular features that play an
+important role in their verification:
+
+- these functions are not written manually, but generated (or *fitted*)
+  to model the unknown data distribution;
+- the “data” may be big, and require large neural networks;
+- we often attribute very little semantic meaning to the resulting
+  function.
+
+## Challenges in Neural Network Verification
+
+There are several research challenges in the area of neural network
+verification:
+
+1.  *Theory: finding appropriate verification properties.* The scope of
+    neural network properties available in the literature is limited.
+    Robustness is the most popular general property to date (Casadio et
+    al. 2021), and others include mostly domain-specific properties,
+    such as ACAS Xu Benchmark (Katz et al. 2017), which we will consider
+    shortly in this tutorial. What neural network properties we want and
+    can realistically verify still stands as a big research question.
+
+2.  *Solvers: undecidability of non-linear real arithmetic and
+    scalability of neural network verifiers.* On the solver side,
+    undecidability of non-linear real arithmetic (Akbarpour and
+    Paulson 2009) and scalability of neural network verifiers
+    \[wang2021beta\] stand as two main challenges.
+
+3.  *Machine Learning: understanding and integrating property-driven
+    training.* In all realistic scenarios, even accurate neural networks
+    require extra “property-driven training” in order to comply with
+    verification properties in question. This requires new methods of
+    integrating training with verification. Several approaches exist,
+    including the recently introduced method of *“differentiable
+    logics”* that translate logical properties into loss functions. But
+    they all have pitfalls, see (Slusarz et al. 2023) for a discussion.
+
+4.  *Programming: finding the right languages to support these
+    developments* Many existing solvers have low-level syntax that is
+    hard to understand, making maintenance of the specification
+    difficult. There is very little programming infrastructure to
+    interface verification and property-driven training. Furthermore,
+    the available language infrastructure only allows specifications to
+    be written in terms of the input space, whereas one often needs to
+    reason about neural network behavior in terms of the problem space.
+    This creates an additional *embedding gap* on verification side, a
+    problem that eventually needs to be resolved.
+
+5.  *Complex systems: integration of neural net verification into
+    complex systems.* Finally, neural networks usually work as
+    components of complex systems, and the question of smooth integation
+    of existing neural network solvers with other theorem provers
+    requires resolution.
+
+This tutorial will focus on problems 3 to 5, and will present Vehicle, a
+tool that provides support in alleviating them. In particular, Vehicle
+is equipped with a specification language that allows one to express
+neural network properties in a high-level, human-readable format (thus
+opening the way to reasoning about a wider space of properties, and
+reasoning in terms of the problem space). Then it compiles the
+specification down into low-level queries and passes them automatically
+to existing neural network solvers. If the specification cannot be
+verified, Vehicle gives one an option to automatically generate a new
+loss function that can be used to train the model to satisfy the stated
+property. Once a specification has been verified (possibly after
+property-driven re-training), Vehicle allows one to export the proof to
+an interactive theorem prover, and reason about the behavior of the
+complex system that embeds the machine learning model.
+
+Vehicle programs can be compiled to an unusually broad set of backends,
+including:
+
+1)  loss functions for Tensorflow which can be used to guide both
+    specification-directed training and gradient-based counter-example
+    search.
+
+2)  queries for the Marabou neural network verifier, which can be used
+    to formally prove that the network obeys the specification.
+
+3)  Agda specifications, which are tightly coupled to the original
+    network and verification result, in order to scalably and
+    maintainably construct larger proofs about machine learning-enhanced
+    systems.
+
+Currently, Vehicle supports the verifier Marabou, the ITP Agda, and the
+ONNX format for neural networks. The below figure illustrates the
+existing user backends in Vehicle.
+
+<figure>
+<img src="src/chapters/../assets/images/vehicle-structure.png"
+alt="Vehicle Backends" />
+<figcaption aria-hidden="true">Vehicle Backends</figcaption>
+</figure>
+
+## Objectives of this Tutorial
+
+This tutorial will give an introduction to the
+[Vehicle](src/chapters/https:/github.com/vehicle-lang/vehicle) tool and
+its conceptual approach to modelling specifications for machine learning
+systems via functional programming. It will teach the participants to
+understand the range of problems that arise in neural network property
+specification, verification and training, and will give hands-on
+experience at solving these problems at a level of a higher-order
+specification language with dependent types.
+
+## Prerequisites
+
+To follow the tutorial, you will need Vehicle, Marabou and Agda
+installed in your machine. For instructions, refer to [vehicle
+documentation](src/chapters/https:/vehicle-lang.readthedocs.io/en/latest/installation.html).
+
+Quick installation instructions:
+
+- For Chapters 1, 2 and 3 you only need to
+
+  1.  Install Vehicle : just run `pip install vehicle-lang`
+
+  2.  Install Marabou: just run `pip install maraboupy`
+
+- Python (Tensorflow) and Agda installation will only be needed to
+  follow Chapters 4 and 5.
+
+We suggest that you start this tutorial with just Vehicle and Marabou as
+tools.
+
+We recommend using [Visual Studio
+Code](src/chapters/https:/code.visualstudio.com) with the [Vehicle
+Syntax
+Highlighting](src/chapters/https:/marketplace.visualstudio.com/items?itemName=wenkokke.vehicle-syntax-highlighting)
+and
+[agda-mode](src/chapters/https:/marketplace.visualstudio.com/items?itemName=banacorn.agda-mode)
+plugins.
+
+Whether you are using this tutorial for self-study or attending one of
+our live tutorials, all supporting exercises, code and infrastructure
+can be downloaded from the [tutorial
+repository](src/chapters/https:/github.com/vehicle-lang/vehicle-tutorial).
+These include all relevant property specifications, trained neural
+networks in ONNX format, data in IDX format, and any necessary
+instructions.
+
+## Further Reading
+
+If you are interested to know more about the theoretical underpinnings
+of Vehicle design, we recommend the following papers:
+
+- Daggitt, M.L., Kokke. W., Atkey, R., Slusarz, N., Arnaboldi, L.,
+  Komendantskaya, E.: *Vehicle: Bridging the Embedding Gap in the
+  Verification of Neuro-Symbolic Programs.*
+  [arXiv](src/chapters/https:/arxiv.org/abs/2401.06379), 2024.
+
+- Casadio, M., Komendantskaya, E., Daggitt, M.L., Kokke, W., Katz, G.,
+  Amir, G., Refaeli, I.: *Neural network robustness as a verification
+  property: A principled case study.* In: Shoham, S., Vizel, Y. (eds.)
+  Computer Aided Verification - 34th International Conference, CAV 2022,
+  Haifa, Israel, August 7-10, 2022, Proceedings, Part I. Lecture Notes
+  in Computer Science, vol. 13371, pp. 219–231. Springer (2022)
+
+- Daggitt, M.L., Atkey, R., Kokke, W., Komendantskaya, E., Arnaboldi,
+  L.: *Compiling higher-order specifications to SMT solvers: How to deal
+  with rejection constructively.* In: Krebbers, R., Traytel, D.,
+  Pientka, B., Zdancewic, S. (eds.) Proceedings of the 12th ACM SIGPLAN
+  International Conference on Certified Programs and Proofs, CPP 2023,
+  Boston, MA, USA, January 16-17, 2023. pp. 102–120. ACM (2023).
+
+- Slusarz, N., Komendantskaya, E., Daggitt, M.L., Stewart, R.J., Stark,
+  K.: *Logic of Differentiable Logics: Towards a Uniform Semantics of
+  DL.* LPAR 2023. Proceedings of 24th International Conference on Logic
+  for Programming, Artificial Intelligence and Reasoning, Manizales,
+  Colombia, 4-9th June 2023, EPiC Series in Computing, vol. 94,
+  pp. 473–493.
+
+# Getting Started with the Vehicle Specification Language
+
+In this chapter we will introduce the basic features of the Vehicle
+specification language via the famous *ACAS Xu verification challenge*,
+first introduced by Guy Katz et al. (2017)
+([arXiv](src/chapters/https:/arxiv.org/pdf/1702.01135.pdf)).
+
+## ACAS Xu
+
+ACAS Xu stands for *Airborne Collision Avoidance System for unmanned
+aircraft*. The objective of the system is to analyse the aircraft’s
+position and distance relative to other aircraft and give collision
+avoidance instructions.
+
+In particular, the following measurements are of importance:
+
+- $`\rho`$: feet **measuring the distance to intruder**,
+- $`\theta, \psi`$: radians **measuring angle of intrusion**,
+- $`v_{own}, v_{vint}`$: feet per second - **the speed of both
+  aircrafts**,
+- $`\tau`$: seconds - **time until loss of vertical separation**,
+- $`a_{prev}`$: **previous advisory**
+
+as the following picture illustrates:
+
+<figure>
+<img src="src/chapters/../assets/images/acas_xu.png" alt="ACAS Xu" />
+<figcaption aria-hidden="true">ACAS Xu</figcaption>
+</figure>
+
+$`\theta`$ and $`\psi`$ are measured counter clockwise, and are always
+in the range $`[-\pi, \pi]`$.
+
+Based on these inputs, the system should produce one of the following
+instructions:
+
+- clear-of-conflict (CoC),
+- weak left,
+- weak right,
+- strong left,
+- strong right.
+
+In practice, the domains of $`\tau`$ and $`a_{prev}`$ are used to
+partition the input space into 45 discrete subspaces. Next a different
+neural network is trained to analyse the relation of input and output
+variables within each subspace, using previous historic data. Therefore
+each individual neural network uses only the first five input variables,
+and outputs a score for each of the output instructions. The instruction
+with the lowest score is then chosen.
+
+Therefore each of the 45 ACASXu neural networks have the mathematical
+type $`N_{AX} : R^5 \rightarrow R^5`$. The exact architecture of the
+neural networks and their training modes are not important for this
+example, and so we will omit the details for now.
+
+The original paper by Guy Katz lists ten properties, but for the sake of
+the illustration we will just consider the third property: *If the
+intruder is directly ahead and is moving towards the ownship, the score
+for COC will not be minimal.*
+
+## Basic Building Blocks in Vehicle
+
+### Types
+
+Unlike many Neural Network verifier input formats, Vehicle is a typed
+language, and it is common for each specification file starts with
+declaring the types. In the ACAS Xu case, these are the types of vectors
+of rational numbers that the network will be taking as inputs and giving
+as outputs
+
+``` vehicle
+type InputVector = Vector Rat 5
+type OutputVector = Vector Rat 5
+```
+
+The `Vector` type represents a mathematical vector, or in programming
+terms can be thought of as a fixed-length array. One potentially unusual
+aspect in Vehicle is that the size of the vector (i.e the number of
+items it contains) must be known statically at compile time. This allows
+Vehicle to check for the presence of out-of-bounds errors at compile
+time rather than run time.
+
+The most general `Vector` type is therefore written as `Vector A n`,
+which represents the type of vectors containing `n` elements of type
+`A`. For example, in this case `Vector Rat 5` is a vector of length
+$`5`$ that contains rational numbers.
+
+Vehicle in fact has a comprehensive support for programming with
+vectors, which we will see throughout this tutorial. But the interested
+reader may go ahead and check the documentation pages for vectors: <a
+href="src/chapters/https:/vehicle-lang.readthedocs.io/en/stable/language/vectors.html"
+class="uri">https://vehicle-lang.readthedocs.io/en/stable/language/vectors.html</a>.
+
+### Networks
+
+Given this, we can declare the network itself:
+
+``` vehicle
+@network
+acasXu : InputVector -> OutputVector
+```
+
+Networks are declared by adding a `@network` annotation to a function
+declaration, as shown above. Note that no implementation for the network
+is provided directly in the specification, and instead will be provided
+later at compile time. However, the name `acasXu` can still be used in
+the specification as any other declared function would be. This follows
+the Vehicle philosophy that specifications should be independent of any
+particular network, and should be able to be used to train/test/verify a
+range of candidate networks implementations.
+
+### Values
+
+New values can be declared in Vehicle using the following syntax, where
+the first line provides the declaration’s type and the bottom line
+provides its definition.
+
+``` vehicle
+<name> : <type>
+<name> = <expr>
+```
+
+For example, as we’ll be working with radians, it is useful to define a
+rational value called `pi`.
+
+``` vehicle
+pi : Rat
+pi = 3.141592
+```
+
+While in many cases, the types provide useful information to the reader,
+in general types can be omitted. For example, in this case it is cleaner
+to simply write the declaration as:
+
+``` vehicle
+pi = 3.141592
+```
+
+The Vehicle compiler will then automatically infer the correct `Rat`
+type.
+
+### Problem Space versus Input Space
+
+Neural networks nearly always assume some amount of pre-processing of
+the input and post-processing of the output. In our ACASXu example, the
+neural networks are trained to accept inputs in the range $`[0, 1]`$ and
+outputs are likewise in the range $`[0,1]`$, i.e. the network does not
+work directly with units like $`m/s`$ or radians, nor the 5 output
+instructions used in the description of the problem above. However, the
+specifications we write will be much more understandable if we can refer
+to values in the original units.
+
+When we encounter such problems, we will say we encountered an instance
+of *problem space / input space mismatch*, also known as *the embedding
+gap*. If we were to reason on input vectors directly, we would be
+writing specifications in terms of the *input space* (i.e. referring to
+the neural network inputs directly). However, when reasoning about
+properties of neural networks, it is much more convenient to refer to
+the original problem. In this case specifications will be written in
+terms of the *problem space*. Being able to write specifications in the
+problem space (alongside the input space) is a feature that
+distinguishes Vehicle from majority of the mainstream neural network
+verifiers, such as e.g. Marabou, ERAN, or $`\alpha\beta`$-Crown. Let us
+see how this happens in practice.
+
+We start with introducing the full block of code that will normalise
+input vectors into the range $`[0,1]`$, and will explain significant
+features of Vehicle syntax featured in the code block afterwards.
+
+For clarity, we define a new type synonym for unnormalised input vectors
+in the problem space.
+
+``` vehicle
+type UnnormalisedInputVector = Vector Rat 5
+```
+
+Next we define the minimum and maximum values that each input can take.
+These correspond to the range of the inputs that the network is designed
+to work over. Note that these values are in the *problem space*.
+
+``` vehicle
+minimumInputValues : UnnormalisedInputVector
+minimumInputValues = [0, pi, pi, 100, 0]
+
+maximumInputValues : UnnormalisedInputVector
+maximumInputValues = [60261, pi, pi, 1200, 1200]
+```
+
+The above is the first instance of vector definition we encounter. The
+type-checker will ensure that all vectors written in this way are of the
+correct size (in this case, `5`).
+
+Then we define the mean values that will be used to scale the inputs:
+
+``` vehicle
+meanScalingValues : UnnormalisedInputVector
+meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
+```
+
+An alternative method for defining new vectors is to use the `foreach`
+constructor, which is used to provide a value for each index `i`. This
+method is useful if the vector has some regular structure. For example,
+we can now define the normalisation function that takes an unnormalised
+input vector and returns the normalised version.
+
+``` vehicle
+normalise : UnnormalisedInputVector -> InputVector
+normalise x = foreach i .
+  (x ! i - meanScalingValues ! i)
+    / (maximumInputValues ! i  - minimumInputValues ! i)
+```
+
+Using this we can define a new function that first normalises the input
+vector and then applies the neural network:
+
+``` vehicle
+normAcasXu : UnnormalisedInputVector -> OutputVector
+normAcasXu x = acasXu (normalise x)
+```
+
+### Functions
+
+In the above block, we saw function definitions for the first time, so
+let us highlight the important features of the Vehicle language
+concerning functions.
+
+Function declarations may be used to define new functions. A declaration
+is of the form
+
+``` vehicle
+<name> : <type>
+<name> [<args>] = <expr>
+```
+
+Observe how all functions above fit within this declaration scheme.
+
+Functions make up the backbone of the Vehicle language. The function
+type is written `A -> B` where `A` is the input type and `B` is the
+output type. For example, the function `validInput` above takes values
+of the (defined) type of `UnnormalisedInputVector` and returns values of
+type `Bool`. The function `normalise` has the same input type, but its
+output type is `InputVector`, which was defined as a vector of rational
+numbers of size $`5`$.
+
+As is standard in functional languages, the function arrow associates to
+the right so `A -> B -> C` is therefore equivalent to `A -> (B -> C)`.
+
+As in most functional languages, function application is written by
+juxtaposition of the function with its arguments. For example, given a
+function `f` of type `Rat -> Bool -> Rat` and arguments `x` of type
+`Rat` and `y` of type `Bool`, the application of `f` to `x` and `y` is
+written `f x y` and this expression has type `Rat`. This is unlike
+imperative languages such as Python, C or Java where you would write
+`f(x,y)`.
+
+Functions of suitable types can be composed. For example, given a
+function `acasXu` of type `InputVector -> OutputVector`, a function
+`normalise` of type `UnnormalisedInputVector -> InputVector` and an
+argument `x` of type `UnnormalisedInputVector` the application of
+`acasXu` to the `InputVector` resulting from applying `normalise x` is
+written as `acasXu (normalise x)`, and this expression has type
+`OutputVector`.
+
+Some functions are pre-defined in Vehicle. For example, the above block
+uses multiplication `*`, division `/` and vector lookup `!`. We have
+also seen the use of a pre-defined “less than or equal to” predicate
+`<=` in the definition of the function `validInput` (note its `Bool`
+type).
+
+### Quantifying over indices
+
+In the `normalise` declaration we saw the `foreach` construct which
+constructs a vector given the definition of the element at each index
+`i`. We can use the similar `forall` to quantify over all indices and
+return a `Bool` which is `true` if the predicate holds for all indices
+and `false` otherwise. For example, having defined the range of minimum
+and maximum values, we can define a simple predicate saying whether a
+given input vector is in the right range:
+
+``` vehicle
+validInput : UnnormalisedInputVector -> Bool
+validInput x = forall i .
+  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+```
+
+Equally usefully, we can write a function that takes an output index `i`
+and an input `x` and returns true if output `i` has the minimal score,
+i.e., neural network outputs instruction `i`.
+
+``` vehicle
+minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
+minimalScore i x = forall j .
+  i != j => normAcasXu x ! i < normAcasXu x ! j
+```
+
+Here the `Index 5` refers to the type of indices into `Vector`s of
+length 5, and implication `=>` is used to denote logical implication.
+Therefore this property says that for every other output index `j` apart
+from output index `i` we want the score of action `i` to be strictly
+smaller than the score of action `j`.
+
+### Naming indices
+
+As ACASXu properties refer to certain elements of input and output
+vectors, let us give those vector indices some suggestive names. This
+will help us to write a more readable code:
+
+``` vehicle
+distanceToIntruder = 0   -- measured in metres
+angleToIntruder    = 1   -- measured in radians
+intruderHeading    = 2   -- measured in radians
+speed              = 3   -- measured in metres/second
+intruderSpeed      = 4   -- measured in meters/second
+```
+
+The fact that all vector types come annotated with their size means that
+it is impossible to mess up indexing into vectors, e.g. if you changed
+`distanceToIntruder = 0` to `distanceToIntruder = 5` the specification
+would fail to type-check as `5` is not a valid index into a `Vector` of
+length 5.
+
+Similarly, we define meaningful names for the indices into output
+vectors.
+
+``` vehicle
+clearOfConflict = 0
+weakLeft        = 1
+weakRight       = 2
+strongLeft      = 3
+strongRight     = 4
+```
+
+## Property Definition in Vehicle
+
+We now make up for the time invested into learning the Vehicle syntax,
+as stating a verification property becomes very easy. Let us now look at
+the property again:
+
+*If the intruder is directly ahead and is moving towards the ownship,
+the score for COC will not be minimal.*
+
+We first need to define what it means to be *directly ahead* and *moving
+towards*. The exact ACASXu definition can be written in Vehicle as:
+
+``` vehicle
+directlyAhead : UnnormalisedInputVector -> Bool
+directlyAhead x =
+  1500  <= x ! distanceToIntruder <= 1800 and
+  -0.06 <= x ! angleToIntruder    <= 0.06
+
+movingTowards : UnnormalisedInputVector -> Bool
+movingTowards x =
+  x ! intruderHeading >= 3.10  and
+  x ! speed           >= 980   and
+  x ! intruderSpeed   >= 960
+```
+
+Note the reasoning in terms of the “problem space”, i.e. the use of
+unnormalised input vectors.
+
+We have already encountered the vector lookup `!` before; but now we
+have a new predefined comparison function, `>=`, “greater than or equal
+to”. The connective `and` is a usual Boolean connective (note the type
+of the function is `Bool`).
+
+There is little left to do, and we finish our mini-formalisation with
+the property statement:
+
+``` vehicle
+@property
+property3 : Bool
+property3 = forall x .
+  validInput x and directlyAhead x and movingTowards x =>
+  not (minimalScore clearOfConflict x)
+```
+
+To flag that this is the property we want to verify, we use the label
+`@property`, we have seen this notation before when we used `@network`
+to annotate the neural network declaration. The final new bit of syntax
+we have not yet discussed is the quantifier `forall`.
+
+### Infinite quantifiers
+
+One of the main advantages of Vehicle is that it can be used to state
+and prove specifications that describe the network’s behaviour over an
+infinite set of values. We have already seen the `forall` operator used
+in the declaration `validInput` – however, there it was quantifying over
+a finite number of indices.
+
+The `forall` in the property above is a very different beast as it is
+quantifying over an “infinite” number of `Vector Rat 5`s. The definition
+of `property3` brings a new variable `x` of type `Vector Rat 5` into
+scope. The variable `x` has no assigned value and therefore represents
+an arbitrary input of that type.
+
+Vehicle also has a matching quantifer `exists`.
+
+## How to run Vehicle
+
+To verify this property, we only need to have:
+
+- a verifier installed (at the moment of writing Vehicle has integration
+  with Marabou);
+- the actual network or networks that we wish to verify. These need to
+  be supplied in an ONNX format, one of the standard formats for
+  representing trained neural networks.
+
+Having these suitably installed or located, it only takes one command
+line to obtain the result (note the `vcl` file, where we have written
+the above specification):
+
+``` sh
+ vehicle verify \
+  --specification acasXu.vcl \
+  --verifier Marabou \
+  --network acasXu:acasXu_1_7.onnx \
+  --property property3
+```
+
+Vehicle passes the network, as well as a translation of our
+specification, to Marabou, and we obtain the result – `property3` does
+not hold for the given neural network, `acasXu_1_7.onnx`:
+
+``` plain
+Verifying properties:
+  property3 [======================================================] 1/1 queries
+    result: ✗ - counterexample found
+      x: [1799.9886669999978, 5.6950779776e-2, 3.09999732192, 980.0, 960.0]
+```
+
+Furthermore, Vehicle gives us a counter-example in the problem space! In
+particular an assignment for the quantified variable `x` that falsifies
+the assignment.
+
+## Exercises
+
+We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty:
+*easy, moderate and hard*.
+
+The exercises assume that you already installed Vehicle as described in
+[vehicle
+documentation](src/chapters/https:/vehicle-lang.readthedocs.io/en/latest/installation.html).
+
+### Exercise (⭑)
+
+Start by simply running the code that was discussed in the above
+chapter. It is available from the `examples` section of the [tutorial
+repository](src/chapters/https:/github.com/vehicle-lang/vehicle-tutorial)
+
+Repeat the steps described in this chapter: download the Vehicle
+specification and the network, and verify the ACAS Xu Property 3.
+
+Did it work? If yes, you are ready to experiment with your own
+specifications.
+
+### Exercise (⭑⭑). Problem Space versus Input/Output Space
+
+We discussed an instance of the embedding gap when verifying Property 3.
+In particular, we reasoned in terms of the problem space, but verified
+the network trained on the input space.
+
+Property 1 in the Acas Xu library is an example where the problem space
+and the output space deviate, as well. This makes Property 1
+specification somewhat harder.
+
+For your first exercise, define Property 1 in Vehicle, paying attention
+to careful handling of the *embedding gap*.
+
+*ACAS Xu Propery 1*: *If the intruder is distant and is significantly
+slower than the ownship, the score of a COC advisory will always be
+below a certain fixed threshold.*
+
+Taking the original thresholds, this boils down to:
+
+``` math
+
+  (\rho \geq 55947.691) \wedge
+  (v_{own} \geq 1145) \wedge (v_{int} \leq 60)
+  \Rightarrow \text{the score for COC is at most} 1500
+```
+
+*Note:* The ACAS Xu neural network outputs are scaled as follows: given
+an element $`x`$ of the output vector, we scale it as:
+
+``` math
+
+\frac{x - 7.518884}{373.94992}
+```
+
+To run the verification queries, please use the networks available from
+the [tutorial
+repository](src/chapters/https:/github.com/vehicle-lang/vehicle-tutorial).
+
+### Exercise (⭑⭑). The full ACAS Xu challenge in one file
+
+Why not trying to state all 10 ACAS Xu properties in one `.vcl` file?
+Try running the verification query in Vehicle using all $`10`$
+properties. You can find them in the Reluplex paper (Katz et al. 2017)
+([arXiv](src/chapters/https:/arxiv.org/pdf/1702.01135.pdf)).
+
+### Exercise (⭑⭑⭑). Your first independent Vehicle specification
+
+1.  Clone the [tutorial
+    repository](src/chapters/https:/github.com/vehicle-lang/vehicle-tutorial).
+2.  Find the `iris_model.onnx` model under
+    `exercises/chapter2/iris-dataset`. This model was trained on the
+    famous [Iris flower data
+    set](src/chapters/https:/en.wikipedia.org/wiki/Iris_flower_data_set).
+3.  Find the Iris data set files `iris_test_data.idx` and
+    `iris_test_labels.idx` under `exercises/chapter2/iris-dataset`.
+4.  Examine the data set and try to define a few “obvious properties”
+    that should hold for the model. You a free to look at the Wikipedia
+    page for the [Iris flower data
+    set](src/chapters/https:/en.wikipedia.org/wiki/Iris_flower_data_set)
+    or consult other sources.
+5.  Write those properties as a Vehicle specification. Ensure that your
+    specification is well-typed. See the [Vehicle
+    Manual](src/chapters/https:/vehicle-lang.readthedocs.io/en/stable/)
+    for how to type-check a Vehicle specification file.
+6.  Verify that the properties in your Vehicle specification hold using
+    the `vehicle` command.
+
+# Proving Neural Network Robustness
+
+## Neural Network Robustness as a Verification Property
+
+In this chapter we will learn about the problem that has received
+significant attention within the machine learning community: *the
+problem of robustness of neural networks to out-of-distribution shifts,
+also known as “robustness to adversarial attacks”.* The problem was
+famously raised by Christian Szegedy and his co-authors in 2013 in the
+paper [“Intriguing properties of neural
+networks”](src/chapters/https:/arxiv.org/pdf/1312.6199.pdf)
+
+So, here is the problem. Suppose we are given a data set $`\mathcal{X}`$
+for classification of images, it consists of pairs
+$`(\mathbf{x}, \mathbf{y})`$, where $`\mathbf{x} \in \mathbb{R}^n`$ is
+an input, and $`\mathbf{y} \in \mathbb{R}^m`$ is the desired output. It
+is assumed that the outputs $`\mathbf{y}`$ are generated from
+$`\mathbf{x}`$ by some function
+$`\mathcal{H} : \mathbb{R}^n → \mathbb{R}^m`$ and that $`\mathbf{x}`$ is
+drawn from some probability distribution over $`\mathbb{R}^n`$.
+
+Let us take as an example the famous [MNIST data set by LeCun et
+al.](src/chapters/https:/www.tensorflow.org/datasets/catalog/mnist) The
+images look like this:
+
+<figure>
+<img src="src/chapters/../assets/images/MNIST.jpeg"
+alt="Images from the MNIST data set" />
+<figcaption aria-hidden="true">Images from the MNIST data
+set</figcaption>
+</figure>
+
+As we have already discussed in the previous chapter, a neural network
+is a function $`f : \mathbb{R}^n → \mathbb{R}^m`$ parametrised by a set
+of weights $`\mathbf{w}`$. The goal of training is to use the dataset
+$`\mathcal{X}`$ to find weights $`\mathbf{w}`$ such that $`f`$
+approximates $`\mathcal{H}`$ well over input regions with high
+probability density.
+
+When we train a neural network to be highly accurate on both the
+training and the test sets, we emprically test:
+
+- how well the neural network can in principle approximate
+  $`\mathcal{H}`$ (we do this by measuring its accuracy on the training
+  set);
+- how well that learnt hypothesis generalises to yet unseen data (we do
+  this by measuring the accuracy on the test set).
+
+Coming to our example, if my neural network has a $`99`$ % accuracy on
+the MNIST data set, I should be satisfied that it learnt what a
+hand-written digit is. Szegedy et al were the first to show
+systematically that this is not the case: take the image on the left
+(below), which is classified with high confidence as “0”, apply
+perturbation on the middle to get the image on the right, and your
+neural network will give a $`94`$ % confidence that it sees a “5” on the
+right, even despite the fact that the image did not change the class
+(for the human eye):
+
+| Original MNIST Image | Perturbation | Resulting Perturbed Image |
+|:--:|:--:|:---|
+| ![Original MNIST Image](src/chapters/../assets/images/true.png) | ![Perturbation](src/chapters/../assets/images/eta.png) | ![Perturbed Image](src/chapters/../assets/images/adv.png) |
+
+This experiment can be replicated for any data set and any neural
+network, no matter how accurate it is.
+
+The root of the problem is: the image on the right no longer belongs to
+the probability distribution that the network has learnt (whether or not
+the image looks the same to a human observer). We could phrase it
+differently: an ideal probability distribiution $`\mathcal{H}`$ that is
+“learnt” by a “human” accounts not only for the images we obtained as
+part of the dataset $`\mathcal{X}`$, but also involves an implicit
+assumption that “semantically” similar images belong to the same class.
+
+The simplest way to capture this implicit assumption is to formulate a
+*verification property* that insists that all similar images (images
+within an $`\epsilon`$ distance of each other in $`\mathbb{R}^n`$) are
+classified similarly. This property is often called $`\epsilon`$-ball
+robusness. For every image in the dataset, we assume we can “draw” a
+small $`\epsilon`$-ball around it, and guarantee that within that
+$`\epsilon`$-ball classification of the network does not change much
+(the ball’s radius below is given by the chosen $`\epsilon`$):
+
+| $`\epsilon`$-ball around a number “7” in MNIST |
+|:--:|
+| ![epsilon-ball](src/chapters/../assets/images/neighbourhood-robustness.png) |
+
+Formally, we define an $`\epsilon`$-ball around an image
+$`\hat{\mathbf{x}}`$ as:
+
+``` math
+\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = [  \mathbf{x} \in \mathbb{R}^n: |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon ]
+```
+
+where $`| ... |`$ is a distance function (or $`L`$-norm) in
+$`\mathbb{R}^n`$, such as Euclidean distance or $`L_{\infty}`$-norm.
+
+It now remains to define the property “classification of $`f`$ does not
+change much”. The paper by [Casadio et
+al.](src/chapters/https:/arxiv.org/abs/2104.01396) summarises a few
+options for this definition. The simplest is the *Classification
+Robustness* that requires that all images within any given
+$`\epsilon`$-ball are classified as the same class. We will consider
+this property in detail, and will take a few other properties from
+Casadio et al. as an exercise.
+
+## Formalising $`\epsilon`$-ball robustness for MNIST networks in Vehicle
+
+We note that $`\epsilon`$-ball robustness as a verification property
+bears some similarity to the ACAS Xu example that we have already
+covered in Chapter 1. In particular, both verification properties impose
+constraints on the output regions of the neural networks, assuming some
+constraint on their input regions. (Both problems are therefore amenable
+to a range of interval propagation and abstract interpretation methods,
+see [this survey](src/chapters/https:/arxiv.org/abs/1812.08342) for
+further details.) From the point of view of the property specification,
+which is our main concern here, there are three main differences between
+these two examples:
+
+- ACAS Xu did not have to refer to a dataset $`\mathcal{X}`$;
+  $`\epsilon`$-ball robustness, however, is formulated relative to the
+  images given in the data set. We will see how *Vehicle* can be used to
+  handle properties that refer directly to the data sets.
+
+- MNIST, as many other data sets used in Computer Vision, has images
+  represented as 2D arrays. Such data sets often require Convolutional
+  Neural Networks (CNNs) that are best designed to deal with 2D and 3D
+  data. In terms of property specification, we will see *Vehicle*’s
+  support for 2D arrays, which comes for free with its general type
+  infrastructure.
+
+- Finally, the MNIST specification involves two parameters that we may
+  want to pass or infer at the compilation time rather than hard-code
+  within the spec. These are the $`\epsilon`$ and the number of data
+  points ($`\epsilon`$-balls) we wish to check (the number is at most
+  the size of the entire data set). We will see how such parameters are
+  defined and used in *Vehicle*.
+
+### 2D Arrays in Vehicle
+
+Starting a specification for MNIST data set follows the same pattern as
+we have seen in Chapter 1, only this time we declare inputs as 2D
+arrays:
+
+``` vehicle
+type Image = Tensor Rat [28, 28]
+type Label = Index 10
+```
+
+As before, we define valid inputs, this time making a mild adaptation to
+2D arrays and assuming all pixel values are normalised between 0 and 1:
+
+``` vehicle
+validImage : Image -> Bool
+validImage x = forall i j . 0 <= x ! i ! j <= 1
+```
+
+The output of the network is a score for each of the digits 0 to 9.
+
+``` vehicle
+@network
+classifier : Image -> Vector Rat 10
+```
+
+We note again the use of the syntax for `@network`, marking the place
+where *Vehicle* interacts with an external tool (this time most likely
+with Python Tensorflow).
+
+The classifier advises that input image `x` has label `i` if the score
+for label `i` is greater than the score of any other label `j`:
+
+``` vehicle
+advises : Image -> Label -> Bool
+advises x i = forall j . j != i => classifier x ! i > classifier x ! j
+```
+
+This completes the basic description if the data set and the model
+architecture in *Vehicle*. We are ready to define verification
+properties.
+
+### Definition of Robustness Around a Point
+
+First we define the parameter `epsilon` that will represent the radius
+of the balls that we verify. Note that we declare this as a parameter
+which allows the value of `epsilon` to be specified at compile time
+rather than be fixed in the specification. We again use the syntax `@`
+to communicate this information externally:
+
+``` vehicle
+@parameter
+epsilon : Rat
+```
+
+Next we define what it means for an image `x` to be in a ball of size
+epsilon. The definition below uses the $`L_{\infty}`$ norm, defined as:
+
+``` math
+|\mathbf{x}|_{\infty} = max (\mathbf{x})
+```
+
+where $`max (\mathbf{x})`$ computes the maximum element of
+$`\mathbf{x}`$. Below, we shortcut a bit the calculation of
+$`|\mathbf{x}|_{\infty}`$ being bounded by $`\epsilon`$ and simply
+require that all vector elements are bounded by $`\epsilon`$:
+
+``` vehicle
+boundedByEpsilon : Image -> Bool
+boundedByEpsilon x = forall i j . -epsilon <= x ! i ! j <= epsilon
+```
+
+Using the Eucledian distance would require a slightly more complicated
+definition, which we will do as an exercise.
+
+We now define what it means for the network to be robust around an image
+`x` that should be classified as `y`. Namely, we define that for any
+perturbation no greater than $`\epsilon`$, if the perturbed image is
+still a valid image then the network should still advise label `y` for
+the perturbed version of `x`.
+
+``` vehicle
+robustAround : Image -> Label -> Bool
+robustAround image label = forall pertubation .
+  let perturbedImage = image - pertubation in
+  boundedByEpsilon pertubation and validImage perturbedImage =>
+    advises perturbedImage label
+```
+
+Again, note the use of a quantifier `forall` that ranges over an
+infinite domain of images of type `Image`.
+
+## Definition of Robustness with Respect to a Dataset
+
+We first specify parameter `n` , which stands for the size of the
+training dataset. Unlike the earlier parameter `epsilon`, we set the
+`infer` option of the parameter `n` to ‘True’. This means that it does
+not need to be provided manually but instead will be automatically
+inferred by the compiler. In this case it will be inferred from the
+training datasets.
+
+``` vehicle
+@parameter(infer=True)
+n : Nat
+```
+
+We next declare two datasets, the training images and the corresponding
+training labels. Note that we use the previously declared parameter `n`
+to enforce that they are of the same size:
+
+``` vehicle
+@dataset
+trainingImages : Vector Image n
+
+@dataset
+trainingLabels : Vector Label n
+```
+
+Again we note the use of syntax that involves `@` flagging *Vehicle*’s
+connection with an external tool or object – in this case, the data set
+is defined externally.
+
+We then say that the network is robust *for this data set* if it is
+robust around every pair of input images and output labels. Note once
+again the use of the `foreach` keyword when quantifying over the index
+`i` in the dataset. Whereas `forall` would return a single `Bool`,
+`foreach` constructs a `Vector` of booleans, ensuring that *Vehicle*
+will report on the verification status of each image in the dataset
+separately. If `forall` was omitted, *Vehicle* would only report if the
+network was robust around *every* image in the dataset, a state of
+affairs which is unlikely to be true.
+
+``` vehicle
+@property
+robust : Vector Bool n
+robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
+```
+
+## Running the Verification Query
+
+In order to run *Vehicle*, we need to provide:
+
+- the specification file,
+- the network in ONNX format,
+- the data in idx format,
+- and the desired $`\epsilon`$ value.
+
+The tutorial files contain two Python scripts that show how to convert
+Tensorflow Neural Networks into *ONNX* format; and images – into `.idx`
+files. These are the formats expected by *Vehicle*. You can use the ones
+we provide, or generate your own. Having obtained these, the following
+command line will take care of verification of the network
+`mnist-classifier.onnx`, for data sets `images.idx` and `labels.idx` and
+$`\epsilon = 0.005`$:
+
+``` vehicle
+vehicle verify \
+  --specification examples/mnist-robustness/mnist-robustness.vcl \
+  --network classifier:examples/mnist-robustness/mnist-classifier.onnx \
+  --parameter epsilon:0.005 \
+  --dataset trainingImages:examples/mnist-robustness/images.idx \
+  --dataset trainingLabels:examples/mnist-robustness/labels.idx \
+  --verifier Marabou
+```
+
+For the first two images in your data set, the output will look as
+follows:
+
+``` vehicle
+Verifying properties:
+  robust [================================================] 9/9 queries complete
+  robust [================================================] 9/9 queries complete
+Result: true
+  robust: 2/2 verified
+    ✓ robust!0
+
+    ✓ robust!1
+```
+
+The reader may have guessed at this pont that, as we make $`\epsilon`$
+larger, fewer and fewer examples will staisfy the property. Chapter 3
+will look into methods that can be used to train networks to satisfy
+robustness for larger $`\epsilon`$.
+
+## Exercises
+
+### Exercise (⭑): Run the Chapter code
+
+As usual, your first task is to repeat the steps described in this
+chapter: download the *Vehicle* specification, the network, the data,
+and verify robustness of the given network on given data. All code is
+available from the `examples` section of the [tutorial
+repository](src/chapters/https:/github.com/vehicle-lang/vehicle-tutorial)
+
+### Exercise (⭑) : Experimenting with $`\epsilon`$-balls of different size
+
+Try experimenting with different values of $`\epsilon`$, for example,
+try $`\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5`$. Make conclusions.
+
+### Exercise (⭑⭑) : Getting a statistical evaluation of robustness with respect to the given data set, for various $`\epsilon`$s
+
+(*This exercise is technically very simple, but the required number of
+experiments may take a few hours to run. We recommend you run it at home
+rather than during the live exercise sessions*).
+
+The previous exercise could be transformed into a proper empirical
+evaluation of robustness of the model for the data set. To do this,
+include more than 2 images into your `idx` file. A script for generating
+`idx` files is available [in the supporting
+materials](src/chapters/https:/github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-complete).
+
+Assuming you created an `idx` file with, for example, 500 images, run
+*Vehicle* on this file, and collect statistics for
+$`\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5`$. You should be able to
+populate a table that looks like this:
+
+|  | $`\epsilon = 0.005`$ | $`\epsilon = 0.01`$ | $`\epsilon = 0.05`$ | $`\epsilon = 0.1`$ | $`\epsilon = 0.5`$ |
+|:--:|:--:|:--:|:--:|:--:|:---|
+| Success rate: | 100.0 % (500/500) | ?? % (???/500) | ?? % (???/500) | ? % (??/500) | 0 % (0/500) |
+
+This is your first proper empirical evaluation of the given neural
+network for the given data set! This kind of evaluation is reported in
+international competitoions such as
+[VNNComp](src/chapters/https:/github.com/stanleybak/vnncomp2023) and in
+research papers.
+
+Make conclusion about feasibility and success rates of $`\epsilon`$-ball
+robustness, and the speed with which verification success deteriorates
+with the growing $`\epsilon`$.
+
+### Exercise (⭑) : Strong Classification Robustness in Vehicle
+
+Using the same `.vcl` file as in all previous exercises, define and
+verify in *Vehicle* the propety of *Strong Classification Robustness*,
+that requires, for all $`\mathbf{x}`$ in the $`\epsilon`$-ball of
+$`\hat{\mathbf{x}}`$, that $`f(\mathbf{x})_i \leq \eta`$, for some small
+$`\eta`$. We now assemble the desired_strong classification robustness\_
+property definition:
+
+Given an $`\hat{\mathbf{x}} \in \mathcal{X}`$,
+
+``` math
+
+\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow f(\mathbf{x})_i \leq \eta
+```
+
+We refer the interested reader for a more detailed discussion of
+different robustness properties in:
+
+- Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen
+  Kokke, Guy Katz, Guy Amir, Idan Refaeli: Neural Network Robustness as
+  a Verification Property: A Principled Case Study. CAV (1) 2022:
+  219-231.
+
+- Xiaowei Huang, Daniel Kroening, Wenjie Ruan, James Sharp, Youcheng
+  Sun, Emese Thamo, Min Wu, Xinping Yi. A Survey of Safety and
+  Trustworthiness of Deep Neural Networks: Verification, Testing,
+  Adversarial Attack and Defence, and Interpretability. J. of Computer
+  Science Review, 2018.
+
+### Exercise (⭑⭑): Explore Other Definitions of Robustness
+
+Use *Vehicle* to define other forms of Robustness property from Casadio
+et al.
+
+*Please note: although the *Vehicle* language is rich enough to compile
+all the robustness definitions, not all definitions will be feasible for
+Marabou that can have only one occurence of a neural network per
+specification.*
+
+### Exercise (⭑⭑): Other Distances in Vehicle
+
+Re-define the *classification* and *standard robustness* properties by
+using some different notion of distance, e.g. the Euclidean distance,
+instead of the $`L_{\infty}`$ norm.
+
+*Please note: although the *Vehicle* language is rich and allows such
+extensions, not all specifications will be feasible for Marabou that
+works with linear real arithmetic.*
+
+### Exercise (⭑) Practicing to write property specifications
+
+To test your understanding of the robustness property, try completing
+the robustness verification in [this
+file](src/chapters/https:/github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-incomplete).
+
+### Exercise (⭑⭑⭑): Conduct a complete “training - verification” experiment from start to finish
+
+*This exercise can be hard or simple, depending how much help you get
+from the model solution provided as sources!*
+
+We will work with the [Fashion MNIST data
+set](src/chapters/https:/www.tensorflow.org/datasets/catalog/fashion_mnist).
+
+Either:
+
+- download the data set, train a model from scratch, generate `onnx` and
+  `idx` files; or
+- obtain the model and `idx` files directly from the directory with [the
+  supporting
+  materials](src/chapters/https:/github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/FMNIST)
+
+Once this is done, define the spec and verify its robustness. Experiment
+with different values of $`\epsilon`$ and different definitions of
+robustness.
+
+# Property-Driven Training
+
+## Motivation
+
+We finished the last chapter with a conjecture concerning diminishing
+robustness verification success with increasing values of $`\epsilon`$.
+Let us now see, using a concrete example, how soon the success rate
+declines.
+
+The last exercise of the previous chapter gave us a property
+specification for robustness of \`\`Fashion MNIST” models. We propose
+now to look into the statistics of verifying one of such models on 500
+examples from the data set. To obtain quicker verification times, let us
+use a Fashion MNIST model with one input layer of $`32`$ neurons, and
+one output layer of $`10`$ neurons (the tutorial files contain the model
+if you wish to check it). Running Vehicle, we obtain the following
+success rates:
+
+| $`\epsilon = 0.01`$ | $`\epsilon = 0.05`$ | $`\epsilon = 0.1`$ | $`\epsilon = 0.5`$ |
+|:--:|:--:|:--:|:---|
+| 82.6 % (413/500) | 29.8 % (149/500) | 3.8 % (19/500) | 0 % (0/500) |
+
+As we see in the table, verifiability of the property deteriorates
+quickly with growing $`\epsilon`$. Yet, for majority of practical
+applications, it is desirable to have a larger $`\epsilon`$, as this
+increases the chance that new yet unseen data points will fall within
+the verified subspaces of the input vector space.
+
+Can we re-train the neural network to be more robust within a desirable
+$`\epsilon`$? The long tradition of robustifying neural networks in
+machine learning has a few methods ready, for example, to re-train the
+networks with new data set that was augmented with images within the
+desired $`\epsilon`$-balls, or to generate adversarial examples (sample
+images closest to the decision boundary) within the given
+$`\epsilon`$-balls during training.
+
+Let us look closer into this.
+
+## Robustness Training
+
+### Data Augmentation
+
+Suppose we are given a data set
+$`\mathcal{D} =  \{(\mathbf{x}_1, y_1), \ldots , (\mathbf{x}_n, y_n)\}`$.
+Prior to training, we can generate new training data samples within
+$`\epsilon`$-balls of the existing data and label them with the same
+output as the original data. Then we can use our usual training methods
+with this new *augmented data set* (Shorten and Khoshgoftaar 2019).
+
+However, this method maybe problematic for verification purposes. Let us
+have a look at its effect, pictorially. Suppose this is the manifold
+that corresponds to $`\mathcal{D}`$ (crosses are the original data
+points, and circles are the $`\epsilon`$-balls around them):
+
+<figure>
+<img src="src/chapters/../assets/images/SR-vs-CR-2.png"
+alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+Remember that we sampled our new data from these $`\epsilon`$-balls. But
+suppose your true decision boundary runs over the manifold like this:
+
+<figure>
+<img src="src/chapters/../assets/images/SR-vs-CR-4.png"
+alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+We have a problem, because some of the data points we sampled from the
+suddenly have wrong labels!
+
+Actually, it maybe even worse. Depending how our data lies on the
+manifold, we may have even generated inconistent labelling. Here is the
+example when this happens:
+
+<figure>
+<img src="src/chapters/../assets/images/SR-vs-CR-5.png"
+alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+It seems data augmentation is not general enough for Vehicle, and only
+works correctly if strong assumptions about the underlying manifold are
+taken.
+
+### Adversarial Training
+
+It would be nice to somehow reflect the fact of proximity to the
+decision boundary in our training! The closer the point is to the
+decision boundary, the less certain the neural network should be about
+its class:
+
+<figure>
+<img src="src/chapters/../assets/images/SR-vs-CR-3.png"
+alt="Data Manifold for D" />
+<figcaption aria-hidden="true">Data Manifold for D</figcaption>
+</figure>
+
+However, using data labels as a method is unfit for the task. We cannot
+achieve the effect we are looking for with data augmentation. We have to
+modify our training algorithm instead (Goodfellow, Shlens, and Szegedy
+2015).
+
+### Loss Function
+
+Given a data set $`\mathcal{D}`$ and a function
+$`{f_{\theta}: \mathbb{R}^n \rightarrow \mathbb{R}^m}`$ with
+optimisation parameters $`\theta`$, a *loss function*
+
+``` math
+
+    \mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}
+```
+
+computes a penalty proportional to the difference between the output of
+$`f_{\theta}`$ on a training input $`\hat{\mathbf{x}}`$ and a desired
+output $`\mathbf{y}`$.
+
+The reader will find an excellent exposition of adversarial training in
+the tutorial by Kolter and Madry (2018).
+
+### Example: Cross-Entropy Loss
+
+Given a function $`{f_{\theta}: \mathbb{R}^n \rightarrow [0,1]^m}`$, the
+cross-entropy loss is defined as
+
+``` math
+
+    \mathcal{L}_{ce}(\hat{\mathbf{x}}, \mathbf{y})
+    =
+    - \Sigma_{i=1}^{m} \mathbf{y}_i \; log(f_{\theta}(\hat{\mathbf{x}})_i)
+```
+
+where $`\mathbf{y}_i`$ is the true probability for class $`i`$ and
+$`f_{\theta}(\hat{\mathbf{x}})_i`$ is the probability for class $`i`$ as
+predicted by $`f_{\theta}`$ when applied to $`\hat{\mathbf{x}}`$.
+
+### Adversarial Training for Robustness
+
+*Gradient descent* minimises loss
+$`\mathcal{L}(\hat{\mathbf{x}}, \mathbf{y})`$ between the predicted
+value $`f_{\theta}(\hat{\mathbf{x}})`$ and the true value
+$`\mathbf{y}`$, for each entry $`(\hat{\mathbf{x}}, \mathbf{y})`$ in
+$`\mathcal{D}`$. It thus solves the optimisation problem:
+
+``` math
+
+    \min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y})
+```
+
+For *adversarial training*, we instead minimise the loss with respect to
+the worst-case perturbation of each sample in $`\mathcal{D}`$. We
+replace the standard training objective with:
+
+``` math
+
+    \min_{\theta} [ \max_{\mathbf{x} : |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon} \mathcal{L}(\mathbf{x}, \mathbf{y})]
+```
+
+The inner maximisation is done by *projected gradient descent* (PGD),
+that \`\`projects” the gradient of $`\mathcal{L}`$ on
+$`\hat{\mathbf{x}}`$ in order to perturb it and get the worst
+$`\mathbf{x}`$.
+
+### Adversarial Training and Verification
+
+Adversarial training is almost the right solution! Its main limitation
+turns out to be the logical property it optimises for. Recall that we
+may encode an arbitrary property in Vehicle. However, as we discovered
+in (Casadio et al. 2022), the projected gradient descent can only
+optimise for one concrete property. Recall the property of
+$`\epsilon`$-ball robustness was defined as:
+$`\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon). robust(f(\mathbf{x}))`$.
+It turns out that adversarial training determines the definition of
+*robust* to be $`|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta`$.
+
+## Logical Loss Functions
+
+<div class="epigraph">
+
+> Is there any way to generate neural network optimisers for any given
+> logical property?
+
+</div>
+
+The main idea is that we would like to co-opt the same gradient-descent
+algorithm that is used to train the network to fit the data to also
+train the network to obey the specification.
+
+### Logical Loss Function: Simple Example
+
+Consider the very simple example specification:
+
+``` vehicle
+@network
+f : Vector Rat 1 -> Vector Rat 1
+
+@property
+greaterThan2 : Bool
+greaterThan2 = f [ 0 ] ! 0 > 2
+```
+
+This statement is either true or false, as shown in the left graph
+below:
+
+<figure>
+<img src="src/chapters/../assets/images/boolean-loss.png"
+alt="Boolean loss" />
+<figcaption aria-hidden="true">Boolean loss</figcaption>
+</figure>
+
+However, what if instead, we converted all `Bool` values to `Rat`, where
+a value greater than `0` indicated false and a value less than `0`
+indicated true? We could then rewrite the specification as:
+
+``` vehicle
+greaterThan2 : Rat
+greaterThan2 = f [ 0 ] ! 0 - 2
+```
+
+If we then replot the graph we get the following:
+
+<figure>
+<img src="src/chapters/../assets/images/real-loss.png"
+alt="Rational loss" />
+<figcaption aria-hidden="true">Rational loss</figcaption>
+</figure>
+
+Now we have a useful gradient, as successfully minimising
+`f [ 0 ] ! 0 - 2` will result in the property `greaterThan2` becoming
+true.
+
+This is the essence of logical loss functions: convert all booleans and
+operations over booleans into equivalent numeric operations that are
+differentiable and whose gradient’s point in the right direction.
+
+### Differentiable Logics
+
+Traditionally, translations from a given logical syntax to a loss
+function are known as “differentiable logics”, or DLs. One of the first
+attempts to translate propositional logic specifications to loss
+functions was given in [(Xu et al.
+2018)](src/chapters/http:/proceedings.mlr.press/v80/xu18h.html) and was
+generalised to a fragment of first-order logic in [(Fischer et al.
+2019)](src/chapters/http:/proceedings.mlr.press/v97/fischer19a.html).
+Later, this work was complemented by giving a fuzzy interpretation to DL
+by [(Krieken, Acar, and Harmelen
+2022)](src/chapters/https:/doi.org/10.1016/j.artint.2021.103602) and
+[(Slusarz et al. 2023)](src/chapters/https:/arxiv.org/abs/2303.10650)
+proposed generalisation for the syntax and semantics of DL, with a view
+of encoding all previously presented DLs in one formal system, and
+comparing their theoretical properties.
+
+Vehicle has several different differentiable logics from the literature
+available, but will not go into detail about how they work here.
+
+Instead, we explain the main idea by means of an example. Let us define
+a very simple differentiable logic on a toy language
+
+``` math
+
+    p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p
+```
+
+One possible DL (called *Product DL* in (Krieken, Acar, and Harmelen
+2022)) for it can be defined as:
+
+``` math
+
+    \mathcal{I}(a_1 \leq a_2) := 1-\max(\frac{a_1 -a_2}{a_1 + a_2}, 0)
+```
+
+``` math
+
+    \mathcal{I}(p_1 \land p_2) := \mathcal{I}(p_1) * \mathcal{I}(p_2)
+```
+
+``` math
+
+    \mathcal{I}(p_1 \Rightarrow p_2) := 1 - \mathcal{I}(p_1) + \mathcal{I}(p_1) * \mathcal{I}(p_2)
+```
+
+An example of this translation is:
+
+``` math
+
+    \mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta) =
+    1 - \max (\dfrac{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| - \delta}{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| + \delta},0)
+```
+
+## Logical Loss Functions in Vehicle
+
+We now have all the necessary building blocks to define Vehicle approach
+to property-driven training. We use the formula:
+
+``` math
+
+    \text{Vehicle Training} = \text{Differentiable Logics} + \text{Projected Gradient Descent}
+```
+
+In Vehicle, given a property
+$`\forall \mathbf{x}. \mathcal{P}(\mathbf{x}) \Rightarrow \mathcal{S}(\mathbf{x})`$,
+we replace the usual PGD training objective with
+
+``` math
+
+    \min_{\theta} [ \max_{\mathbf{x} \in \mathbb{H}_{\mathcal{P}(\mathbf{x})}} \mathcal{L}_{\mathcal{S}(\mathbf{x})}(\mathbf{x}, \mathbf{y})]
+```
+
+where
+
+- $`\mathbb{H}_{\mathcal{P}(\mathbf{x})}`$ is a hyper-shape that
+  corresponds to the pre-condition $`\mathcal{P}(\mathbf{x})`$ and
+- $`\mathcal{L}_{\mathcal{S}(\mathbf{x})}`$ is obtained by
+  DL-translation of the post-condition $`\mathcal{S}(\mathbf{x})`$.
+
+Let us see how this works for the following definition of robustness:
+
+``` math
+
+    \forall \mathbf{x}. |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon \Rightarrow |f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta
+```
+
+The definition of the optimisation problem above instantiates by taking:
+
+- $`\mathbb{H}_{\mathcal{P}(\mathbf{x})}`$ given by the
+  $`\epsilon`$-cube around $`\hat{\mathbf{x}}`$ and
+- given any DL translation $`\mathcal{I}`$, the loss function
+  ``` math
+
+      \mathcal{L}_{\mathcal{S}(\mathbf{x})} = \mathcal{I} ( || f(\mathbf{x}) - f(\hat{\mathbf{x}})|| \leq \delta)
+  ```
+
+## Coding Example: generating a logical loss functions for mnist-robustness in Vehicle
+
+To generate a logical loss function usable in Python, we will use
+Vehicle’s Python bindings that come pre-installed.
+
+We open a new Python file and write:
+
+``` python
+from vehicle_lang.compile import Target, to_python
+
+spec = to_python(
+    "mnist-robustness.vcl",
+    target=Target.LOSS_DL2,
+    samplers={"pertubation": sampler_for_pertubation},
+)
+
+robust_loss_fn = spec["robust"]
+```
+
+which generates the loss function representing the logical loss function
+for the property `robust`.
+
+This can then be used in a standard training loop:
+
+``` python
+model = tf.Sequential([tf.Input(shape=(28,28)), tf.Dense(units=28), tf.Output(units=10)])
+
+for epoch in range(num_epochs):
+    for x_batch_train, y_batch_train in train_dataset:
+        with tf.GradientTape() as tape:
+            # Calculate standard cross entropy loss
+            outputs = model(x_batch_train, training=True)
+            ce_loss_value = ce_batch_loss(y_batch_train, outputs)
+
+            # Calculate the robustness loss
+            robust_loss_value = robust_loss_fn(
+                n=len(x_batch_train),
+                classifier=model,
+                epsilon=0.001,
+                trainingImages=x_batch_train,
+                trainingLabels=y_batch_train,
+            )
+            weighted_loss = 0.5 * ce_loss_value + 0.5 * robust_loss_value
+
+        grads = tape.gradient(weighted_loss, model.trainable_weights)
+        optimizer.apply_gradients(zip(grads, model.trainable_weights))
+```
+
+# Exporting to Agda
+
+## Motivation
+
+In this chapter, we will look at how to export a Vehicle specification
+to Agda. Why is this useful? In the previous chapters we’ve been
+studying about how to verify neural networks in isolation. However,
+frequently neural networks are used as a part of a larger program whose
+correctness we would also like to verify. Vehicle is clearly not
+designed to reason about the correctness of arbitrary programs, and
+therefore we need to link to tools that are. Agda, a powerful
+interactive theorem prover, is one such tool and by exporting Vehicle
+specifications to Agda code we can construct safety proofs for software
+systems whose correctness depends on the correctness of a neural
+network.
+
+## An example
+
+As an example we will use a modified version of the verification problem
+presented by Boyer, Green and Moore (Boyer, Green, and Moore 1990). In
+this scenario an autonomous vehicle is travelling along a straight road
+of width 6 parallel to the x-axis, with a varying cross-wind that blows
+perpendicular to the x-axis. The vehicle has an imperfect sensor that it
+can use to get a (possibly noisy) reading on its position on the y-axis,
+and can change its velocity on the y-axis in response. The car’s
+controller takes in both the current sensor reading and the previous
+sensor reading and its goal is to keep the car on the road.
+
+<figure>
+<img src="src/chapters/../assets/images/car-model.svg"
+alt="Car model" />
+<figcaption aria-hidden="true">Car model</figcaption>
+</figure>
+
+Given this, the aim is to prove the following theorem:
+
+*Theorem 1*: assuming that the wind-speed can shift by no more than 1
+m/s and that the sensor is never off by more than 0.25 m then the car
+will never leave the road.
+
+This safety property is not just a property of the neural network, but
+is instead a temporal property about the model of the entire system,
+e.g. the car, the road, the physics of the system.
+
+After analysing the system, it turns out that this theorem will be
+satisfied if the car controller $`f`$ satisfies the property that if the
+absolute value of the input sensor readings $`x1`$ and $`x2`$ are less
+than 3.25 then the absolute value of $`f [x1, x2] + 2 * x1 - x2`$ should
+be less than 1.25.
+
+We can encode this property in Vehicle as follows:
+
+``` vehicle
+type InputVector = Tensor Rat [2]
+
+currentSensor  = 0
+previousSensor = 1
+
+@network
+controller : InputVector -> Tensor Rat [1]
+
+safeInput : InputVector -> Bool
+safeInput x = forall i . -3.25 <= x ! i <= 3.25
+
+safeOutput : InputVector -> Bool
+safeOutput x =
+  -1.25 <
+    controller x !
+      0 + 2 * (x ! currentSensor) - (x ! previousSensor) < 1.25
+
+@property
+safe : Bool
+safe = forall x . safeInput x => safeOutput x
+```
+
+A neural network controller `controller.onnx` can be verified against
+the specification by running the following command:
+
+``` bash
+vehicle verify \
+  --specification spec.vcl \
+  --network controller:controller.onnx \
+  --verifier Marabou \
+  --cache controller-result
+```
+
+where the last argument tells Vehicle where to write out the result of
+the verification which will be used by Agda in the next step.
+
+Assuming this property holds, we can export the specification from the
+cache as follows:
+
+``` bash
+vehicle export \
+  --target Agda \
+  --cache controller-result \
+  --output WindControllerSpec.agda
+```
+
+which will generate an Agda file:
+
+``` agda
+{-# OPTIONS --allow-exec #-}
+
+open import Vehicle
+open import Vehicle.Utils
+open import Vehicle.Data.Tensor
+open import Data.Product
+open import Data.Integer as ℤ using (ℤ)
+open import Data.Rational as ℚ using (ℚ)
+open import Data.Fin as Fin using (Fin; #_)
+open import Data.List.Base
+
+module WindControllerSpec where
+
+InputVector : Set
+InputVector = Tensor ℚ (2 ∷ [])
+
+currentSensor : Fin 2
+currentSensor = # 0
+
+previousSensor : Fin 2
+previousSensor = # 1
+
+postulate controller : InputVector → Tensor ℚ (1 ∷ [])
+
+SafeInput : InputVector → Set
+SafeInput x =
+  ∀ i → ℚ.- (ℤ.+ 13 ℚ./ 4) ℚ.≤ x i × x i ℚ.≤ ℤ.+ 13 ℚ./ 4
+
+SafeOutput : InputVector → Set
+SafeOutput x =
+  ℚ.- (ℤ.+ 5 ℚ./ 4) ℚ.<
+    (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor)
+    ⊖ x previousSensor
+    × (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor)
+    ⊖ x previousSensor ℚ.< ℤ.+ 5 ℚ./ 4
+
+abstract
+  safe : ∀ x → SafeInput x → SafeOutput x
+  safe = checkSpecification record
+    {
+      verificationFolder =
+        "examples/windController/verificationResult"
+    }
+```
+
+This Agda file can then be imported and used by the larger proof of
+correctness for the whole system. There is not space to replicate the
+full proof here, but it can be found
+[here](src/chapters/https:/github.com/vehicle-lang/vehicle/blob/dev/examples/windController/agdaProof/SafetyProof.agda).
+
+# Bibliography
+
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
+
+<div id="ref-Akbarpour2009" class="csl-entry">
+
+Akbarpour, Behzad, and Lawrence Charles Paulson. 2009. “MetiTarski: An
+Automatic Theorem Prover for Real-Valued Special Functions.” *Journal of
+Automated Reasoning* 44 (3): 175–205.
+
+</div>
+
+<div id="ref-PGL-051" class="csl-entry">
+
+Albarghouthi, Aws. 2021. “Introduction to Neural Network Verification.”
+*Foundations and Trends® in Programming Languages* 7 (1–2): 1–157.
+<https://doi.org/10.1561/2500000051>.
+
+</div>
+
+<div id="ref-BastaniILVNC16" class="csl-entry">
+
+Bastani, Osbert, Yani Ioannou, Leonidas Lampropoulos, Dimitrios
+Vytiniotis, Aditya V. Nori, and Antonio Criminisi. 2016. “Measuring
+Neural Net Robustness with Constraints.” In *Advances in Neural
+Information Processing Systems 29: Annual Conference on Neural
+Information Processing Systems 2016, December 5-10, 2016, Barcelona,
+Spain*, edited by Daniel D. Lee, Masashi Sugiyama, Ulrike von Luxburg,
+Isabelle Guyon, and Roman Garnett, 2613–21.
+<https://proceedings.neurips.cc/paper/2016/hash/980ecd059122ce2e50136bda65c25e07-Abstract.html>.
+
+</div>
+
+<div id="ref-BotoevaKKLM20" class="csl-entry">
+
+Botoeva, Elena, Panagiotis Kouvaros, Jan Kronqvist, Alessio Lomuscio,
+and Ruth Misener. 2020. “Efficient Verification of ReLU-Based Neural
+Networks via Dependency Analysis.” In *The Thirty-Fourth AAAI Conference
+on Artificial Intelligence, AAAI 2020, the Thirty-Second Innovative
+Applications of Artificial Intelligence Conference, IAAI 2020, the Tenth
+AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI
+2020, New York, NY, USA, February 7-12, 2020*, 3291–99. AAAI Press.
+<https://ojs.aaai.org/index.php/AAAI/article/view/5729>.
+
+</div>
+
+<div id="ref-boyer1990use" class="csl-entry">
+
+Boyer, Robert S, Milton W Green, and J Strother Moore. 1990. “The Use of
+a Formal Simulator to Verify a Simple Real Time Control Program.” In
+*Beauty Is Our Business*, 54–66. Springer.
+
+</div>
+
+<div id="ref-casadio2021property" class="csl-entry">
+
+Casadio, Marco, Matthew L. Daggitt, Ekaterina Komendantskaya, Wen Kokke,
+Daniel Kienitz, and Rob Stewart. 2021. “Property-Driven Training: All
+You (n) Ever Wanted to Know About.” *arXiv Preprint arXiv:2104.01396*.
+
+</div>
+
+<div id="ref-CasadioKDKKAR22" class="csl-entry">
+
+Casadio, Marco, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen Kokke,
+Guy Katz, Guy Amir, and Idan Refaeli. 2022. “Neural Network Robustness
+as a Verification Property: A Principled Case Study.” In *Computer Aided
+Verification - 34th International Conference, CAV 2022, Haifa, Israel,
+August 7-10, 2022, Proceedings, Part I*, edited by Sharon Shoham and
+Yakir Vizel, 13371:219–31. Lecture Notes in Computer Science. Springer.
+[https://doi.org/10.1007/978-3-031-13185-1\\11](https://doi.org/10.1007/978-3-031-13185-1\_11).
+
+</div>
+
+<div id="ref-FischerBDGZV19" class="csl-entry">
+
+Fischer, Marc, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce
+Zhang, and Martin T. Vechev. 2019. “DL2: Training and Querying Neural
+Networks with Logic.” In *Proceedings of the 36th International
+Conference on Machine Learning, ICML 2019, 9-15 June 2019, Long Beach,
+California, USA*, edited by Kamalika Chaudhuri and Ruslan Salakhutdinov,
+97:1931–41. Proceedings of Machine Learning Research. PMLR.
+<http://proceedings.mlr.press/v97/fischer19a.html>.
+
+</div>
+
+<div id="ref-GoodfellowSS14" class="csl-entry">
+
+Goodfellow, Ian J., Jonathon Shlens, and Christian Szegedy. 2015.
+“Explaining and Harnessing Adversarial Examples.” In *3rd International
+Conference on Learning Representations, ICLR 2015, San Diego, CA, USA,
+May 7-9, 2015, Conference Track Proceedings*, edited by Yoshua Bengio
+and Yann LeCun.
+
+</div>
+
+<div id="ref-HuangKRSSTWY20" class="csl-entry">
+
+Huang, Xiaowei, Daniel Kroening, Wenjie Ruan, James Sharp, Youcheng Sun,
+Emese Thamo, Min Wu, and Xinping Yi. 2020. “A Survey of Safety and
+Trustworthiness of Deep Neural Networks: Verification, Testing,
+Adversarial Attack and Defence, and Interpretability.” *Comput. Sci.
+Rev.* 37: 100270. <https://doi.org/10.1016/j.cosrev.2020.100270>.
+
+</div>
+
+<div id="ref-HuangKWW17" class="csl-entry">
+
+Huang, Xiaowei, Marta Kwiatkowska, Sen Wang, and Min Wu. 2017. “Safety
+Verification of Deep Neural Networks.” In *Computer Aided Verification -
+29th International Conference, CAV 2017, Heidelberg, Germany, July
+24-28, 2017, Proceedings, Part I*, edited by Rupak Majumdar and Viktor
+Kuncak, 10426:3–29. Lecture Notes in Computer Science. Springer.
+[https://doi.org/10.1007/978-3-319-63387-9\\1](https://doi.org/10.1007/978-3-319-63387-9\_1).
+
+</div>
+
+<div id="ref-IvanovWAPL19" class="csl-entry">
+
+Ivanov, Radoslav, James Weimer, Rajeev Alur, George J. Pappas, and Insup
+Lee. 2019. “Verisig: Verifying Safety Properties of Hybrid Systems with
+Neural Network Controllers.” In *Proceedings of the 22nd ACM
+International Conference on Hybrid Systems: Computation and Control,
+HSCC 2019, Montreal, QC, Canada, April 16-18, 2019*, edited by Necmiye
+Ozay and Pavithra Prabhakar, 169–78. ACM.
+<https://doi.org/10.1145/3302504.3311806>.
+
+</div>
+
+<div id="ref-katz2017reluplex" class="csl-entry">
+
+Katz, Guy, Clark Barrett, David L Dill, Kyle Julian, and Mykel J
+Kochenderfer. 2017. “Reluplex: An Efficient SMT Solver for Verifying
+Deep Neural Networks.” In *International Conference on Computer Aided
+Verification*, 97–117. Springer.
+
+</div>
+
+<div id="ref-katz2019marabou" class="csl-entry">
+
+Katz, Guy, Derek A Huang, Duligur Ibeling, Kyle Julian, Christopher
+Lazarus, Rachel Lim, Parth Shah, et al. 2019. “The Marabou Framework for
+Verification and Analysis of Deep Neural Networks.” In *International
+Conference on Computer Aided Verification*, 443–52. Springer.
+
+</div>
+
+<div id="ref-KM18" class="csl-entry">
+
+Kolter, Zico, and Aleksander Madry. 2018. “Adversarial Robustness -
+Theory and Practice.”
+
+</div>
+
+<div id="ref-KriekenAH22" class="csl-entry">
+
+Krieken, Emile van, Erman Acar, and Frank van Harmelen. 2022. “Analyzing
+Differentiable Fuzzy Logic Operators.” *Artif. Intell.* 302: 103602.
+<https://doi.org/10.1016/j.artint.2021.103602>.
+
+</div>
+
+<div id="ref-LiuALSBK21" class="csl-entry">
+
+Liu, Changliu, Tomer Arnon, Christopher Lazarus, Christopher A. Strong,
+Clark W. Barrett, and Mykel J. Kochenderfer. 2021. “Algorithms for
+Verifying Deep Neural Networks.” *Found. Trends Optim.* 4 (3-4):
+244–404. <https://doi.org/10.1561/2400000035>.
+
+</div>
+
+<div id="ref-mueller2023abstract" class="csl-entry">
+
+Müller, Mark Niklas, Marc Fischer, Robin Staab, and Martin T. Vechev.
+2023. “Abstract Interpretation of Fixpoint Iterators with Applications
+to Neural Networks.” In *PLDI ’23: 44nd ACM SIGPLAN International
+Conference on Programming Language Design and Implementation, Orlando,
+Florida, United States June 17-21, 2023*. ACM.
+<https://doi.org/10.1145/3591252>.
+
+</div>
+
+<div id="ref-muller2022prima" class="csl-entry">
+
+Müller, Mark Niklas, Gleb Makarchuk, Gagandeep Singh, Markus Püschel,
+and Martin Vechev. 2022. “PRIMA: General and Precise Neural Network
+Certification via Scalable Convex Hull Approximations.” *Proceedings of
+the ACM on Programming Languages* 6 (POPL): 1–33.
+
+</div>
+
+<div id="ref-PT10" class="csl-entry">
+
+Pulina, Luca, and Armando Tacchella. 2010. “An Abstraction-Refinement
+Approach to Verification of Artificial Neural Networks.” In *Computer
+Aided Verification (CAV’23)*, edited by Tayssir Touili, Byron Cook, and
+Paul Jackson, 243–57. Berlin, Heidelberg: Springer Berlin Heidelberg.
+
+</div>
+
+<div id="ref-SK19" class="csl-entry">
+
+Shorten, C., and T. M. Khoshgoftaar. 2019. “A Survey on Image Data
+Augmentation for Deep Learning.” *J. Big Data* 6 (60).
+
+</div>
+
+<div id="ref-singh2019abstract" class="csl-entry">
+
+Singh, Gagandeep, Timon Gehr, Markus Püschel, and Martin Vechev. 2019.
+“An Abstract Domain for Certifying Neural Networks.” *Proceedings of the
+ACM on Programming Languages* 3 (POPL): 1–30.
+
+</div>
+
+<div id="ref-SlusarzKDSS23" class="csl-entry">
+
+Slusarz, Natalia, Ekaterina Komendantskaya, Matthew L. Daggitt, Robert
+J. Stewart, and Kathrin Stark. 2023. “Logic of Differentiable Logics:
+Towards a Uniform Semantics of DL.” In *LPAR 2023: Proceedings of 24th
+International Conference on Logic for Programming, Artificial
+Intelligence and Reasoning, Manizales, Colombia, 4-9th June 2023*,
+edited by Ruzica Piskac and Andrei Voronkov, 94:473–93. EPiC Series in
+Computing. EasyChair. <https://doi.org/10.29007/c1nt>.
+
+</div>
+
+<div id="ref-szegedy2013intriguing" class="csl-entry">
+
+Szegedy, Christian, Wojciech Zaremba, Ilya Sutskever, Joan Bruna,
+Dumitru Erhan, Ian Goodfellow, and Rob Fergus. 2013. “Intriguing
+Properties of Neural Networks.” In *International Conference on Learning
+Representations*. <http://arxiv.org/abs/1312.6199>.
+
+</div>
+
+<div id="ref-wang2021beta" class="csl-entry">
+
+Wang, Shiqi, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh,
+and J Zico Kolter. 2021. “Beta-CROWN: Efficient Bound Propagation with
+Per-Neuron Split Constraints for Complete and Incomplete Neural Network
+Verification.” *Advances in Neural Information Processing Systems* 34.
+
+</div>
+
+<div id="ref-XuZFLB18" class="csl-entry">
+
+Xu, Jingyi, Zilu Zhang, Tal Friedman, Yitao Liang, and Guy Van den
+Broeck. 2018. “A Semantic Loss Function for Deep Learning with Symbolic
+Knowledge.” In *Proceedings of the 35th International Conference on
+Machine Learning, ICML 2018, Stockholmsmässan, Stockholm, Sweden, July
+10-15, 2018*, edited by Jennifer G. Dy and Andreas Krause, 80:5498–5507.
+Proceedings of Machine Learning Research. PMLR.
+<http://proceedings.mlr.press/v80/xu18h.html>.
+
+</div>
+
+<div id="ref-zhang2022general" class="csl-entry">
+
+Zhang, Huan, Shiqi Wang, Kaidi Xu, Linyi Li, Bo Li, Suman Jana, Cho-Jui
+Hsieh, and J Zico Kolter. 2022. “General Cutting Planes for
+Bound-Propagation-Based Neural Network Verification.” *Advances in
+Neural Information Processing Systems*.
+
+</div>
+
+</div>
