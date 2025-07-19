@@ -22,6 +22,33 @@ The `gfm` command additionally requires [Pandoc](https://pandoc.org).
 
 The `pdf` command additionally requires [Pandoc](https://pandoc.org), [Python](https://www.python.org/downloads/) with the [Pygments](https://pypi.org/project/Pygments/) and [`vehicle_lang`](https://pypi.org/project/vehicle-lang/) packages, and a full LaTeX installation.
 
+# Layout
+
+```sh
+.
+├── public                   # public assets (copied to site without changes)
+├── src                      #
+│   ├── assets               # private assets (copied to site only when used)
+│   │   ├── css              # style sheets
+│   │   ├── images           # image files
+│   │   └── bibliography.bib # bibliography
+│   ├── chapters             # tutorial chapters
+│   ├── components           # HTML layout components
+│   ├── layouts              # HTML layout files
+│   ├── pages                # pages
+│   │   ├── chapters         # HTML rendering for chapters
+│   │   └── index.mdx        # landing page
+│   ├── plugins              # plugins for rendering
+│   ├── content.config.ts    # HTML content collection for chapters
+│   └── site.ts              # HTML metadata and helper functions
+├── book.md                  # entry point for GFM and PDF formats
+├── book.gfm.yaml            # Pandoc configuration for GFM format
+├── book.pdf.yaml            # Pandoc configuration for PDF format
+├── CONTRIBUTING.md          # You are here!
+├── package.json             # NPM package metadata and dependencies
+└── README.md                # generated output from GFM command
+```
+
 # Markdown
 
 ## Document metadata
