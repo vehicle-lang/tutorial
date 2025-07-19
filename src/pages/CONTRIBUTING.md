@@ -7,12 +7,14 @@ title: Getting Started
 
 All commands are run from the root of the project, from a terminal:
 
-| Command           | Action                                       |
-| :---------------- | :------------------------------------------- |
-| `npm install`     | Installs dependencies                        |
-| `npm run dev`     | Starts local dev server at `localhost:4321`  |
-| `npm run build`   | Build your production site to `./dist/`      |
-| `npm run preview` | Preview your build locally, before deploying |
+| Command           | Action                                              |
+| :---------------- | :-------------------------------------------------- |
+| `npm install`     | Installs dependencies                               |
+| `npm run dev`     | Starts local dev server at `localhost:4321`         |
+| `npm run build`   | Build the tutorial as HTML to `./dist/`             |
+| `npm run preview` | Preview your build locally, before deploying        |
+| `npm run gfm`     | Build the tutorial as GFM to `README.md`            |
+| `npm run pdf`     | Build the tutorial as PDF to `vehicle-tutorial.pdf` |
 
 # Markdown
 
