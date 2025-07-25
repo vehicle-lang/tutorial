@@ -49,8 +49,3 @@ hyperRectangle x = forall i . vectorMin ! i  <= x ! i <= vectorMax ! i
 @property
 property : Bool
 property = forall x . hyperRectangle x =>  advises x pos
-
-
-
-
-

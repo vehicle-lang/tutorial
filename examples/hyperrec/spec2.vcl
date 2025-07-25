@@ -55,22 +55,22 @@ inputTranspose = foreach i . foreach j . inputs ! j ! i
 -- identity : Tensor Rat [2, 3]
 -- identity = [ [1, 0, 1],  [0, 1, 0] ]
 
--- vectorMin : Tensor Rat [inputSize, 5]  -> Index 5 -> Bool  
--- vectorMin x i = forall j k. x ! j ! i  <= x ! j ! k 
+-- vectorMin : Tensor Rat [inputSize, 5]  -> Index 5 -> Bool
+-- vectorMin x i = forall j k. x ! j ! i  <= x ! j ! k
 
 vectorMin :  Index 30 -> Index 5 -> Bool
-vectorMin i j  = forall k . inputs ! j ! i  <= inputs ! j ! k 
+vectorMin i j  = forall k . inputs ! j ! i  <= inputs ! j ! k
 
 vectorMax :  Index 30  ->  Index 5 -> Bool
-vectorMax i j = forall k . inputs ! j ! k  <= inputs ! j ! i 
+vectorMax i j = forall k . inputs ! j ! k  <= inputs ! j ! i
 
 @property
 property : Bool
-property = forall x. forall j i l k.  validInput x and vectorMin i j and vectorMax l k and x ! i  >= inputs ! j ! i and inputs ! k ! l >=  x ! l =>  advises x pos 
+property = forall x. forall j i l k.  validInput x and vectorMin i j and vectorMax l k and x ! i  >= inputs ! j ! i and inputs ! k ! l >=  x ! l =>  advises x pos
 
 {-
-vectorMax : Vector Rat 5 -> Index 5 -> Vector Bool 5   
-vectorMax x i = foreach j . x ! j <= x ! i 
+vectorMax : Vector Rat 5 -> Index 5 -> Vector Bool 5
+vectorMax x i = foreach j . x ! j <= x ! i
 
 vectorOut : Tensor Rat [inputSize, n] -> Vector Rat inputSize
 vectorOut x = foreach i . x ! i -}
@@ -80,13 +80,13 @@ vectorOut x = foreach i . x ! i -}
 -- property = True
 
 {-
-vectorMax :  InputVector                       
+vectorMax :  InputVector
 vectorMax = foreach i . 1 -- maxList (inputTranspose ! i)
 
-vectorMin : InputVector         
+vectorMin : InputVector
 vectorMin = foreach i . 0 --minList (inputTranspose ! i)
 
-vectorMax :  InputVector                       
+vectorMax :  InputVector
 vectorMax = foreach i . 1 -- maxList (inputTranspose ! i)
 
 hyperRectangle : InputVector -> Bool
@@ -94,11 +94,5 @@ hyperRectangle x = forall i . vectorMin ! i  <= x ! i <= vectorMax ! i
 
 @property
 property : Bool
-property = forall x . hyperRectangle x =>  advises x pos 
+property = forall x . hyperRectangle x =>  advises x pos
 -}
-
-
-
-
-
-
