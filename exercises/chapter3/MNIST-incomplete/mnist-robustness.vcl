@@ -21,7 +21,7 @@ validImage x = -- [your answer here]
 -- Declare the network used to classify images. The output of the network is a
 -- score for each of the digits 0 to 9.
 @network
-classifier : Image -> Vector Rat 10
+classifier : Image -> Tensor Real [10]
 
 -- The classifier advises that input image `x` has label `i` if the score
 -- for label `i` is greater than the score of any other label `j`.
@@ -35,7 +35,7 @@ advises x i = -- [your answer here]
 -- First we define the parameter `epsilon` that will represent the radius of the ball that we want the network to be robust in. Note that we declare this as a parameter which allows the value of `epsilon` to be specified at compile time rather than be fixed in the specification.
 
 @parameter
-epsilon : Rat
+epsilon : Real
 
 -- Next we define what it means for an image `x` to be in a ball of
 -- size epsilon around 0.

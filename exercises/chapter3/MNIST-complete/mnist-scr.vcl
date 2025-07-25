@@ -5,7 +5,7 @@
 -- Inputs and outputs
 
 -- Define the type for our input images
-type Image = Tensor Rat [28, 28]
+type Image = Tensor Real [28, 28]
 
 -- The type of the output labels
 -- i.e a number between 0 and 9, one for each digit
@@ -22,10 +22,10 @@ validImage x = forall i j . 0 <= x ! i ! j <= 1
 -- Declare the network used to classify images. The output of the network is a
 -- score for each of the digits 0 to 9.
 @network
-classifier : Image -> Vector Rat 10
+classifier : Image -> Tensor Real [10]
 
 @parameter
-eta : Rat
+eta : Real
 
 -- The classifier advises that input image `x` has label `i` if the score
 -- for label `i` is greater than the specified value `eta`.
@@ -36,10 +36,10 @@ advises x i = classifier x ! i > eta
 -- But that may or may not be the case in reality!!!
 -- You would rather scale the values directly in Vehicle, that is, define:
 
-scalingValue : Image -> Rat
+scalingValue : Image -> Real
 scalingValue x = fold (\x y -> x + y) 0 (classifier x)
 
-normalisedClassifierOutput : Image -> Label -> Rat
+normalisedClassifierOutput : Image -> Label -> Real
 normalisedClassifierOutput x i = ((classifier x) ! i)  / (scalingValue x)
 
 -- This will then give you an alternative definition for `advises`:
@@ -63,7 +63,7 @@ normalisedClassifierOutput x i = ((classifier x) ! i)  / (scalingValue x)
 -- a parameter which allows the value of `epsilon` to be specified at compile
 -- time rather than be fixed in the specification.
 @parameter
-epsilon : Rat
+epsilon : Real
 
 -- Next we define what it means for an image `x` to be in a ball of
 -- size epsilon around 0.

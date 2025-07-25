@@ -18,7 +18,7 @@ pi = 3.141592
 -- We first define a new name for the type of inputs of the network.
 -- In particular, it takes inputs of the form of a vector of 5 rational numbers.
 
-type InputVector = Vector Rat 5
+type Input = Tensor Real [5]
 
 -- Next we add meaningful names for the indices.
 -- The fact that all vector types come annotated with their size means that it
@@ -38,7 +38,7 @@ intruderSpeed      = 4   -- measured in meters/second
 -- Outputs are also a vector of 5 rationals. Each one representing the score
 -- for the 5 available courses of action.
 
-type OutputVector = Vector Rat 5
+type Output = Tensor Real [5]
 
 -- Again we define meaningful names for the indices into output vectors.
 
@@ -56,7 +56,7 @@ strongRight     = 4
 -- via a reference to the ONNX file at compile time.
 
 @network
-acasXu : InputVector -> OutputVector
+acasXu : Input -> Output
 
 --------------------------------------------------------------------------------
 -- Normalisation
@@ -71,41 +71,41 @@ acasXu : InputVector -> OutputVector
 
 -- For clarity, we therefore define a new type synonym
 -- for unnormalised input vectors which are in the problem space.
-type UnnormalisedInputVector = Vector Rat 5
+type UnnormalisedInput = Tensor Real [5]
 
 -- Next we define the minimum and maximum values that each input can take.
 -- These correspond to the range of the inputs that the network is designed
 -- to work over.
-minimumInputValues : UnnormalisedInputVector
+minimumInputValues : UnnormalisedInput
 minimumInputValues = [0,0,0,0,0]
 
-maximumInputValues : UnnormalisedInputVector
+maximumInputValues : UnnormalisedInput
 maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
 
 -- We can therefore define a simple predicate saying whether a given input
 -- vector is in the right range.
-validInput : UnnormalisedInputVector -> Bool
+validInput : UnnormalisedInput -> Bool
 validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 
 -- Then the mean values that will be used to scale the inputs.
-meanScalingValues : UnnormalisedInputVector
+meanScalingValues : UnnormalisedInput
 meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 
 -- We can now define the normalisation function that takes an input vector and
 -- returns the unnormalised version.
-normalise : UnnormalisedInputVector -> InputVector
+normalise : UnnormalisedInput -> Input
 normalise x = foreach i .
   (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
 
 -- Using this we can define a new function that first normalises the input
 -- vector and then applies the neural network.
-normAcasXu : UnnormalisedInputVector -> OutputVector
+normAcasXu : UnnormalisedInput -> Output
 normAcasXu x = acasXu (normalise x)
 
 -- A constraint that says the network chooses output `i` when given the
 -- input `x`. We must necessarily provide a finite index that is less than 5
 -- (i.e. of type Index 5). The `a ! b` operator lookups index `b` in vector `a`.
-advises : Index 5 -> UnnormalisedInputVector -> Bool
+advises : Index 5 -> UnnormalisedInput -> Bool
 advises i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 
 
@@ -119,7 +119,7 @@ advises i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 
 directlyAhead : TODO
 
-movingTowards : UnnormalisedInputVector -> Bool
+movingTowards : UnnormalisedInput -> Bool
 movingTowards x = TODO
 
 @property

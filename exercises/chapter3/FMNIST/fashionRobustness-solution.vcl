@@ -1,5 +1,5 @@
 --The input for the network is a 28 * 28 image
-type Image = Tensor Rat [28, 28]
+type Image = Tensor Real [28, 28]
 
 --A label is an int between 0 and 9
 type Label = Index 10
@@ -11,7 +11,7 @@ validImage x = forall i j . 0 <= x ! i ! j <= 1
 
 --The network takes an image and returns a vector of scores
 @network
-classifier : Image -> Vector Rat 10
+classifier : Image -> Tensor Real [10]
 
 --The classifier scores a given label above all others
 advises : Image -> Label -> Bool
@@ -20,7 +20,7 @@ advises image label = forall j . j != label => classifier image ! label > classi
 
 --The radius of the epsilon ball that we are checking robustness within
 @parameter
-epsilon : Rat
+epsilon : Real
 
 --Every pixel in the perturbation is less than or equal to epsilon
 boundedByEpsilon : Image -> Bool

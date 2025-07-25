@@ -2,7 +2,7 @@
 -- Inputs
 
 -- define a new name for the type of inputs of the network.
-type InputVector = Vector Rat 4
+type Input = Tensor Real [4]
 
 -- add meaningful names for the input indices.
 sepalLength = 0   -- measured in centimetres
@@ -16,7 +16,7 @@ petalWidth  = 3   -- measured in centimetres
 -- define output format - a vector of 3 rationals,
 -- each representing the score for the 3 classes.
 
-type OutputVector = Vector Rat 3
+type Output = Tensor Real [3]
 
 -- add meaningful names for the output indices.
 setosa      = 0
@@ -28,24 +28,24 @@ virginica   = 2
 
 -- use the `network` annotation to declare the name and the type of the network
 @network
-iris : InputVector -> OutputVector
+iris : Input -> Output
 
 --------------------------------------------------------------------------------
 -- Check input data validity
 -- Define normal input ranges (based on training data - min, max values)
-normalSepalLength : InputVector -> Bool
+normalSepalLength : Input -> Bool
 normalSepalLength x = 4.3 <= x ! sepalLength <= 7.9
 
-normalSepalWidth : InputVector -> Bool
+normalSepalWidth : Input -> Bool
 normalSepalWidth x = 2.0 <= x ! sepalWidth <= 4.4
 
-normalPetalLength : InputVector -> Bool
+normalPetalLength : Input -> Bool
 normalPetalLength x = 1.0 <= x ! petalLength <= 6.9
 
-normalPetalWidth : InputVector -> Bool
+normalPetalWidth : Input -> Bool
 normalPetalWidth x = 0.1 <= x ! petalWidth <= 2.5
 
-validInput : InputVector -> Bool
+validInput : Input -> Bool
 validInput x = normalSepalLength x and normalSepalWidth x
     and normalPetalLength x and normalPetalWidth x
     and x ! sepalLength > x ! sepalWidth
@@ -68,11 +68,11 @@ property0 = exists x . validInput x =>
 -- If (sepal length - sepal width) is beteween 1.3cm and 1.5cm,
 -- it is setosa
 
-slAndSw : InputVector -> Bool
+slAndSw : Input -> Bool
 slAndSw x =
     1.3  <= x ! sepalLength - x ! sepalWidth <= 1.5
 
-isSetosa : InputVector -> Bool
+isSetosa : Input -> Bool
 isSetosa x =
     let scores = iris x in
     forall d . d != setosa => scores ! setosa > scores ! d
@@ -88,7 +88,7 @@ property1 = forall x . validInput x and slAndSw x and x ! sepalWidth > 3 =>
 -- If the sepal length (sl) is shorter than 6 and
 -- peteal length (pl) is shorter than 2, then it is setosa
 
-slAndPl : InputVector -> Bool
+slAndPl : Input -> Bool
 slAndPl x =
     x ! sepalLength <= 6 and
     x ! petalLength <= 2
@@ -104,7 +104,7 @@ property2 = forall x . validInput x and slAndPl x =>
 -- If the sepal length (sl) is shorter than 6 and
 -- peteal width (pw) is shorter than 0.8, then it is setosa
 
-slAndPw : InputVector -> Bool
+slAndPw : Input -> Bool
 slAndPw x =
     x ! sepalLength <= 6 and
     x ! petalWidth <= 0.8
@@ -120,11 +120,11 @@ property3 = forall x . validInput x and slAndPw x =>
 -- If the sepal length (sl) is longer than 7.5,
 -- then it is virginica
 
-longSl : InputVector -> Bool
+longSl : Input -> Bool
 longSl x =
     x ! sepalLength >= 7.5
 
-isVirginica : InputVector -> Bool
+isVirginica : Input -> Bool
 isVirginica x =
     let scores = iris x in
     forall d . d != virginica => scores ! virginica > scores ! d
@@ -140,7 +140,7 @@ property4 = forall x . validInput x and longSl x =>
 -- If the petal length is shorter than 2 and the petal width is shorter than 0.5,
 -- then it is setosa
 
-smallPetal : InputVector -> Bool
+smallPetal : Input -> Bool
 smallPetal x =
     x ! petalLength < 2 and x ! petalWidth < 0.5
 
@@ -155,7 +155,7 @@ property5 = forall x . validInput x and smallPetal x =>
 -- If the petal length (sl) is longer than 6 and the petal width is longer than 2,
 -- then it is virginica
 
-bigPetal : InputVector -> Bool
+bigPetal : Input -> Bool
 bigPetal x =
     x ! petalLength > 6 and x ! petalWidth > 2
 
