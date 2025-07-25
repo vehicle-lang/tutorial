@@ -72,7 +72,7 @@ We note that $\epsilon$-ball robustness as a verification property bears some si
 Starting a specification for MNIST data set follows the same pattern as we have seen in Chapter 1, only this time we declare inputs as 2D arrays:
 
 ```vehicle
-type Image = Tensor Rat [28, 28]
+type Image = Tensor Real [28, 28]
 type Label = Index 10
 ```
 
@@ -88,7 +88,7 @@ score for each of the digits 0 to 9.
 
 ```vehicle
 @network
-classifier : Image -> Vector Rat 10
+classifier : Image -> Tensor Real [10]
 ```
 
 We note again the use of the syntax for `@network`, marking the place where _Vehicle_ interacts with an external tool (this time most likely with Python Tensorflow).
@@ -113,7 +113,7 @@ to communicate this information externally:
 
 ```vehicle
 @parameter
-epsilon : Rat
+epsilon : Real
 ```
 
 Next we define what it means for an image `x` to be in a ball of

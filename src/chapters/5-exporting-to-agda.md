@@ -40,18 +40,18 @@ $f [x1, x2] + 2 * x1 - x2$ should be less than 1.25.
 We can encode this property in Vehicle as follows:
 
 ```vehicle
-type InputVector = Tensor Rat [2]
+type Input = Tensor Real [2]
 
 currentSensor  = 0
 previousSensor = 1
 
 @network
-controller : InputVector -> Tensor Rat [1]
+controller : Input -> Tensor Real [1]
 
-safeInput : InputVector -> Bool
+safeInput : Input -> Bool
 safeInput x = forall i . -3.25 <= x ! i <= 3.25
 
-safeOutput : InputVector -> Bool
+safeOutput : Input -> Bool
 safeOutput x =
   -1.25 <
     controller x !
@@ -100,8 +100,8 @@ open import Data.List.Base
 
 module WindControllerSpec where
 
-InputVector : Set
-InputVector = Tensor ℚ (2 ∷ [])
+Input : Set
+Input = Tensor ℚ (2 ∷ [])
 
 currentSensor : Fin 2
 currentSensor = # 0
@@ -109,13 +109,13 @@ currentSensor = # 0
 previousSensor : Fin 2
 previousSensor = # 1
 
-postulate controller : InputVector → Tensor ℚ (1 ∷ [])
+postulate controller : Input → Tensor ℚ (1 ∷ [])
 
-SafeInput : InputVector → Set
+SafeInput : Input → Set
 SafeInput x =
   ∀ i → ℚ.- (ℤ.+ 13 ℚ./ 4) ℚ.≤ x i × x i ℚ.≤ ℤ.+ 13 ℚ./ 4
 
-SafeOutput : InputVector → Set
+SafeOutput : Input → Set
 SafeOutput x =
   ℚ.- (ℤ.+ 5 ℚ./ 4) ℚ.<
     (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor)

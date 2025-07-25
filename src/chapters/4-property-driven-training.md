@@ -127,7 +127,7 @@ Consider the very simple example specification:
 
 ```vehicle
 @network
-f : Vector Rat 1 -> Vector Rat 1
+f : Tensor Real [1] -> Tensor Real [1]
 
 @property
 greaterThan2 : Bool
@@ -138,12 +138,12 @@ This statement is either true or false, as shown in the left graph below:
 
 ![Boolean loss](../assets/images/boolean-loss.png)
 
-However, what if instead, we converted all `Bool` values to `Rat`, where a value greater than
+However, what if instead, we converted all `Bool` values to `Real`, where a value greater than
 `0` indicated false and a value less than `0` indicated true?
 We could then rewrite the specification as:
 
 ```vehicle
-greaterThan2 : Rat
+greaterThan2 : Real
 greaterThan2 = f [ 0 ] ! 0 - 2
 ```
 
