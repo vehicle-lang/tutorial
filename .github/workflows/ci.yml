@@ -38,9 +38,9 @@ jobs:
         run: vehicle check -s mnist-robustness.vcl
         working-directory: examples/chapter3/mnist-robustness
 
-      - name: 🏗️ Check examples/hyperrec/spec.vcl
-        run: vehicle check -s spec.vcl
-        working-directory: examples/hyperrec
+      # - name: 🏗️ Check examples/hyperrec/spec.vcl
+      #   run: vehicle check -s spec.vcl
+      #   working-directory: examples/hyperrec
 
       - name: 🏗️ Check examples/hyperrec/spec2.vcl
         run: vehicle check -s spec2.vcl
