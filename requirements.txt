@@ -1,0 +1,3 @@
+vehicle-lang ==0.17.0
+maraboupy    ==1.0.0
+agda         ==2.7.0.1

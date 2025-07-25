@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - tutorial
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+defaults:
+  run:
+    shell: sh
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🛠️ Setup Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: 🏗️ Check examples/chapter2/acasXu/acasXu.vcl
+        run: vehicle check -s acasXu.vcl
+        working-directory: examples/chapter2/acasXu
+
+      - name: 🏗️ Check examples/chapter3/mnist-robustness/mnist-robustness.vcl
+        run: vehicle check -s mnist-robustness.vcl
+        working-directory: examples/chapter3/mnist-robustness
+
+      - name: 🏗️ Check examples/hyperrec/spec.vcl
+        run: vehicle check -s spec.vcl
+        working-directory: examples/hyperrec
+
+      - name: 🏗️ Check examples/hyperrec/spec2.vcl
+        run: vehicle check -s spec2.vcl
+        working-directory: examples/hyperrec
