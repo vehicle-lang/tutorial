@@ -1,5 +1,3 @@
-# Vehicle Tutorial
-
 Welcome to the *Vehicle Tutorial*! In this tutorial, you will learn
 about neural network verification with Vehicle. Vehicle’s installation
 instructions and user guide are available
@@ -322,20 +320,36 @@ for COC will not be minimal.*
 
 ### Types
 
-Unlike many Neural Network verifier input formats, Vehicle is a typed language, and it is common for each specification file starts with declaring the types. For ACAS Xu, these are the types of the real number tensors that the network will be taking as inputs and giving as outputs
+Unlike many Neural Network verifier input formats, Vehicle is a typed
+language, and it is common for each specification file starts with
+declaring the types. For ACAS Xu, these are the types of the real number
+tensors that the network will be taking as inputs and giving as outputs:
 
 ``` vehicle
 type Input = Tensor Real [5]
 type Output = Tensor Real [5]
 ```
 
-The `Tensor` type represents a mathematical tensor, or in programming terms can be thought of as a multi-dimensional array. One potentially unusual aspect in Vehicle is that the shape of the tensor (i.e its dimensions) must be known statically at compile time. This allows Vehicle to check for the presence of out-of-bounds errors at compile time rather than run time.
+The `Tensor` type represents a mathematical tensor, or in programming
+terms can be thought of as a multi-dimensional array. One potentially
+unusual aspect in Vehicle is that the shape of the tensor (i.e its
+dimensions) must be known statically at compile time. This allows
+Vehicle to check for the presence of out-of-bounds errors at compile
+time rather than run time.
 
-The most general `Tensor` type is therefore written as `Tensor A d`, which represents the type of tensors with shape `d` with elements of type `A`. The argument `d` is a list of numbers, where each number represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a 2-by-3 matrix.. In this case, `Tensor Real [5]` is a one-dimensional tensor, where the size of the first dimension is 5, which contains real numbers.
+The most general `Tensor` type is therefore written as `Tensor A d`,
+which represents the type of tensors with shape `d` with elements of
+type `A`. The argument `d` is a list of numbers, where each number
+represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a
+2-by-3 matrix.. In this case, `Tensor Real [5]` is a one-dimensional
+tensor, where the size of the first dimension is 5, which contains real
+numbers.
 
-Vehicle has a comprehensive support for programming with tensors, which we will see throughout this tutorial.
-The interested reader may go ahead and check the documentation pages for tensors:
-<https://vehicle-lang.readthedocs.io/en/stable/language/tensors.html>.
+Vehicle has a comprehensive support for programming with tensors, which
+we will see throughout this tutorial. The interested reader may go ahead
+and check the documentation pages for tensors: <a
+href="src/chapters/https:/vehicle-lang.readthedocs.io/en/stable/language/tensors.html"
+class="uri">https://vehicle-lang.readthedocs.io/en/stable/language/tensors.html</a>.
 
 ### Networks
 
@@ -413,11 +427,11 @@ We start with introducing the full block of code that will normalise
 input vectors into the range $`[0,1]`$, and will explain significant
 features of Vehicle syntax featured in the code block afterwards.
 
-For clarity, we define a new type synonym for unnormalised inputs
-in the problem space.
+For clarity, we define a new type synonym for unnormalised inputs in the
+problem space.
 
 ``` vehicle
-type UnnormalisedInput = Tensor Real [5]
+type UnnormalisedInput = Input
 ```
 
 Next we define the minimum and maximum values that each input can take.
@@ -480,20 +494,31 @@ is of the form
 
 Observe how all functions above fit within this declaration scheme.
 
-Functions make up the backbone of the Vehicle language. The function type is written `A -> B` where `A` is the input type and `B` is the output type. For example, the function `validInput` above takes values of the (defined) type of `UnnormalisedInput` and returns values of type `Bool`. The function `normalise` has the same input type, but its output type is `Input`, which was defined as a tensor of real numbers with 5 elements.
+Functions make up the backbone of the Vehicle language. The function
+type is written `A -> B` where `A` is the input type and `B` is the
+output type. For example, the function `validInput` above takes values
+of the (defined) type of `UnnormalisedInput` and returns values of type
+`Bool`. The function `normalise` has the same input type, but its output
+type is `Input`, which was defined as a tensor of real numbers with 5
+elements.
 
 As is standard in functional languages, the function arrow associates to
 the right so `A -> B -> C` is therefore equivalent to `A -> (B -> C)`.
 
-As in most functional languages, function application is written by juxtaposition of the function with its arguments. For example, given a function `f` of type `Real -> Bool -> Real` and arguments `x` of type `Real` and `y` of type `Bool`, the application of `f` to `x` and `y` is written `f x y` and this expression has type `Real`. This is unlike imperative languages such as Python, C or Java where you would write `f(x,y)`.
+As in most functional languages, function application is written by
+juxtaposition of the function with its arguments. For example, given a
+function `f` of type `Real -> Bool -> Real` and arguments `x` of type
+`Real` and `y` of type `Bool`, the application of `f` to `x` and `y` is
+written `f x y` and this expression has type `Real`. This is unlike
+imperative languages such as Python, C or Java where you would write
+`f(x,y)`.
 
 Functions of suitable types can be composed. For example, given a
-function `acasXu` of type `Input -> Output`, a function
-`normalise` of type `UnnormalisedInput -> Input` and an
-argument `x` of type `UnnormalisedInput` the application of
-`acasXu` to the `Input` resulting from applying `normalise x` is
-written as `acasXu (normalise x)`, and this expression has type
-`Output`.
+function `acasXu` of type `Input -> Output`, a function `normalise` of
+type `UnnormalisedInput -> Input` and an argument `x` of type
+`UnnormalisedInput` the application of `acasXu` to the `Input` resulting
+from applying `normalise x` is written as `acasXu (normalise x)`, and
+this expression has type `Output`.
 
 Some functions are pre-defined in Vehicle. For example, the above block
 uses multiplication `*`, division `/` and vector lookup `!`. We have
@@ -513,8 +538,7 @@ given input vector is in the right range:
 
 ``` vehicle
 validInput : UnnormalisedInput -> Bool
-validInput x = forall i .
-  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+validInput x = minimumInputValues <= x <= maximumInputValues
 ```
 
 Equally usefully, we can write a function that takes an output index `i`
@@ -537,7 +561,9 @@ smaller than the score of action `j`.
 
 ### Naming indices
 
-As ACASXu properties refer to certain elements of input and output tensors, let us give those tensors indices some suggestive names. This will help us to write a more readable code:
+As ACASXu properties refer to certain elements of input and output
+tensors, let us give those tensors indices some suggestive names. This
+will help us to write a more readable code:
 
 ``` vehicle
 distanceToIntruder = 0   -- measured in metres
@@ -547,9 +573,14 @@ speed              = 3   -- measured in metres/second
 intruderSpeed      = 4   -- measured in meters/second
 ```
 
-The fact that all tensors types come annotated with their dimensions means that it is impossible to mess up indexing into vectors, e.g. if you changed `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification would fail to type-check as `5` is not a valid index into a `Tensor` of length 5.
+The fact that all tensors types come annotated with their dimensions
+means that it is impossible to mess up indexing into vectors, e.g. if
+you changed `distanceToIntruder = 0` to `distanceToIntruder = 5` the
+specification would fail to type-check as `5` is not a valid index into
+a Tensor with dimensions `[5]`.
 
-Similarly, we define meaningful names for the indices into output tensors.
+Similarly, we define meaningful names for the indices into output
+tensors.
 
 ``` vehicle
 clearOfConflict = 0
@@ -616,7 +647,11 @@ infinite set of values. We have already seen the `forall` operator used
 in the declaration `validInput` – however, there it was quantifying over
 a finite number of indices.
 
-The `forall` in the property above is a very different beast as it is quantifying over an “infinite” number of values of type `Tensor Real [5]`. The definition of `property3` brings a new variable `x` of type `Tensor Real [5]` into scope. The variable `x` has no assigned value, but represents an arbitrary input of that type.
+The `forall` in the property above is a very different beast as it is
+quantifying over an “infinite” number of values of type
+`Tensor Real [5]`. The definition of `property3` brings a new variable
+`x` of type `Tensor Real [5]` into scope. The variable `x` has no
+assigned value, but represents an arbitrary input of that type.
 
 Vehicle also has a matching quantifer `exists`.
 
@@ -1384,7 +1419,7 @@ Consider the very simple example specification:
 
 ``` vehicle
 @network
-f : Vector Real 1 -> Vector Real 1
+f : Tensor Real [1] -> Tensor Real [1]
 
 @property
 greaterThan2 : Bool
@@ -1400,8 +1435,8 @@ alt="Boolean loss" />
 <figcaption aria-hidden="true">Boolean loss</figcaption>
 </figure>
 
-However, what if instead, we converted all `Bool` values to `Real`, where
-a value greater than `0` indicated false and a value less than `0`
+However, what if instead, we converted all `Bool` values to `Real`,
+where a value greater than `0` indicated false and a value less than `0`
 indicated true? We could then rewrite the specification as:
 
 ``` vehicle

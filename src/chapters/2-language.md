@@ -198,8 +198,7 @@ For example, having defined the range of minimum and maximum values, we can defi
 
 ```vehicle
 validInput : UnnormalisedInput -> Bool
-validInput x = forall i .
-  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+validInput x = minimumInputValues <= x <= maximumInputValues
 ```
 
 Equally usefully, we can write a function that takes an output index `i` and an input `x` and returns true if output `i` has the minimal score, i.e., neural network outputs instruction `i`.
@@ -227,7 +226,7 @@ speed              = 3   -- measured in metres/second
 intruderSpeed      = 4   -- measured in meters/second
 ```
 
-The fact that all tensors types come annotated with their dimensions means that it is impossible to mess up indexing into vectors, e.g. if you changed `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification would fail to type-check as `5` is not a valid index into a `Tensor` of length 5.
+The fact that all tensors types come annotated with their dimensions means that it is impossible to mess up indexing into vectors, e.g. if you changed `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification would fail to type-check as `5` is not a valid index into a Tensor with dimensions `[5]`.
 
 Similarly, we define meaningful names for the indices into output tensors.
 
