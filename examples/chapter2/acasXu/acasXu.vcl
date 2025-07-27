@@ -85,7 +85,7 @@ maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
 -- We can therefore define a simple predicate saying whether a given input
 -- vector is in the right range.
 validInput : UnnormalisedInput -> Bool
-validInput x = forall i . minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+validInput x = minimumInputValues <= x <= maximumInputValues
 
 -- Then the mean values that will be used to scale the inputs.
 meanScalingValues : UnnormalisedInput
