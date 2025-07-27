@@ -1,5 +1,3 @@
-# Vehicle Tutorial
-
 Welcome to the *Vehicle Tutorial*! In this tutorial, you will learn
 about neural network verification with Vehicle. Vehicle’s installation
 instructions and user guide are available
@@ -324,32 +322,34 @@ for COC will not be minimal.*
 
 Unlike many Neural Network verifier input formats, Vehicle is a typed
 language, and it is common for each specification file starts with
-declaring the types. In the ACAS Xu case, these are the types of vectors
-of rational numbers that the network will be taking as inputs and giving
-as outputs
+declaring the types. For ACAS Xu, these are the types of the real number
+tensors that the network will be taking as inputs and giving as outputs:
 
 ``` vehicle
-type InputVector = Vector Rat 5
-type OutputVector = Vector Rat 5
+type Input = Tensor Real [5]
+type Output = Tensor Real [5]
 ```
 
-The `Vector` type represents a mathematical vector, or in programming
-terms can be thought of as a fixed-length array. One potentially unusual
-aspect in Vehicle is that the size of the vector (i.e the number of
-items it contains) must be known statically at compile time. This allows
+The `Tensor` type represents a mathematical tensor, or in programming
+terms can be thought of as a multi-dimensional array. One potentially
+unusual aspect in Vehicle is that the shape of the tensor (i.e its
+dimensions) must be known statically at compile time. This allows
 Vehicle to check for the presence of out-of-bounds errors at compile
 time rather than run time.
 
-The most general `Vector` type is therefore written as `Vector A n`,
-which represents the type of vectors containing `n` elements of type
-`A`. For example, in this case `Vector Rat 5` is a vector of length
-$`5`$ that contains rational numbers.
+The most general `Tensor` type is therefore written as `Tensor A d`,
+which represents the type of tensors with shape `d` with elements of
+type `A`. The argument `d` is a list of numbers, where each number
+represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a
+2-by-3 matrix.. In this case, `Tensor Real [5]` is a one-dimensional
+tensor, where the size of the first dimension is 5, which contains real
+numbers.
 
-Vehicle in fact has a comprehensive support for programming with
-vectors, which we will see throughout this tutorial. But the interested
-reader may go ahead and check the documentation pages for vectors: <a
-href="src/chapters/https:/vehicle-lang.readthedocs.io/en/stable/language/vectors.html"
-class="uri">https://vehicle-lang.readthedocs.io/en/stable/language/vectors.html</a>.
+Vehicle has a comprehensive support for programming with tensors, which
+we will see throughout this tutorial. The interested reader may go ahead
+and check the documentation pages for tensors: <a
+href="src/chapters/https:/vehicle-lang.readthedocs.io/en/stable/language/tensors.html"
+class="uri">https://vehicle-lang.readthedocs.io/en/stable/language/tensors.html</a>.
 
 ### Networks
 
@@ -357,7 +357,7 @@ Given this, we can declare the network itself:
 
 ``` vehicle
 @network
-acasXu : InputVector -> OutputVector
+acasXu : Input -> Output
 ```
 
 Networks are declared by adding a `@network` annotation to a function
@@ -381,10 +381,10 @@ provides its definition.
 ```
 
 For example, as we’ll be working with radians, it is useful to define a
-rational value called `pi`.
+real number called `pi`.
 
 ``` vehicle
-pi : Rat
+pi : Real
 pi = 3.141592
 ```
 
@@ -396,7 +396,7 @@ to simply write the declaration as:
 pi = 3.141592
 ```
 
-The Vehicle compiler will then automatically infer the correct `Rat`
+The Vehicle compiler will then automatically infer the correct `Real`
 type.
 
 ### Problem Space versus Input Space
@@ -427,11 +427,11 @@ We start with introducing the full block of code that will normalise
 input vectors into the range $`[0,1]`$, and will explain significant
 features of Vehicle syntax featured in the code block afterwards.
 
-For clarity, we define a new type synonym for unnormalised input vectors
-in the problem space.
+For clarity, we define a new type synonym for unnormalised inputs in the
+problem space.
 
 ``` vehicle
-type UnnormalisedInputVector = Vector Rat 5
+type UnnormalisedInput = Input
 ```
 
 Next we define the minimum and maximum values that each input can take.
@@ -439,10 +439,10 @@ These correspond to the range of the inputs that the network is designed
 to work over. Note that these values are in the *problem space*.
 
 ``` vehicle
-minimumInputValues : UnnormalisedInputVector
+minimumInputValues : UnnormalisedInput
 minimumInputValues = [0, pi, pi, 100, 0]
 
-maximumInputValues : UnnormalisedInputVector
+maximumInputValues : UnnormalisedInput
 maximumInputValues = [60261, pi, pi, 1200, 1200]
 ```
 
@@ -453,7 +453,7 @@ correct size (in this case, `5`).
 Then we define the mean values that will be used to scale the inputs:
 
 ``` vehicle
-meanScalingValues : UnnormalisedInputVector
+meanScalingValues : UnnormalisedInput
 meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 ```
 
@@ -464,7 +464,7 @@ we can now define the normalisation function that takes an unnormalised
 input vector and returns the normalised version.
 
 ``` vehicle
-normalise : UnnormalisedInputVector -> InputVector
+normalise : UnnormalisedInput -> Input
 normalise x = foreach i .
   (x ! i - meanScalingValues ! i)
     / (maximumInputValues ! i  - minimumInputValues ! i)
@@ -474,7 +474,7 @@ Using this we can define a new function that first normalises the input
 vector and then applies the neural network:
 
 ``` vehicle
-normAcasXu : UnnormalisedInputVector -> OutputVector
+normAcasXu : UnnormalisedInput -> Output
 normAcasXu x = acasXu (normalise x)
 ```
 
@@ -497,29 +497,28 @@ Observe how all functions above fit within this declaration scheme.
 Functions make up the backbone of the Vehicle language. The function
 type is written `A -> B` where `A` is the input type and `B` is the
 output type. For example, the function `validInput` above takes values
-of the (defined) type of `UnnormalisedInputVector` and returns values of
-type `Bool`. The function `normalise` has the same input type, but its
-output type is `InputVector`, which was defined as a vector of rational
-numbers of size $`5`$.
+of the (defined) type of `UnnormalisedInput` and returns values of type
+`Bool`. The function `normalise` has the same input type, but its output
+type is `Input`, which was defined as a tensor of real numbers with 5
+elements.
 
 As is standard in functional languages, the function arrow associates to
 the right so `A -> B -> C` is therefore equivalent to `A -> (B -> C)`.
 
 As in most functional languages, function application is written by
 juxtaposition of the function with its arguments. For example, given a
-function `f` of type `Rat -> Bool -> Rat` and arguments `x` of type
-`Rat` and `y` of type `Bool`, the application of `f` to `x` and `y` is
-written `f x y` and this expression has type `Rat`. This is unlike
+function `f` of type `Real -> Bool -> Real` and arguments `x` of type
+`Real` and `y` of type `Bool`, the application of `f` to `x` and `y` is
+written `f x y` and this expression has type `Real`. This is unlike
 imperative languages such as Python, C or Java where you would write
 `f(x,y)`.
 
 Functions of suitable types can be composed. For example, given a
-function `acasXu` of type `InputVector -> OutputVector`, a function
-`normalise` of type `UnnormalisedInputVector -> InputVector` and an
-argument `x` of type `UnnormalisedInputVector` the application of
-`acasXu` to the `InputVector` resulting from applying `normalise x` is
-written as `acasXu (normalise x)`, and this expression has type
-`OutputVector`.
+function `acasXu` of type `Input -> Output`, a function `normalise` of
+type `UnnormalisedInput -> Input` and an argument `x` of type
+`UnnormalisedInput` the application of `acasXu` to the `Input` resulting
+from applying `normalise x` is written as `acasXu (normalise x)`, and
+this expression has type `Output`.
 
 Some functions are pre-defined in Vehicle. For example, the above block
 uses multiplication `*`, division `/` and vector lookup `!`. We have
@@ -538,9 +537,8 @@ and maximum values, we can define a simple predicate saying whether a
 given input vector is in the right range:
 
 ``` vehicle
-validInput : UnnormalisedInputVector -> Bool
-validInput x = forall i .
-  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
+validInput : UnnormalisedInput -> Bool
+validInput x = minimumInputValues <= x <= maximumInputValues
 ```
 
 Equally usefully, we can write a function that takes an output index `i`
@@ -548,10 +546,12 @@ and an input `x` and returns true if output `i` has the minimal score,
 i.e., neural network outputs instruction `i`.
 
 ``` vehicle
-minimalScore : Index 5 -> UnnormalisedInputVector -> Bool
+minimalScore : Index 5 -> UnnormalisedInput -> Bool
 minimalScore i x = forall j .
   i != j => normAcasXu x ! i < normAcasXu x ! j
 ```
+
+<!-- TODO: How does Index work with Tensor? -->
 
 Here the `Index 5` refers to the type of indices into `Vector`s of
 length 5, and implication `=>` is used to denote logical implication.
@@ -562,7 +562,7 @@ smaller than the score of action `j`.
 ### Naming indices
 
 As ACASXu properties refer to certain elements of input and output
-vectors, let us give those vector indices some suggestive names. This
+tensors, let us give those tensors indices some suggestive names. This
 will help us to write a more readable code:
 
 ``` vehicle
@@ -573,14 +573,14 @@ speed              = 3   -- measured in metres/second
 intruderSpeed      = 4   -- measured in meters/second
 ```
 
-The fact that all vector types come annotated with their size means that
-it is impossible to mess up indexing into vectors, e.g. if you changed
-`distanceToIntruder = 0` to `distanceToIntruder = 5` the specification
-would fail to type-check as `5` is not a valid index into a `Vector` of
-length 5.
+The fact that all tensors types come annotated with their dimensions
+means that it is impossible to mess up indexing into vectors, e.g. if
+you changed `distanceToIntruder = 0` to `distanceToIntruder = 5` the
+specification would fail to type-check as `5` is not a valid index into
+a Tensor with dimensions `[5]`.
 
 Similarly, we define meaningful names for the indices into output
-vectors.
+tensors.
 
 ``` vehicle
 clearOfConflict = 0
@@ -603,12 +603,12 @@ We first need to define what it means to be *directly ahead* and *moving
 towards*. The exact ACASXu definition can be written in Vehicle as:
 
 ``` vehicle
-directlyAhead : UnnormalisedInputVector -> Bool
+directlyAhead : UnnormalisedInput -> Bool
 directlyAhead x =
   1500  <= x ! distanceToIntruder <= 1800 and
   -0.06 <= x ! angleToIntruder    <= 0.06
 
-movingTowards : UnnormalisedInputVector -> Bool
+movingTowards : UnnormalisedInput -> Bool
 movingTowards x =
   x ! intruderHeading >= 3.10  and
   x ! speed           >= 980   and
@@ -648,10 +648,10 @@ in the declaration `validInput` – however, there it was quantifying over
 a finite number of indices.
 
 The `forall` in the property above is a very different beast as it is
-quantifying over an “infinite” number of `Vector Rat 5`s. The definition
-of `property3` brings a new variable `x` of type `Vector Rat 5` into
-scope. The variable `x` has no assigned value and therefore represents
-an arbitrary input of that type.
+quantifying over an “infinite” number of values of type
+`Tensor Real [5]`. The definition of `property3` brings a new variable
+`x` of type `Tensor Real [5]` into scope. The variable `x` has no
+assigned value, but represents an arbitrary input of that type.
 
 Vehicle also has a matching quantifer `exists`.
 
@@ -924,7 +924,7 @@ we have seen in Chapter 1, only this time we declare inputs as 2D
 arrays:
 
 ``` vehicle
-type Image = Tensor Rat [28, 28]
+type Image = Tensor Real [28, 28]
 type Label = Index 10
 ```
 
@@ -940,7 +940,7 @@ The output of the network is a score for each of the digits 0 to 9.
 
 ``` vehicle
 @network
-classifier : Image -> Vector Rat 10
+classifier : Image -> Tensor Real [10]
 ```
 
 We note again the use of the syntax for `@network`, marking the place
@@ -969,7 +969,7 @@ to communicate this information externally:
 
 ``` vehicle
 @parameter
-epsilon : Rat
+epsilon : Real
 ```
 
 Next we define what it means for an image `x` to be in a ball of size
@@ -1419,7 +1419,7 @@ Consider the very simple example specification:
 
 ``` vehicle
 @network
-f : Vector Rat 1 -> Vector Rat 1
+f : Tensor Real [1] -> Tensor Real [1]
 
 @property
 greaterThan2 : Bool
@@ -1435,12 +1435,12 @@ alt="Boolean loss" />
 <figcaption aria-hidden="true">Boolean loss</figcaption>
 </figure>
 
-However, what if instead, we converted all `Bool` values to `Rat`, where
-a value greater than `0` indicated false and a value less than `0`
+However, what if instead, we converted all `Bool` values to `Real`,
+where a value greater than `0` indicated false and a value less than `0`
 indicated true? We could then rewrite the specification as:
 
 ``` vehicle
-greaterThan2 : Rat
+greaterThan2 : Real
 greaterThan2 = f [ 0 ] ! 0 - 2
 ```
 
@@ -1658,18 +1658,18 @@ be less than 1.25.
 We can encode this property in Vehicle as follows:
 
 ``` vehicle
-type InputVector = Tensor Rat [2]
+type Input = Tensor Real [2]
 
 currentSensor  = 0
 previousSensor = 1
 
 @network
-controller : InputVector -> Tensor Rat [1]
+controller : Input -> Tensor Real [1]
 
-safeInput : InputVector -> Bool
+safeInput : Input -> Bool
 safeInput x = forall i . -3.25 <= x ! i <= 3.25
 
-safeOutput : InputVector -> Bool
+safeOutput : Input -> Bool
 safeOutput x =
   -1.25 <
     controller x !
@@ -1720,8 +1720,8 @@ open import Data.List.Base
 
 module WindControllerSpec where
 
-InputVector : Set
-InputVector = Tensor ℚ (2 ∷ [])
+Input : Set
+Input = Tensor ℚ (2 ∷ [])
 
 currentSensor : Fin 2
 currentSensor = # 0
@@ -1729,13 +1729,13 @@ currentSensor = # 0
 previousSensor : Fin 2
 previousSensor = # 1
 
-postulate controller : InputVector → Tensor ℚ (1 ∷ [])
+postulate controller : Input → Tensor ℚ (1 ∷ [])
 
-SafeInput : InputVector → Set
+SafeInput : Input → Set
 SafeInput x =
   ∀ i → ℚ.- (ℤ.+ 13 ℚ./ 4) ℚ.≤ x i × x i ℚ.≤ ℤ.+ 13 ℚ./ 4
 
-SafeOutput : InputVector → Set
+SafeOutput : Input → Set
 SafeOutput x =
   ℚ.- (ℤ.+ 5 ℚ./ 4) ℚ.<
     (controller x (# 0) ⊕ (ℤ.+ 2 ℚ./ 1) ℚ.* x currentSensor)
