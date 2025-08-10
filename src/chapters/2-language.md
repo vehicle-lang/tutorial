@@ -130,7 +130,7 @@ Note that these values are in the *problem space*.
 
 ```vehicle
 minimumInputValues : UnnormalisedInput
-minimumInputValues = [0, pi, pi, 100, 0]
+minimumInputValues = [0, -pi, -pi, 0, 0]
 
 maximumInputValues : UnnormalisedInput
 maximumInputValues = [60261, pi, pi, 1200, 1200]
@@ -155,7 +155,7 @@ returns the normalised version.
 normalise : UnnormalisedInput -> Input
 normalise x = foreach i .
   (x ! i - meanScalingValues ! i)
-    / (maximumInputValues ! i  - minimumInputValues ! i)
+    / (maximumInputValues ! i - minimumInputValues ! i)
 ```
 
 Using this we can define a new function that first normalises the input
@@ -198,7 +198,8 @@ For example, having defined the range of minimum and maximum values, we can defi
 
 ```vehicle
 validInput : UnnormalisedInput -> Bool
-validInput x = minimumInputValues <= x <= maximumInputValues
+validInput x = forall i .
+  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 ```
 
 Equally usefully, we can write a function that takes an output index `i` and an input `x` and returns true if output `i` has the minimal score, i.e., neural network outputs instruction `i`.
