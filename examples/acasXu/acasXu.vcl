@@ -96,7 +96,7 @@ meanScalingValues = [19791.091, 0.0, 0.0, 650.0, 600.0]
 -- returns the unnormalised version.
 normalise : UnnormalisedInput -> Input
 normalise x = foreach i .
-  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i)
+  (x ! i - meanScalingValues ! i) / (maximumInputValues ! i - minimumInputValues ! i)
 
 -- Using this we can define a new function that first normalises the input
 -- vector and then applies the neural network.
