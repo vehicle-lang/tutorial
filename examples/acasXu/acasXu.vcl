@@ -77,15 +77,16 @@ type UnnormalisedInput = Tensor Real [5]
 -- These correspond to the range of the inputs that the network is designed
 -- to work over.
 minimumInputValues : UnnormalisedInput
-minimumInputValues = [0,0,0,0,0]
+minimumInputValues = [0, -pi, -pi, 0, 0]
 
 maximumInputValues : UnnormalisedInput
-maximumInputValues = [60261.0, 2*pi, 2*pi, 1100.0, 1200.0]
+maximumInputValues = [60261.0, pi, pi, 1200.0, 1200.0]
 
 -- We can therefore define a simple predicate saying whether a given input
 -- vector is in the right range.
 validInput : UnnormalisedInput -> Bool
-validInput x = minimumInputValues <= x <= maximumInputValues
+validInput x = forall i .
+  minimumInputValues ! i <= x ! i <= maximumInputValues ! i
 
 -- Then the mean values that will be used to scale the inputs.
 meanScalingValues : UnnormalisedInput
@@ -130,5 +131,6 @@ movingTowards x =
 
 @property
 property3 : Bool
-property3 = forall x . validInput x and directlyAhead x and movingTowards x =>
+property3 = forall x .
+  validInput x and directlyAhead x and movingTowards x =>
   not (advises clearOfConflict x)
