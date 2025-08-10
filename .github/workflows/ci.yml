@@ -30,13 +30,13 @@ jobs:
       - name: 🛠️ Setup Python dependencies
         run: pip install -r requirements.txt
 
-      - name: 🏗️ Check examples/chapter2/acasXu/acasXu.vcl
+      - name: 🏗️ Check examples/acasXu/acasXu.vcl
         run: vehicle check -s acasXu.vcl
-        working-directory: examples/chapter2/acasXu
+        working-directory: examples/acasXu
 
-      - name: 🏗️ Check examples/chapter3/mnist-robustness/mnist-robustness.vcl
+      - name: 🏗️ Check examples/mnist-robustness/mnist-robustness.vcl
         run: vehicle check -s mnist-robustness.vcl
-        working-directory: examples/chapter3/mnist-robustness
+        working-directory: examples/mnist-robustness
 
       # - name: 🏗️ Check examples/hyperrec/spec.vcl
       #   run: vehicle check -s spec.vcl
