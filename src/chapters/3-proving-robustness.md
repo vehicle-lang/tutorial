@@ -203,11 +203,11 @@ for data sets `images.idx` and `labels.idx` and $\epsilon = 0.005$:
 
 ```vehicle
 vehicle verify \
-  --specification examples/mnist-robustness/mnist-robustness.vcl \
-  --network classifier:examples/mnist-robustness/mnist-classifier.onnx \
+  --specification mnist-robustness.vcl \
+  --network classifier:mnist-classifier.onnx \
   --parameter epsilon:0.005 \
-  --dataset trainingImages:examples/mnist-robustness/images.idx \
-  --dataset trainingLabels:examples/mnist-robustness/labels.idx \
+  --dataset trainingImages:t2-images.idx \
+  --dataset trainingLabels:t2-labels.idx \
   --verifier Marabou
 ```
 
