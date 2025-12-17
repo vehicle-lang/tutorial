@@ -229,48 +229,98 @@ The definition of the optimisation problem above instantiates by taking:
         \mathcal{L}_{\mathcal{S}(\mathbf{x})} = \mathcal{I} ( || f(\mathbf{x}) - f(\hat{\mathbf{x}})|| \leq \delta)
     $$
 
-# Coding Example: generating a logical loss functions for mnist-robustness in Vehicle
+# Coding Example: generating a logical loss function in Python
 
-To generate a logical loss function usable in Python, we will use Vehicle's Python bindings that come pre-installed.
+The Python bindings now ship backend-specific helpers in `vehicle_lang.loss.tensorflow`
+and `vehicle_lang.loss.pytorch`. They both expose a single entry point
+`load_specification(path, *, logic=..., samplers=..., declarations=..., declaration_context=...)`
+which compiles your `.vcl` file to a dictionary of callable Python loss functions.
 
-We open a new Python file and write:
+- `logic` defaults to `DifferentiableLogic.DL2`, but you can also request `DifferentiableLogic.Vehicle`.
+- `samplers` lets you override the search strategy for Vehicle `search` expressions.
+  If omitted, a default FGSM-based sampler is used (see `DefaultTensorFlowSampler` and
+  `DefaultPyTorchSampler`).
+- The returned dictionary keys are the names of `@property` declarations in your spec.
+
+Below is a minimal PyTorch example that mirrors the tests in `vehicle-python/tests`:
 
 ```python
-from vehicle_lang.compile import Target, to_python
+import torch
+from vehicle_lang.typing import DifferentiableLogic
+from vehicle_lang.loss.pytorch import load_specification
 
-spec = to_python(
-    "mnist-robustness.vcl",
-    target=Target.LOSS_DL2,
-    samplers={"pertubation": sampler_for_pertubation},
+# Compile the Vehicle spec to PyTorch loss functions
+spec = load_specification(
+    "test_trainable.vcl",  # any Vehicle spec path
+    logic=DifferentiableLogic.Vehicle,
 )
 
-robust_loss_fn = spec["robust"]
+constraint_loss = spec["output_bounded"]  # name of a @property in the spec
+model = torch.nn.Sequential(
+    torch.nn.Linear(1, 8), torch.nn.ReLU(), torch.nn.Linear(8, 1)
+)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
+
+def network(x):
+    return model(x.reshape(1, 1)).reshape(1)
+
+for step in range(50):
+    optimizer.zero_grad()
+
+    # Task loss (e.g., MSE to a target function)
+    task_loss = torch.tensor(0.0)
+    for x_val, y_val in [(0.0, 0.0), (0.5, 1.0), (1.0, 2.0)]:
+        pred = network(torch.tensor(x_val, dtype=torch.float32))[0]
+        task_loss = task_loss + (pred - y_val) ** 2
+    task_loss = task_loss / 3
+
+    # Constraint loss produced by Vehicle; signature matches the Vehicle property
+    constraint_loss_value = constraint_loss(network)
+
+    loss = 0.5 * task_loss + 0.5 * constraint_loss_value
+    loss.backward()
+    optimizer.step()
 ```
 
-which generates the loss function representing the logical loss function for the property `robust`.
-
-This can then be used in a standard training loop:
+Switching to TensorFlow changes only the backend import and model definition; the
+property call still follows the spec's argument list (typically a single
+`network` callable for many specs):
 
 ```python
-model = tf.Sequential([tf.Input(shape=(28,28)), tf.Dense(units=28), tf.Output(units=10)])
+import tensorflow as tf
+from vehicle_lang.typing import DifferentiableLogic
+from vehicle_lang.loss.tensorflow import load_specification
 
-for epoch in range(num_epochs):
-    for x_batch_train, y_batch_train in train_dataset:
-        with tf.GradientTape() as tape:
-            # Calculate standard cross entropy loss
-            outputs = model(x_batch_train, training=True)
-            ce_loss_value = ce_batch_loss(y_batch_train, outputs)
+spec = load_specification("test_trainable.vcl", logic=DifferentiableLogic.Vehicle)
+constraint_loss = spec["output_bounded"]
 
-            # Calculate the robustness loss
-            robust_loss_value = robust_loss_fn(
-                n=len(x_batch_train),
-                classifier=model,
-                epsilon=0.001,
-                trainingImages=x_batch_train,
-                trainingLabels=y_batch_train,
-            )
-            weighted_loss = 0.5 * ce_loss_value + 0.5 * robust_loss_value
+model = tf.keras.Sequential([
+    tf.keras.layers.Input(shape=(1,)),
+    tf.keras.layers.Dense(8, activation="relu"),
+    tf.keras.layers.Dense(1),
+])
 
-        grads = tape.gradient(weighted_loss, model.trainable_weights)
-        optimizer.apply_gradients(zip(grads, model.trainable_weights))
+def network(x):
+    return tf.reshape(model(tf.reshape(x, [1, 1])), [1])
+
+optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
+
+for step in range(50):
+    with tf.GradientTape() as tape:
+        task_loss = tf.constant(0.0)
+        for x_val, y_val in [(0.0, 0.0), (0.5, 1.0), (1.0, 2.0)]:
+            pred = network(tf.constant(x_val, dtype=tf.float32))[0]
+            task_loss = task_loss + (pred - y_val) ** 2
+        task_loss = task_loss / 3
+
+        constraint_loss_value = constraint_loss(network)
+        loss = 0.5 * task_loss + 0.5 * constraint_loss_value
+
+    grads = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(grads, model.trainable_variables))
 ```
+
+To customise how Vehicle searches adversarial points, pass your own sampler to `samplers`.
+Each sampler receives `(dims, lower_bound, upper_bound, search_lambda, minimise)` and must
+return a stackable tensor of loss values; see `DefaultPyTorchSampler` / `DefaultTensorFlowSampler`
+in the source tree for a reference implementation.
