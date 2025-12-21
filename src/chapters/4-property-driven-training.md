@@ -310,7 +310,7 @@ for step in range(50):
     optimizer.apply_gradients(zip(grads, model.trainable_variables))
 ```
 
-Optional parameters such as `logic`, `samplers`, `declarations`, and `declaration_context` are
+Optional parameters such as `logic`and `samplers` are
 available on `load_specification`; see the [Python API docs](https://vehicle-lang.readthedocs.io/en/stable/training.html) for defaults and examples. To customise
 how Vehicle searches adversarial points, you can supply your own sampler (cf. the default FGSM-based
 samplers in the source tree) when you have domain-specific needs.
