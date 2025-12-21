@@ -231,16 +231,11 @@ The definition of the optimisation problem above instantiates by taking:
 
 # Coding Example: generating a logical loss function in Python
 
-The Python bindings now ship backend-specific helpers in `vehicle_lang.loss.tensorflow`
+The Python bindings ship backend-specific helpers in `vehicle_lang.loss.tensorflow`
 and `vehicle_lang.loss.pytorch`. They both expose a single entry point
-`load_specification(path, *, logic=..., samplers=..., declarations=..., declaration_context=...)`
-which compiles your `.vcl` file to a dictionary of callable Python loss functions.
-
-- `logic` defaults to `DifferentiableLogic.DL2`, but you can also request `DifferentiableLogic.Vehicle`.
-- `samplers` lets you override the search strategy for Vehicle `search` expressions.
-  If omitted, a default FGSM-based sampler is used (see `DefaultTensorFlowSampler` and
-  `DefaultPyTorchSampler`).
-- The returned dictionary keys are the names of `@property` declarations in your spec.
+`load_specification(path, ...)` which compiles your `.vcl` file to a dictionary of
+callable Python loss functions. The returned dictionary keys are the names of
+`@property` declarations in your spec.
 
 Below is a minimal PyTorch example that mirrors the tests in `vehicle-python/tests`:
 
@@ -256,26 +251,24 @@ spec = load_specification(
 )
 
 constraint_loss = spec["output_bounded"]  # name of a @property in the spec
+
+train_x = torch.tensor([0.0, 0.5, 1.0], dtype=torch.float32).unsqueeze(1)
+train_y = torch.tensor([0.0, 1.0, 2.0], dtype=torch.float32)
+
 model = torch.nn.Sequential(
     torch.nn.Linear(1, 8), torch.nn.ReLU(), torch.nn.Linear(8, 1)
 )
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
 
-def network(x):
-    return model(x.reshape(1, 1)).reshape(1)
-
 for step in range(50):
     optimizer.zero_grad()
 
     # Task loss (e.g., MSE to a target function)
-    task_loss = torch.tensor(0.0)
-    for x_val, y_val in [(0.0, 0.0), (0.5, 1.0), (1.0, 2.0)]:
-        pred = network(torch.tensor(x_val, dtype=torch.float32))[0]
-        task_loss = task_loss + (pred - y_val) ** 2
-    task_loss = task_loss / 3
+    preds = model(train_x).squeeze(1)
+    task_loss = torch.mean((preds - train_y) ** 2)
 
     # Constraint loss produced by Vehicle; signature matches the Vehicle property
-    constraint_loss_value = constraint_loss(network)
+    constraint_loss_value = constraint_loss(model)
 
     loss = 0.5 * task_loss + 0.5 * constraint_loss_value
     loss.backward()
@@ -294,33 +287,30 @@ from vehicle_lang.loss.tensorflow import load_specification
 spec = load_specification("test_trainable.vcl", logic=DifferentiableLogic.Vehicle)
 constraint_loss = spec["output_bounded"]
 
+train_x = tf.constant([[0.0], [0.5], [1.0]], dtype=tf.float32)
+train_y = tf.constant([0.0, 1.0, 2.0], dtype=tf.float32)
+
 model = tf.keras.Sequential([
     tf.keras.layers.Input(shape=(1,)),
     tf.keras.layers.Dense(8, activation="relu"),
     tf.keras.layers.Dense(1),
 ])
 
-def network(x):
-    return tf.reshape(model(tf.reshape(x, [1, 1])), [1])
-
 optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
 
 for step in range(50):
     with tf.GradientTape() as tape:
-        task_loss = tf.constant(0.0)
-        for x_val, y_val in [(0.0, 0.0), (0.5, 1.0), (1.0, 2.0)]:
-            pred = network(tf.constant(x_val, dtype=tf.float32))[0]
-            task_loss = task_loss + (pred - y_val) ** 2
-        task_loss = task_loss / 3
+        preds = tf.squeeze(model(train_x), axis=1)
+        task_loss = tf.reduce_mean(tf.square(preds - train_y))
 
-        constraint_loss_value = constraint_loss(network)
+        constraint_loss_value = constraint_loss(model)
         loss = 0.5 * task_loss + 0.5 * constraint_loss_value
 
     grads = tape.gradient(loss, model.trainable_variables)
     optimizer.apply_gradients(zip(grads, model.trainable_variables))
 ```
 
-To customise how Vehicle searches adversarial points, pass your own sampler to `samplers`.
-Each sampler receives `(dims, lower_bound, upper_bound, search_lambda, minimise)` and must
-return a stackable tensor of loss values; see `DefaultPyTorchSampler` / `DefaultTensorFlowSampler`
-in the source tree for a reference implementation.
+Optional parameters such as `logic`, `samplers`, `declarations`, and `declaration_context` are
+available on `load_specification`; see the [Python API docs](https://vehicle-lang.readthedocs.io/en/stable/training.html) for defaults and examples. To customise
+how Vehicle searches adversarial points, you can supply your own sampler (cf. the default FGSM-based
+samplers in the source tree) when you have domain-specific needs.

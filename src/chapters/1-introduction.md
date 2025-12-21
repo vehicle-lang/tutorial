@@ -57,7 +57,7 @@ This tutorial will focus on problems 3 to 5, and will present Vehicle, a tool th
 Vehicle programs can be compiled to an unusually broad set of backends,
 including:
 
-a) loss functions for Tensorflow which can be used to guide
+a) loss functions for PyTorch and Tensorflow which can be used to guide
 both specification-directed training and gradient-based counter-example
 search.
 
@@ -91,7 +91,7 @@ Quick installation instructions:
 
     2. Install Marabou: just run `pip install maraboupy`
 
-- Python (Tensorflow) and Agda installation will only be needed to follow Chapters 4 and 5.
+- Python (PyTorch) and Agda installation will only be needed to follow Chapters 4 and 5.
 
 We suggest that you start this tutorial with just Vehicle and Marabou as tools.
 
