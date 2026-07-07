@@ -37,6 +37,45 @@ const base = import.meta.env.BASE_URL;
 <!-- Add "Copy on Click" button to code blocks. -->
 <CopyOnClick />
 
+<!-- Client-side script to switch tabs -->
+<script>
+  function setupTabs() {
+    document.querySelectorAll('.tabs-container').forEach((container) => {
+      const buttons = container.querySelectorAll('.tab-button');
+      const contents = container.querySelectorAll('.tabs-content > *');
+
+      // Hide all but active tab or first content element
+      contents.forEach((content, idx) => {
+        const button = buttons[idx];
+        if (button && button.classList.contains('active')) {
+          (content as HTMLElement).style.display = 'block';
+        } else if (idx === 0 && !Array.from(buttons).some(b => b.classList.contains('active'))) {
+          (content as HTMLElement).style.display = 'block';
+          buttons[0]?.classList.add('active');
+        } else {
+          (content as HTMLElement).style.display = 'none';
+        }
+      });
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const index = parseInt(button.getAttribute('data-index') || '0', 10);
+          
+          buttons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          contents.forEach((content, idx) => {
+            (content as HTMLElement).style.display = idx === index ? 'block' : 'none';
+          });
+        });
+      });
+    });
+  }
+
+  setupTabs();
+  document.addEventListener('astro:page-load', setupTabs);
+</script>
+
 <style is:global>
   /* Fix Tufte CSS */
   @import "../assets/css/tufte-fixes.css";
