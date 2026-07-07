@@ -228,18 +228,18 @@ The reader may have guessed at this pont that, as we make $\epsilon$ larger, few
 
 # Exercises
 
-## Exercise (⭑): Run the Chapter code
+## Exercise #1 (⭑): Run the Chapter code
 
 As usual, your first task is to repeat the steps described in this chapter: download the _Vehicle_ specification, the network,  the data, and verify robustness of the given network on given data.
 All code is available from the `examples` section of the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial)
 
-## Exercise (⭑) : Experimenting with $\epsilon$-balls of different size
+## Exercise #2 (⭑) : Experimenting with $\epsilon$-balls of different size
 
 Try experimenting with different values of $\epsilon$, for example, try
   $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$.
   Make conclusions.
 
-## Exercise (⭑⭑) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s
+## Exercise #3 (⭑⭑) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s
 
 (_This exercise is technically very simple, but the required number of experiments may take a few hours to run. We recommend you run it at home rather than during the live exercise sessions_).
 
@@ -256,7 +256,7 @@ This is your first proper empirical evaluation of the given neural network for t
 
 Make conclusion about feasibility and success rates of $\epsilon$-ball robustness, and the speed with which verification success deteriorates with the growing $\epsilon$.
 
-## Exercise (⭑) : Strong Classification Robustness in Vehicle
+## Exercise #4 (⭑) : Strong Classification Robustness in Vehicle
 
 Using the same `.vcl` file as in all previous exercises, define and verify in _Vehicle_ the propety of _Strong Classification Robustness_,
 that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \leq \eta$, for some small $\eta$.
@@ -274,23 +274,23 @@ We refer the interested reader for a more detailed discussion of different robus
 
 - Xiaowei Huang, Daniel Kroening, Wenjie Ruan, James Sharp, Youcheng Sun, Emese Thamo, Min Wu, Xinping Yi. A Survey of Safety and Trustworthiness of Deep Neural Networks: Verification, Testing, Adversarial Attack and Defence, and Interpretability. J. of Computer Science Review, 2018.
 
-## Exercise (⭑⭑): Explore Other Definitions of Robustness
+## Exercise #5 (⭑⭑): Explore Other Definitions of Robustness
 
 Use _Vehicle_ to define other forms of Robustness property from Casadio et al.
 
 *Please note: although the _Vehicle_ language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurence of a neural network per specification.*
 
-## Exercise (⭑⭑): Other Distances in Vehicle
+## Exercise #6 (⭑⭑): Other Distances in Vehicle
 
 Re-define the _classification_ and _standard robustness_ properties by using some different notion of distance, e.g. the Euclidean distance, instead of the $L_{\infty}$ norm.
 
 *Please note: although the _Vehicle_ language is rich and allows such extensions, not all specifications will be feasible for Marabou that works with linear real arithmetic.*
 
-## Exercise (⭑) Practicing to write property specifications
+## Exercise #7 (⭑) Practicing to write property specifications
 
 To test your understanding of the robustness property, try completing the robustness verification in [this file](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-incomplete).
 
-## Exercise (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
+## Exercise #8 (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
 
 *This exercise can be hard or simple, depending how much help you get from the model solution provided as sources!*
 

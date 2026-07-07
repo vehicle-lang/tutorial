@@ -168,11 +168,11 @@ torch.onnx.export(
 
  # Exercises
 
- ## Exercise (*): Run the Chapter code
+ ## Exercise #1 (⭑): Run the Chapter code
 Download the required materials (or produce them yourself) and repeat the steps described in this chapter. All code is available from the tutorial repository.
 
- ## Exercise (*): Verifying and comparing networks
+ ## Exercise #2 (⭑): Verifying and comparing networks
  Use a vehicle specification (either the one provided, or your own) to verify a property (e.g., robustness) of a network trained _with_ a logical loss function, and compare this to one trained _without_ a logical loss function. Which is more robust? Which is has a better task accuracy?
 
- ## Exercise (**): Further experimentation
+ ## Exercise #3 (⭑⭑): Further experimentation
 Try various combinations of task loss functions, constraint loss functions, and alpha values. How do these affect each other? Is there a combination that makes the network more robust? Is there a combination that makes the network more accurate? What happens when you use multiple constraint loss functions simultaneously?
