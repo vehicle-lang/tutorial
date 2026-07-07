@@ -98,6 +98,14 @@ Vehicle supports several different differentiable logics from the literature, th
 
 First, we will load our Vehicle specification and define our constraint loss function:
 
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
+
 ```python
 import vehicle_lang as vcl
 from vehicle_lang.loss import pytorch as loss_pt
@@ -109,9 +117,29 @@ spec = loss_pt.load_specification(
 
 constraint_loss_fn = spec["robust"]
 ```
+</div>
+
+<div>
+
+```python
+TensorFlow placeholder
+```
+</div>
+
+</div>
+</div>
+
 The first parameter to the `load_specification` function is the path to the Vehicle specification. The second parameter defines which logic to use -- this is optional, and defaults to DL2. We define which property from the specification to use as our constraint loss function by accessing it by name on the specification object.
 
 Next, we will define a simple model and training procedure:
+
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
 
 ```python
 import torch
@@ -148,8 +176,20 @@ for epoch in range(num_epochs):
         total_loss.backward()
         optimizer.step()
 ```
+</div>
+
+</div>
+</div>
 
 Note that the `network` callable must match the type of the network declared in the Vehicle specification. The `alpha` parameter can be used to tweak the weighting of task loss vs. constraint loss, which are blended together in `total_loss`. We can now export this trained model to verify it using vehicle, with the hope that it is more robust as a result of training with constraint loss. Model exportation can be done like so:
+
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
 
 ```python
 import torch.onnx
@@ -161,9 +201,14 @@ torch.onnx.export(
     model,
     input_tensor,
     "classifier.onnx",
-    external_data=False, # this is required for Marabou verification
+    external_data=False, # required for Marabou verification
 )
 ```
+</div>
+
+</div>
+</div>
+
  Exporting an ONNX file in Pytorch works by tracing, which runs the model with an arbitrary input and records each operation. Hence, we provide the model with a randomly generated input tensor. At the time of writing, Marabou does not support external data locations, so we require that `external_data=False`.
 
  # Exercises
