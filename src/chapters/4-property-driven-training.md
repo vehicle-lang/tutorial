@@ -42,13 +42,13 @@ Let us have a look at its effect, pictorially. Suppose this is the manifold that
 Remember that we sampled our new data from these $\epsilon$-balls.
 But suppose your true decision boundary runs over the manifold like this:
 
-![Data Manifold for D](../assets/images/SR-vs-CR-4.png)
+![Data Manifold for D](../assets/images/SR-vs-CR-4-white-bg.png)
 
 We have a problem, because some of the data points we sampled from the  suddenly have wrong labels!
 
 Actually, it maybe even worse. Depending how our data lies on the manifold, we may have even generated inconistent labelling. Here is the example when this happens:
 
-![Data Manifold for D](../assets/images/SR-vs-CR-5.png)
+![Data Manifold for D](../assets/images/SR-vs-CR-5-white-bg.png)
 
 It seems data augmentation is not general enough for Vehicle, and only works correctly if strong assumptions about the underlying manifold are taken.
 

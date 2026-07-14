@@ -21,11 +21,11 @@ desired $\epsilon$-balls, or generate adversarial examples (sample images closes
 
 Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
 
-![Data Manifold for D](../assets/images/SR-vs-CR-4.png)
+![Data Manifold for D](../assets/images/SR-vs-CR-4-white-bg.png)
 
 In the case where two data points' $\epsilon$-balls overlap, there is a chance we generate two new data points with the same position in the input space. Furthermore, if the two original data points lie both close to (and on opposite sides of) the decision boundary, the augmented data points may have _different labels_, despite occupying the same location in the input space:
 
-![Data Manifold for D](../assets/images/SR-vs-CR-5.png)
+![Data Manifold for D](../assets/images/SR-vs-CR-5-white-bg.png)
 
 These inconsistencies mean this approach is generally unviable for network robustification.
 
@@ -122,7 +122,15 @@ constraint_loss_fn = spec["robust"]
 <div>
 
 ```python
-TensorFlow placeholder
+import vehicle_lang as vcl
+from vehicle_lang.loss import tensorflow as loss_tf
+
+spec = loss_tf.load_specification(
+    "mnist-robustness.vcl",
+    logic=vcl.VehicleDifferentiableLogic(),
+)
+
+constraint_loss_fn = spec["robust"]
 ```
 </div>
 
@@ -161,20 +169,75 @@ def network(x: torch.Tensor) -> torch.Tensor:
     return model(x.reshape(1, 1, 28, 28)).reshape(10)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+cross_entropy = nn.functional.cross_entropy()
+
 num_epochs = 5
 alpha = 0.5
 
 for epoch in range(num_epochs):
-    for images, labels in train_loader:
+    for step, (images, labels) in enumerate(train_loader):
         optimizer.zero_grad()
         logits = model(images)
-        loss = nn.functional.cross_entropy(logits, labels)
+        loss = cross_entropy(logits, labels)
 
-        constraint_loss = constraint_loss_fn(network)
+        constraint_loss = constraint_loss_fn(
+            n=BATCH_SIZE, 
+            classifier=network,
+            epsilon=torch.tensor(0.005),
+            trainingImages=images.squeeze(1),
+            trainingLabels=labels
+        )
+
+        constraint_loss = torch.stack(constraint_loss).mean()
         total_loss = alpha * loss + (1 - alpha) * constraint_loss
 
         total_loss.backward()
         optimizer.step()
+```
+</div>
+
+<div>
+
+```python
+import tensorflow as tf
+from tensorflow.keras import layers, Sequential
+
+model = Sequential([
+    layers.InputLayer(shape=(1, 28, 28)),
+    layers.Flatten(),
+    layers.Dense(64, activation="relu"),
+    layers.Dense(32, activation="relu"),
+    layers.Dense(10)
+])
+
+def network(x: tf.Tensor) -> tf.Tensor:
+    return tf.reshape(model(tf.reshape(x, (1, 1, 28, 28))), (10,))
+
+optimizer = tf.keras.optimizers.SGD(learning_rate=1e-2, momentum=0.9)
+cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+
+num_epochs = 5
+alpha = 0.5
+
+for epoch in range(num_epochs):
+    for step, (images, labels) in enumerate(train_loader):
+        with tf.GradientTape() as tape:
+            logits = model(images)
+            task_loss = cross_entropy(labels, logits)
+            
+            constraint_loss = constraint_loss_fn(
+                n=BATCH_SIZE,
+                classifier=network,
+                epsilon=tf.constant(0.005),
+                trainingImages=tf.squeeze(images, axis=-1),
+                trainingLabels=labels
+            )
+
+            constraint_loss = tf.reduce_mean(tf.stack(constraint_loss))
+            total_loss = alpha * task_loss + (1 - alpha) * constraint_loss
+
+        grads = tape.gradient(total_loss, model.trainable_variables)
+        optimizer.apply_gradients(zip(grads, model.trainable_variables))
 ```
 </div>
 
@@ -204,12 +267,29 @@ torch.onnx.export(
     external_data=False, # required for Marabou verification
 )
 ```
-</div>
-
-</div>
-</div>
 
  Exporting an ONNX file in Pytorch works by tracing, which runs the model with an arbitrary input and records each operation. Hence, we provide the model with a randomly generated input tensor. At the time of writing, Marabou does not support external data locations, so we require that `external_data=False`.
+</div>
+
+<div>
+
+```python
+model.export("models/tf_simple_classifier")
+```
+
+This saves the model at the specified directory. To convert this to ONNX format, we can run the following command (this will require installing tf2onnx):
+
+```bash
+python -m tf2onnx.convert \
+    --saved-model models/tf_simple_classifier \
+    --output tf_simple_classifier.onnx
+```
+The model is now saved in ONNX format under the name specified with the `--output` parameter.
+</div>
+
+</div>
+</div>
+
 
  # Exercises
 
