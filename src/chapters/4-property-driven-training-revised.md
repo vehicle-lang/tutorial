@@ -8,7 +8,7 @@ This section contains a lot of theory. For implementation details, please skip t
 
 ---
 ## Motivation
-The goal of this section is to answer one question: _can we train a neural network to be more robust within a desirable $\epsilon$?_
+The goal of this section is to answer one question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
 The long tradition of robustifying neural networks in machine learning has a few methods
 ready. For example, we can re-train the networks with new data that was augmented using images within the
 desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the decision boundary) within the given $\epsilon$-balls during training. Let us breifly explore these approaches.
@@ -64,34 +64,25 @@ $$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(\hat x, y) \bigg]$
 In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimsation parameters $\theta$ which _minimises_ this loss value.
 
 ## Logical Loss Functions
-Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we know about adversarial training and loss functions, we can reframe this question: _instead of optimising a network purely to fit a dataset, can we also optimise it to fit a specific logical property, e.g., robustness?_
+Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we know about adversarial training and loss functions, we can reframe this question: _how can we combine regular task optimisation with training the network to abide by a specific logical property, e.g., robustness?_
 
 Gradient descent algorithms train networks to fit data. The concept of logical loss functions is to use that same algorithm to train the network to also obey the specification. Standard logic is insufficient for this task since we need a differentiable signal to find the gradient. Hence, we need a type of logic that we can differentiate.
 
 ## Differentiable Logics
-[abridged wording from previous version]: #
+Traditional logics are difficult to translate to loss functions for neural networks because they consist only of boolean values and operations, which are undifferentiable. If we want to use gradient-based techniques for logical properties, we need a logical calculus which uses connectives that are both mathematically rigorous in terms of semantics and differentiable.
 
-Differentiable logics to convert booleans and operations over booleans into equivalent numerical operations that are differentiable. Consider the following example language:
+ Differentiable logics convert booleans and operations over booleans into equivalent numerical operations that are differentiable. One such logic is quantitative linear logic (QLL), or Capucci Logic [@capucci2026QLL]. QLL defines the logical connectives with the following real-valued functions:
 
-$$p:=p\;|\;a\le b\;|\;p\wedge p\;|\;p\implies p$$
+**Negation:** $$\neg a:=-a$$
 
-Let the function $\mathcal{I}$ be the translation from this logical syntax to a differentiable logic. Additionally, let us assume the domain of the differentiable logic we wish to define is $[0,1]$. Let us define the semantics of $p$ case-by-case.
+**Conjunction:** $$a\cap^pb:=\frac{1}{p}\log(e^{pa}+e^{pb})$$
 
-Firstly, if we have the equation $a\le b$, we want this to be true (i.e., take the value of $1$) when $a$ is less than or equal to $b$. We also want this to degrade linearly as $a$ overtakes $b$ - i.e., if $a$ is only slightly bigger than $b$, the value of $a\le b$ should only be slightly below $1$ (it's only a "little bit" false). These intuitions are satisfied by the following definition:
+**Disjunction:** $$a\cup^pb:=-\frac{1}{p}\log(e^{-pa}+e^{-pb})$$
 
-$$\mathcal{I}(a \le b ):=1-\max(0,a-b)$$
+**Implication:** $$a\implies b:=b-a$$
 
-Next, if we have the equation $p_1\wedge p_2$, we want the truth value to approach $1$ as the respective truth values of equations $p_1$ and $p_2$ approach $1$. This is satisfied by the simple definition:
+where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions.
 
-$$\mathcal{I}(p_1\wedge p_2):=\mathcal{I}(p_1)\times \mathcal{I}(p_2)\\$$
-
-Finally, if we have the equation $p_1\implies p_2$, we shall require that it is true if: **1.** the premise is false, or **2.** the conclusion is _at least as true_ as the premise (i.e., $\mathcal{I}(p_2)\ge\mathcal{I}(p_1)$). In the case that the premise is more true than the conclusion (i.e., $\mathcal{I}(p_1)>\mathcal{I}(p_2)$), the truth value of the implication should proportionally reflect this discrepancy. This can be achieved with the following definition:
-
-$$\mathcal{I}(p_1\implies p_2):=\min\bigg(1, \frac{\mathcal{I}(p_2)}{\mathcal{I}(p_1)}\bigg)$$
-
-It is recommended that you take a moment to convince yourself that these definitions are satisfactory (albeit simple). Thus, we have defined a translation function, $\mathcal{I}$, to convert a simple boolean logic to a differentiable logic. This enables us to train a network to obey a logical specification!
-
-[comment on differentiability/subgradients of max/min functions?]: #
 
 ## Logical Loss Functions in Vehicle
 Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with Pytorch. Here, we use the MNIST Fashion dataset to train a neural network. All files used in this example can be found in the supporting materials. 
@@ -263,7 +254,7 @@ input_tensor = torch.randn(1,1,28,28)
 torch.onnx.export(
     model,
     input_tensor,
-    "classifier.onnx",
+    "classifier.onnx", # file name
     external_data=False, # required for Marabou verification
 )
 ```
