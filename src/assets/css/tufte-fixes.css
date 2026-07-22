@@ -6,32 +6,107 @@ img {
 
 /* Disable underline in code block in tufte-css */
 /* See: https://github.com/edwardtufte/tufte-css/pull/187 */
-code > a {
+code>a {
   /* TODO: use text-decoration when next version of tufte-css is released */
   background: unset !important;
 }
+
 
 /* Fix width of pre elements. */
 pre {
   width: 52.5%;
 }
-pre > code {
+
+pre>code {
   width: 97%;
 }
+
 pre.fullwidth {
   width: 90%;
 }
-pre.fullwidth > code {
+
+pre.fullwidth>code {
   width: 97%;
 }
+
 @media (max-width: 760px) {
   pre {
     width: 97%;
   }
+
   pre.fullwidth {
     width: 97%;
   }
+
   .fullwidth {
     max-width: 97%;
+  }
+}
+
+/* Temporary Styling for generated tabs (Rocq, Agda etc.) */
+.tabs-container {
+  margin: 1.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 55%; /* Match Tufte text column */
+}
+.tabs-content pre {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0;
+  box-sizing: border-box;
+}
+.tabs-header {
+  display: flex;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #ccc;
+}
+.tab-button {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-family: inherit;
+  transition: background-color 0.2s, border-bottom 0.2s;
+  color: #111;
+}
+.tab-button:hover {
+  background-color: #ddd;
+}
+.tab-button.active {
+  background-color: #fffff8;
+  border-bottom: 2px solid #555;
+  font-weight: bold;
+}
+.tabs-content {
+  padding: 15px;
+  background-color: transparent;
+}
+@media (max-width: 760px) {
+  .tabs-container {
+    width: 97%;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .tabs-container {
+    border-color: #444;
+  }
+  .tabs-header {
+    background-color: #222;
+    border-bottom-color: #444;
+  }
+  .tab-button {
+    color: #bbb;
+  }
+  .tab-button:hover {
+    background-color: #333;
+  }
+  .tab-button.active {
+    background-color: #151515;
+    border-bottom-color: #ddd;
+    color: #ddd;
   }
 }

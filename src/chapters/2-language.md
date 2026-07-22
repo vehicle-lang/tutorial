@@ -322,7 +322,7 @@ We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty:
 
 The exercises assume that you already installed Vehicle as described in [vehicle documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
-## Exercise (⭑)
+## Exercise #1 (⭑)
 
 Start by simply running the code that was discussed in the above chapter.
 It is available from the `examples` section of the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial)
@@ -331,7 +331,7 @@ It is available from the `examples` section of the [tutorial repository](https:/
 
 Did it work? If yes, you are ready to experiment with your own specifications.
 
-## Exercise (⭑⭑). Problem Space versus Input/Output Space
+## Exercise #2 (⭑⭑). Problem Space versus Input/Output Space
 
 We discussed an instance of the embedding gap when verifying Property 3.
 In particular, we reasoned in terms of the problem space, but verified the network trained on the input space.
@@ -360,13 +360,13 @@ $$
 
 To run the verification queries, please use the networks available from the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
 
-## Exercise (⭑⭑). The full ACAS Xu challenge in one file
+## Exercise #3 (⭑⭑). The full ACAS Xu challenge in one file
 
 Why not trying to state all 10 ACAS Xu properties in one `.vcl` file?
 Try running the verification query in Vehicle using all $10$ properties.
 You can find them in the Reluplex paper [@katz2017reluplex] ([arXiv](https://arxiv.org/pdf/1702.01135.pdf)).
 
-## Exercise (⭑⭑⭑). Your first independent Vehicle specification
+## Exercise #4 (⭑⭑⭑). Your first independent Vehicle specification
 
 1.  Clone the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
 2.  Find the `iris_model.onnx` model under `exercises/chapter2/iris-dataset`.
