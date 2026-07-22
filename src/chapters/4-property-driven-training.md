@@ -1,316 +1,305 @@
 ---
 title: "Property-Driven Training"
 ---
+---
+**Note**
 
-# Motivation
+This section contains a lot of theory. For implementation details, please skip to [Logical Loss Functions In Vehicle](#logical-loss-functions-in-vehicle).
 
-We finished the last chapter with a conjecture concerning
-diminishing robustness verification success with increasing values of $\epsilon$.
-Let us now see, using a concrete example, how soon the success rate declines.
+---
 
-The last exercise of the previous chapter gave us a property specification
-for robustness of ``Fashion MNIST" models. We propose now to look into the statistics of verifying one of such models on 500 examples from the data set. To obtain quicker verification times, let us use a Fashion MNIST model with one input layer of $32$ neurons, and one output layer of $10$ neurons (the tutorial files contain the model if you wish to check it). Running Vehicle, we obtain the following success rates:
-
-| $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
-| :---------------: | :---------------: | :--------------: | :--------------- |
-| 82.6 % (413/500)  | 29.8 % (149/500)  |  3.8 % (19/500)  | 0 % (0/500)      |
-
-As we see in the table, verifiability of the property deteriorates quickly with growing
-$\epsilon$. Yet, for majority of practical applications, it is desirable to have a larger $\epsilon$,
-as this increases the chance that new yet unseen data points will fall within the verified
-subspaces of the input vector space.
-
-Can we re-train the neural network to be more robust within a desirable $\epsilon$?
+## Motivation
+We will begin this chapter with a question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
 The long tradition of robustifying neural networks in machine learning has a few methods
-ready, for example, to re-train the networks with new data set that was augmented with images within the
-desired $\epsilon$-balls, or to generate adversarial examples (sample images closest to the decision boundary) within the given $\epsilon$-balls during training.
+ready. For example, we can re-train the networks with new data that was augmented using images within the
+desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the boundary of the $\epsilon$-ball) during training. Let us breifly explore these approaches.
 
-Let us look closer into this.
 
-# Robustness Training
+[need citations for data augmentation/adversarial trianing]: #
 
-## Data Augmentation
+## Current Approaches
+**Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, usually done using methods such as rotation, cropping, flipping, random sampling, etc. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
 
- Suppose we are given a data set $\mathcal{D} =  \{(\mathbf{x}_1, y_1), \ldots , (\mathbf{x}_n, y_n)\}$.
-  Prior to training, we can generate new training data samples within $\epsilon$-balls of the existing data and label them with the same output as the original data. Then we can use our usual training methods with this new *augmented data set* [@SK19].
-
-However, this method maybe problematic for verification purposes.
-Let us have a look at its effect, pictorially. Suppose this is the manifold that corresponds to $\mathcal{D}$ (crosses are the original data points, and circles are the $\epsilon$-balls around them):
-
-![Data Manifold for D](../assets/images/SR-vs-CR-2.png)
-
-Remember that we sampled our new data from these $\epsilon$-balls.
-But suppose your true decision boundary runs over the manifold like this:
+Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
 
 ![Data Manifold for D](../assets/images/SR-vs-CR-4-white-bg.png)
 
-We have a problem, because some of the data points we sampled from the  suddenly have wrong labels!
-
-Actually, it maybe even worse. Depending how our data lies on the manifold, we may have even generated inconistent labelling. Here is the example when this happens:
+In the case where two data points' $\epsilon$-balls overlap, there is a chance we generate two new data points with the same position in the input space. Furthermore, if the two original data points lie both close to (and on opposite sides of) the decision boundary, the augmented data points may have _different labels_, despite occupying the same location in the input space:
 
 ![Data Manifold for D](../assets/images/SR-vs-CR-5-white-bg.png)
 
-It seems data augmentation is not general enough for Vehicle, and only works correctly if strong assumptions about the underlying manifold are taken.
+These inconsistencies mean this approach is generally unviable for network robustification.
 
-## Adversarial Training
+**Adversarial Training** also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtely different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. The goal of adversarial training is to improve the network's worst-case robustness; it is a form of prophylaxis against adversarial attacks.
 
-It would be nice to somehow reflect the fact of proximity to the decision boundary in our training! The closer the point is to the decision boundary, the less certain the neural network should be about its class:
+[the below paragraph was pasted from the previous version -- double check understanding and fix citation]: #
 
-![Data Manifold for D](../assets/images/SR-vs-CR-3.png)
-
-However, using data labels as a method is unfit for the task. We cannot achieve the effect we are looking for with data augmentation.
-We have to modify our training algorithm instead [@GoodfellowSS14].
-
-## Loss Function
-
-Given a data set $\mathcal{D}$ and a function ${f_{\theta}: \mathbb{R}^n \rightarrow \mathbb{R}^m}$ with optimisation parameters $\theta$, a *loss function*
-
-$$
-    \mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}
-$$
-
-computes a penalty proportional to the difference between the output of $f_{\theta}$ on a training input $\hat{\mathbf{x}}$ and a desired output $\mathbf{y}$.
-
-The reader will find an excellent exposition of adversarial training in the tutorial by @KM18.
-
-## Example: Cross-Entropy Loss
-
-Given a function  ${f_{\theta}: \mathbb{R}^n \rightarrow [0,1]^m}$, the cross-entropy loss is defined as
-
-$$
-    \mathcal{L}_{ce}(\hat{\mathbf{x}}, \mathbf{y})
-    =
-    - \Sigma_{i=1}^{m} \mathbf{y}_i \; log(f_{\theta}(\hat{\mathbf{x}})_i)
-$$
-
-where $\mathbf{y}_i$ is the true probability for class $i$ and $f_{\theta}(\hat{\mathbf{x}})_i$ is the probability for class $i$ as predicted by $f_{\theta}$ when applied to $\hat{\mathbf{x}}$.
-
-## Adversarial Training for Robustness
-
-*Gradient descent*  minimises loss $\mathcal{L}(\hat{\mathbf{x}}, \mathbf{y})$ between the predicted value $f_{\theta}(\hat{\mathbf{x}})$ and the true value $\mathbf{y}$, for each entry $(\hat{\mathbf{x}}, \mathbf{y})$ in $\mathcal{D}$. It thus solves the optimisation problem:
-
-$$
-    \min_{\theta} \mathcal{L}(\hat{\mathbf{x}}, \mathbf{y})
-$$
-
-
-For *adversarial training*, we instead minimise the loss with respect to the worst-case perturbation of each sample in $\mathcal{D}$.
-We replace the standard training objective with:
-
-$$
-    \min_{\theta} [ \max_{\mathbf{x} : |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon} \mathcal{L}(\mathbf{x}, \mathbf{y})]
-$$
-
- The inner maximisation is done by *projected gradient descent* (PGD), that ``projects" the gradient of $\mathcal{L}$ on $\hat{\mathbf{x}}$ in order to perturb it and get the worst $\mathbf{x}$.
-
-## Adversarial Training and Verification
-
-Adversarial training is almost the right solution!
-Its main limitation turns out to be the logical property it optimises for.
-Recall that we may encode an arbitrary property in Vehicle. However, as we discovered in [@CasadioKDKKAR22], the projected gradient descent can only optimise for one concrete property.
+The main limitation of adversarial training turns out to be the logical property it optimises for.
+Recall that we may encode an arbitrary property in Vehicle. However, as was discovered in [@CasadioKDKKAR22], projected gradient descent can only optimise for one concrete property.
 Recall the property of $\epsilon$-ball robustness was defined as:
-$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon). robust(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of *robust* to be
+$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of $\text{robust}$ to be
 $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 
-# Logical Loss Functions
+## Beyond $\epsilon$-Balls
+In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
 
-:::epigraph
-> Is there any way to generate neural network optimisers for any given logical property?
-:::
+However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end. 
 
-The main idea is that we would like to co-opt the same gradient-descent algorithm that is used to
-train the network to fit the data to also train the network to obey the specification.
+Before we explore exactly how we train a network on logical properties in practice, those uninitiated into the cults of machine learning and logic may appreciate some theoretical background of how this is possible. This we cover in the following few sections.
 
-## Logical Loss Function: Simple Example
+## Loss Functions
+Humans learn by making mistakes. The same is true of neural networks. Loss functions are a way of measuring the "magnitude" of a mistake made by a neural network. For a given training input, loss functions compute a penalty proportional to the difference between the output of the network and the _true_ output (i.e., the training label). Formally, this is written as follows:
 
-Consider the very simple example specification:
+$$\mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$$
 
-```vehicle
-@network
-f : Tensor Real [1] -> Tensor Real [1]
+The function $f_\theta: \mathbb{R}^n \rightarrow \mathbb{R}^m$ represents the network, whose optimisation parameters are $\theta$, and $n$ and $m$ represent the sizes of the input and output tensors respectively.
 
-@property
-greaterThan2 : Bool
-greaterThan2 = f [ 0 ] ! 0 > 2
-```
+One of the simplest (yet usable) loss functions is called **mean squared error**, defined as:
 
-This statement is either true or false, as shown in the left graph below:
+$$\mathcal{L}_\text{MSE}(\hat x, y)=\frac{1}{n}\sum_{i=1}^n(y_i-f_\theta(\hat x_i))^2$$
 
-![Boolean loss](../assets/images/boolean-loss.png)
+where $n$ is the total number of data points, $y_i$ is the label for data point ${\hat x}_i$, and $f_\theta(\hat x_i)$ is the model's predicted value for $\hat x_i$. I.e., we find the difference between the prediction and the actual value, square it, and take the average across the training dataset.
 
-However, what if instead, we converted all `Bool` values to `Real`, where a value greater than
-`0` indicated false and a value less than `0` indicated true?
-We could then rewrite the specification as:
+Models learn by iteratively tweaking their optimsation parameters with the goal of minimising the ouptut of the loss function. The most common way to do this is using **gradient descent**. Formally, we wish to find the set of parameters $\theta$ that yeilds the least loss:
 
-```vehicle
-greaterThan2 : Real
-greaterThan2 = f [ 0 ] ! 0 - 2
-```
+$$\min_\theta\mathcal{L}(\hat x,y)$$
 
-If we then replot the graph we get the following:
+Here we can explain further the mechanism that drives adversarial training. We can use a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective becomes:
 
-![Rational loss](../assets/images/real-loss.png)
+$$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(\hat x, y) \bigg]$$
 
-Now we have a useful gradient, as successfully minimising `f [ 0 ] ! 0 - 2` will result in the property `greaterThan2` becoming true.
+In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimsation parameters $\theta$ which _minimises_ this loss value.
 
-This is the essence of logical loss functions: convert all booleans and operations over booleans
-into equivalent numeric operations that are differentiable and whose gradient's point in the
-right direction.
+## Logical Loss Functions
+Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we now know about adversarial training and loss functions, we can reframe this question: _how can we train a network to abide by any arbitrary logical property?_
+
+Gradient descent algorithms train networks to fit data. The big idea behind logical loss functions is to use that same algorithm to train the network to also obey the specification. Standard logic is insufficient for this task since we need a differentiable signal to find the gradient. Hence, we need a type of logic that we can differentiate.
 
 ## Differentiable Logics
-Traditionally, translations from a given logical syntax to a loss function are
-known as “differentiable logics", or DLs.
-One of the first attempts to translate propositional logic specifications to loss functions was given in [[@XuZFLB18]](http://proceedings.mlr.press/v80/xu18h.html) and was generalised to a fragment of first-order logic in [[@FischerBDGZV19]](http://proceedings.mlr.press/v97/fischer19a.html).
-Later, this work was complemented by giving a fuzzy interpretation to DL by [[@KriekenAH22]](https://doi.org/10.1016/j.artint.2021.103602) and [[@SlusarzKDSS23]](https://arxiv.org/abs/2303.10650) proposed generalisation for the
-syntax and semantics of DL, with a view of encoding all previously presented DLs in one formal
-system, and comparing their theoretical properties.
+Traditional logics are difficult to translate to loss functions for neural networks because they consist only of boolean values and operations, which are undifferentiable. If we want to use gradient-based techniques for logical properties, we need a logical calculus which uses connectives that are both mathematically rigorous in terms of semantics and differentiable.
 
-Vehicle has several different differentiable logics from the literature available, but will not go into detail about
-how they work here.
+Differentiable logics (DLs) convert booleans and operations over booleans into equivalent numerical operations that are differentiable. We have numerous DLs at our disposal (including DL2 [@FischerBDGZV19], DFLs [@KriekenAH22], and more), and Vehicle implements a variety of these. One such logic that has shown particular promise is quantitative linear logic (QLL), or Capucci Logic [@capucci2026QLL]. QLL defines the logical connectives with the following real-valued functions:
 
-Instead, we explain the main idea by means of an example.
-Let us define a very simple differentiable logic on a toy language
+**Negation:** $$\neg a:=-a$$
 
-$$
-    p := p\ |a\ \leq\ a|\ p \land p\ |\ p \Rightarrow p
-$$
+**Conjunction:** $$a\cap^pb:=\frac{1}{p}\log(e^{pa}+e^{pb})$$
 
-One possible DL (called *Product DL* in [@KriekenAH22]) for it can be defined as:
+**Disjunction:** $$a\cup^pb:=-\frac{1}{p}\log(e^{-pa}+e^{-pb})$$
 
-$$
-    \mathcal{I}(a_1 \leq a_2) := 1-\max(\frac{a_1 -a_2}{a_1 + a_2}, 0)
-$$
+**Implication:** $$a\implies b:=b-a$$
 
-$$
-    \mathcal{I}(p_1 \land p_2) := \mathcal{I}(p_1) * \mathcal{I}(p_2)
-$$
+where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions. This is one approach that conserves logical semantics whilst allowing us to use gradient-based methods for property-driven training.
 
-$$
-    \mathcal{I}(p_1 \Rightarrow p_2) := 1 - \mathcal{I}(p_1) + \mathcal{I}(p_1) * \mathcal{I}(p_2)
-$$
+## Logical Loss Functions in Vehicle
+Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with Pytorch. Here, we use the MNIST Fashion dataset to train a neural network. All files used in this example can be found in the supporting materials. 
 
-An example of this translation is:
+First, we will load our Vehicle specification and define our constraint loss function:
 
-$$
-    \mathcal{I} (| f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta) =
-    1 - \max (\dfrac{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| - \delta}{| f(\mathbf{x}) - f(\hat{\mathbf{x}})| + \delta},0)
-$$
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
 
-# Logical Loss Functions in Vehicle
+```python
+import vehicle_lang as vcl
+from vehicle_lang.loss import pytorch as loss_pt
 
-We now have all the necessary building blocks to define Vehicle approach to property-driven training. We use the formula:
+spec = loss_pt.load_specification(
+    "mnist-robustness.vcl",
+    logic=vcl.VehicleDifferentiableLogic(),
+)
 
-$$
-    \text{Vehicle Training} = \text{Differentiable Logics} + \text{Projected Gradient Descent}
-$$
+constraint_loss_fn = spec["robust"]
+```
+</div>
 
-In Vehicle, given a property $\forall \mathbf{x}. \mathcal{P}(\mathbf{x}) \Rightarrow \mathcal{S}(\mathbf{x})$, we replace the usual PGD training objective with
+<div>
 
-$$
-    \min_{\theta} [ \max_{\mathbf{x} \in \mathbb{H}_{\mathcal{P}(\mathbf{x})}} \mathcal{L}_{\mathcal{S}(\mathbf{x})}(\mathbf{x}, \mathbf{y})]
-$$
+```python
+import vehicle_lang as vcl
+from vehicle_lang.loss import tensorflow as loss_tf
 
-where
+spec = loss_tf.load_specification(
+    "mnist-robustness.vcl",
+    logic=vcl.VehicleDifferentiableLogic(),
+)
 
-*   $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ is a hyper-shape that corresponds to the pre-condition $\mathcal{P}(\mathbf{x})$ and
-*   $\mathcal{L}_{\mathcal{S}(\mathbf{x})}$ is obtained by DL-translation of the post-condition $\mathcal{S}(\mathbf{x})$.
+constraint_loss_fn = spec["robust"]
+```
+</div>
 
-Let us see how this works for the following definition of robustness:
+</div>
+</div>
 
-$$
-    \forall \mathbf{x}. |\mathbf{x} - \hat{\mathbf{x}}| \leq \epsilon \Rightarrow |f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta
-$$
+The first parameter to the `load_specification` function is the path to the Vehicle specification. The second parameter defines which logic to use -- this is optional, and defaults to DL2. We define which property from the specification to use as our constraint loss function by accessing it by name on the specification object.
 
-The definition of the optimisation problem above instantiates by taking:
+Next, we will define a simple model and training procedure:
 
-*   $\mathbb{H}_{\mathcal{P}(\mathbf{x})}$ given by the $\epsilon$-cube around $\hat{\mathbf{x}}$ and
-*   given any DL translation $\mathcal{I}$, the loss function
-    $$
-        \mathcal{L}_{\mathcal{S}(\mathbf{x})} = \mathcal{I} ( || f(\mathbf{x}) - f(\hat{\mathbf{x}})|| \leq \delta)
-    $$
-
-# Coding Example: generating a logical loss function in Python
-
-The Python bindings ship backend-specific helpers in `vehicle_lang.loss.tensorflow`
-and `vehicle_lang.loss.pytorch`. They both expose a single entry point
-`load_specification(path, ...)` which compiles your `.vcl` file to a dictionary of
-callable Python loss functions. The returned dictionary keys are the names of
-`@property` declarations in your spec.
-
-Below is a minimal PyTorch example that mirrors the tests in `vehicle-python/tests`:
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
 
 ```python
 import torch
-from vehicle_lang.typing import DifferentiableLogic
-from vehicle_lang.loss.pytorch import load_specification
+import torch.nn as nn
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
 
-# Compile the Vehicle spec to PyTorch loss functions
-spec = load_specification(
-    "test_trainable.vcl",  # any Vehicle spec path
-    logic=DifferentiableLogic.Vehicle,
+model = nn.Sequential(
+    nn.Flatten(),
+    nn.Linear(784, 64),
+    nn.ReLU(),
+    nn.Linear(64, 32),
+    nn.ReLU(),
+    nn.Linear(32, 10)
 )
 
-constraint_loss = spec["output_bounded"]  # name of a @property in the spec
+def network(x: torch.Tensor) -> torch.Tensor:
+    return model(x.reshape(1, 1, 28, 28)).reshape(10)
 
-train_x = torch.tensor([0.0, 0.5, 1.0], dtype=torch.float32).unsqueeze(1)
-train_y = torch.tensor([0.0, 1.0, 2.0], dtype=torch.float32)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+cross_entropy = nn.functional.cross_entropy()
 
-model = torch.nn.Sequential(
-    torch.nn.Linear(1, 8), torch.nn.ReLU(), torch.nn.Linear(8, 1)
-)
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
+num_epochs = 5
+alpha = 0.5
 
-for step in range(50):
-    optimizer.zero_grad()
+for epoch in range(num_epochs):
+    for step, (images, labels) in enumerate(train_loader):
+        optimizer.zero_grad()
+        logits = model(images)
+        loss = cross_entropy(logits, labels)
 
-    # Task loss (e.g., MSE to a target function)
-    preds = model(train_x).squeeze(1)
-    task_loss = torch.mean((preds - train_y) ** 2)
+        constraint_loss = constraint_loss_fn(
+            n=BATCH_SIZE, 
+            classifier=network,
+            epsilon=torch.tensor(0.005),
+            trainingImages=images.squeeze(1),
+            trainingLabels=labels
+        )
 
-    # Constraint loss produced by Vehicle; signature matches the Vehicle property
-    constraint_loss_value = constraint_loss(model)
+        constraint_loss = torch.stack(constraint_loss).mean()
+        total_loss = alpha * loss + (1 - alpha) * constraint_loss
 
-    loss = 0.5 * task_loss + 0.5 * constraint_loss_value
-    loss.backward()
-    optimizer.step()
+        total_loss.backward()
+        optimizer.step()
 ```
+</div>
 
-Switching to TensorFlow changes only the backend import and model definition; the
-property call still follows the spec's argument list (typically a single
-`network` callable for many specs):
+<div>
 
 ```python
 import tensorflow as tf
-from vehicle_lang.typing import DifferentiableLogic
-from vehicle_lang.loss.tensorflow import load_specification
+from tensorflow.keras import layers, Sequential
 
-spec = load_specification("test_trainable.vcl", logic=DifferentiableLogic.Vehicle)
-constraint_loss = spec["output_bounded"]
-
-train_x = tf.constant([[0.0], [0.5], [1.0]], dtype=tf.float32)
-train_y = tf.constant([0.0, 1.0, 2.0], dtype=tf.float32)
-
-model = tf.keras.Sequential([
-    tf.keras.layers.Input(shape=(1,)),
-    tf.keras.layers.Dense(8, activation="relu"),
-    tf.keras.layers.Dense(1),
+model = Sequential([
+    layers.InputLayer(shape=(1, 28, 28)),
+    layers.Flatten(),
+    layers.Dense(64, activation="relu"),
+    layers.Dense(32, activation="relu"),
+    layers.Dense(10)
 ])
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
+def network(x: tf.Tensor) -> tf.Tensor:
+    return tf.reshape(model(tf.reshape(x, (1, 1, 28, 28))), (10,))
 
-for step in range(50):
-    with tf.GradientTape() as tape:
-        preds = tf.squeeze(model(train_x), axis=1)
-        task_loss = tf.reduce_mean(tf.square(preds - train_y))
+optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
-        constraint_loss_value = constraint_loss(model)
-        loss = 0.5 * task_loss + 0.5 * constraint_loss_value
+num_epochs = 5
+alpha = 0.5
 
-    grads = tape.gradient(loss, model.trainable_variables)
-    optimizer.apply_gradients(zip(grads, model.trainable_variables))
+for epoch in range(num_epochs):
+    for step, (images, labels) in enumerate(train_loader):
+        with tf.GradientTape() as tape:
+            logits = model(images)
+            task_loss = cross_entropy(labels, logits)
+            
+            constraint_loss = constraint_loss_fn(
+                n=BATCH_SIZE,
+                classifier=network,
+                epsilon=tf.constant(0.005),
+                trainingImages=tf.squeeze(images, axis=-1),
+                trainingLabels=labels
+            )
+
+            constraint_loss = tf.reduce_mean(tf.stack(constraint_loss))
+            total_loss = alpha * task_loss + (1 - alpha) * constraint_loss
+
+        grads = tape.gradient(total_loss, model.trainable_variables)
+        optimizer.apply_gradients(zip(grads, model.trainable_variables))
+```
+</div>
+
+</div>
+</div>
+
+Note that the `network` callable must match the type of the network declared in the Vehicle specification. The `alpha` parameter can be used to tweak the weighting of task loss vs. constraint loss, which are blended together in `total_loss`. We can now export this trained model to verify it using vehicle, with the hope that it is more robust as a result of training with constraint loss. Model exportation can be done like so:
+
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
+
+```python
+import torch.onnx
+
+model.eval()
+input_tensor = torch.randn(1,1,28,28)
+
+torch.onnx.export(
+    model,
+    input_tensor,
+    "classifier.onnx", # file name
+    external_data=False, # required for Marabou verification
+)
 ```
 
-Optional parameters such as `logic`and `samplers` are
-available on `load_specification`; see the [Python API docs](https://vehicle-lang.readthedocs.io/en/stable/training.html) for defaults and examples. To customise
-how Vehicle searches adversarial points, you can supply your own sampler (cf. the default FGSM-based
-samplers in the source tree) when you have domain-specific needs.
+ Exporting an ONNX file in Pytorch works by tracing, which runs the model with an arbitrary input and records each operation. Hence, we provide the model with a randomly generated input tensor. At the time of writing, Marabou does not support external data locations, so we require that `external_data=False`.
+</div>
+
+<div>
+
+```python
+model.export("classifier")
+```
+
+This saves the model at the specified directory. To convert this to ONNX format, we can run the following command (this will require installing tf2onnx):
+
+```bash
+python -m tf2onnx.convert \
+    --saved-model classifier \
+    --output classifier.onnx
+```
+The model is now saved in ONNX format under the name specified with the `--output` parameter.
+</div>
+
+</div>
+</div>
+
+
+ # Exercises
+
+ ## Exercise #1 (⭑): Run the Chapter code
+Download the required materials (or produce them yourself) and repeat the steps described in this chapter. All code used in this chapter is available from the [tutorial repository](https://github.com/vehicle-lang/tutorial/tree/tutorial/examples).
+
+ ## Exercise #2 (⭑): Verifying and comparing networks
+ Use a vehicle specification (either the one provided, or your own) to verify a property (e.g., robustness) of a network trained _with_ a logical loss function, and compare this to one trained _without_ a logical loss function. Which is more robust, Which is has a better task accuracy, and why?
+
+ ## Exercise #3 (⭑⭑): Further experimentation
+Try various combinations of task loss functions, constraint loss functions, and alpha values. How do these affect each other? Is there a combination that makes the network more robust? Is there a combination that makes the network more accurate? What happens when you use multiple constraint loss functions simultaneously?
+
+## Exercise #4 (⭑⭑⭑) Training a model from scratch
+Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness, and the effect robustness training can have on this.
+
+Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
