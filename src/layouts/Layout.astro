@@ -60,7 +60,7 @@ const base = import.meta.env.BASE_URL;
       buttons.forEach((button) => {
         button.addEventListener('click', () => {
           const index = parseInt(button.getAttribute('data-index') || '0', 10);
-          
+
           buttons.forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
 

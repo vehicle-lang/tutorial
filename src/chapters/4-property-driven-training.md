@@ -43,7 +43,7 @@ $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 ## Beyond $\epsilon$-Balls
 In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
 
-However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end. 
+However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end.
 
 Before we explore exactly how we train a network on logical properties in practice, those uninitiated into the cults of machine learning and logic may appreciate some theoretical background of how this is possible. This we cover in the following few sections.
 
@@ -91,7 +91,7 @@ Differentiable logics (DLs) convert booleans and operations over booleans into e
 where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions. This is one approach that conserves logical semantics whilst allowing us to use gradient-based methods for property-driven training.
 
 ## Logical Loss Functions in Vehicle
-Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with Pytorch. Here, we use the MNIST Fashion dataset to train a neural network. All files used in this example can be found in the supporting materials. 
+Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with Pytorch. Here, we use the MNIST Fashion dataset to train a neural network. All files used in this example can be found in the supporting materials.
 
 First, we will load our Vehicle specification and define our constraint loss function:
 
@@ -178,7 +178,7 @@ for epoch in range(num_epochs):
         loss = cross_entropy(logits, labels)
 
         constraint_loss = constraint_loss_fn(
-            n=BATCH_SIZE, 
+            n=BATCH_SIZE,
             classifier=network,
             epsilon=torch.tensor(0.005),
             trainingImages=images.squeeze(1),
@@ -221,7 +221,7 @@ for epoch in range(num_epochs):
         with tf.GradientTape() as tape:
             logits = model(images)
             task_loss = cross_entropy(labels, logits)
-            
+
             constraint_loss = constraint_loss_fn(
                 n=BATCH_SIZE,
                 classifier=network,

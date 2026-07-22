@@ -8,7 +8,7 @@ Modern software systems increasingly combine neural network components with othe
 
  **Prerequisites**: This chapter assumes a general familiarity with interactive theorem provers. While deep expertise is not required, it is assumed that you are comfortable with core concepts and reading/constructing proofs in at least one ITP.
 
-# Where does Vehicle fit?   
+# Where does Vehicle fit?
 
 The overall correctness of such systems depends on both the behaviour of the neural network and the surrounding software or mathematical model. Interactive theorem provers are well suited to reasoning about system level properties such as temporal properties and the interaction between software components and mathematical models. However, directly modelling and verifying trained neural networks inside an ITP can become difficult to scale and maintain as network sizes increase [@desmartin]. Previous work has observed that neural network verification involves a wide range of properties, many of which are better addressed using specialised verification techniques and solvers [@vehicle].
 
@@ -159,9 +159,9 @@ Regardless of which ITP you target, the generated file will generally contain th
   This compiles to:
   - `Lemma safe : forall x, safeInput x -> safeOutput x.` in Rocq,
   - `safe : ∀ x → SafeInput x → SafeOutput x` in Agda,
-  - `axiom safe x = ((safe_input x) ==> (safe_output x))` in Imandra, 
+  - `axiom safe x = ((safe_input x) ==> (safe_output x))` in Imandra,
   - `assumes safe : "\<forall> x. safeInput controller x \<longrightarrow> safeOutput controller x"` in Isabelle.
-  
+
   Depending on whether you export with a cache and if the backend supports it, the property is either a proved lemma or an unproven axiom/postulate.
 
  **Note (v0.26.1)**: At the time of writing, cache-backed validation, where the ITP actively checks the verification result, is only supported for **Agda** and **Rocq**. Imandra and Isabelle currently export all properties as axioms or locale assumptions regardless of whether `--cache` is supplied. See the [Vehicle exporting documentation](https://vehicle-lang.readthedocs.io/en/stable/exporting.html) for the latest list of supported backends.
@@ -287,7 +287,7 @@ The full proof of correctness for the system can be found in [SafetyProof.agda](
  Require Import Stdlib.Reals.Reals.
  Local Open Scope ring_scope.
  Local Open Scope order_scope.
- 
+
  Notation R := Rdefinitions.R.
  ```
 
@@ -460,7 +460,7 @@ open WindControllerSpec
 (* Prove the controller lemma by referencing the exported safe axiom *)
 lemma controller_safety_scalar x y =
   safe_input x y ==> safe_output x y (controller_fun x y)
-[@@by [%use Wind_controller_spec.safe (Tensor.tensor_from_vec [2] [x; y])] 
+[@@by [%use Wind_controller_spec.safe (Tensor.tensor_from_vec [2] [x; y])]
    @> [%expand controller_fun x y] @> auto]
 
 (* Establish system-level correctness using the lemma proven above *)
@@ -500,7 +500,7 @@ begin
 
   type_synonym R = "real"
 
-  
+
 
   typedef InputVector  =  "{ a :: R tensor. (dims a) = ((2 :: nat) # []) }"
     using dims_tensor_from_lookup by blast
@@ -578,7 +578,7 @@ begin
   definition safeOutput  :: " (InputVector \<Rightarrow> OutputVector) \<Rightarrow> (InputVector) \<Rightarrow>  bool "
     where " safeOutput   controller x = ( let y = (flex_subtensor ((controller ((normalise controller x)))) velocity) in ((ltTensorReduced (tensor_cdot (-1 :: R) (flextensor_from_vec [] [ (((5 :: R) / 4)) ])) ((tensor_plus ((tensor_plus y ((hadamard_prod (flextensor_from_vec [] [ (((2 :: R) )) ]) (flex_subtensor x currentSensor))))) (tensor_cdot (-1 :: R) (flex_subtensor x previousSensor)))))) \<and> ((ltTensorReduced ((tensor_plus ((tensor_plus y ((hadamard_prod (flextensor_from_vec [] [ (((2 :: R) )) ]) (flex_subtensor x currentSensor))))) (tensor_cdot (-1 :: R) (flex_subtensor x previousSensor)))) (flextensor_from_vec [] [ (((5 :: R) / 4)) ]))) ) "
 
-  locale  WindControllerSpec  = 
+  locale  WindControllerSpec  =
 
     fixes  controller  :: " InputVector \<Rightarrow> OutputVector "
 
