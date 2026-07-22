@@ -7,17 +7,18 @@ title: "Property-Driven Training (Revised)"
 This section contains a lot of theory. For implementation details, please skip to [Logical Loss Functions In Vehicle](#logical-loss-functions-in-vehicle).
 
 ---
+
 ## Motivation
-The goal of this section is to answer one question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
+We will begin this chapter with a question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
 The long tradition of robustifying neural networks in machine learning has a few methods
 ready. For example, we can re-train the networks with new data that was augmented using images within the
-desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the decision boundary) within the given $\epsilon$-balls during training. Let us breifly explore these approaches.
+desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the boundary of the $\epsilon$-ball) during training. Let us breifly explore these approaches.
 
 
 [need citations for data augmentation/adversarial trianing]: #
 
 ## Current Approaches
-**Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, done using methods such as random sampling. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
+**Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, usually done using methods such as rotation, cropping, flipping, random sampling, etc. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
 
 Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
 
@@ -29,16 +30,22 @@ In the case where two data points' $\epsilon$-balls overlap, there is a chance w
 
 These inconsistencies mean this approach is generally unviable for network robustification.
 
-**Adversarial Training** also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. These examples are used to optimise the network with the hope of improving its worst-case robustness.
+**Adversarial Training** also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtely different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. The goal of adversarial training is to improve the network's worst-case robustness; it is a form of prophylaxis against adversarial attacks.
 
 [the below paragraph was pasted from the previous version -- double check understanding and fix citation]: #
 
-Adversarial training is almost the right solution!
-Its main limitation turns out to be the logical property it optimises for.
-Recall that we may encode an arbitrary property in Vehicle. However, as we discovered in [@CasadioKDKKAR22], the projected gradient descent can only optimise for one concrete property.
+The main limitation of adversarial training turns out to be the logical property it optimises for.
+Recall that we may encode an arbitrary property in Vehicle. However, as was discovered in [@CasadioKDKKAR22], projected gradient descent can only optimise for one concrete property.
 Recall the property of $\epsilon$-ball robustness was defined as:
-$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon). robust(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of *robust* to be
+$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of $\text{robust}$ to be
 $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
+
+## Beyond $\epsilon$-Balls
+In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
+
+However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end. 
+
+Before we explore exactly how we train a network on logical properties in practice, those uninitiated into the cults of machine learning and logic may appreciate some theoretical background of how this is possible. This we cover in the following few sections.
 
 ## Loss Functions
 Humans learn by making mistakes. The same is true of neural networks. Loss functions are a way of measuring the "magnitude" of a mistake made by a neural network. For a given training input, loss functions compute a penalty proportional to the difference between the output of the network and the _true_ output (i.e., the training label). Formally, this is written as follows:
@@ -47,31 +54,31 @@ $$\mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$$
 
 The function $f_\theta: \mathbb{R}^n \rightarrow \mathbb{R}^m$ represents the network, whose optimisation parameters are $\theta$, and $n$ and $m$ represent the sizes of the input and output tensors respectively.
 
-One of the simplest loss functions is called **mean squared error**, defined as:
+One of the simplest (yet usable) loss functions is called **mean squared error**, defined as:
 
 $$\mathcal{L}_\text{MSE}(\hat x, y)=\frac{1}{n}\sum_{i=1}^n(y_i-f_\theta(\hat x_i))^2$$
 
 where $n$ is the total number of data points, $y_i$ is the label for data point ${\hat x}_i$, and $f_\theta(\hat x_i)$ is the model's predicted value for $\hat x_i$. I.e., we find the difference between the prediction and the actual value, square it, and take the average across the training dataset.
 
-Models learn by iteratively tweaking their optimsation parameters with the goal of minimising the ouptut of the loss function. The most common way to do this is using **gradient descent**. Formally, we wish to find what $\theta$ yeilds the least loss:
+Models learn by iteratively tweaking their optimsation parameters with the goal of minimising the ouptut of the loss function. The most common way to do this is using **gradient descent**. Formally, we wish to find the set of parameters $\theta$ that yeilds the least loss:
 
 $$\min_\theta\mathcal{L}(\hat x,y)$$
 
-We can use a variant of gradient descent, called **projected gradient descent**, to maximise loss for adversarial training purposes. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by projecting those perturbations that escape the $\epsilon$-ball back inside. Our new training objective becomes:
+Here we can explain further the mechanism that drives adversarial training. We can use a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective becomes:
 
 $$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(\hat x, y) \bigg]$$
 
 In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimsation parameters $\theta$ which _minimises_ this loss value.
 
 ## Logical Loss Functions
-Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we know about adversarial training and loss functions, we can reframe this question: _how can we combine regular task optimisation with training the network to abide by a specific logical property, e.g., robustness?_
+Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we now know about adversarial training and loss functions, we can reframe this question: _how can we train a network to abide by any arbitrary logical property?_
 
-Gradient descent algorithms train networks to fit data. The concept of logical loss functions is to use that same algorithm to train the network to also obey the specification. Standard logic is insufficient for this task since we need a differentiable signal to find the gradient. Hence, we need a type of logic that we can differentiate.
+Gradient descent algorithms train networks to fit data. The big idea behind logical loss functions is to use that same algorithm to train the network to also obey the specification. Standard logic is insufficient for this task since we need a differentiable signal to find the gradient. Hence, we need a type of logic that we can differentiate.
 
 ## Differentiable Logics
 Traditional logics are difficult to translate to loss functions for neural networks because they consist only of boolean values and operations, which are undifferentiable. If we want to use gradient-based techniques for logical properties, we need a logical calculus which uses connectives that are both mathematically rigorous in terms of semantics and differentiable.
 
- Differentiable logics convert booleans and operations over booleans into equivalent numerical operations that are differentiable. One such logic is quantitative linear logic (QLL), or Capucci Logic [@capucci2026QLL]. QLL defines the logical connectives with the following real-valued functions:
+Differentiable logics (DLs) convert booleans and operations over booleans into equivalent numerical operations that are differentiable. We have numerous DLs at our disposal (including DL2 [@FischerBDGZV19], DFLs [@KriekenAH22], and more), and Vehicle implements a variety of these. One such logic that has shown particular promise is quantitative linear logic (QLL), or Capucci Logic [@capucci2026QLL]. QLL defines the logical connectives with the following real-valued functions:
 
 **Negation:** $$\neg a:=-a$$
 
@@ -81,8 +88,7 @@ Traditional logics are difficult to translate to loss functions for neural netwo
 
 **Implication:** $$a\implies b:=b-a$$
 
-where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions.
-
+where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions. This is one approach that conserves logical semantics whilst allowing us to use gradient-based methods for property-driven training.
 
 ## Logical Loss Functions in Vehicle
 Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with Pytorch. Here, we use the MNIST Fashion dataset to train a neural network. All files used in this example can be found in the supporting materials. 
@@ -204,7 +210,7 @@ model = Sequential([
 def network(x: tf.Tensor) -> tf.Tensor:
     return tf.reshape(model(tf.reshape(x, (1, 1, 28, 28))), (10,))
 
-optimizer = tf.keras.optimizers.SGD(learning_rate=1e-2, momentum=0.9)
+optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
 cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
 num_epochs = 5
@@ -265,15 +271,15 @@ torch.onnx.export(
 <div>
 
 ```python
-model.export("models/tf_simple_classifier")
+model.export("classifier")
 ```
 
 This saves the model at the specified directory. To convert this to ONNX format, we can run the following command (this will require installing tf2onnx):
 
 ```bash
 python -m tf2onnx.convert \
-    --saved-model models/tf_simple_classifier \
-    --output tf_simple_classifier.onnx
+    --saved-model classifier \
+    --output classifier.onnx
 ```
 The model is now saved in ONNX format under the name specified with the `--output` parameter.
 </div>
@@ -288,7 +294,12 @@ The model is now saved in ONNX format under the name specified with the `--outpu
 Download the required materials (or produce them yourself) and repeat the steps described in this chapter. All code is available from the tutorial repository.
 
  ## Exercise #2 (⭑): Verifying and comparing networks
- Use a vehicle specification (either the one provided, or your own) to verify a property (e.g., robustness) of a network trained _with_ a logical loss function, and compare this to one trained _without_ a logical loss function. Which is more robust? Which is has a better task accuracy?
+ Use a vehicle specification (either the one provided, or your own) to verify a property (e.g., robustness) of a network trained _with_ a logical loss function, and compare this to one trained _without_ a logical loss function. Which is more robust, Which is has a better task accuracy, and why?
 
  ## Exercise #3 (⭑⭑): Further experimentation
 Try various combinations of task loss functions, constraint loss functions, and alpha values. How do these affect each other? Is there a combination that makes the network more robust? Is there a combination that makes the network more accurate? What happens when you use multiple constraint loss functions simultaneously?
+
+## Exercise #4 (⭑⭑⭑) Training a model from scratch
+Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness.
+
+Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
