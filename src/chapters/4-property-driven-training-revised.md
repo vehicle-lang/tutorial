@@ -300,6 +300,6 @@ Download the required materials (or produce them yourself) and repeat the steps 
 Try various combinations of task loss functions, constraint loss functions, and alpha values. How do these affect each other? Is there a combination that makes the network more robust? Is there a combination that makes the network more accurate? What happens when you use multiple constraint loss functions simultaneously?
 
 ## Exercise #4 (⭑⭑⭑) Training a model from scratch
-Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness.
+Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness, and the effect robustness training can have on this.
 
 Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
