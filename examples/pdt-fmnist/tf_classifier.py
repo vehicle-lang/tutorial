@@ -55,7 +55,7 @@ for epoch in range(num_epochs):
         with tf.GradientTape() as tape:
             logits = model(images)
             task_loss = cross_entropy(labels, logits)
-            
+
             constraint_loss = constraint_loss_fn(
                 n=BATCH_SIZE,
                 classifier=network,

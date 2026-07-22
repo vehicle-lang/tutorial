@@ -4,7 +4,7 @@ p : Real
 
 @logic
 capucciAdditive : DifferentiableLogic
-capucciAdditive = 
+capucciAdditive =
   { trueElement                = -infinity
   , falseElement               = infinity
   , pointwiseNegation          = \x -> -x
@@ -19,4 +19,3 @@ capucciAdditive =
   , reduceConjunction          = \xs -> (1/p) * log(reduceAdd (exp (p * xs)))
   , reduceDisjunction          = \xs -> (1/p) * log(reduceAdd (exp (-p * xs)))
   }
-

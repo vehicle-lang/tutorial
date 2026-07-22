@@ -54,7 +54,7 @@ for epoch in range(num_epochs):
         loss = cross_entropy(logits, labels)
 
         constraint_loss = constraint_loss_fn(
-            n=BATCH_SIZE, 
+            n=BATCH_SIZE,
             classifier=network,
             epsilon=torch.tensor(0.005),
             trainingImages=images.squeeze(1),

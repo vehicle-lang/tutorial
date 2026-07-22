@@ -26,7 +26,7 @@ from vehicle_lang.loss import pytorch as loss_pt
 
 declarations = loss_pt.load_specification(
     "spec.vcl",
-    logic=vcl.DifferentiableLogic.Vehicle, 
+    logic=vcl.DifferentiableLogic.Vehicle,
     #logic=vcl.DifferentiableLogic.Custom(cappuci)
 )
 
