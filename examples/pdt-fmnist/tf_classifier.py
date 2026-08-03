@@ -26,7 +26,7 @@ train_loader = (
 # load Vehicle specification + loss function
 
 spec = loss_tf.load_specification(
-    "mnist-robustness.vcl",
+    "fmnist-robustness.vcl",
     logic=vcl.VehicleDifferentiableLogic()
 )
 

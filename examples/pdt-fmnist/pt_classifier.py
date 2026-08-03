@@ -23,7 +23,7 @@ train_loader = DataLoader(train_subset, batch_size=BATCH_SIZE, shuffle=True)
 # load Vehicle specification + loss function
 
 spec = loss_pt.load_specification(
-    "mnist-robustness.vcl",
+    "fmnist-robustness.vcl",
     logic=vcl.VehicleDifferentiableLogic()
 )
 
@@ -42,7 +42,7 @@ def network(x: torch.Tensor) -> torch.Tensor:
     return model(x.reshape(1, 1, 28, 28)).reshape(10)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-cross_entropy = nn.functional.cross_entropy()
+cross_entropy = nn.CrossEntropyLoss()
 
 num_epochs = 5
 alpha = 0.5
