@@ -108,7 +108,7 @@ import vehicle_lang as vcl
 from vehicle_lang.loss import pytorch as loss_pt
 
 spec = loss_pt.load_specification(
-    "mnist-robustness.vcl",
+    "fmnist-robustness.vcl",
     logic=vcl.VehicleDifferentiableLogic(),
 )
 
@@ -123,7 +123,7 @@ import vehicle_lang as vcl
 from vehicle_lang.loss import tensorflow as loss_tf
 
 spec = loss_tf.load_specification(
-    "mnist-robustness.vcl",
+    "fmnist-robustness.vcl",
     logic=vcl.VehicleDifferentiableLogic(),
 )
 
