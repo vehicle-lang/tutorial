@@ -5,4 +5,5 @@ span.inline-bib > span.inline-bib-entry {
   display: list-item;
   list-style-position: outside;
   list-style-type: disclosure-closed;
+  counter-increment: list-item 0;
 }
