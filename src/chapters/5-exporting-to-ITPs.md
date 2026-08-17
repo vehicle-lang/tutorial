@@ -40,7 +40,7 @@ Using Vehicle in this way has two main advantages:
 
 # An Example: The Wind Controller
 
-As a running example throughout this chapter, we will use the Wind Controller benchmark (located in the repository at `examples/windController`). This is a modified version of the vehicle verification problem originally presented by Boyer, Green, and Moore [@boyer1990use].
+As a running example throughout this chapter, we will use the Wind Controller benchmark (located in the repository at [`examples/windController`](https://github.com/vehicle-lang/vehicle/tree/dev/examples/windController)). This is a modified version of the vehicle verification problem originally presented by Boyer, Green, and Moore [@boyer1990use].
 In this scenario an autonomous vehicle is travelling along a straight road of width 6 parallel to the x-axis, with a varying cross-wind that blows perpendicular to the x-axis.
 The vehicle has an imperfect sensor that it can use to get a (possibly noisy) reading on its position on the y-axis, and can change its velocity on the y-axis in response.
 The car's controller takes in both the current sensor reading and the previous sensor reading and its goal is to keep the car on the road.
@@ -156,13 +156,29 @@ Regardless of which ITP you target, the generated file will generally contain th
   safe : Bool
   safe = forall x . safeInput x => safeOutput x
   ```
-  This compiles to:
-  - `Lemma safe : forall x, safeInput x -> safeOutput x.` in Rocq,
-  - `safe : ∀ x → SafeInput x → SafeOutput x` in Agda,
-  - `axiom safe x = ((safe_input x) ==> (safe_output x))` in Imandra,
-  - `assumes safe : "\<forall> x. safeInput controller x \<longrightarrow> safeOutput controller x"` in Isabelle.
+This compiles to the following statements.
 
-  Depending on whether you export with a cache and if the backend supports it, the property is either a proved lemma or an unproven axiom/postulate.
+Rocq:
+```coq
+Lemma safe : forall x, safeInput x -> safeOutput x.
+```
+
+Agda:
+```agda
+safe : ∀ x → SafeInput x → SafeOutput x
+```
+
+Imandra:
+```ocaml
+axiom safe x = ((safe_input x) ==> (safe_output x))
+```
+
+Isabelle:
+```ocaml
+assumes safe : "\<forall> x. safeInput controller x \<longrightarrow> safeOutput controller x"
+```
+
+Depending on whether you export with a cache and if the backend supports it, the property is either a proved lemma or an unproven axiom/postulate.
 
  **Note (v0.26.1)**: At the time of writing, cache-backed validation, where the ITP actively checks the verification result, is only supported for **Agda** and **Rocq**. Imandra and Isabelle currently export all properties as axioms or locale assumptions regardless of whether `--cache` is supplied. See the [Vehicle exporting documentation](https://vehicle-lang.readthedocs.io/en/stable/exporting.html) for the latest list of supported backends.
 
@@ -484,7 +500,7 @@ vehicle export \
 
 which will generate an Isabelle theory file:
 
-```isabelle
+```ocaml
 theory  WindControllerSpec
 
   imports
@@ -598,7 +614,7 @@ end
 
 Once exported, we can import this module and use the safety lemma to prove system-level properties in Isabelle:
 
-```isabelle
+```ocaml
 context WindControllerSpec
 begin
 

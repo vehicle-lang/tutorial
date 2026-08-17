@@ -15,7 +15,7 @@ src/chapters/1-introduction.md
 src/chapters/2-language.md
 src/chapters/3-proving-robustness.md
 src/chapters/4-property-driven-training.md
-src/chapters/5-exporting-to-agda.md
+src/chapters/5-exporting-to-ITPs.md
 ```
 
 # Bibliography
