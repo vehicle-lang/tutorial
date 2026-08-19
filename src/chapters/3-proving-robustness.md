@@ -244,7 +244,7 @@ Try experimenting with different values of $\epsilon$, for example, try
 (_This exercise is technically very simple, but the required number of experiments may take a few hours to run. We recommend you run it at home rather than during the live exercise sessions_).
 
 The previous exercise could be transformed into a proper empirical evaluation of robustness of the model for the data set.
-To do this, include more than 2 images into your `idx` file.  A script for generating `idx` files is available [in the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-complete).
+To do this, include more than 2 images into your `idx` file.  A script for generating `idx` files is available [in the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/MNIST-complete).
 
 Assuming you created an `idx` file with, for example, 500 images, run _Vehicle_ on this file, and collect statistics for $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate a table that looks like this:
 
@@ -288,7 +288,7 @@ Re-define the _classification_ and _standard robustness_ properties by using som
 
 ## Exercise #7 (⭑) Practicing to write property specifications
 
-To test your understanding of the robustness property, try completing the robustness verification in [this file](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/MNIST-incomplete).
+To test your understanding of the robustness property, try completing the robustness verification in [this file](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/MNIST-incomplete).
 
 ## Exercise #8 (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
 
@@ -299,6 +299,6 @@ We will work with the [Fashion MNIST data set](https://www.tensorflow.org/datase
 Either:
 
 - download the data set, train a model from scratch, generate `onnx` and `idx` files; or
-- obtain the model and `idx` files directly from the directory with [the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/chapter3/FMNIST)
+- obtain the model and `idx` files directly from the directory with [the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/FMNIST)
 
 Once this is done, define the spec and verify its robustness. Experiment with different values of $\epsilon$ and different definitions of robustness.
