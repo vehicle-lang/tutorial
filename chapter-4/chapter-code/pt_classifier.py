@@ -1,0 +1,1 @@
+../../resources-by-dataset/fashion-mnist/pt_classifier.py

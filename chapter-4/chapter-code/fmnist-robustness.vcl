@@ -1,0 +1,1 @@
+../../resources-by-dataset/fashion-mnist/fmnist-robustness.vcl
