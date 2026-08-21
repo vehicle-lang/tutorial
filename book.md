@@ -16,6 +16,7 @@ src/chapters/2-language.md
 src/chapters/3-proving-robustness.md
 src/chapters/4-property-driven-training.md
 src/chapters/5-exporting-to-ITPs.md
+src/chapters/6-vancomycert.md
 ```
 
 # Bibliography

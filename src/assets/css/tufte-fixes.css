@@ -14,32 +14,159 @@ code>a {
 
 /* Fix width of pre elements. */
 pre {
-  width: 52.5%;
+  width: 55%;
+  max-width: 90%;
+  box-sizing: border-box;
 }
 
 pre>code {
-  width: 97%;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  box-sizing: border-box;
 }
 
 pre.fullwidth {
   width: 90%;
+  max-width: 90%;
 }
 
 pre.fullwidth>code {
-  width: 97%;
+  width: 100%;
 }
 
-@media (max-width: 760px) {
+/* Keep displayed equations centred under the text column instead of the page. */
+section > mjx-container[display="true"] {
+  width: 55%;
+  max-width: 90%;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* The tutorial tables contain explanations, so give them more reading space. */
+section > table {
+  width: 55%;
+  max-width: 90%;
+  table-layout: fixed;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  line-height: 1.35;
+}
+
+section > table th,
+section > table td {
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+
+section > table th:first-child,
+section > table td:first-child {
+  width: 28%;
+}
+
+/* Full-width figures have no spare margin for a side caption. Keep their
+   captions directly below the image at every viewport width. */
+figure.fullwidth > label.margin-toggle:not(.sidenote-number),
+figure.fullwidth > input.margin-toggle {
+  display: none;
+}
+
+figure.fullwidth > .marginnote {
+  display: block;
+  float: none;
+  clear: both;
+  left: auto;
+  width: 100%;
+  margin: 0.6rem 0 1.5rem;
+  position: static;
+}
+
+/* Tufte switches to its single-column layout at 760px. The app scrollbar can
+   leave a 760px content area inside a slightly wider viewport, so switch a
+   little earlier and keep margin notes and captions inside the page. */
+@media (max-width: 800px) {
+  body {
+    width: 84%;
+    padding-left: 8%;
+    padding-right: 8%;
+  }
+
   pre {
-    width: 97%;
+    width: 100%;
+    max-width: 100%;
   }
 
   pre.fullwidth {
-    width: 97%;
+    width: 100%;
+    max-width: 100%;
   }
 
   .fullwidth {
-    max-width: 97%;
+    max-width: 100%;
+  }
+
+  section > mjx-container[display="true"],
+  section > table {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  section > p,
+  section > footer {
+    width: 100%;
+  }
+
+  section > dl,
+  section > ol,
+  section > ul {
+    width: 90%;
+  }
+
+  figure,
+  figure.fullwidth {
+    max-width: 100%;
+  }
+
+  figcaption,
+  figure.fullwidth figcaption {
+    margin-right: 0;
+    max-width: none;
+  }
+
+  label.margin-toggle:not(.sidenote-number) {
+    display: inline;
+  }
+
+  .marginnote,
+  .sidenote {
+    display: none;
+  }
+
+  .margin-toggle:checked + .marginnote,
+  .margin-toggle:checked + .sidenote {
+    display: block;
+    float: left;
+    left: 1rem;
+    clear: both;
+    width: 95%;
+    margin: 1rem 2.5%;
+    position: relative;
+  }
+
+  figure > label.margin-toggle:not(.sidenote-number),
+  figure > input.margin-toggle {
+    display: none;
+  }
+
+  figure > .marginnote {
+    display: block;
+    float: none;
+    left: auto;
+    width: 100%;
+    margin: 0.6rem 0 1.5rem;
+    position: static;
   }
 }
 
@@ -85,9 +212,10 @@ pre.fullwidth>code {
   padding: 15px;
   background-color: transparent;
 }
-@media (max-width: 760px) {
+@media (max-width: 800px) {
   .tabs-container {
-    width: 97%;
+    width: 100%;
+    max-width: 100%;
   }
 }
 @media (prefers-color-scheme: dark) {
