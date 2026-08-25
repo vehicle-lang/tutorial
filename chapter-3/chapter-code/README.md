@@ -2,7 +2,7 @@
 
 This is an example of a specification for the widely studied adversarial
 robustness problem.
-At a high-level the specification states that any small small pertubation to the
+At a high-level the specification states that any small small perturbation to the
 input, e.g. adjusting a few pixels, should not significantly change the output
 of the network.
 
