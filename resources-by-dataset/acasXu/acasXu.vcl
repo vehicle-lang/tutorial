@@ -26,11 +26,11 @@ type Input = Tensor Real [5]
 -- `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification would
 -- fail to type-check.
 
-distanceToIntruder = 0   -- measured in metres
+distanceToIntruder = 0   -- measured in feet
 angleToIntruder    = 1   -- measured in radians
 intruderHeading    = 2   -- measured in radians
-speed              = 3   -- measured in metres/second
-intruderSpeed      = 4   -- measured in meters/second
+speed              = 3   -- measured in feet/second
+intruderSpeed      = 4   -- measured in feet/second
 
 --------------------------------------------------------------------------------
 -- Outputs
