@@ -9,6 +9,14 @@ Neural networks are widely used in the field of machine learning; and are often 
 
 The image is represented as a vector of real numbers, each vector element standing for a pixel value. Each arrow in the picture bears a *weight* that is used to multiply the input signal; each neuron computes the sum of its inputs.
 
+Formally, a neural network is a function $N : R^m \rightarrow R^n$. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called $\epsilon$*-ball robustness* (or just *robustness*), as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
+
+Seen as functions, neural networks have particular features that play an important role in their verification:
+
+- these functions are not written manually, but generated (or *fitted*) to model the unknown data distribution;
+- the "data" may be big, and require large neural networks;
+- we often attribute very little semantic meaning to the resulting function.
+
 In some scenarios, it becomes important to establish formal guarantees about neural network behaviour. One of the first known attempts to verify neural networks, by [@PT10], was based on abstract interpretation.
 The famous paper by Szegedy [@szegedy2013intriguing] that highlighted the problem of neural network vulnerability to small-norm input perturbations ("adversarial attacks") gave additional impulse to this line of research. In CAV'2017, two papers, by Huang et al [@HuangKWW17] and
 Katz et al. [@katz2017reluplex], on neural network verification appeared and both used specialised forms of SMT-solving. The later gave rise
@@ -30,13 +38,6 @@ Neural network verifier extensions followed three main directions:
 
 At the time of writing, there exist over a dozen verifiers for neural networks. Several papers and monographs are dedicated to the survey of the landscape [e.g., @PGL-051;@HuangKRSSTWY20;@LiuALSBK21]. The community established the specification standards [VNNLib](https://www.vnnlib.org/), common benchmarks and annual competitions. Vehicle compiles down to the VNNLib standard, and is compatible with the growing family of verifiers.
 
-Formally, a neural network is a function $N : R^m \rightarrow R^n$. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called $\epsilon$*-ball robustness* (or just *robustness*), as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
-
-Seen as functions, neural networks have particular features that play an important role in their verification:
-
-- these functions are not written manually, but generated (or *fitted*) to model the unknown data distribution;
-- the "data" may be big, and require large neural networks;
-- we often attribute very little semantic meaning to the resulting function.
 
 # Challenges in Neural Network Verification
 
@@ -44,13 +45,13 @@ There are several research challenges in the area of neural network verification
 
 1. *Theory: finding appropriate verification properties.* The scope of neural network properties available in the literature is limited. Robustness is the most popular general property to date [@casadio2021property], and others include mostly domain-specific properties, such as ACAS Xu Benchmark [@katz2017reluplex], which we will consider shortly in this tutorial. What neural network properties we want and can realistically verify still stands as a big research question.
 
-2. *Solvers: undecidability of non-linear real arithmetic and scalability of neural network verifiers.* On the solver side, undecidability of non-linear real arithmetic [@Akbarpour2009] and scalability of neural network verifiers [wang2021beta] stand as two main challenges.
+2. *Solvers: undecidability of non-linear real arithmetic and scalability of neural network verifiers.* On the solver side, undecidability of non-linear real arithmetic [@Akbarpour2009] and scalability of neural network verifiers [@wang2021beta] stand as two main challenges. That said, progress is being made in these two directions. Several solvers, notably VibeCheck [@vibecheck], now support polynomial verification. And the annual competition VNNCOMP [@vnncomp] features models of up to 67.4 million parameters (weights). 
 
-3. *Machine Learning: understanding and integrating property-driven training.* In all realistic scenarios, even accurate neural networks require extra "property-driven training" in order to comply with verification properties in question. This requires new methods of integrating training with verification. Several approaches exist, including the recently introduced method of *"differentiable logics"* that translate logical properties into loss functions. But they all have pitfalls, see [@SlusarzKDSS23] for a discussion.
+3. *Machine Learning: understanding and integrating property-driven training.* In all realistic scenarios, even accurate neural networks require extra "property-driven training" in order to comply with verification properties in question. This requires new methods of integrating training with verification. Several approaches exist, including the recently introduced method of *"differentiable logics"* that translate logical properties into loss functions. Although initially, most DLs had pitfalls  (see [@SlusarzKDSS23,affeldt2026] for a discussion), some promising logics, such as the Quantitative Linear Logic [@capucci2026], have been suggested recently.
 
-4. *Programming: finding the right languages to support these developments* Many existing solvers have low-level syntax that is hard to understand, making maintenance of the specification difficult. There is very little programming infrastructure to interface verification and property-driven training. Furthermore, the available language infrastructure only allows specifications to be written in terms of the input space, whereas one often needs to reason about neural network behavior in terms of the problem space. This creates an additional *embedding gap* on verification side, a problem that eventually needs to be resolved.
+4. *Programming: finding the right languages to support these developments* Many existing solvers have low-level syntax that is hard to understand, making maintenance of the specification difficult. There is very little programming infrastructure to interface verification and property-driven training. Furthermore, the available language infrastructure only allows specifications to be written in terms of the input space, whereas one often needs to reason about neural network behavior in terms of the problem space. This creates an additional *embedding gap* on verification side, a problem that eventually needs to be resolved. Here, too, progress is being made, with VNNLIB 2.0 [@Daggitt26] being a major step towards a more principled specification language.
 
-5. *Complex systems: integration of neural net verification into complex systems.* Finally, neural networks usually work as components of complex systems, and the question of smooth integation of existing neural network solvers with other theorem provers requires resolution.
+5. *Complex systems: integration of neural net verification into complex systems.* Finally, neural networks usually work as components of complex systems, and the question of smooth integration of existing neural network solvers with other theorem provers requires resolution. A special competition, ARCH-COMP [@ARCH26], is dedicated to this problem, and in this tutorial we will take our own original spin on the problem, following [@vehicle-compositional]. 
 
 This tutorial will focus on problems 3 to 5, and will present Vehicle, a tool that provides support in alleviating them. In particular, Vehicle is equipped with a specification language that allows one to express neural network properties in a high-level, human-readable format (thus opening the way to reasoning about a wider space of properties, and reasoning in terms of the problem space). Then it compiles the specification down into low-level queries and passes them automatically to existing neural network solvers. If the specification cannot be verified, Vehicle gives one an option to automatically generate a new loss function that can be used to train the model to satisfy the stated property. Once a specification has been verified (possibly after property-driven re-training), Vehicle allows one to export the proof to an interactive theorem prover, and reason about the behavior of the complex system that embeds the machine learning model.
 
@@ -61,14 +62,13 @@ a) loss functions for PyTorch and Tensorflow which can be used to guide
 both specification-directed training and gradient-based counter-example
 search.
 
-b) queries for the Marabou neural network verifier, which
+b) queries for the neural network verifiers, which
 can be used to formally prove that the network obeys the specification.
 
-c) Agda specifications, which are tightly coupled to the original network
+c) ITP specifications (Agda, Isabelle/HOL, Rocq, Imandra), which are tightly coupled to the original network
 and verification result, in order to scalably and maintainably construct
 larger proofs about machine learning-enhanced systems.
 
-Currently, Vehicle supports the verifier Marabou, the ITP Agda, and the ONNX format for neural networks.
 The below figure illustrates the existing user backends in Vehicle.
 
 ![Vehicle Backends](../assets/images/Vehicle.png)
@@ -76,11 +76,11 @@ The below figure illustrates the existing user backends in Vehicle.
 # Objectives of this Tutorial
 
 This tutorial will give an introduction to the [Vehicle](https://github.com/vehicle-lang/vehicle) tool and its conceptual approach to modelling specifications for machine learning systems via functional programming.
-It will teach the participants to understand the range of problems that arise in neural network property specification, verification and training, and will give hands-on experience at solving these problems at a level of a higher-order specification language with dependent types.
+It will teach the reader to understand the range of problems that arise in neural network property specification, verification and training, and will give hands-on experience at solving these problems at a level of a higher-order specification language with dependent types.
 
 # Prerequisites
 
-To follow the tutorial, you will need Vehicle, Marabou and Agda installed in your machine.
+To follow the tutorial, you will need Vehicle, Marabou (or other solver from [@vnncomp]) and any of the mentioned ITPs installed in your machine.
 For instructions, refer to [vehicle documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
 Quick installation instructions:
@@ -91,11 +91,11 @@ Quick installation instructions:
 
     2. Install Marabou: just run `pip install maraboupy`
 
-- Python (PyTorch) and Agda installation will only be needed to follow Chapters 4 and 5.
+- Python (PyTorch) and ITP (Agda, Isabelle/HOL, Rocq, Imandra) installation will only be needed to follow Chapters 4, 5 and 6.
 
 We suggest that you start this tutorial with just Vehicle and Marabou as tools.
 
-We recommend using [Visual Studio Code](https://code.visualstudio.com) with the [Vehicle Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=wenkokke.vehicle-syntax-highlighting) and [agda-mode](https://marketplace.visualstudio.com/items?itemName=banacorn.agda-mode) plugins.
+We recommend using [Visual Studio Code](https://code.visualstudio.com) with the [Vehicle Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=wenkokke.vehicle-syntax-highlighting).
 
 Whether you are using this tutorial for self-study or attending one of our live tutorials, all supporting exercises, code and infrastructure can be downloaded from the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial). These include all relevant  property specifications, trained neural networks in ONNX format, data in IDX format, and any necessary instructions.
 
@@ -103,9 +103,10 @@ Whether you are using this tutorial for self-study or attending one of our live 
 
 If you are interested to know more about the theoretical underpinnings of Vehicle design, we recommend the following papers:
 
-- Daggitt, M.L., Kokke. W., Atkey, R., Slusarz, N., Arnaboldi, L., Komendantskaya, E.:
-  *Vehicle: Bridging the Embedding Gap in the Verification of Neuro-Symbolic Programs.*
-  [arXiv](https://arxiv.org/abs/2401.06379), 2024.
+- Daggitt, M., Kokke, W., Atkey, R.,  Komendantskaya, E., Slusarz, N., and  Arnaboldi, L. *Vehicle: Bridging the Embedding Gap in the Verification of Neuro-Symbolic Programs.* Invited paper at 10th International Conference on Formal Structures for Computation and Deduction (FSCD'25).
+
+- Daggitt, M., Komendantskaya, E., 
+Sirman, A., Bruni, A., Teuber, S., Smart, J., Passmore, G.: *Compositional Neural-Cyber-Physical System Verification in the Interactive Theorem Prover of Your Choice.* International Conference on Functional Programming (ICFP'26).
 
 - Casadio, M., Komendantskaya, E., Daggitt, M.L., Kokke, W., Katz, G., Amir, G., Refaeli, I.:
   *Neural network robustness as a verification property: A principled case study.*
@@ -123,3 +124,7 @@ ACM (2023).
   *Logic of Differentiable Logics: Towards a Uniform Semantics of DL.*
   LPAR 2023.
   Proceedings of 24th International Conference on Logic for Programming, Artificial Intelligence and Reasoning, Manizales, Colombia, 4-9th June 2023, EPiC Series in Computing, vol. 94, pp. 473--493.
+
+
+-  Sirman, A., Conway, F., Ciupa, J.,  Grinbergs, G., Komendantskaya, E., Hoang, S., Rawson, M., Bruni, A., Belle, V.,  Williams, M. *Vancomycert: A Certified Neuro-Symbolic Drug Delivery System (Case Study).* Symposium on AI Verification (SAIV'26).
+
