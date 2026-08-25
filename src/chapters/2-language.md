@@ -369,9 +369,9 @@ You can find them in the Reluplex paper [@katz2017reluplex] ([arXiv](https://arx
 ## Exercise #4 (⭑⭑⭑). Your first independent Vehicle specification
 
 1.  Clone the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
-2.  Find the `iris_model.onnx` model under `exercises/chapter2/iris-dataset`.
+2.  Find the `iris_model.onnx` model under `exercises/iris-dataset/`.
     This model was trained on the famous [Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set).
-3.  Find the Iris data set files `iris_test_data.idx` and `iris_test_labels.idx` under `exercises/chapter2/iris-dataset`.
+3.  Find the Iris data set files `iris_test_data.idx` and `iris_test_labels.idx` under `exercises/iris-dataset/`.
 4.  Examine the data set and try to define a few "obvious properties" that should hold for the model.
     You a free to look at the Wikipedia page for the [Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set) or consult other sources.
 5.  Write those properties as a Vehicle specification.
