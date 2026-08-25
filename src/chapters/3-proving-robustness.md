@@ -6,7 +6,7 @@ title: "Proving Neural Network Robustness"
 
 In this chapter we will learn about the problem that has received significant attention within the machine learning community:
 _the problem of robustness of neural networks to out-of-distribution shifts, also known as "robustness to adversarial attacks"._
-The problem was famously raised by Christian Szegedy and his co-authors in 2013 in the paper ["Intriguing properties of neural networks"](https://arxiv.org/pdf/1312.6199.pdf)
+The problem was famously raised by Christian Szegedy and his co-authors in 2013 in the paper *Intriguing properties of neural networks* [@szegedy2013intriguing].
 
 So, here is the problem. Suppose we are given a data set $\mathcal{X}$ for classification of images, it consists of
 pairs $(\mathbf{x}, \mathbf{y})$, where $\mathbf{x} \in \mathbb{R}^n$ is an input, and $\mathbf{y} \in \mathbb{R}^m$ is the desired output.
@@ -28,7 +28,7 @@ When we train a neural network to be highly accurate on both the training and th
 - how well that learnt hypothesis generalises to yet unseen data (we do this by measuring the accuracy on the test set).
 
 Coming to our example, if my neural network has a $99$ % accuracy on the MNIST data set, I should be satisfied that it learnt
-what a hand-written digit is. Szegedy et al were the first to show systematically that this is not the case:
+what a hand-written digit is. Szegedy et al. [-@szegedy2013intriguing] were the first to show systematically that this is not the case:
 take the image on the left (below), which is classified with high confidence as "0", apply perturbation on the middle to get the image on the right,
 and your neural network will give a $94$ % confidence that it sees a "5" on the right, even despite the fact that the image did
 not change the class (for the human eye):
@@ -54,12 +54,12 @@ $$\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = [  \mathbf{x} \in \mathbb{R}^n: |\hat
 
 where $| ... |$ is a distance function (or $L$-norm) in $\mathbb{R}^n$, such as Euclidean distance or $L_{\infty}$-norm.
 
-It now remains to define the property "classification of $f$ does not change much". The paper by [Casadio et al.](https://arxiv.org/abs/2104.01396)
-summarises a few options for this definition. The simplest is the _Classification Robustness_ that requires that all images within any given $\epsilon$-ball are classified as the same class. We will consider this property in detail, and will take a few other properties from Casadio et al. as an exercise.
+It now remains to define the property "classification of $f$ does not change much". The paper by Casadio et al. [-@CasadioKDKKAR22]
+summarises a few options for this definition. The simplest is the _Classification Robustness_ that requires that all images within any given $\epsilon$-ball are classified as the same class. We will consider this property in detail, and will take a few other properties from Casadio et al. [-@CasadioKDKKAR22] as an exercise.
 
 # Formalising $\epsilon$-ball robustness for MNIST networks in Vehicle
 
-We note that $\epsilon$-ball robustness as a verification property bears some similarity to the ACAS Xu example that we have already covered in Chapter 1. In particular, both verification properties impose constraints on the output regions of the neural networks, assuming some constraint on their input regions. (Both problems are therefore amenable to a range of interval propagation and abstract interpretation methods, see [this survey](https://arxiv.org/abs/1812.08342) for further details.) From the point of view of the property specification, which is our main concern here, there are three main differences between these two examples:
+We note that $\epsilon$-ball robustness as a verification property bears some similarity to the ACAS Xu example that we have already covered in Chapter 1. In particular, both verification properties impose constraints on the output regions of the neural networks, assuming some constraint on their input regions. (Both problems are therefore amenable to a range of interval propagation and abstract interpretation methods, see the survey by Huang et al. [-@HuangKRSSTWY20] for further details.) From the point of view of the property specification, which is our main concern here, there are three main differences between these two examples:
 
 - ACAS Xu did not have to refer to a dataset $\mathcal{X}$; $\epsilon$-ball robustness, however, is formulated relative to the images given in the data set. We will see how _Vehicle_ can be used to handle properties that refer directly to the data sets.
 
@@ -276,7 +276,7 @@ We refer the interested reader for a more detailed discussion of different robus
 
 ## Exercise #5 (⭑⭑): Explore Other Definitions of Robustness
 
-Use _Vehicle_ to define other forms of Robustness property from Casadio et al.
+Use _Vehicle_ to define other forms of Robustness property from Casadio et al. [-@CasadioKDKKAR22].
 
 *Please note: although the _Vehicle_ language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurence of a neural network per specification.*
 
