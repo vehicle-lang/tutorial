@@ -55,7 +55,7 @@ $$\mathbb{B}(\hat{\mathbf{x}}, \epsilon) = [  \mathbf{x} \in \mathbb{R}^n: |\hat
 where $| ... |$ is a distance function (or $L$-norm) in $\mathbb{R}^n$, such as Euclidean distance or $L_{\infty}$-norm.
 
 It now remains to define the property "classification of $f$ does not change much". The paper by Casadio et al. [-@CasadioKDKKAR22]
-summarises a few options for this definition. The simplest is the _Classification Robustness_ that requires that all images within any given $\epsilon$-ball are classified as the same class. We will consider this property in detail, and will take a few other properties from Casadio et al. [-@CasadioKDKKAR22] as an exercise.
+summarises a few options for this definition. The simplest is the _Classification Robustness_ that requires that all images within any given $\epsilon$-ball are classified as the same class. We will consider this property in detail, and will take a few other properties from Casadio et al. as an exercise.
 
 # Formalising $\epsilon$-ball robustness for MNIST networks in Vehicle
 
