@@ -8,7 +8,9 @@ This example demonstrates how the entire specification, consisting of all
 10 properties, can be written in a single file.
 Unlike the equivalent low-level Marabou queries, the specification is written at a high-level and is understandable by a non-expert.
 
-## Input files
+## The exercise: based on the example of property 3 encoding, covered in the tutorial, try restoring all 10 properties described in the Reluplex paper. 
+
+## The file set up remains the same:
 
 - `acasXu.vcl` - the specification describing the desired behaviour. This needs to be edited
 
@@ -16,7 +18,7 @@ Unlike the equivalent low-level Marabou queries, the specification is written at
 
 ## Verifying using Marabou
 
-The following command verifies `property3` for the network `acasXu_1_7.onnx`:
+The following command verifies all properties for the network `acasXu_1_7.onnx`:
 
 ```bash
 vehicle \
@@ -24,11 +26,8 @@ vehicle \
   --specification acasXu.vcl \
   --verifier Marabou \
   --network acasXu:acasXu_1_7.onnx \
-  --property property3
 ```
 
-The same property can be verified for the other two networks in the folder. The remaining
-properties apply to other network components
 
 ## Output files
 
