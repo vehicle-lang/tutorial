@@ -14,7 +14,7 @@ In particular, the following measurements are of importance:
 
 - $\rho$: feet **measuring the distance to intruder**,
 - $\theta, \psi$: radians **measuring angle of intrusion**,
-- $v_{own}, v_{vint}$: feet per second - **the speed of both aircrafts**,
+- $v_{own}, v_{int}$: feet per second - **the speed of both aircraft**,
 - $\tau$: seconds - **time until loss of vertical separation**,
 - $a_{prev}$: **previous advisory**
 
@@ -22,7 +22,7 @@ as the following picture illustrates:
 
 ![ACAS Xu](../assets/images/acas_xu.png)
 
-$\theta$ and $\psi$ are measured counter clockwise, and are always in the range $[-\pi, \pi]$.
+$\theta$ and $\psi$ are measured counter-clockwise, and are always in the range $[-\pi, \pi]$.
 
 Based on these inputs, the system should produce one of the following instructions:
 
@@ -37,7 +37,7 @@ Therefore each individual neural network uses only the first five input variable
 for each of the output instructions.
 The instruction with the lowest score is then chosen.
 
-Therefore each of the 45 ACASXu neural networks have the mathematical type $N_{AX} : R^5 \rightarrow R^5$.
+Therefore each of the 45 ACAS Xu neural networks has the mathematical type $N_{AX} : \mathbb{R}^5 \rightarrow \mathbb{R}^5$.
 The exact architecture of the neural networks and their training modes are not important for this example, and so we will omit the details for now.
 
 The original paper by Guy Katz lists ten properties, but for the sake of the illustration we will just consider the third property:
@@ -47,7 +47,7 @@ The original paper by Guy Katz lists ten properties, but for the sake of the ill
 
 ## Types
 
-Unlike many Neural Network verifier input formats, Vehicle is a typed language, and it is common for each specification file starts with declaring the types. For ACAS Xu, these are the types of the real number tensors that the network will be taking as inputs and giving as outputs:
+Unlike many Neural Network verifier input formats, Vehicle is a typed language, and it is common for each specification file to start by declaring the types. For ACAS Xu, these are the types of the real number tensors that the network will be taking as inputs and giving as outputs:
 
 ```vehicle
 type Input = Tensor Real [5]
@@ -56,9 +56,9 @@ type Output = Tensor Real [5]
 
 The `Tensor` type represents a mathematical tensor, or in programming terms can be thought of as a multi-dimensional array. One potentially unusual aspect in Vehicle is that the shape of the tensor (i.e its dimensions) must be known statically at compile time. This allows Vehicle to check for the presence of out-of-bounds errors at compile time rather than run time.
 
-The most general `Tensor` type is therefore written as `Tensor A d`, which represents the type of tensors with shape `d` with elements of type `A`. The argument `d` is a list of numbers, where each number represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a 2-by-3 matri. In this case, `Tensor Real [5]` is a one-dimensional tensor, where the size of the first dimension is 5, which contains real numbers.
+The most general `Tensor` type is therefore written as `Tensor A d`, which represents the type of tensors with shape `d` with elements of type `A`. The argument `d` is a list of numbers, where each number represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a 2-by-3 matrix. In this case, `Tensor Real [5]` is a one-dimensional tensor, where the size of the first dimension is 5, which contains real numbers.
 
-Vehicle has a comprehensive support for programming with tensors, which we will see throughout this tutorial.
+Vehicle has comprehensive support for programming with tensors, which we will see throughout this tutorial.
 The interested reader may go ahead and check the documentation pages for tensors:
 <https://vehicle-lang.readthedocs.io/en/stable/language/tensors.html>.
 
@@ -75,7 +75,7 @@ Networks are declared by adding a `@network` annotation to a function declaratio
 Note that no implementation for the network is provided directly in the specification, and instead will
 be provided later at compile time.
 However, the name `acasXu` can still be used in the specification as any other declared function would be.
-This follows the Vehicle philosophy that specifications should be independent of any particular network, and should be able to be used to train/test/verify a range of candidate networks implementations.
+This follows the Vehicle philosophy that specifications should be independent of any particular network, and should be able to be used to train/test/verify a range of candidate network implementations.
 
 ## Values
 
@@ -86,7 +86,7 @@ New values can be declared in Vehicle using the following syntax, where the firs
 <name> = <expr>
 ```
 
-For example, as we’ll be working with radians, it is useful to define a real number called `pi`.
+For example, as we'll be working with radians, it is useful to define a real number called `pi`.
 
 ```vehicle
 pi : Real
@@ -104,7 +104,7 @@ The Vehicle compiler will then automatically infer the correct `Real` type.
 ## Problem Space versus Input Space
 
 Neural networks nearly always assume some amount of pre-processing of the input and post-processing of the output.
-In our ACASXu example, the neural networks are trained to accept inputs in the range $[0, 1]$ and outputs are likewise in the range $[0,1]$, i.e. the network does not work directly with units like $m/s$ or radians, nor the 5 output instructions used in the description of the problem above.
+In our ACAS Xu example, the neural networks are trained to accept inputs in the range $[0, 1]$ and outputs are likewise in the range $[0,1]$, i.e. the network does not work directly with units like $ft/s$ or radians, nor the 5 output instructions used in the description of the problem above.
 However, the specifications we write will be much more understandable if we can refer to values in the original units.
 
 When we encounter such problems, we will say we encountered an instance of *problem space / input space mismatch*, also known as *the embedding gap*.
@@ -113,7 +113,7 @@ directly, we would be writing specifications in terms of the *input space* (i.e.
 However, when reasoning about properties of neural networks, it is much more convenient to refer to the original problem.
 In this case specifications will be written in terms of the *problem space*.
 Being able to write specifications in the problem space (alongside the input space) is a feature that distinguishes Vehicle from
-majority of the mainstream neural network verifiers, such as e.g. Marabou, ERAN, or $\alpha\beta$-Crown.
+the majority of mainstream neural network verifiers, such as Marabou, ERAN, or $\alpha,\beta$-CROWN.
 Let us see how this happens in practice.
 
 We start with introducing the full block of code that will normalise input vectors into the range $[0,1]$, and will explain significant features of Vehicle syntax featured in the code block afterwards.
@@ -179,7 +179,7 @@ Function declarations may be used to define new functions. A declaration is of t
 
 Observe how all functions above fit within this declaration scheme.
 
-Functions make up the backbone of the Vehicle language. The function type is written `A -> B` where `A` is the input type and `B` is the output type. For example, the function `validInput` above takes values of the (defined) type of `UnnormalisedInput` and returns values of type `Bool`. The function `normalise` has the same input type, but its output type is `Input`, which was defined as a tensor of real numbers with 5 elements.
+Functions make up the backbone of the Vehicle language. The function type is written `A -> B` where `A` is the input type and `B` is the output type. For example, the function `validInput` below takes values of the (defined) type of `UnnormalisedInput` and returns values of type `Bool`. The function `normalise` has the same input type, but its output type is `Input`, which was defined as a tensor of real numbers with 5 elements.
 
 As is standard in functional languages, the function arrow associates to the right so `A -> B -> C` is therefore equivalent to `A -> (B -> C)`.
 
@@ -187,7 +187,7 @@ As in most functional languages, function application is written by juxtapositio
 
 Functions of suitable types can be composed. For example, given a function `acasXu` of type `Input -> Output`, a function `normalise` of type `UnnormalisedInput -> Input` and an argument `x` of type `UnnormalisedInput` the application of `acasXu` to the `Input` resulting from applying `normalise x` is written as `acasXu (normalise x)`, and this expression has type `Output`.
 
-Some functions are pre-defined in Vehicle. For example, the above block uses multiplication `*`, division `/` and vector lookup `!`. We have also seen the use of a pre-defined "less than or equal to" predicate `<=` in the definition of the function `validInput` (note its `Bool` type).
+Some functions are pre-defined in Vehicle. For example, the above block uses subtraction `-`, division `/` and vector lookup `!`. We will also see the use of a pre-defined "less than or equal to" predicate `<=` in the definition of the function `validInput` below (note its `Bool` type).
 
 ## Quantifying over indices
 
@@ -217,14 +217,14 @@ Therefore this property says that for every other output index `j` apart from ou
 
 ## Naming indices
 
-As ACASXu properties refer to certain elements of input and output tensors, let us give those tensor indices some suggestive names. This will help us to write a more readable code:
+As ACAS Xu properties refer to certain elements of input and output tensors, let us give those tensor indices some suggestive names. This will help us to write a more readable code:
 
 ```vehicle
-distanceToIntruder = 0   -- measured in metres
+distanceToIntruder = 0   -- measured in feet
 angleToIntruder    = 1   -- measured in radians
 intruderHeading    = 2   -- measured in radians
-speed              = 3   -- measured in metres/second
-intruderSpeed      = 4   -- measured in meters/second
+speed              = 3   -- measured in feet/second
+intruderSpeed      = 4   -- measured in feet/second
 ```
 
 The fact that all tensors types come annotated with their dimensions means that it is impossible to mess up indexing into vectors, e.g. if you changed `distanceToIntruder = 0` to `distanceToIntruder = 5` the specification would fail to type-check as `5` is not a valid index into a Tensor with dimensions `[5]`.
@@ -246,7 +246,7 @@ We now make up for the time invested into learning the Vehicle syntax, as statin
 *If the intruder is directly ahead and is moving towards the ownship, the score for COC will not be minimal.*
 
 We first need to define what it means to be *directly ahead* and *moving towards*.
-The exact ACASXu definition can be written in Vehicle as:
+The exact ACAS Xu definition can be written in Vehicle as:
 
 ```vehicle
 directlyAhead : UnnormalisedInput -> Bool
@@ -279,26 +279,26 @@ To flag that this is the property we want to verify, we use the label `@property
 
 ## Infinite quantifiers
 
-One of the main advantages of Vehicle is that it can be used to state and prove specifications that describe the network’s behaviour over an infinite set of values.
+One of the main advantages of Vehicle is that it can be used to state and prove specifications that describe the network's behaviour over an infinite set of values.
 We have already seen the `forall` operator used in the declaration `validInput` -- however, there it was quantifying over a finite number of indices.
 
-The `forall` in the property above is a very different beast as it is quantifying over an “infinite” number of values of type `Tensor Real [5]`. The definition of `property3` brings a new variable `x` of type `Tensor Real [5]` into scope. The variable `x` has no assigned value, but represents an arbitrary input of that type.
+The `forall` in the property above is a very different beast as it is quantifying over an "infinite" number of values of type `Tensor Real [5]`. The definition of `property3` brings a new variable `x` of type `Tensor Real [5]` into scope. The variable `x` has no assigned value, but represents an arbitrary input of that type.
 
-Vehicle also has a matching quantifer `exists`.
+Vehicle also has a matching quantifier `exists`.
 
 # How to run Vehicle
 
 To verify this property, we only need to have:
 
-- a verifier installed (at the moment of writing Vehicle has integration with Marabou);
+- a solver installed (Vehicle ships with direct integration for Marabou, and can also emit VNN-LIB queries for other solvers);
 - the actual network or networks that we wish to verify. These need to be supplied in an ONNX format, one of the standard formats for representing trained neural networks.
 
-Having these suitably installed or located, it only takes one command line to obtain the result (note the `vcl` file, where we have written the above specification):
+Having these suitably installed or located, it only takes one command to obtain the result (note the `vcl` file, where we have written the above specification):
 
 ```sh
  vehicle verify \
   --specification acasXu.vcl \
-  --verifier Marabou \
+  --solver Marabou \
   --network acasXu:acasXu_1_7.onnx \
   --property property3
 ```
@@ -309,25 +309,30 @@ obtain the result -- `property3` does not hold for the given neural network, `ac
 ```plain
 Verifying properties:
   property3 [======================================================] 1/1 queries
-    result: ✗ - counterexample found
-      x: [1799.9886669999978, 5.6950779776e-2, 3.09999732192, 980.0, 960.0]
+    result: ✗ - Marabou found a counterexample
+      x: [ 1799.988667, 5.9998124016e-2, 3.09999732192, 980.0, 1058.6256 ]
 ```
 
+Note that Vehicle will also emit a warning here: `property3` generates a strict
+inequality (`<`), which the Marabou query format does not support, so Vehicle
+converts it to a non-strict one. The exact counterexample reported may therefore
+differ between runs and solver versions.
+
 Furthermore, Vehicle gives us a counter-example in the problem space! In particular an assignment
-for the quantified variable `x` that falsifies the assignment.
+for the quantified variable `x` that falsifies the property.
 
 # Exercises
 
-We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty: *easy, moderate and  hard*.
+We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty: *easy, moderate and hard*.
 
 The exercises assume that you already installed Vehicle as described in [vehicle documentation](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
 
 ## Exercise #1 (⭑)
 
 Start by simply running the code that was discussed in the above chapter.
-It is available from the `examples` section of the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial)
+It is available from the `chapter-2/chapter-code` directory of the [tutorial repository](https://github.com/vehicle-lang/tutorial)
 
- Repeat the steps described in this chapter: download the Vehicle specification and the network, and verify the ACAS Xu Property 3.
+Repeat the steps described in this chapter: download the Vehicle specification and the network, and verify the ACAS Xu Property 3.
 
 Did it work? If yes, you are ready to experiment with your own specifications.
 
@@ -336,19 +341,19 @@ Did it work? If yes, you are ready to experiment with your own specifications.
 We discussed an instance of the embedding gap when verifying Property 3.
 In particular, we reasoned in terms of the problem space, but verified the network trained on the input space.
 
-Property 1 in the Acas Xu library is an example where the
+Property 1 in the ACAS Xu library is an example where the
 problem space and the output space deviate, as well. This makes Property 1 specification somewhat harder.
 
-For your first exercise, define Property 1 in Vehicle, paying attention to careful handling of the *embedding gap*.
+For this exercise, define Property 1 in Vehicle, paying attention to careful handling of the *embedding gap*.
 
-*ACAS Xu Propery 1*: *If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.*
+*ACAS Xu Property 1*: *If the intruder is distant and is significantly slower than the ownship, the score of a COC advisory will always be below a certain fixed threshold.*
 
 Taking the original thresholds, this boils down to:
 
 $$
   (\rho \geq 55947.691) \wedge
   (v_{own} \geq 1145) \wedge (v_{int} \leq 60)
-  \Rightarrow \text{the score for COC is at most} 1500
+  \Rightarrow \text{the score for COC is at most } 1500
 $$
 
 *Note:*
@@ -358,23 +363,23 @@ $$
 \frac{x - 7.518884}{373.94992}
 $$
 
-To run the verification queries, please use the networks available from the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
+To run the verification queries, please use the networks available from the [tutorial repository](https://github.com/vehicle-lang/tutorial).
 
 ## Exercise #3 (⭑⭑). The full ACAS Xu challenge in one file
 
-Why not trying to state all 10 ACAS Xu properties in one `.vcl` file?
-Try running the verification query in Vehicle using all $10$ properties.
+Why not try to state all ten ACAS Xu properties in one `.vcl` file?
+Try running the verification query in Vehicle using all ten properties.
 You can find them in the Reluplex paper [@katz2017reluplex] ([arXiv](https://arxiv.org/pdf/1702.01135.pdf)).
 
 ## Exercise #4 (⭑⭑⭑). Your first independent Vehicle specification
 
-1.  Clone the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial).
-2.  Find the `iris_model.onnx` model under `exercises/iris-dataset/`.
+1.  Clone the [tutorial repository](https://github.com/vehicle-lang/tutorial).
+2.  Find the `iris_model.onnx` model under `resources-by-dataset/iris/`.
     This model was trained on the famous [Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set).
-3.  Find the Iris data set files `iris_test_data.idx` and `iris_test_labels.idx` under `exercises/iris-dataset/`.
+3.  Find the Iris data set files `iris_test_data.idx` and `iris_test_label.idx` under `resources-by-dataset/iris/`.
 4.  Examine the data set and try to define a few "obvious properties" that should hold for the model.
-    You a free to look at the Wikipedia page for the [Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set) or consult other sources.
+    You are free to look at the Wikipedia page for the [Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set) or consult other sources.
 5.  Write those properties as a Vehicle specification.
     Ensure that your specification is well-typed.
     See the [Vehicle Manual](https://vehicle-lang.readthedocs.io/en/stable/) for how to type-check a Vehicle specification file.
-4.  Verify that the properties in your Vehicle specification hold using the `vehicle` command.
+6.  Verify that the properties in your Vehicle specification hold using the `vehicle` command.

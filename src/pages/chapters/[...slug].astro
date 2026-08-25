@@ -1,19 +1,26 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import ChapterNav from "../../components/ChapterNav.astro";
+import { byChapterNumber } from "../../site";
 
 export const getStaticPaths = async () => {
-  const chapters = await getCollection("chapters");
-  return chapters.map((chapter) => ({
+  const chapters = (await getCollection("chapters")).toSorted(byChapterNumber);
+  return chapters.map((chapter, index) => ({
     params: { slug: chapter.id },
-    props: { chapter },
+    props: {
+      chapter,
+      prev: chapters[index - 1],
+      next: chapters[index + 1],
+    },
   }));
 };
 
-const { chapter } = Astro.props;
+const { chapter, prev, next } = Astro.props;
 const { Content } = await render(chapter);
 ---
 
 <Layout frontmatter={chapter.data}>
   <Content />
+  <ChapterNav prev={prev} next={next} />
 </Layout>
