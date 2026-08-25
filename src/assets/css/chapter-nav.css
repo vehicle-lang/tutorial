@@ -1,0 +1,46 @@
+/* Previous/next chapter navigation at the foot of each chapter. */
+
+nav.chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2rem;
+  width: 55%;
+  max-width: 90%;
+  box-sizing: border-box;
+  margin: 4rem 0 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(17, 17, 17, 0.2);
+  font-size: 1.3rem;
+  line-height: 1.35;
+}
+
+nav.chapter-nav > .chapter-nav-next {
+  margin-left: auto;
+  text-align: right;
+}
+
+/* An empty slot on the first/last chapter must not collapse the layout. */
+nav.chapter-nav > * {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+nav.chapter-nav .chapter-nav-label {
+  display: block;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+@media (max-width: 800px) {
+  nav.chapter-nav {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  nav.chapter-nav {
+    border-top-color: rgba(221, 221, 221, 0.25);
+  }
+}

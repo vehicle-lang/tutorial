@@ -1,0 +1,36 @@
+---
+import type { Chapter } from "../site";
+
+interface Props {
+  prev?: Chapter;
+  next?: Chapter;
+}
+
+const { prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const chapterHref = (chapter: Chapter): string =>
+  `${base}/chapters/${chapter.id}/`;
+---
+
+<nav class="chapter-nav" aria-label="Chapter navigation">
+  <span class="chapter-nav-prev">
+    {
+      prev && (
+        <a href={chapterHref(prev)} rel="prev">
+          <span class="chapter-nav-label">&#8592; Previous</span>
+          {prev.data.title}
+        </a>
+      )
+    }
+  </span>
+  <span class="chapter-nav-next">
+    {
+      next && (
+        <a href={chapterHref(next)} rel="next">
+          <span class="chapter-nav-label">Next &#8594;</span>
+          {next.data.title}
+        </a>
+      )
+    }
+  </span>
+</nav>
