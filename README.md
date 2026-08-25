@@ -2,9 +2,9 @@ Welcome to the *Vehicle Tutorial*! In this tutorial, you will learn
 about neural network verification with Vehicle. Vehicle’s installation
 instructions and user guide are available
 [here](https://vehicle-lang.readthedocs.io/en/latest/installation.html).
-This tutorial was created by Matthew Daggitt, Wen Kokke, Ekaterina
-Komendantskaya, Bob Atkey, Luca Arnaboldi, Natalia Slusarz, Marco
-Casadio, Ben Coke, and Jeonghyeon Lee.
+This tutorial was created by Ekaterina Komendantskaya, Matthew Daggitt,
+Wen Kokke, Bob Atkey, Alistair Sirman, Joe Hall, and Aashish Misra, with
+additional exercise contributions from Ben Coke and Jeonghyeon Lee.
 
 If you have any questions about the Vehicle Tutorial, you are invited to
 join [our
