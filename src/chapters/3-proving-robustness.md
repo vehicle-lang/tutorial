@@ -140,9 +140,9 @@ network should still advise label `y` for the perturbed version of `x`.
 
 ```vehicle
 robustAround : Image -> Label -> Bool
-robustAround image label = forall pertubation .
-  let perturbedImage = image - pertubation in
-  boundedByEpsilon pertubation and validImage perturbedImage =>
+robustAround image label = forall perturbation .
+  let perturbedImage = image - perturbation in
+  boundedByEpsilon perturbation and validImage perturbedImage =>
     advises perturbedImage label
 ```
 
@@ -179,7 +179,7 @@ of input images and output labels. Note once again the use of the `foreach`
 keyword when quantifying over the index `i` in the dataset. Whereas `forall`
 would return a single `Bool`, `foreach` constructs a `Vector` of booleans,
 ensuring that _Vehicle_ will report on the verification status of each image in
-the dataset separately. If `forall` was omitted, _Vehicle_ would only
+the dataset separately. If `foreach` was omitted, _Vehicle_ would only
 report if the network was robust around _every_ image in the dataset, a
 state of affairs which is unlikely to be true.
 
@@ -201,27 +201,29 @@ In order to run _Vehicle_, we need to provide:
 The tutorial files contain two Python scripts that show how to convert Tensorflow Neural Networks into _ONNX_ format; and images -- into `.idx` files. These are the formats expected by _Vehicle_. You can use the ones we provide, or generate your own. Having obtained these, the following command line will take care of verification of the network `mnist-classifier.onnx`,
 for data sets `images.idx` and `labels.idx` and $\epsilon = 0.005$:
 
-```vehicle
+```sh
 vehicle verify \
   --specification mnist-robustness.vcl \
   --network classifier:mnist-classifier.onnx \
   --parameter epsilon:0.005 \
   --dataset trainingImages:t2-images.idx \
   --dataset trainingLabels:t2-labels.idx \
-  --verifier Marabou
+  --solver Marabou
 ```
 
 For the first two images in your data set, the output will look as follows:
 
-```vehicle
+```plain
 Verifying properties:
-  robust [================================================] 9/9 queries complete
-  robust [================================================] 9/9 queries complete
-Result: true
-  robust: 2/2 verified
-    ✓ robust!0
-
-    ✓ robust!1
+  robust!0 [=======================================================] 9/9 queries
+    result: 🗸 - Marabou proved no counterexample exists
+  robust!1 [=======================================================] 9/9 queries
+    result: 🗸 - Marabou proved no counterexample exists
+robust:
+    verified:  2/2
+    falsified: 0/2
+    timed-out: 0/2
+    errored:   0/2
 ```
 
 The reader may have guessed at this pont that, as we make $\epsilon$ larger, fewer and fewer examples will staisfy the property. Chapter 3 will look into methods that can be used to train networks to satisfy robustness for larger $\epsilon$.
@@ -286,11 +288,7 @@ Re-define the _classification_ and _standard robustness_ properties by using som
 
 *Please note: although the _Vehicle_ language is rich and allows such extensions, not all specifications will be feasible for Marabou that works with linear real arithmetic.*
 
-## Exercise #7 (⭑) Practicing to write property specifications
-
-To test your understanding of the robustness property, try completing the robustness verification in [this file](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/MNIST-incomplete).
-
-## Exercise #8 (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
+## Exercise #7 (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
 
 *This exercise can be hard or simple, depending how much help you get from the model solution provided as sources!*
 
