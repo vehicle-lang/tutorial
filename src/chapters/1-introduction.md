@@ -43,7 +43,7 @@ At the time of writing, there exist over a dozen verifiers for neural networks. 
 
 There are several research challenges in the area of neural network verification:
 
-1. *Theory: finding appropriate verification properties.* The scope of neural network properties available in the literature is limited. Robustness is the most popular general property to date [@casadio2021property], and others include mostly domain-specific properties, such as ACAS Xu Benchmark [@katz2017reluplex], which we will consider shortly in this tutorial. What neural network properties we want and can realistically verify still stands as a big research question.
+1. *Theory: finding appropriate verification properties.* The scope of neural network properties available in the literature is limited. Robustness is the most popular general property to date [CasadioKDKKAR22], and others include mostly domain-specific properties, such as ACAS Xu Benchmark [@katz2017reluplex], which we will consider shortly in this tutorial. What neural network properties we want and can realistically verify still stands as a big research question.
 
 2. *Solvers: undecidability of non-linear real arithmetic and scalability of neural network verifiers.* On the solver side, undecidability of non-linear real arithmetic [@Akbarpour2009] and scalability of neural network verifiers [@wang2021beta] stand as two main challenges. That said, progress is being made in these two directions. Several solvers, notably VibeCheck [@vibecheck], now support polynomial verification. And the annual competition VNNCOMP [@vnncomp] features models of up to 67.4 million parameters (weights). 
 
