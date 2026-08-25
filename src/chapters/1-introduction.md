@@ -20,15 +20,15 @@ This line of research led to many subsequent extensions, e.g. by Muller et al. [
 
 Mixed Integer Linear Programming (MILP) methods were brought into this community by Bastani et al. [@BastaniILVNC16], and were further developed into working tools, e.g. Venus [@BotoevaKKLM20].
 
-Neural network verifier extensions followed two main directions:
+Neural network verifier extensions followed three main directions:
 
-- scaling to larger networks (we can mention $\alpha\beta$-Crown [@wang2021beta] and GCP-Crown [@zhang2022general] as VNN-COMP winners in 2021 and 2022);
-
-and
+- scaling to larger networks (we can mention $\alpha\beta$-Crown [@wang2021beta] and GCP-Crown [@zhang2022general] as VNN-COMP winners in 2021-2026);
 
 - extending from piece-wise linear to non-linear activation functions. (An example are sigmoid neurons handled by Verisig using interval arithmetic [@IvanovWAPL19].)
 
-At the time of writing, there exist over a hundred verifiers for neural networks. Several papers and monographs are dedicated to the survey of the landscape [e.g., @PGL-051;@HuangKRSSTWY20;@LiuALSBK21]. The community established the specification standards [VNNLib](https://www.vnnlib.org/), common benchmarks and annual competitions. Vehicle compiles down to the VNNLib standard, with a view to be compatible with the growing family of verifiers.
+- clarifying and extending the syntax of the property specifications, which ultimately led to the new standard, VNNLIB 2.0 [@Daggitt26]. 
+
+At the time of writing, there exist over a dozen verifiers for neural networks. Several papers and monographs are dedicated to the survey of the landscape [e.g., @PGL-051;@HuangKRSSTWY20;@LiuALSBK21]. The community established the specification standards [VNNLib](https://www.vnnlib.org/), common benchmarks and annual competitions. Vehicle compiles down to the VNNLib standard, and is compatible with the growing family of verifiers.
 
 Formally, a neural network is a function $N : R^m \rightarrow R^n$. Verification of such functions most commonly boils down to specifying admissible intervals for the function's output given an interval for its inputs. For example, one can specify a set of inputs to belong to an $\epsilon$- neighborhood of some given input $\mathbf{x}$, and verify that for such inputs, the outputs of $N$ will be in $\delta$ distance to $N(\mathbf{x})$. This property is often called $\epsilon$*-ball robustness* (or just *robustness*), as it proves the network's output is robust (does not change drastically) in the neighborhood of certain inputs.
 
