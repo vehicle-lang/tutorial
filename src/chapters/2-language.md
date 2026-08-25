@@ -56,7 +56,7 @@ type Output = Tensor Real [5]
 
 The `Tensor` type represents a mathematical tensor, or in programming terms can be thought of as a multi-dimensional array. One potentially unusual aspect in Vehicle is that the shape of the tensor (i.e its dimensions) must be known statically at compile time. This allows Vehicle to check for the presence of out-of-bounds errors at compile time rather than run time.
 
-The most general `Tensor` type is therefore written as `Tensor A d`, which represents the type of tensors with shape `d` with elements of type `A`. The argument `d` is a list of numbers, where each number represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a 2-by-3 matrix.. In this case, `Tensor Real [5]` is a one-dimensional tensor, where the size of the first dimension is 5, which contains real numbers.
+The most general `Tensor` type is therefore written as `Tensor A d`, which represents the type of tensors with shape `d` with elements of type `A`. The argument `d` is a list of numbers, where each number represents a dimension, e.g., if `d` is `[2, 3]` then the tensor is a 2-by-3 matri. In this case, `Tensor Real [5]` is a one-dimensional tensor, where the size of the first dimension is 5, which contains real numbers.
 
 Vehicle has a comprehensive support for programming with tensors, which we will see throughout this tutorial.
 The interested reader may go ahead and check the documentation pages for tensors:
@@ -217,7 +217,7 @@ Therefore this property says that for every other output index `j` apart from ou
 
 ## Naming indices
 
-As ACASXu properties refer to certain elements of input and output tensors, let us give those tensors indices some suggestive names. This will help us to write a more readable code:
+As ACASXu properties refer to certain elements of input and output tensors, let us give those tensor indices some suggestive names. This will help us to write a more readable code:
 
 ```vehicle
 distanceToIntruder = 0   -- measured in metres
