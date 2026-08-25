@@ -12,6 +12,8 @@ Unlike the equivalent low-level Marabou queries, the specification is written at
 
 ## The file set up remains the same:
 
+You can find these files in the folder `chapter-code`:
+
 - `acasXu.vcl` - the specification describing the desired behaviour. This needs to be edited
 
 - `acasXu_1_7.onnx`, `acasXu_1_8.onnx`, `acasXu_1_9.onnx` - 3 out of the 45 networks. The remainder can be found [here](https://github.com/NeuralNetworkVerification/Marabou/tree/master/resources/onnx/acasxu).
