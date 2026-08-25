@@ -110,18 +110,4 @@ advises i x = forall j . i != j => normAcasXu x ! i < normAcasXu x ! j
 
 
 --------------------------------------------------------------------------------
--- Property 3 - Do it yourself!
-
--- If the intruder is directly ahead and is moving towards the
--- ownship, the score for COC will not be minimal.
-
--- Tested on: all networks except N_{1,7}, N_{1,8}, and N_{1,9}.
-
-directlyAhead : TODO
-
-movingTowards : UnnormalisedInput -> Bool
-movingTowards x = TODO
-
-@property
-property3 : Bool
-property3 = TODO
+-- Property 1 - 10 -- restore from the paper by Katz et al.
