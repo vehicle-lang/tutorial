@@ -23,3 +23,45 @@ $$
 $$
 
 where $Q$ is the constant number of queries that a property generates for a single data point.
+
+## Open question: `requirements.txt` and CI on the `exercises` branch
+
+**Raised 2026-08-26, awaiting input from other developers — no action taken yet.**
+
+Should `requirements.txt` (and the `ci.yml` that uses it) be deleted from the
+`exercises` branch, or repaired?
+
+Findings:
+
+- `requirements.txt` exists at the root of the `exercises` branch and pins
+  `vehicle-lang ==0.17.0`, `maraboupy ==1.0.0`, `agda ==2.7.0.1`. The pinned
+  Vehicle is far behind the current release (0.27.1), which is what
+  `pip install vehicle-lang` gives readers of Chapter 1.
+- Its only reference is `.github/workflows/ci.yml`, line 31
+  (`pip install -r requirements.txt`).
+- That workflow is already dead on `exercises`: it triggers only on pushes to
+  the `tutorial` branch, and its steps `cd` into `examples/acasXu`,
+  `examples/mnist-robustness` and `examples/hyperrec`, which exist on the
+  `tutorial` branch but not on `exercises`. It also runs `vehicle check`, which
+  is not a valid subcommand in 0.27.1 (`Invalid argument 'check'`).
+- `ci.yml` is byte-identical on both branches, and the `tutorial` branch has its
+  own `requirements.txt` and `ci.yml`, so the pair on `exercises` looks like a
+  leftover copy. Nothing on the `pages` branch references a `requirements.txt`.
+
+Two proposed actions, either of which is self-consistent:
+
+1. **Delete both** `requirements.txt` and `.github/workflows/ci.yml` from
+   `exercises`. The `tutorial` branch keeps its working copies. Consequence:
+   no CI on the branch that holds the live code — honest, since it cannot pass
+   there today. Deleting only `requirements.txt` is worse: it leaves the
+   workflow referencing a missing file.
+2. **Repair instead:** retarget the trigger to `exercises`, point the steps at
+   `chapter-N/chapter-code`, replace `vehicle check` with `vehicle typecheck`,
+   and unpin `vehicle-lang`. This would have caught the `--verifier` →
+   `--solver` breakage that went unnoticed across Chapters 2, 3 and 5, so it has
+   real value.
+
+Related: the `tutorial` branch (last commit 2026-08-03) and `source-donotuse`
+are both still public, and the stale `tutorial` branch is what keeps this CI
+alive. Retiring it would remove the ambiguity. Chapter 3's links used to point
+into `tutorial`; they now point at `exercises`.
