@@ -282,7 +282,7 @@ We refer the interested reader for a more detailed discussion of different robus
 
 Use _Vehicle_ to define other forms of Robustness property from Casadio et al. [-@CasadioKDKKAR22].
 
-*Please note: although the _Vehicle_ language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurence of a neural network per specification. But you may install the tool [@vibecheck] and call it from Vehicle. This will help you to complete this exercise.*
+*Please note: although the _Vehicle_ language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurence of a neural network per specification. With the update to VNNLIB2.0, there is a push for all verifiers to introduce this feature, and indeed some of them have it in their developer versions. It may well be that by the time you do this exercise, either Marabou or Vibecheck [@vibecheck] will introduce this feature to their standard installations.*
 
 ## Exercise #6 (⭑⭑): Other Distances in Vehicle
 
