@@ -2,7 +2,7 @@
 
 This is an example of a specification for the widely studied adversarial
 robustness problem.
-At a high-level the specification states that any small small perturbation to the
+At a high-level the specification states that any small perturbation to the
 input, e.g. adjusting a few pixels, should not significantly change the output
 of the network.
 
@@ -21,9 +21,13 @@ This folder contains the following files:
 
 ## Notes
 
-1. The classifier is obtained from [here](https://github.com/onnx/models/blob/main/vision/classification/mnist/model/mnist-12.onnx).
+1. The classifier is obtained from [here](https://github.com/onnx/models/blob/main/validated/vision/classification/mnist/model/mnist-12.onnx).
 
-2. The `.idx` files are obtained from [here](http://yann.lecun.com/exdb/mnist/).
+2. The `.idx` files are obtained from the MNIST test set (see the
+[data set description](https://www.tensorflow.org/datasets/catalog/mnist)); the original
+`yann.lecun.com` downloads are no longer available, so
+`chapter-3/exercises/create_dataset.py` fetches them from the
+[ossci-datasets mirror](https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz).
 
 3. Note that in the dataset available from the link above, pixels are stored as integers between 0 and 255. In the `idx` files in this folder, their values have been normalised to doubles between 0.0 and 1.0.
 
@@ -43,7 +47,7 @@ vehicle verify \
   --parameter epsilon:0.005 \
   --dataset trainingImages:t2-images.idx \
   --dataset trainingLabels:t2-labels.idx \
-  --verifier Marabou
+  --solver Marabou
 ```
 
 Note that the epsilon value can be changed, but the memory requirements of

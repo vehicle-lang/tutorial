@@ -4,7 +4,7 @@ To complete the exercises, you will need:
 - 
 All code is available from the chapter-code folder.
 
-- Exercise #2 (⭑) : Experimenting with -balls of different size
+- Exercise #2 (⭑) : Experimenting with ε-balls of different size
 
 Same
 
