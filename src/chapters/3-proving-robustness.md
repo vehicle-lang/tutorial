@@ -61,11 +61,11 @@ summarises a few options for this definition. The simplest is the _Classificatio
 
 We note that $\epsilon$-ball robustness as a verification property bears some similarity to the ACAS Xu example that we have already covered in Chapter 2. In particular, both verification properties impose constraints on the output regions of the neural networks, assuming some constraint on their input regions. (Both problems are therefore amenable to a range of interval propagation and abstract interpretation methods, see the survey by Huang et al. [-@HuangKRSSTWY20] for further details.) From the point of view of the property specification, which is our main concern here, there are three main differences between these two examples:
 
-- ACAS Xu did not have to refer to a dataset $\mathcal{X}$; $\epsilon$-ball robustness, however, is formulated relative to the images given in the data set. We will see how _Vehicle_ can be used to handle properties that refer directly to the data sets.
+- ACAS Xu did not have to refer to a dataset $\mathcal{X}$; $\epsilon$-ball robustness, however, is formulated relative to the images given in the data set. We will see how Vehicle can be used to handle properties that refer directly to the data sets.
 
-- MNIST, as many other data sets used in Computer Vision, has images represented as 2D arrays. Such data sets often require Convolutional Neural Networks (CNNs) that are best designed to deal with 2D and 3D data. In terms of property specification, we will see _Vehicle_'s support for 2D arrays, which comes for free with its general type infrastructure.
+- MNIST, as many other data sets used in Computer Vision, has images represented as 2D arrays. Such data sets often require Convolutional Neural Networks (CNNs) that are best designed to deal with 2D and 3D data. In terms of property specification, we will see Vehicle's support for 2D arrays, which comes for free with its general type infrastructure.
 
-- Finally, the MNIST specification involves two parameters that we may want to pass or infer at the compilation time rather than hard-code within the spec. These are the $\epsilon$ and the number of data points ($\epsilon$-balls) we wish to check (the number is at most the size of the entire data set). We will see how such parameters are defined and used in _Vehicle_.
+- Finally, the MNIST specification involves two parameters that we may want to pass or infer at the compilation time rather than hard-code within the spec. These are the $\epsilon$ and the number of data points ($\epsilon$-balls) we wish to check (the number is at most the size of the entire data set). We will see how such parameters are defined and used in Vehicle.
 
 ## 2D Arrays in Vehicle
 
@@ -91,7 +91,7 @@ score for each of the digits 0 to 9.
 classifier : Image -> Tensor Real [10]
 ```
 
-We note again the use of the syntax for `@network`, marking the place where _Vehicle_ interacts with an external tool (this time most likely with Python Tensorflow).
+We note again the use of the syntax for `@network`, marking the place where Vehicle interacts with an external tool (this time most likely with Python Tensorflow).
 
 The classifier advises that input image `x` has label `i` if the score
 for label `i` is greater than the score of any other label `j`:
@@ -101,7 +101,7 @@ advises : Image -> Label -> Bool
 advises x i = forall j . j != i => classifier x ! i > classifier x ! j
 ```
 
-This completes the basic description if the data set and the model architecture in _Vehicle_. We are ready to define verification properties.
+This completes the basic description if the data set and the model architecture in Vehicle. We are ready to define verification properties.
 
 ## Definition of Robustness Around a Point
 
@@ -172,14 +172,14 @@ trainingImages : Vector Image n
 trainingLabels : Vector Label n
 ```
 
-Again we note the use of syntax that involves `@` flagging _Vehicle_'s connection with an external tool or object -- in this case, the data set is defined externally.
+Again we note the use of syntax that involves `@` flagging Vehicle's connection with an external tool or object -- in this case, the data set is defined externally.
 
 We then say that the network is robust _for this data set_ if it is robust around every pair
 of input images and output labels. Note once again the use of the `foreach`
 keyword when quantifying over the index `i` in the dataset. Whereas `forall`
 would return a single `Bool`, `foreach` constructs a `Vector` of booleans,
-ensuring that _Vehicle_ will report on the verification status of each image in
-the dataset separately. If `foreach` was omitted, _Vehicle_ would only
+ensuring that Vehicle will report on the verification status of each image in
+the dataset separately. If `foreach` was omitted, Vehicle would only
 report if the network was robust around _every_ image in the dataset, a
 state of affairs which is unlikely to be true.
 
@@ -191,14 +191,14 @@ robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
 
 # Running the Verification Query
 
-In order to run _Vehicle_, we need to provide:
+In order to run Vehicle, we need to provide:
 
 - the specification file,
 - the network in ONNX format,
 - the data in idx format,
 - and the desired $\epsilon$ value.
 
-The tutorial files contain two Python scripts that show how to convert Tensorflow Neural Networks into _ONNX_ format; and images -- into `.idx` files. These are the formats expected by _Vehicle_. You can use the ones we provide, or generate your own. Having obtained these, the following command line will take care of verification of the network `mnist-classifier.onnx`,
+The tutorial files contain two Python scripts that show how to convert Tensorflow Neural Networks into _ONNX_ format; and images -- into `.idx` files. These are the formats expected by Vehicle. You can use the ones we provide, or generate your own. Having obtained these, the following command line will take care of verification of the network `mnist-classifier.onnx`,
 for data sets `images.idx` and `labels.idx` and $\epsilon = 0.005$:
 
 ```sh
@@ -230,27 +230,29 @@ The reader may have guessed at this point that, as we make $\epsilon$ larger, fe
 
 # Exercises
 
+We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty: *easy, moderate and hard*.
+
 *A note on the neural network shape. Each solver, Marabou, vibecheck, etc will have its own restrictions as to the type of layers and hence networks that it can process. For example, in the exercises below, the MNIST model is a CNN, and the FMNIST model -- is a plain multi-layer perceptron. Both can be handled by Marabou, but only the second one can be handled by vibecheck.*
 
 ## Exercise #1 (⭑): Run the Chapter code
 
-As usual, your first task is to repeat the steps described in this chapter: download the _Vehicle_ specification, the network, the data, and verify robustness of the given network on given data.
+As usual, your first task is to repeat the steps described in this chapter: download the Vehicle specification, the network, the data, and verify robustness of the given network on given data.
 All code is available from the [exercises directory](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/exercises) of the tutorial repository
 
-## Exercise #2 (⭑) : Experimenting with $\epsilon$-balls of different size
+## Exercise #2 (⭑): Experimenting with $\epsilon$-balls of different size
 
 Try experimenting with different values of $\epsilon$, for example, try
   $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$.
   Make conclusions.
 
-## Exercise #3 (⭑⭑) : Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s
+## Exercise #3 (⭑⭑): Getting a statistical evaluation of robustness with respect to the given data set, for various $\epsilon$s
 
 (_This exercise is technically very simple, but the required number of experiments may take a few hours to run. We recommend you run it at home rather than during the live exercise sessions_).
 
 The previous exercise could be transformed into a proper empirical evaluation of robustness of the model for the data set.
 To do this, include more than 2 images into your `idx` file. A script for generating `idx` files is available [in the supporting materials](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/exercises).
 
-Assuming you created an `idx` file with, for example, 500 images, run _Vehicle_ on this file, and collect statistics for $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate a table that looks like this:
+Assuming you created an `idx` file with, for example, 500 images, run Vehicle on this file, and collect statistics for $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate a table that looks like this:
 
 | | $\epsilon = 0.005$ | $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
 | :---------------:| :---------------: | :---------------: | :---------------: | :--------------: | :--------------- |
@@ -260,9 +262,9 @@ This is your first proper empirical evaluation of the given neural network for t
 
 Make conclusion about feasibility and success rates of $\epsilon$-ball robustness, and the speed with which verification success deteriorates with the growing $\epsilon$.
 
-## Exercise #4 (⭑) : Strong Classification Robustness in Vehicle
+## Exercise #4 (⭑): Strong Classification Robustness in Vehicle
 
-Using the same `.vcl` file as in all previous exercises, define and verify in _Vehicle_ the property of _Strong Classification Robustness_,
+Using the same `.vcl` file as in all previous exercises, define and verify in Vehicle the property of _Strong Classification Robustness_,
 that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \leq \eta$, for some small $\eta$.
 We now assemble the desired _strong classification robustness_ property definition:
 
@@ -280,15 +282,15 @@ We refer the interested reader for a more detailed discussion of different robus
 
 ## Exercise #5 (⭑⭑): Explore Other Definitions of Robustness
 
-Use _Vehicle_ to define other forms of Robustness property from Casadio et al. [-@CasadioKDKKAR22].
+Use Vehicle to define other forms of Robustness property from Casadio et al. [-@CasadioKDKKAR22].
 
-*Please note: although the _Vehicle_ language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurrence of a neural network per specification. With the update to VNN-LIB 2.0, there is a push for all verifiers to introduce this feature, and indeed some of them have it in their developer versions. It may well be that by the time you do this exercise, either Marabou or vibecheck [@vibecheck] will introduce this feature to their standard installations.*
+*Please note: although the Vehicle language is rich enough to compile all the robustness definitions, not all definitions will be feasible for Marabou that can have only one occurrence of a neural network per specification. With the update to VNN-LIB 2.0, there is a push for all verifiers to introduce this feature, and indeed some of them have it in their developer versions. It may well be that by the time you do this exercise, either Marabou or vibecheck [@vibecheck] will introduce this feature to their standard installations.*
 
 ## Exercise #6 (⭑⭑): Other Distances in Vehicle
 
 Re-define the _classification_ and _standard robustness_ properties by using some different notion of distance, e.g. the Euclidean distance, instead of the $L_{\infty}$ norm.
 
-*Please note: although the _Vehicle_ language is rich and allows such extensions, not all specifications will be feasible for Marabou that works with linear real arithmetic. Try other solvers!*
+*Please note: although the Vehicle language is rich and allows such extensions, not all specifications will be feasible for Marabou that works with linear real arithmetic. Try other solvers!*
 
 ## Exercise #7 (⭑⭑⭑): Conduct a complete "training - verification" experiment from start to finish
 
