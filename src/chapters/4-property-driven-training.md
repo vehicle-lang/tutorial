@@ -14,7 +14,6 @@ The long tradition of robustifying neural networks in machine learning has a few
 ready. For example, we can re-train the networks with new data that was augmented using images within the
 desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the boundary of the $\epsilon$-ball) during training. Let us briefly explore these approaches.
 
-
 # Current Approaches
 **Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, usually done using methods such as rotation, cropping, flipping, random sampling, etc. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
 
@@ -371,7 +370,6 @@ The model is now saved in ONNX format under the name specified with the `--outpu
 
 </div>
 </div>
-
 
 # Exercises
 
