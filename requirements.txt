@@ -1,3 +1,7 @@
+################################################################################
+# Core tool chain — needed for every chapter
+################################################################################
+
 # Vehicle itself. Deliberately unpinned: Chapter 1 tells readers to run
 # `pip install vehicle-lang`, so CI should test against whatever that gives
 # them today. Pinning here is how this file drifted to 0.17.0 while the
@@ -6,11 +10,43 @@ vehicle-lang
 
 # The neural network verifier used from Chapter 2 onwards. Provides the
 # `Marabou` executable that `vehicle verify --solver Marabou` looks for.
-maraboupy  ==2.0.0
+maraboupy   ==2.0.0
 
-# Used by chapter-3/exercises/create_dataset.py to build IDX data sets.
-idx2numpy  ==1.2.3
+################################################################################
+# Chapter 3 — generating IDX data sets
+################################################################################
+
+# Used by chapter-3/exercises/create_dataset.py.
+idx2numpy   ==1.2.3
 numpy
 
-# The interactive theorem prover used in Chapters 5 and 6.
-agda       ==2.7.0.1
+################################################################################
+# Chapter 4 — property-driven training
+#
+# The chapter presents the same example twice, once for PyTorch and once for
+# TensorFlow. You only need the framework you intend to use; install the other
+# group only if you want to run both versions.
+################################################################################
+
+# PyTorch route (chapter-4/chapter-code/pt_classifier.py). Unpinned, but note
+# that `torch` and `numpy` must be ABI-compatible: a torch built against
+# NumPy 1.x fails under NumPy 2.x with `RuntimeError: Numpy is not available`.
+# Verified working with torch 2.13.0 and numpy 2.2.6.
+torch
+torchvision
+
+# Required by `torch.onnx.export` in recent PyTorch, which routes through a new
+# exporter that imports onnxscript. Without it, training completes and only the
+# final export step fails with ModuleNotFoundError.
+onnxscript  ==0.7.1
+
+# TensorFlow route (chapter-4/chapter-code/tf_classifier.py). tf2onnx converts
+# the exported SavedModel to ONNX. Not tested on the maintainers' machine.
+tensorflow
+tf2onnx
+
+################################################################################
+# Chapters 5 and 6 — exporting to interactive theorem provers
+################################################################################
+
+agda        ==2.7.0.1
