@@ -31,17 +31,17 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: 🏗️ Check examples/acasXu/acasXu.vcl
-        run: vehicle check -s acasXu.vcl
+        run: vehicle typecheck -s acasXu.vcl
         working-directory: examples/acasXu
 
       - name: 🏗️ Check examples/mnist-robustness/mnist-robustness.vcl
-        run: vehicle check -s mnist-robustness.vcl
+        run: vehicle typecheck -s mnist-robustness.vcl
         working-directory: examples/mnist-robustness
 
       # - name: 🏗️ Check examples/hyperrec/spec.vcl
-      #   run: vehicle check -s spec.vcl
+      #   run: vehicle typecheck -s spec.vcl
       #   working-directory: examples/hyperrec
 
       - name: 🏗️ Check examples/hyperrec/spec2.vcl
-        run: vehicle check -s spec2.vcl
+        run: vehicle typecheck -s spec2.vcl
         working-directory: examples/hyperrec
