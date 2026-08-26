@@ -383,3 +383,9 @@ You can find them in the Reluplex paper [@katz2017reluplex] ([arXiv](https://arx
     Ensure that your specification is well-typed.
     See the [Vehicle Manual](https://vehicle-lang.readthedocs.io/en/stable/) for how to type-check a Vehicle specification file.
 6.  Verify that the properties in your Vehicle specification hold using the `vehicle` command.
+
+# Solutions
+
+Some sample solutions are available in [this folder](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-2/solutions). But we recommend that you try solving all exercises first.
+
+Wish to contribute a new solution? Let us know and we will add it.
