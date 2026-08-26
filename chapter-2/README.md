@@ -1,7 +1,7 @@
 # ACAS Xu example
 
 ACAS Xu is a collection of 45 neural networks that together make up a collision avoidance system
-for automonous unmanned aircraft.
+for autonomous unmanned aircraft.
 The partial verification of the system was first described in the seminal
 [Reluplex paper](https://arxiv.org/abs/1702.01135).
 This example demonstrates how the entire specification, consisting of all
@@ -21,7 +21,7 @@ The following command verifies `property3` for the network `acasXu_1_7.onnx`:
 ```bash
 vehicle verify \
   --specification acasXu.vcl \
-  --verifier Marabou \
+  --solver Marabou \
   --network acasXu:acasXu_1_7.onnx \
   --property property3
 ```

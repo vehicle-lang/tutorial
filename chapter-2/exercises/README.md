@@ -13,7 +13,7 @@ Start by simply running the code that was discussed in the above chapter. It is 
 Then proceed to write more specs as instructed. 
 
 ACAS Xu is a collection of 45 neural networks that together make up a collision avoidance system
-for automonous unmanned aircraft.
+for autonomous unmanned aircraft.
 The partial verification of the system was first described in the seminal
 [Reluplex paper](https://arxiv.org/abs/1702.01135).
 The entire specification consists of all
@@ -36,8 +36,8 @@ The following command verifies all properties for the network `acasXu_1_7.onnx`:
 vehicle \
   verify \
   --specification acasXu.vcl \
-  --verifier Marabou \
-  --network acasXu:acasXu_1_7.onnx \
+  --solver Marabou \
+  --network acasXu:acasXu_1_7.onnx
 ```
 
 ## Exercise #4 (⭑⭑⭑). Your first independent Vehicle specification
