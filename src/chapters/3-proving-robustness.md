@@ -255,7 +255,7 @@ To do this, include more than 2 images into your `idx` file. A script for genera
 Assuming you created an `idx` file with, for example, 500 images, run Vehicle on this file, and collect statistics for $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate a table that looks like this:
 
 | | $\epsilon = 0.005$ | $\epsilon = 0.01$ | $\epsilon = 0.05$ | $\epsilon = 0.1$ | $\epsilon = 0.5$ |
-| :---------------:| :---------------: | :---------------: | :---------------: | :--------------: | :--------------- |
+| :-----------------:| :-----------------: | :-----------------: | :-----------------: | :----------------: | :----------------- |
 Success rate: | 100.0 % (500/500)  | ?? % (???/500)  | ?? % (???/500)  |  ? % (??/500)  | 0 % (0/500)      |
 
 This is your first proper empirical evaluation of the given neural network for the given data set! This kind of evaluation is reported in international competitions such as VNN-COMP [@vnncomp] and in research papers.
