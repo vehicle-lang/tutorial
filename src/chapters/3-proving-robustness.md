@@ -230,6 +230,8 @@ The reader may have guessed at this pont that, as we make $\epsilon$ larger, few
 
 # Exercises
 
+*A note on the neural network shape. Each solver, Marabou, Vibecheck, etc will have its own restrictions as to the type of layers and hence networks that it can process. For example, in the exercises below, the MNIST model is a CNN, and the FMNIST model -- is a plain multi-layer perceptron. Both can be handled by Marabou, but only the second one can be handled by Vibecheck.*
+
 ## Exercise #1 (⭑): Run the Chapter code
 
 As usual, your first task is to repeat the steps described in this chapter: download the _Vehicle_ specification, the network,  the data, and verify robustness of the given network on given data.
@@ -300,3 +302,9 @@ Either:
 - obtain the model and `idx` files directly from the directory with [the supporting materials](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/exercises)
 
 Once this is done, define the spec and verify its robustness. Experiment with different values of $\epsilon$ and different definitions of robustness.
+
+# Solutions
+
+Some sample solutions are avialable in [this folder](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/solutions). But we recommend that you try solving all exercises first. 
+
+Wish to contribute a new solution? Let us know and we will add it.  
