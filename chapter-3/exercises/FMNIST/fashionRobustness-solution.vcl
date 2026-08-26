@@ -34,6 +34,11 @@ robustAround image label = forall perturbation .
 		advises perturbedImage label
 
 
+--The size of the data set. The `infer` option means the compiler works this
+--out from the data sets below, so it need not be supplied on the command line
+@parameter(infer=True)
+n : Nat
+
 --Take two datasets
 
 @dataset
