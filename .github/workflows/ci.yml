@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - tutorial
+      - exercises
   pull_request:
     types:
       - opened
@@ -30,18 +30,40 @@ jobs:
       - name: 🛠️ Setup Python dependencies
         run: pip install -r requirements.txt
 
-      - name: 🏗️ Check examples/acasXu/acasXu.vcl
-        run: vehicle typecheck -s acasXu.vcl
-        working-directory: examples/acasXu
+      - name: 🔍 Report tool versions
+        run: |
+          vehicle --version
+          Marabou --version || true
 
-      - name: 🏗️ Check examples/mnist-robustness/mnist-robustness.vcl
-        run: vehicle typecheck -s mnist-robustness.vcl
-        working-directory: examples/mnist-robustness
+      # Type-check every specification in the repository. Files containing
+      # fill-in-the-blanks placeholders are skipped, since they are meant not
+      # to compile until the reader completes them.
+      - name: 🏗️ Type-check all specifications
+        run: |
+          status=0
+          for spec in $(git ls-files '*.vcl'); do
+            if grep -q 'your answer here' "$spec"; then
+              echo "skipping  $spec (exercise with placeholders)"
+              continue
+            fi
+            echo "checking  $spec"
+            vehicle typecheck --specification "$spec" || status=1
+          done
+          exit $status
 
-      # - name: 🏗️ Check examples/hyperrec/spec.vcl
-      #   run: vehicle typecheck -s spec.vcl
-      #   working-directory: examples/hyperrec
-
-      - name: 🏗️ Check examples/hyperrec/spec2.vcl
-        run: vehicle typecheck -s spec2.vcl
-        working-directory: examples/hyperrec
+      # Type-checking alone cannot catch changes to the `vehicle verify`
+      # command line, so run one real verification end to end. This is the
+      # check that would have caught `--verifier` being renamed `--solver`.
+      #
+      # Note: ACAS Xu property 3 is *false* for network 1_7, so Marabou is
+      # expected to report a counterexample. `vehicle verify` still exits 0 in
+      # that case, because the verification itself succeeded. The step fails
+      # only if the command line or the tool chain is broken.
+      - name: ✅ Verify the Chapter 2 example
+        run: |
+          vehicle verify \
+            --specification acasXu.vcl \
+            --network acasXu:acasXu_1_7.onnx \
+            --property property3 \
+            --solver Marabou
+        working-directory: chapter-2/chapter-code

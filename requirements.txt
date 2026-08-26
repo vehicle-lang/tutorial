@@ -1,3 +1,16 @@
-vehicle-lang ==0.17.0
-maraboupy    ==1.0.0
-agda         ==2.7.0.1
+# Vehicle itself. Deliberately unpinned: Chapter 1 tells readers to run
+# `pip install vehicle-lang`, so CI should test against whatever that gives
+# them today. Pinning here is how this file drifted to 0.17.0 while the
+# chapters documented a much newer command-line interface.
+vehicle-lang
+
+# The neural network verifier used from Chapter 2 onwards. Provides the
+# `Marabou` executable that `vehicle verify --solver Marabou` looks for.
+maraboupy  ==2.0.0
+
+# Used by chapter-3/exercises/create_dataset.py to build IDX data sets.
+idx2numpy  ==1.2.3
+numpy
+
+# The interactive theorem prover used in Chapters 5 and 6.
+agda       ==2.7.0.1
