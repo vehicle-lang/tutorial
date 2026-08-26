@@ -24,15 +24,16 @@ $$
 
 where $Q$ is the constant number of queries that a property generates for a single data point.
 
-## Open question: `requirements.txt` and CI on the `exercises` branch
+## Resolved: `requirements.txt` and CI on the `exercises` branch
 
-**Raised 2026-08-26, parked pending input from other developers.** One partial
-change has since been made: commit `7a5349f` on the `exercises` branch replaced
-`vehicle check` with `vehicle typecheck` in `ci.yml`. The rest is untouched, and
-that change alone does not make CI pass — see "Version/command coupling" below.
+**Raised 2026-08-26; decided the same day — option 2, correct rather than
+remove.** Both `requirements.txt` and `.github/workflows/ci.yml` were repaired
+on the `exercises` branch rather than deleted. What was done is recorded under
+"What was implemented" below; the findings that motivated it are kept for the
+record.
 
-Should `requirements.txt` (and the `ci.yml` that uses it) be deleted from the
-`exercises` branch, or repaired?
+The question was whether `requirements.txt` (and the `ci.yml` that uses it)
+should be deleted from the `exercises` branch, or repaired.
 
 Findings:
 
@@ -87,3 +88,44 @@ Related: the `tutorial` branch (last commit 2026-08-03) and `source-donotuse`
 are both still public, and the stale `tutorial` branch is what keeps this CI
 alive. Retiring it would remove the ambiguity. Chapter 3's links used to point
 into `tutorial`; they now point at `exercises`.
+
+### What was implemented
+
+`requirements.txt`:
+
+- `vehicle-lang` is now **unpinned**, not raised to a fixed version. Chapter 1
+  tells readers to run `pip install vehicle-lang`, so CI now tests against
+  whatever that gives them. Pinning is precisely how this file drifted to
+  0.17.0 while the chapters documented a newer command line; an exact pin would
+  keep CI green while readers hit failures. Revisit if reproducibility matters
+  more than drift detection.
+- `maraboupy` raised `==1.0.0` -> `==2.0.0` (current, and what is installed
+  locally).
+- `idx2numpy ==1.2.3` and `numpy` added: `chapter-3/exercises/create_dataset.py`
+  needs both and neither was declared anywhere.
+- `agda ==2.7.0.1` left alone; it is still the current release.
+
+`.github/workflows/ci.yml`:
+
+- trigger changed from `push: branches: [tutorial]` to `exercises`;
+- the three hard-coded `examples/*` steps replaced by a loop over
+  `git ls-files '*.vcl'`, so all 16 specifications are checked and new ones are
+  picked up automatically. Specs containing `your answer here` are skipped, as
+  they are meant not to compile until the reader completes them. That rule is
+  exact: it matches only `resources-by-dataset/mnist/mnist-robustness-incomplete.vcl`,
+  the single spec that legitimately fails to typecheck, while
+  `chapter-2/exercises/acasXu-incomplete.vcl` has no placeholders and passes;
+- **a `vehicle verify` step was added.** This corrects the claim made earlier in
+  this note that a working CI "would have caught the `--verifier` breakage".
+  A typecheck-only workflow would *not* have: `--verifier` is a `verify`-only
+  flag. The new step runs one real verification (Chapter 2's ACAS Xu property 3,
+  a single query) so the `verify` command line is actually exercised. Note that
+  property 3 is false for network 1_7, so a counterexample is the expected
+  result and `vehicle verify` still exits 0.
+
+Verified locally by running both steps under `sh` exactly as CI does: 15 specs
+pass, 1 is skipped, exit status 0; the verification completes and exits 0.
+
+**Not yet verified:** the workflow has never run on GitHub, so dependency
+resolution on a clean Ubuntu runner is untested — in particular whether
+`agda ==2.7.0.1` installs there. Watch the first run on `exercises`.
