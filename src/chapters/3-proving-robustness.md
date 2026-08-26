@@ -267,7 +267,7 @@ We now assemble the desired_strong classification robustness_ property definitio
 Given an $\hat{\mathbf{x}} \in \mathcal{X}$,
 
 $$
-\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow f(\mathbf{x})_i \leq \eta
+\forall \mathbf{x}. |\hat{\mathbf{x}}-\mathbf{x}| \leq \epsilon  \Longrightarrow f(\mathbf{x})_i \geq \eta
 $$
 
 We refer the interested reader for a more detailed discussion of different robustness properties in:
