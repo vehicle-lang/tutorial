@@ -26,7 +26,10 @@ where $Q$ is the constant number of queries that a property generates for a sing
 
 ## Open question: `requirements.txt` and CI on the `exercises` branch
 
-**Raised 2026-08-26, awaiting input from other developers — no action taken yet.**
+**Raised 2026-08-26, parked pending input from other developers.** One partial
+change has since been made: commit `7a5349f` on the `exercises` branch replaced
+`vehicle check` with `vehicle typecheck` in `ci.yml`. The rest is untouched, and
+that change alone does not make CI pass — see "Version/command coupling" below.
 
 Should `requirements.txt` (and the `ci.yml` that uses it) be deleted from the
 `exercises` branch, or repaired?
@@ -60,6 +63,25 @@ Two proposed actions, either of which is self-consistent:
    and unpin `vehicle-lang`. This would have caught the `--verifier` →
    `--solver` breakage that went unnoticed across Chapters 2, 3 and 5, so it has
    real value.
+
+**Version/command coupling (important for whoever picks this up).** The command
+name and the pinned version have to be changed together, or CI fails either way:
+
+- `vehicle check` was renamed to `vehicle typecheck` in the compiler by commit
+  `72e97b1c` ("Rename `check` command to `typecheck` and update docs", #1014).
+  `git tag --contains 72e97b1c` shows it shipped in **v0.23.0 and later only**;
+  `git merge-base --is-ancestor 72e97b1c v0.17.0` confirms it is *not* in
+  v0.17.0.
+- So with `requirements.txt` pinning `vehicle-lang ==0.17.0`, the workflow's new
+  `vehicle typecheck` will fail with `Invalid argument 'typecheck'`. Before the
+  edit it used `check`, which 0.17.0 has but 0.27.1 does not.
+
+To make CI actually pass on `exercises`, option 2 needs all four of:
+
+1. raise or drop the `vehicle-lang` pin (0.27.1, or unpinned),
+2. keep `vehicle typecheck` (already done in `7a5349f`),
+3. retarget the trigger from `push: branches: [tutorial]` to `exercises`,
+4. point the steps at `chapter-N/chapter-code` instead of `examples/*`.
 
 Related: the `tutorial` branch (last commit 2026-08-03) and `source-donotuse`
 are both still public, and the stale `tutorial` branch is what keeps this CI
