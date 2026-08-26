@@ -90,7 +90,7 @@ Differentiable logics (DLs) convert booleans and operations over booleans into e
 
 where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions. This is one approach that conserves logical semantics whilst allowing us to use gradient-based methods for property-driven training.
 
-Note that in the Capucci logic the order is reversed: $0$ is the top and $\infty$ is the
+Note that in the Capucci logic the order is reversed: $-\infty$ is the top and $\infty$ is the
 bottom. This is usual in the differentiable logic literature, DL2 [@FischerBDGZV19]
 included, because the value measures how far a formula is from being satisfied — the
 less error there is, the more true the formula is.
@@ -98,7 +98,91 @@ less error there is, the more true the formula is.
 # Logical Loss Functions in Vehicle
 Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with PyTorch. Here, we use the Fashion MNIST dataset to train a neural network. All files used in this example can be found in the [chapter-4/chapter-code directory](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/chapter-code) of the tutorial repository.
 
-First, we will load our Vehicle specification and define our constraint loss function:
+First, we need some data to train on. This step is not specific to Vehicle, but it
+matters more here than in ordinary training: the constraint loss is evaluated on the
+same batch of images as the task loss, because the specification quantifies over a
+data set. Whatever we hand to the loss function must therefore match the `@dataset`
+declarations in the specification.
+
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
+<div>
+
+```python
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader, Subset
+
+MEAN, STD = 0.2860, 0.3530  # mean and standard deviation of Fashion MNIST
+BATCH_SIZE = 64
+SUBSET_SIZE = 1024  # ensure SUBSET_SIZE mod BATCH_SIZE == 0
+
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((MEAN,), (STD,))
+])
+
+train_data = torchvision.datasets.FashionMNIST(
+    root="./data", train=True, download=True, transform=transform
+)
+train_loader = DataLoader(
+    Subset(train_data, range(SUBSET_SIZE)), batch_size=BATCH_SIZE, shuffle=True
+)
+```
+</div>
+
+<div>
+
+```python
+import tensorflow as tf
+
+MEAN, STD = 0.2860, 0.3530  # mean and standard deviation of Fashion MNIST
+BATCH_SIZE = 64
+SUBSET_SIZE = 1024  # ensure SUBSET_SIZE mod BATCH_SIZE == 0
+
+(train_images, train_labels), _ = tf.keras.datasets.fashion_mnist.load_data()
+
+train_images = train_images[:SUBSET_SIZE].astype("float32") / 255.0
+train_images = (train_images - MEAN) / STD
+train_images = train_images[..., None]  # add channel dim -> (N, 28, 28, 1)
+train_labels = train_labels[:SUBSET_SIZE].astype("int32")
+
+train_loader = (
+    tf.data.Dataset.from_tensor_slices((train_images, train_labels))
+    .shuffle(SUBSET_SIZE)
+    .batch(BATCH_SIZE)
+)
+```
+</div>
+
+</div>
+</div>
+
+Three of these choices are worth explaining.
+
+`SUBSET_SIZE` restricts training to the first 1024 images. Evaluating a robustness
+property is far more expensive than evaluating task loss, so a full epoch over 60,000
+images would be very slow; a subset keeps the example runnable while still showing the
+effect. `SUBSET_SIZE` must be an exact multiple of `BATCH_SIZE` — the reason appears
+below, when we pass `n=BATCH_SIZE` to the loss function.
+
+`MEAN` and `STD` are the mean and standard deviation of Fashion MNIST, used to
+normalise the pixel values. Note that this is normalisation for *training*, and is a
+separate matter from the problem-space/input-space discussion of Chapter 2: it rescales
+the data, not the specification.
+
+The two frameworks store images differently, which is why the code that follows squeezes
+different axes. PyTorch's `ToTensor` produces channel-first batches of shape
+`(N, 1, 28, 28)`, whereas here we append the channel dimension last for TensorFlow,
+giving `(N, 28, 28, 1)`. The specification's `Image` type is a plain 28 by 28 tensor, so
+in both cases the channel dimension has to be dropped before the images reach the loss
+function.
+
+Next, we will load our Vehicle specification and define our constraint loss function:
 
 <div class="tabs-container">
   <div class="tabs-header">
@@ -154,9 +238,6 @@ Next, we will define a simple model and training procedure:
 ```python
 import torch
 import torch.nn as nn
-import torchvision
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
 
 model = nn.Sequential(
     nn.Flatten(),
@@ -201,7 +282,6 @@ for epoch in range(num_epochs):
 <div>
 
 ```python
-import tensorflow as tf
 from tensorflow.keras import layers, Sequential
 
 model = Sequential([
@@ -246,7 +326,9 @@ for epoch in range(num_epochs):
 </div>
 </div>
 
-Note that the `network` callable must match the type of the network declared in the Vehicle specification. The `alpha` parameter can be used to tweak the weighting of task loss vs. constraint loss, which are blended together in `total_loss`. We can now export this trained model to verify it using Vehicle, with the hope that it is more robust as a result of training with constraint loss. Model exportation can be done like so:
+Note that the `network` callable must match the type of the network declared in the Vehicle specification. The `alpha` parameter can be used to tweak the weighting of task loss vs. constraint loss, which are blended together in `total_loss`.
+
+The `n=BATCH_SIZE` argument is the reason `SUBSET_SIZE` had to divide evenly by `BATCH_SIZE`. The specification declares its data set size as an inferred parameter, `n`, and here each batch plays the role of the data set, so `n` must be exactly the number of images in the batch. Were the last batch of an epoch short, the value of `n` would no longer describe the images being passed alongside it. We can now export this trained model to verify it using Vehicle, with the hope that it is more robust as a result of training with constraint loss. Model exportation can be done like so:
 
 <div class="tabs-container">
   <div class="tabs-header">
@@ -270,7 +352,7 @@ torch.onnx.export(
 )
 ```
 
-Exporting an ONNX file in PyTorch works by tracing, which runs the model with an arbitrary input and records each operation. Hence, we provide the model with a randomly generated input tensor. At the time of writing, Marabou does not support external data locations, so we require that `external_data=False`.
+Exporting an ONNX file in PyTorch works by tracing, which runs the model with an arbitrary input and records each operation. Hence, we provide the model with a randomly generated input tensor. At the time of writing, Marabou does not support external data locations, so we require that `external_data=False`. Recent versions of PyTorch route `torch.onnx.export` through a new exporter that additionally requires the `onnxscript` package, so install that alongside `torch` if the export reports it missing.
 </div>
 
 <div>
