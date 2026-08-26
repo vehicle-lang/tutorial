@@ -233,7 +233,7 @@ The reader may have guessed at this pont that, as we make $\epsilon$ larger, few
 ## Exercise #1 (⭑): Run the Chapter code
 
 As usual, your first task is to repeat the steps described in this chapter: download the _Vehicle_ specification, the network,  the data, and verify robustness of the given network on given data.
-All code is available from the `examples` section of the [tutorial repository](https://github.com/vehicle-lang/vehicle-tutorial)
+All code is available from the [exercises directory](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/exercises) of the tutorial repository
 
 ## Exercise #2 (⭑) : Experimenting with $\epsilon$-balls of different size
 
@@ -246,7 +246,7 @@ Try experimenting with different values of $\epsilon$, for example, try
 (_This exercise is technically very simple, but the required number of experiments may take a few hours to run. We recommend you run it at home rather than during the live exercise sessions_).
 
 The previous exercise could be transformed into a proper empirical evaluation of robustness of the model for the data set.
-To do this, include more than 2 images into your `idx` file.  A script for generating `idx` files is available [in the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/MNIST-complete).
+To do this, include more than 2 images into your `idx` file.  A script for generating `idx` files is available [in the supporting materials](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/exercises).
 
 Assuming you created an `idx` file with, for example, 500 images, run _Vehicle_ on this file, and collect statistics for $\epsilon = 0.005, 0.01, 0.05, 0.1, 0.5$. You should be able to populate a table that looks like this:
 
@@ -254,7 +254,7 @@ Assuming you created an `idx` file with, for example, 500 images, run _Vehicle_ 
 | :---------------:| :---------------: | :---------------: | :---------------: | :--------------: | :--------------- |
 Success rate: | 100.0 % (500/500)  | ?? % (???/500)  | ?? % (???/500)  |  ? % (??/500)  | 0 % (0/500)      |
 
-This is your first proper empirical evaluation of the given neural network for the given data set! This kind of evaluation is reported in international competitoions such as [VNNComp](https://github.com/stanleybak/vnncomp2023) and in research papers.
+This is your first proper empirical evaluation of the given neural network for the given data set! This kind of evaluation is reported in international competitions such as VNN-COMP [@vnncomp] and in research papers.
 
 Make conclusion about feasibility and success rates of $\epsilon$-ball robustness, and the speed with which verification success deteriorates with the growing $\epsilon$.
 
@@ -297,6 +297,6 @@ We will work with the [Fashion MNIST data set](https://www.tensorflow.org/datase
 Either:
 
 - download the data set, train a model from scratch, generate `onnx` and `idx` files; or
-- obtain the model and `idx` files directly from the directory with [the supporting materials](https://github.com/vehicle-lang/tutorial/tree/tutorial/exercises/FMNIST)
+- obtain the model and `idx` files directly from the directory with [the supporting materials](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-3/exercises)
 
 Once this is done, define the spec and verify its robustness. Experiment with different values of $\epsilon$ and different definitions of robustness.
