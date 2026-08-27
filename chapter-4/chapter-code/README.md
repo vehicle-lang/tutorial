@@ -182,7 +182,7 @@ is in `vanilla-experiment/marabou-outputs/`.
 
 | epoch | correctly classified | robust, `epsilon 0.005` | robust, `epsilon 0.02` |
 | ----: | -------------------: | ----------------------: | ---------------------: |
-| 75 | 38/50 | **37/50** | _pending_ |
+| 75 | 38/50 | **37/50** | **25/50** |
 | 100 | 38/50 | **37/50** | _pending_ |
 | 150 | 37/50 | **36/50** | **21/50** |
 
