@@ -1,3 +1,8 @@
+# Training the Vanilla classifier and Checking its robustness
+
+Let us first train a Vanilla classifier, similar to the one that was used to produce the onnx file in Chapter 3.
+
+
 # Running the property-driven training example
 
 The data sets are described in the [chapter README](../README.md) — they are the same
