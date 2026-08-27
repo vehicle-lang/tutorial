@@ -240,14 +240,35 @@ robustness result followed.
 That tells us something about $\epsilon$ as much as about the network. At
 $\epsilon = 0.005$ the perturbation is small enough that classifying an image correctly
 almost guarantees classifying its whole neighbourhood correctly, so the verification is
-measuring generalisation more than robustness. A radius where correctly-classified
-images genuinely start to fail would be needed to separate the two.
+measuring generalisation more than robustness.
 
 What survives regardless is the shape of the objective. Once cross-entropy is satisfied,
 there is nothing left in it to push the network towards anything it does not measure ---
 the loss falls sevenfold above while held-out accuracy does not improve at all.
-Robustness is exactly such an unmeasured quantity. If we want it, and want it at radii
-that actually bite, it has to appear in the objective itself.
+Robustness is exactly such an unmeasured quantity. If we want it, it has to appear in the
+objective itself.
+
+**How much room is there to improve?** Before turning to methods, it is worth asking how
+much of a robustness problem there is to solve, and that depends on $\epsilon$. The
+figures above mix two effects together, because thirteen of the fifty images are
+misclassified and so fail at zero perturbation. Setting those aside and keeping only the
+37 images the epoch-150 network classifies correctly, the same specification at two radii
+gives:
+
+| $\epsilon$ | provably robust | not robust |
+| ---------: | --------------: | ---------: |
+| 0.005 | 36/37 | 1 |
+| 0.02 | 21/37 | 16 |
+
+Same network, same images; only the size of the neighbourhood differs. A four-fold
+increase in the radius turns one failure into sixteen, so the near perfect robustness at
+$\epsilon = 0.005$ was less a property of the network than of the question we asked it:
+the neighbourhoods were small enough that almost nothing could go wrong inside them.
+
+This sets the terms for the rest of the chapter. To ask whether adding robustness to the
+training objective helps, we need a radius at which the network is genuinely vulnerable.
+At $\epsilon = 0.005$ there is one image to win back; at $\epsilon = 0.02$ there are
+sixteen.
 
 
 # How to make our models verifiable?
