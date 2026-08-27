@@ -185,7 +185,7 @@ is in `vanilla-experiment/marabou-outputs/`.
 | ----: | ------: | -------: | --------: | ---------------------: | -------------------: | -----------------------: | -----: |
 | 75 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1033 s |
 | 100 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1029 s |
-| 150 | 37/50 | _running_ | | | | | |
+| 150 | 37/50 | **36/50** | 14/50 | 13 | 1 | 97.3% | 980 s |
 
 The decomposition matters more than the headline count. An image the network already
 misclassifies cannot be robust — `advises perturbedImage label` fails at zero
@@ -193,14 +193,19 @@ perturbation — so those images land in the falsified column for reasons that h
 nothing to do with robustness. Subtracting them leaves the images that are genuinely
 non-robust.
 
-At epochs 75 and 100 that number is **one**. Of the 38 images the network classifies
-correctly, 37 are provably robust: 97.4%. No image times out or errors, so the counts are
-decisive rather than an artefact of Marabou giving up.
+At every checkpoint that number is **one**. Not approximately one — exactly one, three
+times, while the mean loss falls by a factor of 7.6. No image times out or errors, so the
+counts are decisive rather than an artefact of Marabou giving up.
 
-The two checkpoints are identical on every count — same verified, same falsified, and
-solver times within four seconds of each other — while the mean loss between them almost
-halves. That is the chapter's claim in its clearest form: the extra optimisation changed
-the network's confidence and nothing the verifier can see.
+Epochs 75 and 100 are identical on every count, including solver times within four
+seconds of each other, though the loss almost halves between them. Epoch 150's drop from
+37 to 36 is not a loss of robustness: its ceiling fell from 38 to 37, so one image left
+the correct column and took its robustness result with it. The genuinely non-robust count
+never budges.
+
+That is the chapter's claim in its sharpest form. Further optimisation of cross-entropy
+made the network more confident about answers it already had, and changed nothing the
+verifier can see.
 
 ### What this says about epsilon
 
