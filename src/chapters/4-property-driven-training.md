@@ -216,7 +216,7 @@ learned gives:
 | epochs | mean loss | train accuracy | correct on the 50 images | provably robust |
 | -----: | --------: | -------------: | -----------------------: | --------------: |
 | 75 | 0.0785 | 98.1% | 38/50 | 37/50 |
-| 100 | 0.0413 | 99.5% | 38/50 | _being measured_ |
+| 100 | 0.0413 | 99.5% | 38/50 | 37/50 |
 | 150 | 0.0103 | 99.9% | 37/50 | _being measured_ |
 
 It is worth being clear about which images those last two columns concern. The network
@@ -224,9 +224,10 @@ trains on 1024 images from the training set; the fifty the specification is chec
 against are *test* images, held out of training. So the final column is generalisation,
 not memorisation.
 
-Between epoch 75 and epoch 150 the mean loss falls by a factor of seven and a half.
-Over the same span the number of held-out images the network classifies correctly does
-not improve at all: 38, then 38, then 37.
+Between epoch 75 and epoch 100 the mean loss almost halves, and neither the number of
+images classified correctly nor the number proved robust moves by one: 38 and 37 in both
+cases. Between epoch 75 and epoch 150 the loss falls by a factor of seven and a half,
+and the correct count does not improve at all --- 38, then 38, then 37.
 
 The two columns should be read together. At epoch 75 the network classifies 38 of the
 fifty correctly and is proved robust around 37 of them. That is not a coincidence of
