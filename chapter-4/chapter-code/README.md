@@ -207,21 +207,49 @@ That is the chapter's claim in its sharpest form. Further optimisation of cross-
 made the network more confident about answers it already had, and changed nothing the
 verifier can see.
 
-### What this says about epsilon
+#### A second experiment: how much does epsilon decide?
 
-A network trained on cross-entropy alone, with nothing whatsoever asking it to be
-robust, is provably robust around 97.4% of the images it classifies correctly. At
-`epsilon 0.005` there is almost no robustness deficit for property-driven training to
-close — the verification is largely re-measuring generalisation.
+Everything above is measured on the fifty images of Chapter 3's set, thirteen of which
+this network misclassifies. To ask about robustness alone, the experiment below drops
+those thirteen and keeps only the 37 images the epoch-150 checkpoint classifies correctly
+— the set in
+[vanilla-experiment/accurate-test-E150/](vanilla-experiment/accurate-test-E150/). Nothing
+in it can fail at zero perturbation, so every falsification is a robustness failure.
 
-This is worth stating plainly because it bears on how the chapter's experiments should
-be read: a comparison between vanilla and property-driven training at this radius has
-roughly one image of headroom to work with. Establishing an epsilon at which
-correctly-classified images genuinely start to fail is a prerequisite for the comparison
-to mean anything. The subset in
-[vanilla-experiment/accurate-test-E150/](vanilla-experiment/accurate-test-E150/) is built
-for exactly that measurement: every image in it is classified correctly, so any
-falsification there is robustness and nothing else.
+The same network and the same specification, changing nothing but the radius:
+
+| `epsilon` | images | provably robust | genuinely non-robust | robust share | solver |
+| --------: | -----: | --------------: | -------------------: | -----------: | -----: |
+| 0.005 | 37 | 36/37 | 1 | 97.3% | 980 s |
+| 0.02 | 37 | 21/37 | 16 | 56.8% | 699 s |
+
+```bash
+vehicle verify \
+  --specification ../../chapter-3/exercises/FMNIST/fashionRobustness-solution.vcl \
+  --network classifier:vanilla-experiment/onnx_models/vanilla_e150.onnx \
+  --parameter epsilon:0.02 \
+  --dataset trainingImages:vanilla-experiment/accurate-test-E150/accurateImages.idx \
+  --dataset trainingLabels:vanilla-experiment/accurate-test-E150/accurateLabels.idx \
+  --solver Marabou
+```
+
+**The choice of epsilon, not the network, decided the earlier result.** A network trained
+on cross-entropy alone, with nothing whatsoever asking it to be robust, is provably robust
+around 97.3% of the images it classifies correctly at `epsilon 0.005`. Quadruple the
+radius and that falls to 56.8%. The same weights, the same images, the same specification
+— only the size of the neighbourhood differs.
+
+Two practical consequences.
+
+**`epsilon 0.005` cannot support a comparison between training methods.** It leaves one
+image of headroom out of 37. No method, however good, could demonstrate anything against
+that baseline, because there is almost nothing left to win. `epsilon 0.02` leaves sixteen,
+which is a deficit large enough to measure an improvement against.
+
+**Falsification is cheaper than proof.** The wider ball took 699 s against 980 s, despite
+having 13 fewer images to consider. Marabou stops as soon as it finds a counterexample,
+whereas proving robustness means exhausting the search space. A verification run that
+finishes surprisingly quickly is often reporting bad news.
 
 Two further cautions on the numbers above:
 
