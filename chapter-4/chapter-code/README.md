@@ -115,43 +115,61 @@ vehicle verify \
 ```
 
 Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
-images at nine queries apiece and takes several minutes.
+images at nine queries apiece and takes several minutes — around sixteen on the
+machine used here.
+
+#### Results
+
+Each checkpoint was trained and verified exactly as described above. The complete
+Vehicle output for every run is kept in `marabou-outputs/`, since a single
+counterexample prints its perturbation as a full 28 by 28 array and fifty images
+produce far too much text to read inline.
+
+| epoch | mean loss | train accuracy | verified | falsified | full output |
+| ----: | --------: | -------------: | -------: | --------: | ----------- |
+| 100 | 0.00199 | 100.0% | 28/50 | 22/50 | [vanilla-e100-0-49.txt](marabou-outputs/vanilla-e100-0-49.txt) |
+| 200 | 0.00027 | 100.0% | *pending* | *pending* | *pending* |
+| 300 | *pending* | *pending* | *pending* | *pending* | *pending* |
+
+For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
+40/50 on the very same command — see
+[Chapter 3's recorded output](../../chapter-3/exercises/FMNIST/expected-output-0-49.txt).
+So a network trained to fit this data perfectly is markedly *less* provably
+robust than the one Chapter 3 provides, even though both reach the same task.
 
 #### Verifying using Marabou
 
-The exported network can be checked against the same specification it was trained on,
-exactly as in Chapter 3. Using one image from the Chapter 3 exercise data:
+If you would rather try a single image before committing to a full fifty-image run,
+the same command works with the one-image data set. Run it from this directory
+rather than from `chapter-3/exercises`, adjusting the paths accordingly:
 
 ```bash
 vehicle verify \
-  --specification fmnist-robustness.vcl \
-  --network classifier:models/simple_classifier.onnx \
+  --specification ../../chapter-3/exercises/FMNIST/fashionRobustness-solution.vcl \
+  --network classifier:onnx_models/vanilla_e100.onnx \
   --parameter epsilon:0.005 \
   --dataset trainingImages:../../chapter-3/exercises/FMNIST/idxdata/1Image.idx \
   --dataset trainingLabels:../../chapter-3/exercises/FMNIST/idxdata/1Label.idx \
   --solver Marabou
 ```
 
-Do not expect this to succeed on a network trained with the default settings. A few
-epochs over 1024 images is not enough for robustness at this epsilon, so the expected
-result is a counterexample:
+Vehicle reports each image separately, so a single image gives a single verdict —
+either a proof or a counterexample:
 
 ```plain
 Verifying properties:
   robust!0 [=======================================================] 9/9 queries
     result: ✗ - Marabou found a counterexample
-      perturbation: [ [ ... ] ]
+      perturbation: [ [ 0.0, 0.0, 0.0, ..., -5.0e-3, -5.0e-3, ... ], ... ]
 ```
 
 Vehicle also warns here that the property uses a strict inequality (`<`), which the
 Marabou query format does not support and which Vehicle therefore converts; see
 [vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
 
-A `✗` is the honest outcome of this example, not a failure of the setup. The point of
-the chapter is that constraint loss moves the network in the right direction, not that
-a few minutes of training makes it provably robust. Comparing this outcome against a
-network trained *without* the constraint loss is Exercise #2, and that comparison is
-where the effect shows up.
+A `✗` is not a failure of the setup: this network was trained only to classify, with
+nothing asking it to be robust, so counterexamples are expected. The fifty-image runs
+below quantify how often they occur.
 
 # Running the property-driven training example
 
