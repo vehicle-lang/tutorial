@@ -22,11 +22,34 @@ $$\mathcal{L}_\text{MSE}(\hat x, y)=\frac{1}{k}\sum_{i=1}^k(y_i-f_\theta(\hat x_
 
 where $k$ is the total number of data points, $y_i$ is the label for data point ${\hat x}_i$, and $f_\theta(\hat x_i)$ is the model's predicted value for $\hat x_i$. I.e., we find the difference between the prediction and the actual value, square it, and take the average across the training dataset.
 
+The example later in this chapter classifies images rather than predicting a
+number, and for that the usual choice is **cross-entropy loss**. In the same
+notation:
+
+$$\mathcal{L}_\text{CE}(\hat x, y)=-\frac{1}{k}\sum_{i=1}^k\sum_{c=1}^m y_{i,c}\log f_\theta(\hat x_i)_c$$
+
+where $m$ is the number of classes, which is also the size of the output tensor,
+$y_{i,c}$ is $1$ when data point $\hat x_i$ belongs to class $c$ and $0$
+otherwise, and $f_\theta(\hat x_i)_c$ is the probability the network assigns to
+class $c$. Since only one term of the inner sum is non-zero, this is just the
+average of $-\log$ of the probability given to the *correct* class. The penalty
+therefore grows without bound as that probability approaches zero, which is what
+makes cross-entropy a better fit than mean squared error when the outputs are
+class probabilities rather than magnitudes.
+
+One practical note: the networks we build below end in a plain linear layer, so
+they emit unnormalised scores rather than probabilities. Both PyTorch's
+`CrossEntropyLoss` and TensorFlow's `SparseCategoricalCrossentropy` apply the
+normalisation internally, which is why no softmax appears in the model
+definitions.
+
 Models learn by iteratively tweaking their optimisation parameters with the goal of minimising the output of the loss function. The most common way to do this is using **gradient descent**. Formally, we wish to find the set of parameters $\theta$ that yields the least loss:
 
 $$\min_\theta\mathcal{L}(\hat x,y)$$
 
-## Getting Started 
+We are now ready to code all of this. 
+
+## Getting Started with the Code
 
 Let us start our first training pipeline.
 Recall that Chapter 3 ended with failing to verify robustness. We used the model that was already pre-trained. Let is now try to train a similar model from scratch.
