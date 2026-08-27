@@ -71,8 +71,22 @@ The `FMNIST` folder contains:
 - `fashionRobustness-solution.vcl` - a model solution, if you would rather study
   one than write your own.
 
-- `idxdata/` - images and labels as `1`, `0-49`, `0-99`, `50-99`, and fifty-image
-  slices up to `450-499`, plus `individuals/` holding 1,000 single-image files.
+- `idxdata/` - images and labels in ten disjoint fifty-image slices, `0-49`,
+  `50-99`, `100-149` and so on up to `450-499`, covering 500 images in total.
+  There is also a `0-99` slice that overlaps the first two, a single-image pair
+  `1Image`/`1Label`, and `individuals/` holding 1,000 single-image files. All of
+  these are `float64` images of shape `[n, 28, 28]` with `uint8` labels, matching
+  the format the specification expects.
+
+  Note that `redDimImages.idx` is **not** usable with this specification: it
+  holds three 2-by-2 images, not 28-by-28 ones, and its labels are `int32`
+  rather than `uint8`.
+
+The command below verifies one slice — the first fifty images. There is no
+single 500-image file, so evaluating the whole set means running the command
+once per slice and adding up the results, in the manner of Exercise #3. Verifying
+fifty images takes several minutes, so budget accordingly before reaching for all
+ten.
 
 For example, to verify the first fifty images:
 
@@ -85,6 +99,31 @@ vehicle verify \
   --dataset trainingLabels:FMNIST/idxdata/0-49Labels.idx \
   --solver Marabou
 ```
+
+Of these fifty images, forty are proved robust at this epsilon and ten are
+falsified. Vehicle reports each image separately. Below is one of each: a proved
+image and a falsified one, with its perturbation abbreviated.
+
+```plain
+Verifying properties:
+  robust!0 [=======================================================] 9/9 queries
+    result: 🗸 - Marabou proved no counterexample exists
+  ...
+  robust!11 [======================================================] 9/9 queries
+    result: ✗ - Marabou found a counterexample
+      perturbation: [ [ 0.0, 0.0, 0.0, ..., -5.0e-3, -5.0e-3, ... ], ... ]
+  ...
+robust:
+    verified:  40/50
+    falsified: 10/50
+    timed-out: 0/50
+    errored:   0/50
+```
+
+The perturbation is a full 28 by 28 array of the pixel changes Marabou found,
+so a single counterexample runs to several thousand characters. The complete
+transcript, with all fifty results and every perturbation in full, is in
+[FMNIST/expected-output-0-49.txt](FMNIST/expected-output-0-49.txt).
 
 Sample solutions for the other exercises are in `chapter-3/solutions`, but we
 recommend that you try solving them first.
