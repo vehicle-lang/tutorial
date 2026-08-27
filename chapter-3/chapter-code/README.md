@@ -31,8 +31,29 @@ vehicle verify \
   --solver Marabou
 ```
 
+At this epsilon the network is robust around both of the supplied images, so the
+expected result is two proofs and no counterexamples. The property is a
+`Vector Bool n`, so Vehicle reports each image separately and then summarises:
+
+```plain
+Verifying properties:
+  robust!0 [=======================================================] 9/9 queries
+    result: 🗸 - Marabou proved no counterexample exists
+  robust!1 [=======================================================] 9/9 queries
+    result: 🗸 - Marabou proved no counterexample exists
+robust:
+    verified:  2/2
+    falsified: 0/2
+    timed-out: 0/2
+    errored:   0/2
+```
+
+The nine queries per image are what make this example expensive.
+
 Note that the epsilon value can be changed, but the memory requirements of
-Marabou may increase drastically as epsilon increases.
+Marabou may increase drastically as epsilon increases. As epsilon grows you
+should expect rows to move from `verified` to `falsified`, and on larger data
+sets some may become `errored` when Marabou exhausts its memory.
 
 ## Notes
 
