@@ -125,11 +125,17 @@ Vehicle output for every run is kept in `marabou-outputs/`, since a single
 counterexample prints its perturbation as a full 28 by 28 array and fifty images
 produce far too much text to read inline.
 
-| epoch | mean loss | train accuracy | verified | falsified | full output |
-| ----: | --------: | -------------: | -------: | --------: | ----------- |
-| 100 | 0.00199 | 100.0% | 28/50 | 22/50 | [vanilla-e100-0-49.txt](marabou-outputs/vanilla-e100-0-49.txt) |
-| 200 | 0.00027 | 100.0% | *pending* | *pending* | *pending* |
-| 300 | *pending* | *pending* | *pending* | *pending* | *pending* |
+| epoch | mean loss | train accuracy | verified | falsified | verify time | full output |
+| ----: | --------: | -------------: | -------: | --------: | ----------: | ----------- |
+| 100 | 0.00199 | 100.0% | 28/50 | 22/50 | 982 s | [vanilla-e100-0-49.txt](marabou-outputs/vanilla-e100-0-49.txt) |
+| 200 | 0.00028 | 100.0% | 29/50 | 21/50 | 875 s | [vanilla-e200-0-49.txt](marabou-outputs/vanilla-e200-0-49.txt) |
+| 300 | 0.00008 | 100.0% | 29/50 | 21/50 | 884 s | [vanilla-e300-0-49.txt](marabou-outputs/vanilla-e300-0-49.txt) |
+
+Training accuracy is pinned at 100% from about epoch 75 onwards, and the loss keeps
+falling — by a factor of twenty-six between the first and last checkpoint — yet the
+number of provably robust images moves by one, and then not at all. Note also that no
+image ever times out or errors, so these counts are decisive rather than an artefact of
+Marabou giving up.
 
 For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
 40/50 on the very same command — see
