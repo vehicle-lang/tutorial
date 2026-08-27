@@ -139,7 +139,8 @@ below quantify how often they occur.
 #### Results
 
 Each checkpoint was trained exactly as described above, on raw `[0,1]` pixels. The
-complete Vehicle output for every run is kept in `marabou-outputs/`, since a single
+complete Vehicle output for every run is kept in `vanilla-experiment/marabou-outputs/`,
+since a single
 counterexample prints its perturbation as a full 28 by 28 array and fifty images
 produce far too much text to read inline.
 
@@ -165,7 +166,7 @@ count does not improve: 38, 38, 37.
 scripts normalised its inputs while the verifier was given raw pixels, so the networks
 were measured outside the input space they had been trained on. The scripts no longer
 normalise. See [normalisation-options.md](normalisation-options.md) for the full account
-and [folded-vanilla-models/](folded-vanilla-models/) for the repaired versions of the
+and [folded-vanilla-models/](vanilla-experiment/folded-vanilla-models/) for the repaired versions of the
 older checkpoints.
 
 ### Verification

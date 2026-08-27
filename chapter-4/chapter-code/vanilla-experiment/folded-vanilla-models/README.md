@@ -11,7 +11,7 @@ The chapter's training scripts used to normalise their inputs,
 in roughly `[-0.810, 2.023]`. Verification reads the `.idx` datasets, whose pixels are
 in `[0.0, 1.0]`. Every published verification result was therefore measured on a
 network operating outside the input scale it had been trained for. See
-[normalisation-options.md](../normalisation-options.md) for the full account.
+[normalisation-options.md](../../normalisation-options.md) for the full account.
 
 The scripts no longer normalise, so **models trained from now on do not need
 folding**. These files convert the checkpoints that already existed, so the corrected
@@ -44,7 +44,7 @@ python3 fold_normalisation.py <normalised-model.onnx> <folded-model.onnx>
 | `vanilla_e100_folded.onnx` | epoch-100 checkpoint | 1024 images, cross-entropy only |
 | `vanilla_e200_folded.onnx` | epoch-200 checkpoint | " |
 | `vanilla_e300_folded.onnx` | epoch-300 checkpoint | " |
-| `vanilla_classifier_folded.onnx` | [`../vanilla-experiment/onnx_models/vanilla_classifier.onnx`](../vanilla-experiment/onnx_models/vanilla_classifier.onnx) | the 5-epoch model the chapter script used to produce |
+| `vanilla_classifier_folded.onnx` | [`../onnx_models/vanilla_classifier.onnx`](../onnx_models/vanilla_classifier.onnx) | the 5-epoch model the chapter script used to produce |
 
 ## What they show
 
