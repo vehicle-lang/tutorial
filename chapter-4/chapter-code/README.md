@@ -119,39 +119,37 @@ images at nine queries apiece and takes several minutes.
 
 #### Verifying using Marabou
 
-The exported network can be checked against the same specification it was trained on,
-exactly as in Chapter 3. Using one image from the Chapter 3 exercise data:
+If you would rather try a single image before committing to a full fifty-image run,
+the same command works with the one-image data set. Run it from this directory
+rather than from `chapter-3/exercises`, adjusting the paths accordingly:
 
 ```bash
 vehicle verify \
-  --specification fmnist-robustness.vcl \
-  --network classifier:models/simple_classifier.onnx \
+  --specification ../../chapter-3/exercises/FMNIST/fashionRobustness-solution.vcl \
+  --network classifier:onnx_models/vanilla_e100.onnx \
   --parameter epsilon:0.005 \
   --dataset trainingImages:../../chapter-3/exercises/FMNIST/idxdata/1Image.idx \
   --dataset trainingLabels:../../chapter-3/exercises/FMNIST/idxdata/1Label.idx \
   --solver Marabou
 ```
 
-Do not expect this to succeed on a network trained with the default settings. A few
-epochs over 1024 images is not enough for robustness at this epsilon, so the expected
-result is a counterexample:
+Vehicle reports each image separately, so a single image gives a single verdict —
+either a proof or a counterexample:
 
 ```plain
 Verifying properties:
   robust!0 [=======================================================] 9/9 queries
     result: ✗ - Marabou found a counterexample
-      perturbation: [ [ ... ] ]
+      perturbation: [ [ 0.0, 0.0, 0.0, ..., -5.0e-3, -5.0e-3, ... ], ... ]
 ```
 
 Vehicle also warns here that the property uses a strict inequality (`<`), which the
 Marabou query format does not support and which Vehicle therefore converts; see
 [vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
 
-A `✗` is the honest outcome of this example, not a failure of the setup. The point of
-the chapter is that constraint loss moves the network in the right direction, not that
-a few minutes of training makes it provably robust. Comparing this outcome against a
-network trained *without* the constraint loss is Exercise #2, and that comparison is
-where the effect shows up.
+A `✗` is not a failure of the setup: this network was trained only to classify, with
+nothing asking it to be robust, so counterexamples are expected. The fifty-image runs
+below quantify how often they occur.
 
 # Running the property-driven training example
 
