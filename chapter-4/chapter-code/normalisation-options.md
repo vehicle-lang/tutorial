@@ -187,14 +187,30 @@ Two habits would have caught this immediately, and both are cheap enough to keep
    while provable robustness improves, or vice versa, means the surrogate and the
    property have come apart. That is a pipeline bug, not a training difficulty.
 
-## A residual issue this does not address
+## What fixing it exposed, and how that was resolved
 
-Fixing the normalisation exposes something else. At epsilon 0.005 the number of
-provably robust images is very nearly a restatement of accuracy: across the eight
-networks measured, 82-97% of correctly-classified images were also proved robust, and
-for the folded vanilla models only 2 of 38 eligible images fail. The robustness
-plateau in the corrected table is the accuracy plateau.
+Fixing the normalisation exposed something else. At epsilon 0.005 the number of provably
+robust images is very nearly a restatement of accuracy: across the eight networks
+measured, 82-97% of correctly-classified images were also proved robust, and on the
+re-trained vanilla network only one of the 38 eligible images fails, at every checkpoint.
+The robustness plateau in the corrected table is the accuracy plateau.
 
-So epsilon 0.005 is too small to make robustness a phenomenon distinct from accuracy.
-Choosing a radius at which correctly-classified images genuinely start to fail is a
-separate decision from any of the fixes above, and it is still open.
+Epsilon 0.005 is therefore too small to make robustness a phenomenon distinct from
+accuracy. That was an open question when this file was first written; it has since been
+settled by measurement. Taking the 150-epoch network and the 37 images it classifies
+correctly, and changing nothing but the radius:
+
+| epsilon | provably robust | not robust |
+| ------: | --------------: | ---------: |
+| 0.005 | 36/37 | 1 |
+| 0.02 | 21/37 | 16 |
+
+A four-fold increase in the radius turns one failure into sixteen. Epsilon 0.02 is
+consequently the radius at which the chapter's experiments can say anything: it leaves a
+deficit large enough for a training method to improve on, where 0.005 leaves one image.
+
+The two defects compound in a way worth noting. The original mismatch made epsilon mean a
+cube 2.83x tighter during training than the one verified — and at these radii that factor
+is the difference between a property that is nearly free and one that is substantially
+violated. A scaling bug in the input space is not a small quantitative error; it can
+change which regime the experiment is in.

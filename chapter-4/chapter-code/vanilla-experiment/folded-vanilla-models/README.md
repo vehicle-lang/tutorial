@@ -75,8 +75,11 @@ robustness -- more crisply than the published 28/29/29, which had a one-image wo
 **But note what the plateau is.** Accuracy sits at 38/50 and provable robustness two
 images below it throughout. At epsilon 0.005 the robustness count is very nearly a
 restatement of accuracy: only 2 of the 38 eligible images are genuinely non-robust.
-Choosing an epsilon at which robustness becomes a phenomenon distinct from accuracy is
-still an open question for this chapter.
+
+That is a property of the radius rather than of these networks. On the re-trained vanilla
+network, widening the ball to epsilon 0.02 takes the failures among correctly-classified
+images from 1 of 37 to 16 of 37. The chapter's later experiments therefore use 0.02; see
+[the chapter-code README](../../README.md) for those figures.
 
 ## A caveat on the comparison with Chapter 3's network
 

@@ -153,21 +153,20 @@ produce far too much text to read inline.
 
 ### Training statistics
 
-| epoch | mean loss | train accuracy | correct on the 50 test images |
-| ----: | --------: | -------------: | ----------------------------: |
-| 75 | 0.0785 | 98.1% | 38/50 |
-| 100 | 0.0413 | 99.5% | 38/50 |
-| 150 | 0.0103 | 99.9% | 37/50 |
+| epoch | mean loss | train accuracy |
+| ----: | --------: | -------------: |
+| 75 | 0.0785 | 98.1% |
+| 100 | 0.0413 | 99.5% |
+| 150 | 0.0103 | 99.9% |
 
-The fifty images the specification is checked against are the first fifty FashionMNIST
-**test** images, held out of the 1024 the network trains on. The last column is
-therefore generalisation, and it also sets a hard ceiling on how many images could
-possibly be proved robust: an image the network already misclassifies fails
-`advises perturbedImage label` at zero perturbation, so it can never be verified.
+Both figures are measured on the 1024 images the network trains on. Between epoch 75 and
+epoch 150 the mean loss falls by a factor of seven and a half while training accuracy
+climbs from 98.1% to 99.9%.
 
-Between epoch 75 and epoch 150 the mean loss falls by a factor of seven and a half
-while training accuracy climbs from 98.1% to 99.9%. Over the same span the held-out
-count does not improve: 38, 38, 37.
+Note that the fifty images the specification is checked against are the first fifty
+FashionMNIST **test** images, held out of those 1024. Everything in the verification
+table below is therefore held-out behaviour, and not comparable with the training
+accuracy above.
 
 **These figures come from a re-run of the experiment.** An earlier version of these
 scripts normalised its inputs while the verifier was given raw pixels, so the networks
@@ -181,31 +180,35 @@ older checkpoints.
 Each checkpoint is verified with Chapter 3 Exercise #7's command, unchanged. Full output
 is in `vanilla-experiment/marabou-outputs/`.
 
-| epoch | correct | verified | falsified | of which misclassified | genuinely non-robust | robust share of eligible | solver |
-| ----: | ------: | -------: | --------: | ---------------------: | -------------------: | -----------------------: | -----: |
-| 75 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1033 s |
-| 100 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1029 s |
-| 150 | 37/50 | **36/50** | 14/50 | 13 | 1 | 97.3% | 980 s |
+| epoch | correctly classified | robust, `epsilon 0.005` | robust, `epsilon 0.02` |
+| ----: | -------------------: | ----------------------: | ---------------------: |
+| 75 | 38/50 | **37/50** | _pending_ |
+| 100 | 38/50 | **37/50** | _pending_ |
+| 150 | 37/50 | **36/50** | **21/50** |
 
-The decomposition matters more than the headline count. An image the network already
-misclassifies cannot be robust — `advises perturbedImage label` fails at zero
-perturbation — so those images land in the falsified column for reasons that have
-nothing to do with robustness. Subtracting them leaves the images that are genuinely
-non-robust.
+Solver times were 1033 s, 1029 s and 980 s at `epsilon 0.005`, and 924 s for the
+150-epoch checkpoint at `epsilon 0.02`. No image timed out or errored in any run, so
+every count is decisive rather than an artefact of Marabou giving up.
 
-At every checkpoint that number is **one**. Not approximately one — exactly one, three
-times, while the mean loss falls by a factor of 7.6. No image times out or errors, so the
-counts are decisive rather than an artefact of Marabou giving up.
+The `correctly classified` column is what makes the other two readable. An image the
+network already misclassifies cannot be robust — `advises perturbedImage label` fails at
+zero perturbation — so it is counted as a failure for reasons that have nothing to do with
+robustness. Read each robustness figure against that column rather than against 50.
 
-Epochs 75 and 100 are identical on every count, including solver times within four
-seconds of each other, though the loss almost halves between them. Epoch 150's drop from
-37 to 36 is not a loss of robustness: its ceiling fell from 38 to 37, so one image left
-the correct column and took its robustness result with it. The genuinely non-robust count
-never budges.
+At `epsilon 0.005` the network sits exactly one image below it at all three checkpoints:
+37 of 38, 37 of 38, 36 of 37. Epochs 75 and 100 agree on both columns, and their solver
+times are within four seconds of each other, even though the mean loss almost halves
+between them. Epoch 150's drop from 37 to 36 is not a loss of robustness either — its
+`correctly classified` figure fell from 38 to 37, so one image left that column and took
+its robustness result with it. Across all three checkpoints exactly one correctly
+classified image fails to be proved robust.
 
-That is the chapter's claim in its sharpest form. Further optimisation of cross-entropy
-made the network more confident about answers it already had, and changed nothing the
-verifier can see.
+At `epsilon 0.02` the 150-epoch checkpoint manages 21 of the 37 it classifies correctly,
+so sixteen images that survive the smaller radius fail at the larger one.
+
+The `epsilon 0.005` column is the chapter's claim in its sharpest form. Further
+optimisation of cross-entropy made the network more confident about answers it already
+had, and changed nothing the verifier could see.
 
 #### A second experiment: how much does epsilon decide?
 

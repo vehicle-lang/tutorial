@@ -36,6 +36,28 @@ correct sets, or keep using the full 50 images and report the decomposition
 **It is easier by construction.** Because the images were selected as ones the model
 gets right, `verified / 37` is not comparable with any published `x / 50` figure.
 
+## What it has shown so far
+
+Verifying the 150-epoch checkpoint against this set at two radii, changing nothing else:
+
+| epsilon | provably robust | not robust | solver |
+| ------: | --------------: | ---------: | -----: |
+| 0.005 | 36/37 | 1 | 980 s |
+| 0.02 | 21/37 | 16 | 699 s |
+
+Because every image here is classified correctly, those failure counts are robustness
+alone. The comparison is what established that epsilon 0.005 leaves almost no robustness
+deficit to improve on, and that 0.02 leaves a substantial one.
+
+A cross-check worth recording: running the same 150-epoch network at epsilon 0.02 against
+the full 50-image set returned 21 verified and 29 falsified — the same 21 proofs, with the
+13 misclassified images added to the 16 genuine failures. The two measurements agree
+exactly, which confirms that separating misclassification from non-robustness by
+subtraction gives the same answer as excluding it by construction.
+
+Note also that the wider radius was *faster* (699 s against 980 s) despite the same 37
+images. Marabou stops at the first counterexample, so falsification is cheaper than proof.
+
 ## Using it
 
 ```bash
