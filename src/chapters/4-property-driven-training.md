@@ -217,7 +217,7 @@ learned gives:
 | -----: | --------: | -------------: | -----------------------: | --------------: |
 | 75 | 0.0785 | 98.1% | 38/50 | 37/50 |
 | 100 | 0.0413 | 99.5% | 38/50 | 37/50 |
-| 150 | 0.0103 | 99.9% | 37/50 | _being measured_ |
+| 150 | 0.0103 | 99.9% | 37/50 | 36/50 |
 
 It is worth being clear about which images those last two columns concern. The network
 trains on 1024 images from the training set; the fifty the specification is checked
@@ -229,13 +229,13 @@ images classified correctly nor the number proved robust moves by one: 38 and 37
 cases. Between epoch 75 and epoch 150 the loss falls by a factor of seven and a half,
 and the correct count does not improve at all --- 38, then 38, then 37.
 
-The two columns should be read together. At epoch 75 the network classifies 38 of the
-fifty correctly and is proved robust around 37 of them. That is not a coincidence of
-arithmetic: an image the network already misclassifies cannot be robust, because
-`advises perturbedImage label` fails at zero perturbation. So the count of correctly
-classified images is a ceiling on the count of robust ones, and at this $\epsilon$ the
-network is sitting almost exactly on that ceiling --- just one of its 38 correct answers
-is not provably robust.
+The two columns must be read together. An image the network already misclassifies
+cannot be robust, because `advises perturbedImage label` fails at zero perturbation. The
+count of correctly classified images is therefore a ceiling on the count of robust ones,
+and at this $\epsilon$ the network sits exactly one image below that ceiling at every
+checkpoint: 37 of 38, 37 of 38, 36 of 37. The apparent dip at epoch 150 is the ceiling
+moving, not robustness changing --- one image slipped out of the correct column, and its
+robustness result followed.
 
 That tells us something about $\epsilon$ as much as about the network. At
 $\epsilon = 0.005$ the perturbation is small enough that classifying an image correctly
