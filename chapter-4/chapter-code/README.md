@@ -109,6 +109,121 @@ python -m tf2onnx.convert \
     --output models/tf_simple_classifier.onnx
 ```
 
+## Worked experiment: the vanilla baseline, trained long and verified
+
+Exercise #2 asks you to compare a network trained *with* a logical loss function
+against one trained *without*. `vanilla_classifier.py` is the "without" side: the
+same architecture, the same data and the same optimiser as `pt_classifier.py`,
+but only cross-entropy — no constraint loss at all. Because there is no
+differentiable-logic term to evaluate, it trains in seconds rather than minutes.
+
+What follows is a complete record of one such run, so that you can reproduce it
+step by step.
+
+### Step 1: check the prerequisites
+
+Training needs `torch` and `torchvision`; the ONNX export additionally needs
+`onnxscript`; verification needs `maraboupy`. All are listed in the repository's
+`requirements.txt`. The Fashion MNIST data is already committed under `data/`,
+so nothing is downloaded.
+
+```bash
+pip install -r ../../requirements.txt
+```
+
+### Step 2: run the script as it ships
+
+```bash
+python vanilla_classifier.py
+```
+
+With its default `num_epochs = 5` this prints a loss for each of the 16 steps per
+epoch and writes `onnx_models/vanilla_classifier.onnx`. That is enough to see the
+mechanics, but five epochs is far too few to say anything about robustness.
+
+### Step 3: train for longer, saving a checkpoint along the way
+
+To watch robustness change as training proceeds, raise the epoch count and export
+the network at several points rather than only at the end. Two edits are needed.
+Replace
+
+```python
+num_epochs = 5
+```
+
+with
+
+```python
+num_epochs = 300
+CHECKPOINTS = [100, 200, 300]
+```
+
+and, at the end of the epoch loop — that is, inside `for epoch in ...` but
+outside the inner `for step, ...` loop — add
+
+```python
+    if (epoch + 1) in CHECKPOINTS:
+        model.eval()
+        torch.onnx.export(
+            model,
+            torch.randn(1, 1, 28, 28),
+            f"onnx_models/vanilla_e{epoch + 1}.onnx",
+            input_names=["input"],
+            output_names=["output"],
+            external_data=False,
+        )
+        model.train()
+```
+
+Then run it again:
+
+```bash
+python vanilla_classifier.py
+```
+
+The per-step `print` produces 16 lines per epoch, so 300 epochs is around 4,800
+lines of output. Either redirect it to a file or move that `print` outside the
+inner loop to report once per epoch.
+
+### Step 4: verify each checkpoint
+
+Each exported network is checked with the command from Chapter 3's Exercise #7 —
+the same specification, epsilon and data, with only the network swapped:
+
+```bash
+cd ../../chapter-3/exercises
+
+vehicle verify \
+  --specification FMNIST/fashionRobustness-solution.vcl \
+  --network classifier:../../chapter-4/chapter-code/onnx_models/vanilla_e100.onnx \
+  --parameter epsilon:0.005 \
+  --dataset trainingImages:FMNIST/idxdata/0-49Images.idx \
+  --dataset trainingLabels:FMNIST/idxdata/0-49Labels.idx \
+  --solver Marabou
+```
+
+Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
+images at nine queries apiece and takes several minutes.
+
+### What the training looked like
+
+Timings are from a CPU-only machine; an epoch took between 0.8 and 1.8 seconds,
+so all 300 epochs finished in under three minutes.
+
+```plain
+epoch   1: loss 1.8607 | train acc 37.4%
+epoch  25: loss 0.1290 | train acc 96.7%
+epoch  50: loss 0.0217 | train acc 99.9%
+epoch  75: loss 0.0051 | train acc 100.0%
+epoch 100: loss 0.0020 | train acc 100.0%
+```
+
+The subset is only 1,024 images, so the network memorises it completely by about
+epoch 75. Past that point accuracy cannot improve; the loss keeps falling because
+the network grows more *confident* about answers it already gets right. Whether
+that helps or harms provable robustness is exactly what the verification below
+measures.
+
 ## Verifying using Marabou
 
 The exported network can be checked against the same specification it was trained on,
