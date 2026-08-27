@@ -51,6 +51,8 @@ num_epochs = 5
 alpha = 0.5
 
 for epoch in range(num_epochs):
+    running_total_loss, correct, seen = 0.0, 0, 0
+
     for step, (images, labels) in enumerate(train_loader):
         with tf.GradientTape() as tape:
             logits = model(images)
@@ -66,14 +68,25 @@ for epoch in range(num_epochs):
 
             constraint_loss = tf.reduce_mean(tf.stack(constraint_loss))
             total_loss = alpha * task_loss + (1 - alpha) * constraint_loss
-            print(f"Step: {step + 1}, Loss (task | constraint | total): {task_loss.numpy():.4f} | {constraint_loss.numpy():.4f} | {total_loss.numpy():.4f}")
+
+        print(
+            f"Step {step}:\n\t"
+            f"task loss:        {task_loss.numpy():.4f}\n\t"
+            f"constraint loss:  {constraint_loss.numpy():.4f}\n\t"
+            f"total loss:       {total_loss.numpy():.4f}"
+        )
 
         grads = tape.gradient(total_loss, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
-
+ 
+        running_total_loss += total_loss.numpy() * labels.shape[0]
+        correct += (tf.argmax(logits, axis=1, output_type=labels.dtype) == labels).numpy().sum()
+        seen += labels.shape[0]
+        
     print(
         f"Epoch: {epoch + 1}, "
-        f"loss: {total_loss.numpy():.4f}"
+        f"mean total loss: {running_total_loss / seen:.4f}, "
+        f"train accuracy: {100 * correct / seen:.1f}%"
     )
 
 model.export("models/tf_simple_classifier")
