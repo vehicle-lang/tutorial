@@ -300,11 +300,11 @@ Vehicle supports several different differentiable logics from the literature, th
 Next, we will load our Vehicle specification and define our constraint loss function:
 
 <div class="tabs-container">
-  <div class="tabs-header">
-    <button class="tab-button active" data-index="0">PyTorch</button>
-    <button class="tab-button" data-index="1">TensorFlow</button>
-  </div>
-  <div class="tabs-content">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
 <div>
 
 ```python
@@ -343,11 +343,11 @@ The first parameter to the `load_specification` function is the path to the Vehi
 Next, we will define a simple model and training procedure:
 
 <div class="tabs-container">
-  <div class="tabs-header">
-    <button class="tab-button active" data-index="0">PyTorch</button>
-    <button class="tab-button" data-index="1">TensorFlow</button>
-  </div>
-  <div class="tabs-content">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
 <div>
 
 ```python
@@ -446,11 +446,11 @@ Note that the `network` callable must match the type of the network declared in 
 The `n=BATCH_SIZE` argument is the reason `SUBSET_SIZE` had to divide evenly by `BATCH_SIZE`. The specification declares its data set size as an inferred parameter, `n`, and here each batch plays the role of the data set, so `n` must be exactly the number of images in the batch. Were the last batch of an epoch short, the value of `n` would no longer describe the images being passed alongside it. We can now export this trained model to verify it using Vehicle, with the hope that it is more robust as a result of training with constraint loss. Model exportation can be done like so:
 
 <div class="tabs-container">
-  <div class="tabs-header">
-    <button class="tab-button active" data-index="0">PyTorch</button>
-    <button class="tab-button" data-index="1">TensorFlow</button>
-  </div>
-  <div class="tabs-content">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">PyTorch</button>
+    <button class="tab-button" data-index="1">TensorFlow</button>
+  </div>
+  <div class="tabs-content">
 <div>
 
 ```python
