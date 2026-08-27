@@ -136,7 +136,7 @@ channel dimension last for TensorFlow, giving `(N, 28, 28, 1)`. It makes no diff
 to the network we are about to train, whose first layer flattens its input either way,
 but it will matter once we start handing images to a specification.
 
-### Training the network the ordinary way
+## Training the network the ordinary way
 
 With the data in place, the rest is unremarkable supervised training. The architecture
 is small — two hidden layers — which is deliberate: a simpler network has smoother
@@ -194,7 +194,7 @@ torch.onnx.export(
 )
 ```
 
-### Asking Chapter 3's question of our own network
+## Asking Chapter 3's question of our own network
 
 We now put this network to exactly the question Chapter 3 asked: the same
 specification, the same $\epsilon$, the same fifty images.
@@ -255,7 +255,7 @@ Recall the property of $\epsilon$-ball robustness was defined as:
 $\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of $\text{robust}$ to be
 $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 
-### Adversarial training
+## Adversarial training
 
 Now we can explain further the mechanism that drives adversarial training. We can use a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
 
