@@ -28,7 +28,7 @@ python vanilla_classifier.py
 ```
 
 With its default `num_epochs = 5` this prints a loss for each of the 16 steps per
-epoch and writes `onnx_models/vanilla_classifier.onnx`. That is enough to see the
+epoch and writes `vanilla-experiment/onnx_models/vanilla_classifier.onnx`. That is enough to see the
 mechanics, but five epochs is far too few to say anything about robustness.
 
 ### Step 3: train for longer, saving a checkpoint along the way
@@ -44,8 +44,8 @@ num_epochs = 5
 with
 
 ```python
-num_epochs = 300
-CHECKPOINTS = [100, 200, 300]
+num_epochs = 150
+CHECKPOINTS = [75, 100, 150]
 ```
 
 and, at the end of the epoch loop — that is, inside `for epoch in ...` but
@@ -57,7 +57,7 @@ outside the inner `for step, ...` loop — add
         torch.onnx.export(
             model,
             torch.randn(1, 1, 28, 28),
-            f"onnx_models/vanilla_e{epoch + 1}.onnx",
+            f"vanilla-experiment/onnx_models/vanilla_e{epoch + 1}.onnx",
             input_names=["input"],
             output_names=["output"],
             external_data=False,
@@ -72,30 +72,37 @@ python vanilla_classifier.py
 ```
 
 The script reports once per epoch, giving the mean loss over the epoch and the
-training accuracy, so 300 epochs is 300 lines rather than thousands.
+training accuracy, so 150 epochs is 150 lines rather than thousands.
 
 #### What the training looked like
 
-Timings are from a CPU-only machine; an epoch took between 0.8 and 1.8 seconds,
-so all 300 epochs finished in under three minutes.
+Timings are from a CPU-only machine; an epoch took between 0.3 and 2.5 seconds,
+so all 150 epochs finished in about two and a half minutes.
 
 ```plain
-Epoch: 1, mean loss: 1.8607, train accuracy: 37.4%
+Epoch: 1, mean loss: 2.1178, train accuracy: 32.9%
 ...
-Epoch: 25, mean loss: 0.1290, train accuracy: 96.7%
+Epoch: 25, mean loss: 0.3325, train accuracy: 89.5%
 ...
-Epoch: 50, mean loss: 0.0217, train accuracy: 99.9%
+Epoch: 50, mean loss: 0.1744, train accuracy: 95.1%
 ...
-Epoch: 75, mean loss: 0.0051, train accuracy: 100.0%
+Epoch: 75, mean loss: 0.0785, train accuracy: 98.1%
 ...
-Epoch: 100, mean loss: 0.0020, train accuracy: 100.0%
+Epoch: 100, mean loss: 0.0413, train accuracy: 99.5%
+...
+Epoch: 150, mean loss: 0.0103, train accuracy: 99.9%
 ```
 
-The subset is only 1,024 images, so the network memorises it completely by about
-epoch 75. Past that point accuracy cannot improve; the loss keeps falling because
-the network grows more *confident* about answers it already gets right. Whether
-that helps or harms provable robustness is exactly what the verification below
-measures.
+The subset is only 1,024 images, so the network very nearly memorises it: it passes
+98% by epoch 75 and touches 100% intermittently from about epoch 135, though it does
+not stay there — the shuffled batches move it between 99% and 100% from one epoch to
+the next. Your own numbers will differ in the same way, since the script fixes no
+random seed.
+
+Past that point there is almost no accuracy left to gain, yet the loss keeps falling
+— by a factor of seven and a half between epochs 75 and 150 — because the network
+grows more *confident* about answers it already gets right. Whether that helps or
+harms provable robustness is exactly what the verification below measures.
 
 ### Step 4: verify each checkpoint
 
@@ -107,7 +114,7 @@ cd ../../chapter-3/exercises
 
 vehicle verify \
   --specification FMNIST/fashionRobustness-solution.vcl \
-  --network classifier:../../chapter-4/chapter-code/onnx_models/vanilla_e100.onnx \
+  --network classifier:../../chapter-4/chapter-code/vanilla-experiment/onnx_models/vanilla_e100.onnx \
   --parameter epsilon:0.005 \
   --dataset trainingImages:FMNIST/idxdata/0-49Images.idx \
   --dataset trainingLabels:FMNIST/idxdata/0-49Labels.idx \
@@ -117,41 +124,6 @@ vehicle verify \
 Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
 images at nine queries apiece and takes several minutes — around sixteen on the
 machine used here.
-
-#### Results
-
-Each checkpoint was trained and verified exactly as described above. The complete
-Vehicle output for every run is kept in `marabou-outputs/`, since a single
-counterexample prints its perturbation as a full 28 by 28 array and fifty images
-produce far too much text to read inline.
-
-| epoch | mean loss | train accuracy | verified | falsified | full output |
-| ----: | --------: | -------------: | -------: | --------: | ----------- |
-| 100 | 0.00199 | 100.0% | 28/50 | 22/50 | [vanilla-e100-0-49.txt](marabou-outputs/vanilla-e100-0-49.txt) |
-| 200 | 0.00027 | 100.0% | *pending* | *pending* | *pending* |
-| 300 | *pending* | *pending* | *pending* | *pending* | *pending* |
-
-For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
-40/50 on the very same command — see
-[Chapter 3's recorded output](../../chapter-3/exercises/FMNIST/expected-output-0-49.txt).
-So a network trained to fit this data perfectly is markedly *less* provably
-robust than the one Chapter 3 provides, even though both reach the same task.
-
-#### Verifying using Marabou
-
-If you would rather try a single image before committing to a full fifty-image run,
-the same command works with the one-image data set. Run it from this directory
-rather than from `chapter-3/exercises`, adjusting the paths accordingly:
-
-```bash
-vehicle verify \
-  --specification ../../chapter-3/exercises/FMNIST/fashionRobustness-solution.vcl \
-  --network classifier:onnx_models/vanilla_e100.onnx \
-  --parameter epsilon:0.005 \
-  --dataset trainingImages:../../chapter-3/exercises/FMNIST/idxdata/1Image.idx \
-  --dataset trainingLabels:../../chapter-3/exercises/FMNIST/idxdata/1Label.idx \
-  --solver Marabou
-```
 
 Vehicle reports each image separately, so a single image gives a single verdict —
 either a proof or a counterexample:
@@ -170,6 +142,139 @@ Marabou query format does not support and which Vehicle therefore converts; see
 A `✗` is not a failure of the setup: this network was trained only to classify, with
 nothing asking it to be robust, so counterexamples are expected. The fifty-image runs
 below quantify how often they occur.
+
+#### Results
+
+Each checkpoint was trained exactly as described above, on raw `[0,1]` pixels. The
+complete Vehicle output for every run is kept in `vanilla-experiment/marabou-outputs/`,
+since a single
+counterexample prints its perturbation as a full 28 by 28 array and fifty images
+produce far too much text to read inline.
+
+### Training statistics
+
+| epoch | mean loss | train accuracy |
+| ----: | --------: | -------------: |
+| 75 | 0.0785 | 98.1% |
+| 100 | 0.0413 | 99.5% |
+| 150 | 0.0103 | 99.9% |
+
+Both figures are measured on the 1024 images the network trains on. Between epoch 75 and
+epoch 150 the mean loss falls by a factor of seven and a half while training accuracy
+climbs from 98.1% to 99.9%.
+
+Note that the fifty images the specification is checked against are the first fifty
+FashionMNIST **test** images, held out of those 1024. Everything in the verification
+table below is therefore held-out behaviour, and not comparable with the training
+accuracy above.
+
+**These figures come from a re-run of the experiment.** An earlier version of these
+scripts normalised its inputs while the verifier was given raw pixels, so the networks
+were measured outside the input space they had been trained on. The scripts no longer
+normalise. See [normalisation-options.md](normalisation-options.md) for the full account
+and [folded-vanilla-models/](vanilla-experiment/folded-vanilla-models/) for the repaired versions of the
+older checkpoints.
+
+### Verification
+
+Each checkpoint is verified with Chapter 3 Exercise #7's command, unchanged. Full output
+is in `vanilla-experiment/marabou-outputs/`.
+
+| epoch | correctly classified | robust, `epsilon 0.005` | robust, `epsilon 0.02` |
+| ----: | -------------------: | ----------------------: | ---------------------: |
+| 75 | 38/50 | **37/50** | _pending_ |
+| 100 | 38/50 | **37/50** | _pending_ |
+| 150 | 37/50 | **36/50** | **21/50** |
+
+Solver times were 1033 s, 1029 s and 980 s at `epsilon 0.005`, and 924 s for the
+150-epoch checkpoint at `epsilon 0.02`. No image timed out or errored in any run, so
+every count is decisive rather than an artefact of Marabou giving up.
+
+The `correctly classified` column is what makes the other two readable. An image the
+network already misclassifies cannot be robust — `advises perturbedImage label` fails at
+zero perturbation — so it is counted as a failure for reasons that have nothing to do with
+robustness. Read each robustness figure against that column rather than against 50.
+
+At `epsilon 0.005` the network sits exactly one image below it at all three checkpoints:
+37 of 38, 37 of 38, 36 of 37. Epochs 75 and 100 agree on both columns, and their solver
+times are within four seconds of each other, even though the mean loss almost halves
+between them. Epoch 150's drop from 37 to 36 is not a loss of robustness either — its
+`correctly classified` figure fell from 38 to 37, so one image left that column and took
+its robustness result with it. Across all three checkpoints exactly one correctly
+classified image fails to be proved robust.
+
+At `epsilon 0.02` the 150-epoch checkpoint manages 21 of the 37 it classifies correctly,
+so sixteen images that survive the smaller radius fail at the larger one.
+
+The `epsilon 0.005` column is the chapter's claim in its sharpest form. Further
+optimisation of cross-entropy made the network more confident about answers it already
+had, and changed nothing the verifier could see.
+
+#### A second experiment: how much does epsilon decide?
+
+Everything above is measured on the fifty images of Chapter 3's set, thirteen of which
+this network misclassifies. To ask about robustness alone, the experiment below drops
+those thirteen and keeps only the 37 images the epoch-150 checkpoint classifies correctly
+— the set in
+[vanilla-experiment/accurate-test-E150/](vanilla-experiment/accurate-test-E150/). Nothing
+in it can fail at zero perturbation, so every falsification is a robustness failure.
+
+The same network and the same specification, changing nothing but the radius:
+
+| `epsilon` | images | provably robust | genuinely non-robust | robust share | solver |
+| --------: | -----: | --------------: | -------------------: | -----------: | -----: |
+| 0.005 | 37 | 36/37 | 1 | 97.3% | 980 s |
+| 0.02 | 37 | 21/37 | 16 | 56.8% | 699 s |
+
+```bash
+vehicle verify \
+  --specification ../../chapter-3/exercises/FMNIST/fashionRobustness-solution.vcl \
+  --network classifier:vanilla-experiment/onnx_models/vanilla_e150.onnx \
+  --parameter epsilon:0.02 \
+  --dataset trainingImages:vanilla-experiment/accurate-test-E150/accurateImages.idx \
+  --dataset trainingLabels:vanilla-experiment/accurate-test-E150/accurateLabels.idx \
+  --solver Marabou
+```
+
+**The choice of epsilon, not the network, decided the earlier result.** A network trained
+on cross-entropy alone, with nothing whatsoever asking it to be robust, is provably robust
+around 97.3% of the images it classifies correctly at `epsilon 0.005`. Quadruple the
+radius and that falls to 56.8%. The same weights, the same images, the same specification
+— only the size of the neighbourhood differs.
+
+Two practical consequences.
+
+**`epsilon 0.005` cannot support a comparison between training methods.** It leaves one
+image of headroom out of 37. No method, however good, could demonstrate anything against
+that baseline, because there is almost nothing left to win. `epsilon 0.02` leaves sixteen,
+which is a deficit large enough to measure an improvement against.
+
+**Falsification is cheaper than proof.** The wider ball took 699 s against 980 s, despite
+having 13 fewer images to consider. Marabou stops as soon as it finds a counterexample,
+whereas proving robustness means exhausting the search space. A verification run that
+finishes surprisingly quickly is often reporting bad news.
+
+Two further cautions on the numbers above:
+
+- **Fifty images is a coarse instrument.** Across epochs 75 to 150 the held-out count
+  wanders between 37 and 40 (standard deviation 0.93) on a strictly falling loss. A
+  difference of one to three images between checkpoints is within noise and should not be
+  read as a trend either way.
+- **Chapter 3's `fashion1l32n.onnx` is not a like-for-like comparison.** It scores 40/50
+  on the same command, but classifies 46 of the 50 correctly against 38 here, having been
+  trained on far more data. Per eligible image it is the *less* robust of the two, 40/46
+  (87.0%) against 37/38 (97.4%). Comparing raw verified counts measures the
+  generalisation gap, not robustness.
+
+The point the rest of the chapter builds on survives all of this, in a slightly narrower
+form: **once cross-entropy is satisfied, further optimisation of it is simply
+uninformative about anything the objective does not measure.** The loss falls sevenfold
+between epochs 75 and 150 while held-out accuracy does not improve at all. Robustness is
+not a quantity the task objective measures, so driving that objective lower cannot be
+expected to improve it. If we want robustness — at radii where it is genuinely at risk —
+it has to enter the objective itself, which is what the rest of this chapter does.
+
+
 
 # Running the property-driven training example
 

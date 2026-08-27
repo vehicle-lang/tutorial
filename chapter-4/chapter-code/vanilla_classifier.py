@@ -5,13 +5,17 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Subset
 import torch.onnx
 
-MEAN, STD = 0.2860, 0.3530 # mean and std dev of Fashion MNIST
 BATCH_SIZE = 64
 SUBSET_SIZE = 1024 # ensure SUBSET_SIZE mod BATCH_SIZE = 0
 
+# ToTensor alone puts pixels in [0.0, 1.0]. We deliberately do not normalise:
+# the specification says `validImage x = forall i j . 0 <= x ! i ! j <= 1`, and
+# the .idx datasets handed to the verifier hold pixels in that same range. Adding
+# a Normalize step here would train the network on a different input space from
+# the one it is later verified on, so `epsilon` would denote a different sized
+# perturbation on each side of the pipeline.
 transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((MEAN,), (STD,))
+    transforms.ToTensor()
 ])
 
 train_data = torchvision.datasets.FashionMNIST(root="./data", train=True, download=True, transform=transform)
@@ -59,10 +63,10 @@ input_tensor = torch.randn(1,1,28,28)
 torch.onnx.export(
     model,
     input_tensor,
-    "onnx_models/vanilla_classifier.onnx",
+    "vanilla-experiment/onnx_models/vanilla_classifier.onnx",
     input_names= ["input"],
     output_names=["output"],
     external_data=False, # required for Marabou verification
 )
 
-print("Saved to onnx_models/vanilla_classifier.onnx")
+print("Saved to vanilla-experiment/onnx_models/vanilla_classifier.onnx")

@@ -3,7 +3,6 @@ import vehicle_lang as vcl
 from vehicle_lang.loss import tensorflow as loss_tf
 from tensorflow.keras import layers, Sequential
 
-MEAN, STD = 0.2860, 0.3530  # mean and std dev of Fashion MNIST
 BATCH_SIZE = 64
 SUBSET_SIZE = 1024 # ensure SUBSET_SIZE mod BATCH_SIZE = 0
 
@@ -13,8 +12,13 @@ train_images = train_images[:SUBSET_SIZE]
 train_labels = train_labels[:SUBSET_SIZE]
 train_labels = train_labels.astype("int32")
 
+# Scaling by 255 puts pixels in [0.0, 1.0]. We deliberately do not normalise beyond
+# that: the specification says `validImage x = forall i j . 0 <= x ! i ! j <= 1`, and
+# the .idx datasets handed to the verifier hold pixels in that same range. Adding a
+# normalisation step here would train the network on a different input space from the
+# one it is later verified on, so `epsilon` would denote a different sized
+# perturbation on each side of the pipeline.
 train_images = train_images.astype("float32") / 255.0
-train_images = (train_images - MEAN) / STD
 train_images = train_images[..., None]  # add channel dim -> (N, 28, 28, 1)
 
 train_loader = (
