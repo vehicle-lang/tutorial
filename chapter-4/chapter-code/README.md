@@ -44,8 +44,8 @@ num_epochs = 5
 with
 
 ```python
-num_epochs = 300
-CHECKPOINTS = [100, 200, 300]
+num_epochs = 150
+CHECKPOINTS = [75, 100, 150]
 ```
 
 and, at the end of the epoch loop — that is, inside `for epoch in ...` but
@@ -72,30 +72,37 @@ python vanilla_classifier.py
 ```
 
 The script reports once per epoch, giving the mean loss over the epoch and the
-training accuracy, so 300 epochs is 300 lines rather than thousands.
+training accuracy, so 150 epochs is 150 lines rather than thousands.
 
 #### What the training looked like
 
-Timings are from a CPU-only machine; an epoch took between 0.8 and 1.8 seconds,
-so all 300 epochs finished in under three minutes.
+Timings are from a CPU-only machine; an epoch took between 0.3 and 2.5 seconds,
+so all 150 epochs finished in about two and a half minutes.
 
 ```plain
-Epoch: 1, mean loss: 1.8607, train accuracy: 37.4%
+Epoch: 1, mean loss: 2.1178, train accuracy: 32.9%
 ...
-Epoch: 25, mean loss: 0.1290, train accuracy: 96.7%
+Epoch: 25, mean loss: 0.3325, train accuracy: 89.5%
 ...
-Epoch: 50, mean loss: 0.0217, train accuracy: 99.9%
+Epoch: 50, mean loss: 0.1744, train accuracy: 95.1%
 ...
-Epoch: 75, mean loss: 0.0051, train accuracy: 100.0%
+Epoch: 75, mean loss: 0.0785, train accuracy: 98.1%
 ...
-Epoch: 100, mean loss: 0.0020, train accuracy: 100.0%
+Epoch: 100, mean loss: 0.0413, train accuracy: 99.5%
+...
+Epoch: 150, mean loss: 0.0103, train accuracy: 99.9%
 ```
 
-The subset is only 1,024 images, so the network memorises it completely by about
-epoch 75. Past that point accuracy cannot improve; the loss keeps falling because
-the network grows more *confident* about answers it already gets right. Whether
-that helps or harms provable robustness is exactly what the verification below
-measures.
+The subset is only 1,024 images, so the network very nearly memorises it: it passes
+98% by epoch 75 and touches 100% intermittently from about epoch 135, though it does
+not stay there — the shuffled batches move it between 99% and 100% from one epoch to
+the next. Your own numbers will differ in the same way, since the script fixes no
+random seed.
+
+Past that point there is almost no accuracy left to gain, yet the loss keeps falling
+— by a factor of seven and a half between epochs 75 and 150 — because the network
+grows more *confident* about answers it already gets right. Whether that helps or
+harms provable robustness is exactly what the verification below measures.
 
 ### Step 4: verify each checkpoint
 
