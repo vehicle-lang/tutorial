@@ -115,7 +115,27 @@ vehicle verify \
 ```
 
 Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
-images at nine queries apiece and takes several minutes.
+images at nine queries apiece and takes several minutes — around sixteen on the
+machine used here.
+
+#### Results
+
+Each checkpoint was trained and verified exactly as described above. The complete
+Vehicle output for every run is kept in `marabou-outputs/`, since a single
+counterexample prints its perturbation as a full 28 by 28 array and fifty images
+produce far too much text to read inline.
+
+| epoch | mean loss | train accuracy | verified | falsified | full output |
+| ----: | --------: | -------------: | -------: | --------: | ----------- |
+| 100 | 0.00199 | 100.0% | 28/50 | 22/50 | [vanilla-e100-0-49.txt](marabou-outputs/vanilla-e100-0-49.txt) |
+| 200 | 0.00027 | 100.0% | *pending* | *pending* | *pending* |
+| 300 | *pending* | *pending* | *pending* | *pending* | *pending* |
+
+For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
+40/50 on the very same command — see
+[Chapter 3's recorded output](../../chapter-3/exercises/FMNIST/expected-output-0-49.txt).
+So a network trained to fit this data perfectly is markedly *less* provably
+robust than the one Chapter 3 provides, even though both reach the same task.
 
 #### Verifying using Marabou
 
