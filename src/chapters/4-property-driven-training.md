@@ -187,7 +187,7 @@ model.eval()
 torch.onnx.export(
     model,
     torch.randn(1, 1, 28, 28),
-    "onnx_models/vanilla_classifier.onnx",
+    "vanilla-experiment/onnx_models/vanilla_classifier.onnx",
     input_names=["input"],
     output_names=["output"],
     external_data=False,  # required for Marabou verification
@@ -209,25 +209,44 @@ vehicle verify \
   --solver Marabou
 ```
 
-On 1024 images this network reaches perfect training accuracy in about seventy-five
-epochs. Training it well past that point gives:
+On 1024 images this network reaches 98% training accuracy by about epoch 75, and 99.9%
+by epoch 150. Training it well past the point where the task has essentially been
+learned gives:
 
-| epochs | mean loss | train accuracy | provably robust |
-| -----: | --------: | -------------: | --------------: |
-| 100 | 0.00199 | 100% | 28/50 |
-| 200 | 0.00028 | 100% | 29/50 |
-| 300 | 0.00008 | 100% | 29/50 |
+| epochs | mean loss | train accuracy | correct on the 50 images | provably robust |
+| -----: | --------: | -------------: | -----------------------: | --------------: |
+| 75 | 0.0785 | 98.1% | 38/50 | 37/50 |
+| 100 | 0.0413 | 99.5% | 38/50 | _being measured_ |
+| 150 | 0.0103 | 99.9% | 37/50 | _being measured_ |
 
-Every training image is classified correctly, and yet fewer than three in five are
-provably robust. Training three times as long drives the loss down by a factor of
-twenty-six and moves robustness by a single image, then not at all. For comparison, the pre-trained network
-Chapter 3 supplied manages 40 out of 50 on the same command, so fitting this data harder
-has not made the network more robust — if anything, less.
+It is worth being clear about which images those last two columns concern. The network
+trains on 1024 images from the training set; the fifty the specification is checked
+against are *test* images, held out of training. So the final column is generalisation,
+not memorisation.
 
-That is the observation the rest of this chapter is built on. Once cross-entropy is
-satisfied there is nothing left in the objective to push a network towards robustness,
-so more of the same training buys nothing. If we want robustness, it has to appear in
-the objective itself.
+Between epoch 75 and epoch 150 the mean loss falls by a factor of seven and a half.
+Over the same span the number of held-out images the network classifies correctly does
+not improve at all: 38, then 38, then 37.
+
+The two columns should be read together. At epoch 75 the network classifies 38 of the
+fifty correctly and is proved robust around 37 of them. That is not a coincidence of
+arithmetic: an image the network already misclassifies cannot be robust, because
+`advises perturbedImage label` fails at zero perturbation. So the count of correctly
+classified images is a ceiling on the count of robust ones, and at this $\epsilon$ the
+network is sitting almost exactly on that ceiling --- just one of its 38 correct answers
+is not provably robust.
+
+That tells us something about $\epsilon$ as much as about the network. At
+$\epsilon = 0.005$ the perturbation is small enough that classifying an image correctly
+almost guarantees classifying its whole neighbourhood correctly, so the verification is
+measuring generalisation more than robustness. A radius where correctly-classified
+images genuinely start to fail would be needed to separate the two.
+
+What survives regardless is the shape of the objective. Once cross-entropy is satisfied,
+there is nothing left in it to push the network towards anything it does not measure ---
+the loss falls sevenfold above while held-out accuracy does not improve at all.
+Robustness is exactly such an unmeasured quantity. If we want it, and want it at radii
+that actually bite, it has to appear in the objective itself.
 
 
 # How to make our models verifiable?
