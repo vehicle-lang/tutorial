@@ -203,8 +203,32 @@ between them. Epoch 150's drop from 37 to 36 is not a loss of robustness either 
 its robustness result with it. Across all three checkpoints exactly one correctly
 classified image fails to be proved robust.
 
-At `epsilon 0.02` the 150-epoch checkpoint manages 21 of the 37 it classifies correctly,
-so sixteen images that survive the smaller radius fail at the larger one.
+At `epsilon 0.02` the picture changes, and the checkpoints stop agreeing:
+
+| epoch | correctly classified | provably robust | share of correctly classified |
+| ----: | -------------------: | --------------: | ----------------------------: |
+| 75 | 38 | 25 | 65.8% |
+| 150 | 37 | 21 | 56.8% |
+
+**Training for longer made the network less robust.** That is the expected direction, and
+it is worth spelling out why. Once the 1024 training images are fitted, further
+optimisation of cross-entropy cannot change which side of the decision boundary they fall
+on — so it draws the boundary closer to them instead, buying greater confidence on
+examples already answered correctly. The margin around each point narrows. A sufficiently
+small neighbourhood never notices, which is why the `epsilon 0.005` column is flat; a
+wider one does, and points that sat comfortably inside the correct region start to straddle
+its edge.
+
+So robustness is not simply a quantity cross-entropy fails to optimise. It is one that
+optimising cross-entropy erodes, and the erosion stays invisible until the property is
+checked at a radius wide enough to reveal it. This is the case for putting robustness into
+the objective rather than expecting it to follow from fitting the data well.
+
+Two honest caveats. Fifty images resolve differences of only a few images — the
+correctly-classified count itself wanders by up to three across these epochs — so the
+75-versus-150 gap of four images is near the limit of what this set can distinguish. And
+the 100-epoch checkpoint is still being measured at this radius; it is the run that decides
+whether this is a trend or two endpoints that happen to differ.
 
 The `epsilon 0.005` column is the chapter's claim in its sharpest form. Further
 optimisation of cross-entropy made the network more confident about answers it already
