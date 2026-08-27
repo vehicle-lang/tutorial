@@ -161,6 +161,12 @@ For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
 So a network trained to fit this data perfectly is markedly *less* provably
 robust than the one Chapter 3 provides, even though both reach the same task.
 
+The conclusion to draw from these three runs is this: **once cross-entropy is
+satisfied, further optimisation of it is simply uninformative about robustness.**
+Robustness is not a quantity the task objective is measuring, so driving that
+objective lower cannot be expected to improve it. If we want robustness, it has to
+enter the objective itself — which is what the rest of this chapter does.
+
 
 
 # Running the property-driven training example
