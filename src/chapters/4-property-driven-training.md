@@ -1,7 +1,6 @@
 ---
 title: "Property-Driven Training"
 ---
----
 
 # Motivation
 We will begin this chapter with a question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
