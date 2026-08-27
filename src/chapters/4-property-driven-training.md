@@ -213,34 +213,39 @@ On 1024 images this network reaches 98% training accuracy by about epoch 75, and
 by epoch 150. Training it well past the point where the task has essentially been
 learned gives:
 
-| epochs | mean loss | train accuracy | correct on the 50 images | provably robust |
-| -----: | --------: | -------------: | -----------------------: | --------------: |
-| 75 | 0.0785 | 98.1% | 38/50 | 37/50 |
-| 100 | 0.0413 | 99.5% | 38/50 | 37/50 |
-| 150 | 0.0103 | 99.9% | 37/50 | 36/50 |
+| epochs | mean loss | train accuracy | correctly classified | robust, $\epsilon = 0.005$ | robust, $\epsilon = 0.02$ |
+| -----: | --------: | -------------: | -------------------: | ------------------------: | -----------------------: |
+| 75 | 0.0785 | 98.1% | 38/50 | 37/50 | _pending_ |
+| 100 | 0.0413 | 99.5% | 38/50 | 37/50 | _pending_ |
+| 150 | 0.0103 | 99.9% | 37/50 | 36/50 | 21/50 |
 
-It is worth being clear about which images those last two columns concern. The network
-trains on 1024 images from the training set; the fifty the specification is checked
-against are *test* images, held out of training. So the final column is generalisation,
-not memorisation.
+The first three columns are measured during training, on the 1024 images the network
+learns from. The last three are measured afterwards by Vehicle, on the fifty images of
+Chapter 3's set --- which are *test* images, held out of training. So `correctly
+classified` reports generalisation rather than memorisation, and it is a different
+quantity from the training accuracy beside it.
 
-Between epoch 75 and epoch 100 the mean loss almost halves, and neither the number of
-images classified correctly nor the number proved robust moves by one: 38 and 37 in both
-cases. Between epoch 75 and epoch 150 the loss falls by a factor of seven and a half,
-and the correct count does not improve at all --- 38, then 38, then 37.
+Reading down the training columns, the mean loss almost halves between epochs 75 and 100
+and falls by a factor of seven and a half by epoch 150. Reading down `correctly
+classified` over the same span: 38, then 38, then 37. All that extra optimisation bought
+no improvement in generalisation whatsoever.
 
-The two columns must be read together. An image the network already misclassifies
-cannot be robust, because `advises perturbedImage label` fails at zero perturbation. The
-count of correctly classified images is therefore a ceiling on the count of robust ones,
-and at this $\epsilon$ the network sits exactly one image below that ceiling at every
-checkpoint: 37 of 38, 37 of 38, 36 of 37. The apparent dip at epoch 150 is the ceiling
-moving, not robustness changing --- one image slipped out of the correct column, and its
-robustness result followed.
+The two robustness columns have to be read against `correctly classified`, not against
+50. An image the network already gets wrong cannot be robust, because
+`advises perturbedImage label` fails at zero perturbation; such an image is counted as a
+failure for a reason that has nothing to do with robustness. So `correctly classified` is
+a ceiling on how many images could possibly be proved robust.
 
-That tells us something about $\epsilon$ as much as about the network. At
-$\epsilon = 0.005$ the perturbation is small enough that classifying an image correctly
-almost guarantees classifying its whole neighbourhood correctly, so the verification is
-measuring generalisation more than robustness.
+At $\epsilon = 0.005$ the network sits exactly one image below that ceiling at every
+checkpoint --- 37 of 38, 37 of 38, 36 of 37. The apparent dip at epoch 150 is the ceiling
+moving rather than robustness changing: one image left the `correctly classified` column
+and took its robustness result with it. At $\epsilon = 0.02$ the same 150-epoch network
+proves only 21, so sixteen images that survive the smaller radius fail at the larger one.
+
+The $\epsilon = 0.005$ figures therefore say more about the question than about the
+network. At that radius, classifying an image correctly almost guarantees classifying its
+whole neighbourhood correctly, so the verification is measuring generalisation more than
+robustness.
 
 What survives regardless is the shape of the objective. Once cross-entropy is satisfied,
 there is nothing left in it to push the network towards anything it does not measure ---
