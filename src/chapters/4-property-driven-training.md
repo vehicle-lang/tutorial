@@ -217,10 +217,11 @@ epochs. Training it well past that point gives:
 | -----: | --------: | -------------: | --------------: |
 | 100 | 0.00199 | 100% | 28/50 |
 | 200 | 0.00028 | 100% | 29/50 |
+| 300 | 0.00008 | 100% | 29/50 |
 
 Every training image is classified correctly, and yet fewer than three in five are
-provably robust. Training for twice as long drives the loss down by a further factor of
-seven and moves robustness by a single image. For comparison, the pre-trained network
+provably robust. Training three times as long drives the loss down by a factor of
+twenty-six and moves robustness by a single image, then not at all. For comparison, the pre-trained network
 Chapter 3 supplied manages 40 out of 50 on the same command, so fitting this data harder
 has not made the network more robust — if anything, less.
 
@@ -230,7 +231,9 @@ so more of the same training buys nothing. If we want robustness, it has to appe
 the objective itself.
 
 
-# Current Approaches
+# How to make our models verifiable?
+
+## Current Approaches
 **Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, usually done using methods such as rotation, cropping, flipping, random sampling, etc. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
 
 Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
@@ -253,20 +256,19 @@ Recall the property of $\epsilon$-ball robustness was defined as:
 $\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of $\text{robust}$ to be
 $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 
-# Beyond $\epsilon$-Balls
-In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
+### Adversarial training
 
-However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end.
-
-Before we explore exactly how we train a network on logical properties in practice, those uninitiated into the cults of machine learning and logic may appreciate some theoretical background of how this is possible. This we cover in the following few sections.
-
-# Adversarial training
-
-Here we can explain further the mechanism that drives adversarial training. We can use a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
+Now we can explain further the mechanism that drives adversarial training. We can use a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
 
 $$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(x, y) \bigg]$$
 
 In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimisation parameters $\theta$ which _minimises_ this loss value.
+
+## Beyond $\epsilon$-Balls
+In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
+
+However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end.
+
 
 # Logical Loss Functions
 Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we now know about adversarial training and loss functions, we can reframe this question: _how can we train a network to abide by any arbitrary logical property?_
