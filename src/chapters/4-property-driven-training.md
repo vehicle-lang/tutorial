@@ -52,15 +52,13 @@ We are now ready to code all of this.
 ## Getting Started with the Code
 
 Let us start our first training pipeline.
-Recall that Chapter 3 ended with failing to verify robustness. We used the model that was already pre-trained. Let is now try to train a similar model from scratch.
+Recall that Chapter 3 ended with failing to verify robustness. We used the model that was already pre-trained. Let us now try to train a similar model from scratch, in the plainest way possible, and see how robust it turns out to be.
 
 Here, we use the Fashion MNIST dataset to train a neural network. All files used in this example can be found in the [chapter-4/chapter-code directory](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/chapter-code) of the tutorial repository.
 
-First, we need some data to train on. This step is not specific to Vehicle, but it
-matters more here than in ordinary training: the constraint loss is evaluated on the
-same batch of images as the task loss, because the specification quantifies over a
-data set. Whatever we hand to the loss function must therefore match the `@dataset`
-declarations in the specification.
+First, we need some data to train on. Nothing here is specific to Vehicle, and the
+same loader serves both the plain network we train in a moment and the
+property-driven one later in the chapter.
 
 <div class="tabs-container">
   <div class="tabs-header">
@@ -122,24 +120,114 @@ train_loader = (
 
 Three of these choices are worth explaining.
 
-`SUBSET_SIZE` restricts training to the first 1024 images. Evaluating a robustness
-property is far more expensive than evaluating task loss, so a full epoch over 60,000
-images would be very slow; a subset keeps the example runnable while still showing the
-effect. `SUBSET_SIZE` must be an exact multiple of `BATCH_SIZE` — the reason appears
-below, when we pass `n=BATCH_SIZE` to the loss function.
+`SUBSET_SIZE` restricts training to the first 1024 images. Plain training would happily
+run over all 60,000, but evaluating a robustness property is far more expensive, so a
+subset keeps the second half of this chapter runnable while still showing the effect.
+Keep it an exact multiple of `BATCH_SIZE`; the reason becomes clear later, when we pass
+`n=BATCH_SIZE` to the constraint loss.
 
 `MEAN` and `STD` are the mean and standard deviation of Fashion MNIST, used to
 normalise the pixel values. Note that this is normalisation for *training*, and is a
 separate matter from the problem-space/input-space discussion of Chapter 2: it rescales
 the data, not the specification.
 
-The two frameworks store images differently, which is why the code that follows squeezes
-different axes. PyTorch's `ToTensor` produces channel-first batches of shape
-`(N, 1, 28, 28)`, whereas here we append the channel dimension last for TensorFlow,
-giving `(N, 28, 28, 1)`. The specification's `Image` type is a plain 28 by 28 tensor, so
-in both cases the channel dimension has to be dropped before the images reach the loss
-function.
+Finally, note that the two frameworks store images differently: PyTorch's `ToTensor`
+produces channel-first batches of shape `(N, 1, 28, 28)`, whereas here we append the
+channel dimension last for TensorFlow, giving `(N, 28, 28, 1)`. It makes no difference
+to the network we are about to train, whose first layer flattens its input either way,
+but it will matter once we start handing images to a specification.
 
+### Training the network the ordinary way
+
+With the data in place, the rest is unremarkable supervised training. The architecture
+is small — two hidden layers — which is deliberate: a simpler network has smoother
+decision boundaries, and is therefore easier both to train and to verify.
+
+```python
+import torch
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Flatten(),
+    nn.Linear(784, 64),
+    nn.ReLU(),
+    nn.Linear(64, 32),
+    nn.ReLU(),
+    nn.Linear(32, 10)
+)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+cross_entropy = nn.CrossEntropyLoss()
+
+for epoch in range(num_epochs):
+    running_loss, correct, seen = 0.0, 0, 0
+
+    for images, labels in train_loader:
+        optimizer.zero_grad()
+        logits = model(images)
+        loss = cross_entropy(logits, labels)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item() * labels.numel()
+        correct += (logits.argmax(1) == labels).sum().item()
+        seen += labels.numel()
+
+    print(f"Epoch: {epoch + 1}, mean loss: {running_loss / seen:.4f}, "
+          f"train accuracy: {100 * correct / seen:.1f}%")
+```
+
+Nothing in that objective mentions robustness. The only thing being minimised is
+cross-entropy, exactly as in any introductory classification example. This is the
+complete script `vanilla_classifier.py` in the chapter code.
+
+To verify the result we need it in ONNX form:
+
+```python
+model.eval()
+torch.onnx.export(
+    model,
+    torch.randn(1, 1, 28, 28),
+    "onnx_models/vanilla_classifier.onnx",
+    input_names=["input"],
+    output_names=["output"],
+    external_data=False,  # required for Marabou verification
+)
+```
+
+### Asking Chapter 3's question of our own network
+
+We now put this network to exactly the question Chapter 3 asked: the same
+specification, the same $\epsilon$, the same fifty images.
+
+```sh
+vehicle verify \
+  --specification fashionRobustness-solution.vcl \
+  --network classifier:vanilla_classifier.onnx \
+  --parameter epsilon:0.005 \
+  --dataset trainingImages:0-49Images.idx \
+  --dataset trainingLabels:0-49Labels.idx \
+  --solver Marabou
+```
+
+On 1024 images this network reaches perfect training accuracy in about seventy-five
+epochs. Training it well past that point gives:
+
+| epochs | mean loss | train accuracy | provably robust |
+| -----: | --------: | -------------: | --------------: |
+| 100 | 0.00199 | 100% | 28/50 |
+| 200 | 0.00028 | 100% | 29/50 |
+
+Every training image is classified correctly, and yet fewer than three in five are
+provably robust. Training for twice as long drives the loss down by a further factor of
+seven and moves robustness by a single image. For comparison, the pre-trained network
+Chapter 3 supplied manages 40 out of 50 on the same command, so fitting this data harder
+has not made the network more robust — if anything, less.
+
+That is the observation the rest of this chapter is built on. Once cross-entropy is
+satisfied there is nothing left in the objective to push a network towards robustness,
+so more of the same training buys nothing. If we want robustness, it has to appear in
+the objective itself.
 
 
 # Current Approaches
