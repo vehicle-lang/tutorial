@@ -216,7 +216,7 @@ learned gives:
 | epochs | mean loss | train accuracy | correctly classified | robust, $\epsilon = 0.005$ | robust, $\epsilon = 0.02$ |
 | -----: | --------: | -------------: | -------------------: | ------------------------: | -----------------------: |
 | 75 | 0.0785 | 98.1% | 38/50 | 37/50 | 25/50 |
-| 100 | 0.0413 | 99.5% | 38/50 | 37/50 | _pending_ |
+| 100 | 0.0413 | 99.5% | 38/50 | 37/50 | 22/50 |
 | 150 | 0.0103 | 99.9% | 37/50 | 36/50 | 21/50 |
 
 The first three columns are measured during training, on the 1024 images the network
@@ -242,8 +242,12 @@ moving rather than robustness changing: one image left the `correctly classified
 and took its robustness result with it.
 
 The $\epsilon = 0.02$ column tells a more interesting story. Here the checkpoints do not
-agree. After 75 epochs the network proves 25 of the 38 images it classifies correctly;
-after 150 epochs, only 21 of 37. Training for longer has made it *less* robust.
+agree, and they disagree in an orderly way: 25 provable images at 75 epochs, 22 at 100,
+21 at 150. Training for longer has made the network *less* robust, and steadily so.
+
+Note that this is not the ceiling moving. Over those same checkpoints the number of
+correctly classified images goes 38, 38, 37 --- down by one --- while the number proved
+robust falls by four.
 
 That is worth dwelling on, because it is what one would expect. Once the training data is
 fitted, further optimisation of cross-entropy cannot change which side of the decision
