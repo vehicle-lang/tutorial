@@ -67,7 +67,28 @@ python pt_classifier.py
 
 The script prints the task loss, the constraint loss and their weighted total at every
 step, which is the interesting part: the constraint loss is the specification being
-optimised. It writes `models/simple_classifier.onnx`.
+optimised. With the default settings there are 16 steps per epoch and 5 epochs, ending
+in the export:
+
+```plain
+Step: 0,   Loss (task | constraint | total): 2.3082 | 0.1831 | 1.2456
+Step: 1,   Loss (task | constraint | total): 2.2493 | 0.1037 | 1.1765
+Step: 2,   Loss (task | constraint | total): 2.2106 | 0.0886 | 1.1496
+...
+Epoch: 1, Total loss: 1.1496
+...
+Saved to models/simple_classifier.onnx
+```
+
+The numbers will differ on every run, because the model is initialised randomly and the
+data loader shuffles. What to look for is the *middle* column falling: that is the
+constraint loss, and a downward trend means the network is being pushed towards
+satisfying the specification. The task loss in the first column should fall too, more
+slowly. If the constraint loss stays flat at zero from the first step, the property is
+already trivially satisfied and the run tells you nothing.
+
+PyTorch also prints its own progress lines from the ONNX exporter
+(`[torch.onnx] ... ✅`); those are informational.
 
 The `SUBSET_SIZE` constant at the top limits training to the first 1024 images. Raise
 it for better accuracy at the cost of a considerably longer run, keeping it an exact
@@ -98,7 +119,23 @@ vehicle verify \
   --solver Marabou
 ```
 
-Do not expect this to succeed on a network trained with the default settings: a few
-epochs over 1024 images is not enough for robustness at this epsilon, and Marabou will
-report a counterexample. Comparing that outcome against a network trained without the
-constraint loss is Exercise #2.
+Do not expect this to succeed on a network trained with the default settings. A few
+epochs over 1024 images is not enough for robustness at this epsilon, so the expected
+result is a counterexample:
+
+```plain
+Verifying properties:
+  robust!0 [=======================================================] 9/9 queries
+    result: ✗ - Marabou found a counterexample
+      perturbation: [ [ ... ] ]
+```
+
+Vehicle also warns here that the property uses a strict inequality (`<`), which the
+Marabou query format does not support and which Vehicle therefore converts; see
+[vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
+
+A `✗` is the honest outcome of this example, not a failure of the setup. The point of
+the chapter is that constraint loss moves the network in the right direction, not that
+a few minutes of training makes it provably robust. Comparing this outcome against a
+network trained *without* the constraint loss is Exercise #2, and that comparison is
+where the effect shows up.
