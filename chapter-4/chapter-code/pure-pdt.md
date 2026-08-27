@@ -77,7 +77,7 @@ vehicle verify \
 | +5 epochs, constraint loss only | _pending_ | _pending_ | – |
 | +10 epochs, constraint loss only | _pending_ | _pending_ | – |
 
-Full transcripts are in [marabou-outputs/](marabou-outputs/), one file per model.
+Full transcripts are in [pdt-experiment/marabou-outputs/](pdt-experiment/marabou-outputs/), one file per model.
 
 ## What the numbers say
 

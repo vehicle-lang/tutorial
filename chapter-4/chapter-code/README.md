@@ -171,25 +171,60 @@ older checkpoints.
 
 ### Verification
 
-Provable-robustness figures for these three checkpoints are being re-measured with
-Chapter 3 Exercise #7's command and are not yet available. Two cautions will apply when
-they are:
+Each checkpoint is verified with Chapter 3 Exercise #7's command, unchanged. Full output
+is in `vanilla-experiment/marabou-outputs/`.
+
+| epoch | correct | verified | falsified | of which misclassified | genuinely non-robust | robust share of eligible | solver |
+| ----: | ------: | -------: | --------: | ---------------------: | -------------------: | -----------------------: | -----: |
+| 75 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1033 s |
+| 100 | 38/50 | _running_ | | | | | |
+| 150 | 37/50 | _running_ | | | | | |
+
+The decomposition matters more than the headline count. An image the network already
+misclassifies cannot be robust — `advises perturbedImage label` fails at zero
+perturbation — so those images land in the falsified column for reasons that have
+nothing to do with robustness. Subtracting them leaves the images that are genuinely
+non-robust.
+
+At epoch 75 that number is **one**. Of the 38 images the network classifies correctly,
+37 are provably robust: 97.4%. No image times out or errors, so the counts are decisive
+rather than an artefact of Marabou giving up.
+
+### What this says about epsilon
+
+A network trained on cross-entropy alone, with nothing whatsoever asking it to be
+robust, is provably robust around 97.4% of the images it classifies correctly. At
+`epsilon 0.005` there is almost no robustness deficit for property-driven training to
+close — the verification is largely re-measuring generalisation.
+
+This is worth stating plainly because it bears on how the chapter's experiments should
+be read: a comparison between vanilla and property-driven training at this radius has
+roughly one image of headroom to work with. Establishing an epsilon at which
+correctly-classified images genuinely start to fail is a prerequisite for the comparison
+to mean anything. The subset in
+[vanilla-experiment/accurate-test-E150/](vanilla-experiment/accurate-test-E150/) is built
+for exactly that measurement: every image in it is classified correctly, so any
+falsification there is robustness and nothing else.
+
+Two further cautions on the numbers above:
 
 - **Fifty images is a coarse instrument.** Across epochs 75 to 150 the held-out count
   wanders between 37 and 40 (standard deviation 0.93) on a strictly falling loss. A
-  difference of one to three images between checkpoints is therefore within noise, and
-  should not be read as a trend either way.
+  difference of one to three images between checkpoints is within noise and should not be
+  read as a trend either way.
 - **Chapter 3's `fashion1l32n.onnx` is not a like-for-like comparison.** It scores 40/50
-  on the same command, but it classifies 46 of the 50 correctly against 38 here, having
-  been trained on far more data. Comparing raw verified counts against it measures the
-  generalisation gap more than it measures robustness.
+  on the same command, but classifies 46 of the 50 correctly against 38 here, having been
+  trained on far more data. Per eligible image it is the *less* robust of the two, 40/46
+  (87.0%) against 37/38 (97.4%). Comparing raw verified counts measures the
+  generalisation gap, not robustness.
 
-Whatever those figures turn out to be, the point the rest of the chapter builds on is
-already visible above: **once cross-entropy is satisfied, further optimisation of it is
-simply uninformative about anything the objective does not measure.** Robustness is not
-a quantity the task objective measures, so driving that objective lower cannot be
-expected to improve it. If we want robustness, it has to enter the objective itself —
-which is what the rest of this chapter does.
+The point the rest of the chapter builds on survives all of this, in a slightly narrower
+form: **once cross-entropy is satisfied, further optimisation of it is simply
+uninformative about anything the objective does not measure.** The loss falls sevenfold
+between epochs 75 and 150 while held-out accuracy does not improve at all. Robustness is
+not a quantity the task objective measures, so driving that objective lower cannot be
+expected to improve it. If we want robustness — at radii where it is genuinely at risk —
+it has to enter the objective itself, which is what the rest of this chapter does.
 
 
 
