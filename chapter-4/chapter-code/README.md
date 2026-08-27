@@ -181,9 +181,8 @@ Then run it again:
 python vanilla_classifier.py
 ```
 
-The per-step `print` produces 16 lines per epoch, so 300 epochs is around 4,800
-lines of output. Either redirect it to a file or move that `print` outside the
-inner loop to report once per epoch.
+The script reports once per epoch, giving the mean loss over the epoch and the
+training accuracy, so 300 epochs is 300 lines rather than thousands.
 
 ### Step 4: verify each checkpoint
 
@@ -211,11 +210,15 @@ Timings are from a CPU-only machine; an epoch took between 0.8 and 1.8 seconds,
 so all 300 epochs finished in under three minutes.
 
 ```plain
-epoch   1: loss 1.8607 | train acc 37.4%
-epoch  25: loss 0.1290 | train acc 96.7%
-epoch  50: loss 0.0217 | train acc 99.9%
-epoch  75: loss 0.0051 | train acc 100.0%
-epoch 100: loss 0.0020 | train acc 100.0%
+Epoch: 1, mean loss: 1.8607, train accuracy: 37.4%
+...
+Epoch: 25, mean loss: 0.1290, train accuracy: 96.7%
+...
+Epoch: 50, mean loss: 0.0217, train accuracy: 99.9%
+...
+Epoch: 75, mean loss: 0.0051, train accuracy: 100.0%
+...
+Epoch: 100, mean loss: 0.0020, train accuracy: 100.0%
 ```
 
 The subset is only 1,024 images, so the network memorises it completely by about

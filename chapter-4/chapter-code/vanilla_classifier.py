@@ -31,22 +31,26 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 cross_entropy = nn.CrossEntropyLoss()
 
 num_epochs = 5
-alpha = 0.5
 
 for epoch in range(num_epochs):
-    for step, (images, labels) in enumerate(train_loader):
+    running_loss, correct, seen = 0.0, 0, 0
+
+    for images, labels in train_loader:
         optimizer.zero_grad()
         logits = model(images)
         loss = cross_entropy(logits, labels)
 
-        print(f"Step: {step},   Loss: {loss.item():.4f}")
-
         loss.backward()
         optimizer.step()
 
+        running_loss += loss.item() * labels.numel()
+        correct += (logits.argmax(1) == labels).sum().item()
+        seen += labels.numel()
+
     print(
         f"Epoch: {epoch + 1}, "
-        f"Total loss: {loss.item():.4f}"
+        f"mean loss: {running_loss / seen:.4f}, "
+        f"train accuracy: {100 * correct / seen:.1f}%"
     )
 
 model.eval()
