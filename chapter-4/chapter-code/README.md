@@ -184,7 +184,7 @@ is in `vanilla-experiment/marabou-outputs/`.
 | epoch | correct | verified | falsified | of which misclassified | genuinely non-robust | robust share of eligible | solver |
 | ----: | ------: | -------: | --------: | ---------------------: | -------------------: | -----------------------: | -----: |
 | 75 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1033 s |
-| 100 | 38/50 | _running_ | | | | | |
+| 100 | 38/50 | **37/50** | 13/50 | 12 | 1 | 97.4% | 1029 s |
 | 150 | 37/50 | _running_ | | | | | |
 
 The decomposition matters more than the headline count. An image the network already
@@ -193,9 +193,14 @@ perturbation — so those images land in the falsified column for reasons that h
 nothing to do with robustness. Subtracting them leaves the images that are genuinely
 non-robust.
 
-At epoch 75 that number is **one**. Of the 38 images the network classifies correctly,
-37 are provably robust: 97.4%. No image times out or errors, so the counts are decisive
-rather than an artefact of Marabou giving up.
+At epochs 75 and 100 that number is **one**. Of the 38 images the network classifies
+correctly, 37 are provably robust: 97.4%. No image times out or errors, so the counts are
+decisive rather than an artefact of Marabou giving up.
+
+The two checkpoints are identical on every count — same verified, same falsified, and
+solver times within four seconds of each other — while the mean loss between them almost
+halves. That is the chapter's claim in its clearest form: the extra optimisation changed
+the network's confidence and nothing the verifier can see.
 
 ### What this says about epsilon
 
