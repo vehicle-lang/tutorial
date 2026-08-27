@@ -2,6 +2,156 @@
 
 Let us first train a Vanilla classifier, similar to the one that was used to produce the onnx file in Chapter 3. For verification we will use exactly the same set up (same Vehicle command) as was used in the verification experiment of Exercise 7, Chapter 3.
 
+## Worked experiment: the vanilla baseline, trained long and verified
+
+We will start with `vanilla_classifier.py` trained in the FMNIST data set using
+cross-entropy loss.
+
+What follows is a complete record of one such run, so that you can reproduce it
+step by step.
+
+### Step 1: check the prerequisites
+
+Training needs `torch` and `torchvision`; the ONNX export additionally needs
+`onnxscript`; verification needs `maraboupy`. All are listed in the repository's
+`requirements.txt`. The Fashion MNIST data is already committed under `data/`,
+so nothing is downloaded.
+
+```bash
+pip install -r ../../requirements.txt
+```
+
+### Step 2: run the script as it ships
+
+```bash
+python vanilla_classifier.py
+```
+
+With its default `num_epochs = 5` this prints a loss for each of the 16 steps per
+epoch and writes `onnx_models/vanilla_classifier.onnx`. That is enough to see the
+mechanics, but five epochs is far too few to say anything about robustness.
+
+### Step 3: train for longer, saving a checkpoint along the way
+
+To watch robustness change as training proceeds, raise the epoch count and export
+the network at several points rather than only at the end. Two edits are needed.
+Replace
+
+```python
+num_epochs = 5
+```
+
+with
+
+```python
+num_epochs = 300
+CHECKPOINTS = [100, 200, 300]
+```
+
+and, at the end of the epoch loop — that is, inside `for epoch in ...` but
+outside the inner `for step, ...` loop — add
+
+```python
+    if (epoch + 1) in CHECKPOINTS:
+        model.eval()
+        torch.onnx.export(
+            model,
+            torch.randn(1, 1, 28, 28),
+            f"onnx_models/vanilla_e{epoch + 1}.onnx",
+            input_names=["input"],
+            output_names=["output"],
+            external_data=False,
+        )
+        model.train()
+```
+
+Then run it again:
+
+```bash
+python vanilla_classifier.py
+```
+
+The script reports once per epoch, giving the mean loss over the epoch and the
+training accuracy, so 300 epochs is 300 lines rather than thousands.
+
+#### What the training looked like
+
+Timings are from a CPU-only machine; an epoch took between 0.8 and 1.8 seconds,
+so all 300 epochs finished in under three minutes.
+
+```plain
+Epoch: 1, mean loss: 1.8607, train accuracy: 37.4%
+...
+Epoch: 25, mean loss: 0.1290, train accuracy: 96.7%
+...
+Epoch: 50, mean loss: 0.0217, train accuracy: 99.9%
+...
+Epoch: 75, mean loss: 0.0051, train accuracy: 100.0%
+...
+Epoch: 100, mean loss: 0.0020, train accuracy: 100.0%
+```
+
+The subset is only 1,024 images, so the network memorises it completely by about
+epoch 75. Past that point accuracy cannot improve; the loss keeps falling because
+the network grows more *confident* about answers it already gets right. Whether
+that helps or harms provable robustness is exactly what the verification below
+measures.
+
+### Step 4: verify each checkpoint
+
+Each exported network is checked with the command from Chapter 3's Exercise #7 —
+the same specification, epsilon and data, with only the network swapped:
+
+```bash
+cd ../../chapter-3/exercises
+
+vehicle verify \
+  --specification FMNIST/fashionRobustness-solution.vcl \
+  --network classifier:../../chapter-4/chapter-code/onnx_models/vanilla_e100.onnx \
+  --parameter epsilon:0.005 \
+  --dataset trainingImages:FMNIST/idxdata/0-49Images.idx \
+  --dataset trainingLabels:FMNIST/idxdata/0-49Labels.idx \
+  --solver Marabou
+```
+
+Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
+images at nine queries apiece and takes several minutes.
+
+#### Verifying using Marabou
+
+The exported network can be checked against the same specification it was trained on,
+exactly as in Chapter 3. Using one image from the Chapter 3 exercise data:
+
+```bash
+vehicle verify \
+  --specification fmnist-robustness.vcl \
+  --network classifier:models/simple_classifier.onnx \
+  --parameter epsilon:0.005 \
+  --dataset trainingImages:../../chapter-3/exercises/FMNIST/idxdata/1Image.idx \
+  --dataset trainingLabels:../../chapter-3/exercises/FMNIST/idxdata/1Label.idx \
+  --solver Marabou
+```
+
+Do not expect this to succeed on a network trained with the default settings. A few
+epochs over 1024 images is not enough for robustness at this epsilon, so the expected
+result is a counterexample:
+
+```plain
+Verifying properties:
+  robust!0 [=======================================================] 9/9 queries
+    result: ✗ - Marabou found a counterexample
+      perturbation: [ [ ... ] ]
+```
+
+Vehicle also warns here that the property uses a strict inequality (`<`), which the
+Marabou query format does not support and which Vehicle therefore converts; see
+[vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
+
+A `✗` is the honest outcome of this example, not a failure of the setup. The point of
+the chapter is that constraint loss moves the network in the right direction, not that
+a few minutes of training makes it provably robust. Comparing this outcome against a
+network trained *without* the constraint loss is Exercise #2, and that comparison is
+where the effect shows up.
 
 # Running the property-driven training example
 
@@ -109,156 +259,4 @@ python -m tf2onnx.convert \
     --output models/tf_simple_classifier.onnx
 ```
 
-## Worked experiment: the vanilla baseline, trained long and verified
 
-Exercise #2 asks you to compare a network trained *with* a logical loss function
-against one trained *without*. `vanilla_classifier.py` is the "without" side: the
-same architecture, the same data and the same optimiser as `pt_classifier.py`,
-but only cross-entropy — no constraint loss at all. Because there is no
-differentiable-logic term to evaluate, it trains in seconds rather than minutes.
-
-What follows is a complete record of one such run, so that you can reproduce it
-step by step.
-
-### Step 1: check the prerequisites
-
-Training needs `torch` and `torchvision`; the ONNX export additionally needs
-`onnxscript`; verification needs `maraboupy`. All are listed in the repository's
-`requirements.txt`. The Fashion MNIST data is already committed under `data/`,
-so nothing is downloaded.
-
-```bash
-pip install -r ../../requirements.txt
-```
-
-### Step 2: run the script as it ships
-
-```bash
-python vanilla_classifier.py
-```
-
-With its default `num_epochs = 5` this prints a loss for each of the 16 steps per
-epoch and writes `onnx_models/vanilla_classifier.onnx`. That is enough to see the
-mechanics, but five epochs is far too few to say anything about robustness.
-
-### Step 3: train for longer, saving a checkpoint along the way
-
-To watch robustness change as training proceeds, raise the epoch count and export
-the network at several points rather than only at the end. Two edits are needed.
-Replace
-
-```python
-num_epochs = 5
-```
-
-with
-
-```python
-num_epochs = 300
-CHECKPOINTS = [100, 200, 300]
-```
-
-and, at the end of the epoch loop — that is, inside `for epoch in ...` but
-outside the inner `for step, ...` loop — add
-
-```python
-    if (epoch + 1) in CHECKPOINTS:
-        model.eval()
-        torch.onnx.export(
-            model,
-            torch.randn(1, 1, 28, 28),
-            f"onnx_models/vanilla_e{epoch + 1}.onnx",
-            input_names=["input"],
-            output_names=["output"],
-            external_data=False,
-        )
-        model.train()
-```
-
-Then run it again:
-
-```bash
-python vanilla_classifier.py
-```
-
-The script reports once per epoch, giving the mean loss over the epoch and the
-training accuracy, so 300 epochs is 300 lines rather than thousands.
-
-### Step 4: verify each checkpoint
-
-Each exported network is checked with the command from Chapter 3's Exercise #7 —
-the same specification, epsilon and data, with only the network swapped:
-
-```bash
-cd ../../chapter-3/exercises
-
-vehicle verify \
-  --specification FMNIST/fashionRobustness-solution.vcl \
-  --network classifier:../../chapter-4/chapter-code/onnx_models/vanilla_e100.onnx \
-  --parameter epsilon:0.005 \
-  --dataset trainingImages:FMNIST/idxdata/0-49Images.idx \
-  --dataset trainingLabels:FMNIST/idxdata/0-49Labels.idx \
-  --solver Marabou
-```
-
-Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
-images at nine queries apiece and takes several minutes.
-
-### What the training looked like
-
-Timings are from a CPU-only machine; an epoch took between 0.8 and 1.8 seconds,
-so all 300 epochs finished in under three minutes.
-
-```plain
-Epoch: 1, mean loss: 1.8607, train accuracy: 37.4%
-...
-Epoch: 25, mean loss: 0.1290, train accuracy: 96.7%
-...
-Epoch: 50, mean loss: 0.0217, train accuracy: 99.9%
-...
-Epoch: 75, mean loss: 0.0051, train accuracy: 100.0%
-...
-Epoch: 100, mean loss: 0.0020, train accuracy: 100.0%
-```
-
-The subset is only 1,024 images, so the network memorises it completely by about
-epoch 75. Past that point accuracy cannot improve; the loss keeps falling because
-the network grows more *confident* about answers it already gets right. Whether
-that helps or harms provable robustness is exactly what the verification below
-measures.
-
-## Verifying using Marabou
-
-The exported network can be checked against the same specification it was trained on,
-exactly as in Chapter 3. Using one image from the Chapter 3 exercise data:
-
-```bash
-vehicle verify \
-  --specification fmnist-robustness.vcl \
-  --network classifier:models/simple_classifier.onnx \
-  --parameter epsilon:0.005 \
-  --dataset trainingImages:../../chapter-3/exercises/FMNIST/idxdata/1Image.idx \
-  --dataset trainingLabels:../../chapter-3/exercises/FMNIST/idxdata/1Label.idx \
-  --solver Marabou
-```
-
-Do not expect this to succeed on a network trained with the default settings. A few
-epochs over 1024 images is not enough for robustness at this epsilon, so the expected
-result is a counterexample:
-
-```plain
-Verifying properties:
-  robust!0 [=======================================================] 9/9 queries
-    result: ✗ - Marabou found a counterexample
-      perturbation: [ [ ... ] ]
-```
-
-Vehicle also warns here that the property uses a strict inequality (`<`), which the
-Marabou query format does not support and which Vehicle therefore converts; see
-[vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
-
-A `✗` is the honest outcome of this example, not a failure of the setup. The point of
-the chapter is that constraint loss moves the network in the right direction, not that
-a few minutes of training makes it provably robust. Comparing this outcome against a
-network trained *without* the constraint loss is Exercise #2, and that comparison is
-where the effect shows up.
