@@ -183,7 +183,7 @@ is in `vanilla-experiment/marabou-outputs/`.
 | epoch | correctly classified | robust, `epsilon 0.005` | robust, `epsilon 0.02` |
 | ----: | -------------------: | ----------------------: | ---------------------: |
 | 75 | 38/50 | **37/50** | **25/50** |
-| 100 | 38/50 | **37/50** | _pending_ |
+| 100 | 38/50 | **37/50** | **22/50** |
 | 150 | 37/50 | **36/50** | **21/50** |
 
 Solver times were 1033 s, 1029 s and 980 s at `epsilon 0.005`, and 924 s for the
@@ -208,6 +208,7 @@ At `epsilon 0.02` the picture changes, and the checkpoints stop agreeing:
 | epoch | correctly classified | provably robust | share of correctly classified |
 | ----: | -------------------: | --------------: | ----------------------------: |
 | 75 | 38 | 25 | 65.8% |
+| 100 | 38 | 22 | 57.9% |
 | 150 | 37 | 21 | 56.8% |
 
 **Training for longer made the network less robust.** That is the expected direction, and
@@ -224,11 +225,16 @@ optimising cross-entropy erodes, and the erosion stays invisible until the prope
 checked at a radius wide enough to reveal it. This is the case for putting robustness into
 the objective rather than expecting it to follow from fitting the data well.
 
-Two honest caveats. Fifty images resolve differences of only a few images — the
-correctly-classified count itself wanders by up to three across these epochs — so the
-75-versus-150 gap of four images is near the limit of what this set can distinguish. And
-the 100-epoch checkpoint is still being measured at this radius; it is the run that decides
-whether this is a trend or two endpoints that happen to differ.
+The decline is orderly rather than a single jump — 25, then 22, then 21 — and it is not
+the ceiling moving: correctly-classified goes 38, 38, 37 over the same checkpoints, down by
+one, while provable robustness falls by four.
+
+One caveat remains on precision. Fifty images resolve differences of only a few images, and
+the correctly-classified count itself wanders by up to three across these epochs, so the
+individual figures should not be read to the last image. What survives that caveat is the
+ordering: three measurements in sequence, each lower than the last, on a strictly falling
+training loss. A larger image set would sharpen the numbers but is unlikely to reverse
+their direction.
 
 The `epsilon 0.005` column is the chapter's claim in its sharpest form. Further
 optimisation of cross-entropy made the network more confident about answers it already
