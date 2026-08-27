@@ -1,6 +1,6 @@
 # Training the Vanilla classifier and Checking its robustness
 
-Let us first train a Vanilla classifier, similar to the one that was used to produce the onnx file in Chapter 3.
+Let us first train a Vanilla classifier, similar to the one that was used to produce the onnx file in Chapter 3. For verification we will use exactly the same set up (same Vehicle command) as was used in the verification experiment of Exercise 7, Chapter 3.
 
 
 # Running the property-driven training example
