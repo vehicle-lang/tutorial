@@ -239,8 +239,23 @@ a ceiling on how many images could possibly be proved robust.
 At $\epsilon = 0.005$ the network sits exactly one image below that ceiling at every
 checkpoint --- 37 of 38, 37 of 38, 36 of 37. The apparent dip at epoch 150 is the ceiling
 moving rather than robustness changing: one image left the `correctly classified` column
-and took its robustness result with it. At $\epsilon = 0.02$ the same 150-epoch network
-proves only 21, so sixteen images that survive the smaller radius fail at the larger one.
+and took its robustness result with it.
+
+The $\epsilon = 0.02$ column tells a more interesting story. Here the checkpoints do not
+agree. After 75 epochs the network proves 25 of the 38 images it classifies correctly;
+after 150 epochs, only 21 of 37. Training for longer has made it *less* robust.
+
+That is worth dwelling on, because it is what one would expect. Once the training data is
+fitted, further optimisation of cross-entropy cannot change which side of the decision
+boundary those points fall on --- so instead it draws the boundary closer to them, buying
+ever greater confidence on examples that were already correct. The margin around each
+point narrows. A small enough neighbourhood never notices this, which is why the
+$\epsilon = 0.005$ column is flat; a larger one does, and points that sat comfortably
+inside the correct region begin to straddle its edge. Robustness, on this evidence, is not
+merely a quantity the task objective neglects. It is one the task objective quietly
+erodes, and the erosion is invisible until the question is asked at a radius wide enough
+to see it. Which is precisely why robustness has to be trained for, rather than hoped for
+as a by-product of fitting the data well [@madry2017towards].
 
 The $\epsilon = 0.005$ figures therefore say more about the question than about the
 network. At that radius, classifying an image correctly almost guarantees classifying its
