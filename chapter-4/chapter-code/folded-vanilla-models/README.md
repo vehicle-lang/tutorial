@@ -44,7 +44,7 @@ python3 fold_normalisation.py <normalised-model.onnx> <folded-model.onnx>
 | `vanilla_e100_folded.onnx` | epoch-100 checkpoint | 1024 images, cross-entropy only |
 | `vanilla_e200_folded.onnx` | epoch-200 checkpoint | " |
 | `vanilla_e300_folded.onnx` | epoch-300 checkpoint | " |
-| `vanilla_classifier_folded.onnx` | [`../onnx_models/vanilla_classifier.onnx`](../onnx_models/vanilla_classifier.onnx) | the 5-epoch model the chapter script used to produce |
+| `vanilla_classifier_folded.onnx` | [`../vanilla-experiment/onnx_models/vanilla_classifier.onnx`](../vanilla-experiment/onnx_models/vanilla_classifier.onnx) | the 5-epoch model the chapter script used to produce |
 
 ## What they show
 

@@ -63,10 +63,10 @@ input_tensor = torch.randn(1,1,28,28)
 torch.onnx.export(
     model,
     input_tensor,
-    "onnx_models/vanilla_classifier.onnx",
+    "vanilla-experiment/onnx_models/vanilla_classifier.onnx",
     input_names= ["input"],
     output_names=["output"],
     external_data=False, # required for Marabou verification
 )
 
-print("Saved to onnx_models/vanilla_classifier.onnx")
+print("Saved to vanilla-experiment/onnx_models/vanilla_classifier.onnx")

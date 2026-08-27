@@ -28,7 +28,7 @@ python vanilla_classifier.py
 ```
 
 With its default `num_epochs = 5` this prints a loss for each of the 16 steps per
-epoch and writes `onnx_models/vanilla_classifier.onnx`. That is enough to see the
+epoch and writes `vanilla-experiment/onnx_models/vanilla_classifier.onnx`. That is enough to see the
 mechanics, but five epochs is far too few to say anything about robustness.
 
 ### Step 3: train for longer, saving a checkpoint along the way
@@ -57,7 +57,7 @@ outside the inner `for step, ...` loop — add
         torch.onnx.export(
             model,
             torch.randn(1, 1, 28, 28),
-            f"onnx_models/vanilla_e{epoch + 1}.onnx",
+            f"vanilla-experiment/onnx_models/vanilla_e{epoch + 1}.onnx",
             input_names=["input"],
             output_names=["output"],
             external_data=False,
@@ -107,7 +107,7 @@ cd ../../chapter-3/exercises
 
 vehicle verify \
   --specification FMNIST/fashionRobustness-solution.vcl \
-  --network classifier:../../chapter-4/chapter-code/onnx_models/vanilla_e100.onnx \
+  --network classifier:../../chapter-4/chapter-code/vanilla-experiment/onnx_models/vanilla_e100.onnx \
   --parameter epsilon:0.005 \
   --dataset trainingImages:FMNIST/idxdata/0-49Images.idx \
   --dataset trainingLabels:FMNIST/idxdata/0-49Labels.idx \
@@ -138,34 +138,57 @@ below quantify how often they occur.
 
 #### Results
 
-Each checkpoint was trained and verified exactly as described above. The complete
-Vehicle output for every run is kept in `marabou-outputs/`, since a single
+Each checkpoint was trained exactly as described above, on raw `[0,1]` pixels. The
+complete Vehicle output for every run is kept in `marabou-outputs/`, since a single
 counterexample prints its perturbation as a full 28 by 28 array and fifty images
 produce far too much text to read inline.
 
-| epoch | mean loss | train accuracy | verified | falsified | verify time | full output |
-| ----: | --------: | -------------: | -------: | --------: | ----------: | ----------- |
-| 100 | 0.00199 | 100.0% | 28/50 | 22/50 | 982 s | [vanilla-e100-0-49.txt](marabou-outputs/vanilla-e100-0-49.txt) |
-| 200 | 0.00028 | 100.0% | 29/50 | 21/50 | 875 s | [vanilla-e200-0-49.txt](marabou-outputs/vanilla-e200-0-49.txt) |
-| 300 | 0.00008 | 100.0% | 29/50 | 21/50 | 884 s | [vanilla-e300-0-49.txt](marabou-outputs/vanilla-e300-0-49.txt) |
+### Training statistics
 
-Training accuracy is pinned at 100% from about epoch 75 onwards, and the loss keeps
-falling — by a factor of twenty-six between the first and last checkpoint — yet the
-number of provably robust images moves by one, and then not at all. Note also that no
-image ever times out or errors, so these counts are decisive rather than an artefact of
-Marabou giving up.
+| epoch | mean loss | train accuracy | correct on the 50 test images |
+| ----: | --------: | -------------: | ----------------------------: |
+| 75 | 0.0785 | 98.1% | 38/50 |
+| 100 | 0.0413 | 99.5% | 38/50 |
+| 150 | 0.0103 | 99.9% | 37/50 |
 
-For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
-40/50 on the very same command — see
-[Chapter 3's recorded output](../../chapter-3/exercises/FMNIST/expected-output-0-49.txt).
-So a network trained to fit this data perfectly is markedly *less* provably
-robust than the one Chapter 3 provides, even though both reach the same task.
+The fifty images the specification is checked against are the first fifty FashionMNIST
+**test** images, held out of the 1024 the network trains on. The last column is
+therefore generalisation, and it also sets a hard ceiling on how many images could
+possibly be proved robust: an image the network already misclassifies fails
+`advises perturbedImage label` at zero perturbation, so it can never be verified.
 
-The conclusion to draw from these three runs is this: **once cross-entropy is
-satisfied, further optimisation of it is simply uninformative about robustness.**
-Robustness is not a quantity the task objective is measuring, so driving that
-objective lower cannot be expected to improve it. If we want robustness, it has to
-enter the objective itself — which is what the rest of this chapter does.
+Between epoch 75 and epoch 150 the mean loss falls by a factor of seven and a half
+while training accuracy climbs from 98.1% to 99.9%. Over the same span the held-out
+count does not improve: 38, 38, 37.
+
+**These figures come from a re-run of the experiment.** An earlier version of these
+scripts normalised its inputs while the verifier was given raw pixels, so the networks
+were measured outside the input space they had been trained on. The scripts no longer
+normalise. See [normalisation-options.md](normalisation-options.md) for the full account
+and [folded-vanilla-models/](folded-vanilla-models/) for the repaired versions of the
+older checkpoints.
+
+### Verification
+
+Provable-robustness figures for these three checkpoints are being re-measured with
+Chapter 3 Exercise #7's command and are not yet available. Two cautions will apply when
+they are:
+
+- **Fifty images is a coarse instrument.** Across epochs 75 to 150 the held-out count
+  wanders between 37 and 40 (standard deviation 0.93) on a strictly falling loss. A
+  difference of one to three images between checkpoints is therefore within noise, and
+  should not be read as a trend either way.
+- **Chapter 3's `fashion1l32n.onnx` is not a like-for-like comparison.** It scores 40/50
+  on the same command, but it classifies 46 of the 50 correctly against 38 here, having
+  been trained on far more data. Comparing raw verified counts against it measures the
+  generalisation gap more than it measures robustness.
+
+Whatever those figures turn out to be, the point the rest of the chapter builds on is
+already visible above: **once cross-entropy is satisfied, further optimisation of it is
+simply uninformative about anything the objective does not measure.** Robustness is not
+a quantity the task objective measures, so driving that objective lower cannot be
+expected to improve it. If we want robustness, it has to enter the objective itself —
+which is what the rest of this chapter does.
 
 
 
