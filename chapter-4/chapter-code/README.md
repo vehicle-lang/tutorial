@@ -118,6 +118,24 @@ Repeat with `vanilla_e200.onnx` and `vanilla_e300.onnx`. Each run checks 50
 images at nine queries apiece and takes several minutes — around sixteen on the
 machine used here.
 
+Vehicle reports each image separately, so a single image gives a single verdict —
+either a proof or a counterexample:
+
+```plain
+Verifying properties:
+  robust!0 [=======================================================] 9/9 queries
+    result: ✗ - Marabou found a counterexample
+      perturbation: [ [ 0.0, 0.0, 0.0, ..., -5.0e-3, -5.0e-3, ... ], ... ]
+```
+
+Vehicle also warns here that the property uses a strict inequality (`<`), which the
+Marabou query format does not support and which Vehicle therefore converts; see
+[vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
+
+A `✗` is not a failure of the setup: this network was trained only to classify, with
+nothing asking it to be robust, so counterexamples are expected. The fifty-image runs
+below quantify how often they occur.
+
 #### Results
 
 Each checkpoint was trained and verified exactly as described above. The complete
@@ -143,39 +161,7 @@ For comparison, the network shipped with Chapter 3, `fashion1l32n.onnx`, scores
 So a network trained to fit this data perfectly is markedly *less* provably
 robust than the one Chapter 3 provides, even though both reach the same task.
 
-#### Verifying using Marabou
 
-If you would rather try a single image before committing to a full fifty-image run,
-the same command works with the one-image data set. Run it from this directory
-rather than from `chapter-3/exercises`, adjusting the paths accordingly:
-
-```bash
-vehicle verify \
-  --specification ../../chapter-3/exercises/FMNIST/fashionRobustness-solution.vcl \
-  --network classifier:onnx_models/vanilla_e100.onnx \
-  --parameter epsilon:0.005 \
-  --dataset trainingImages:../../chapter-3/exercises/FMNIST/idxdata/1Image.idx \
-  --dataset trainingLabels:../../chapter-3/exercises/FMNIST/idxdata/1Label.idx \
-  --solver Marabou
-```
-
-Vehicle reports each image separately, so a single image gives a single verdict —
-either a proof or a counterexample:
-
-```plain
-Verifying properties:
-  robust!0 [=======================================================] 9/9 queries
-    result: ✗ - Marabou found a counterexample
-      perturbation: [ [ 0.0, 0.0, 0.0, ..., -5.0e-3, -5.0e-3, ... ], ... ]
-```
-
-Vehicle also warns here that the property uses a strict inequality (`<`), which the
-Marabou query format does not support and which Vehicle therefore converts; see
-[vehicle issue 74](https://github.com/vehicle-lang/vehicle/issues/74).
-
-A `✗` is not a failure of the setup: this network was trained only to classify, with
-nothing asking it to be robust, so counterexamples are expected. The fifty-image runs
-below quantify how often they occur.
 
 # Running the property-driven training example
 
