@@ -312,6 +312,13 @@ These inconsistencies mean this approach is generally unviable for network robus
 
 **Adversarial Training** [@madry2017towards] also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtly different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. The goal of adversarial training is to improve the network's worst-case robustness; it is a form of prophylaxis against adversarial attacks.
 
+Formally, adversarial training uses a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
+
+$$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(x, y) \bigg]$$
+
+In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimisation parameters $\theta$ which _minimises_ this loss value.
+
+
 [the below paragraph was pasted from the previous version -- double check understanding and fix citation]: #
 
 The main limitation of adversarial training turns out to be the logical property it optimises for.
@@ -320,13 +327,6 @@ Recall the property of $\epsilon$-ball robustness was defined as:
 $\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of $\text{robust}$ to be
 $|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
 
-## Adversarial training
-
-Now we can explain further the mechanism that drives adversarial training. We can use a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
-
-$$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(x, y) \bigg]$$
-
-In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimisation parameters $\theta$ which _minimises_ this loss value.
 
 ## Beyond $\epsilon$-Balls
 In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
