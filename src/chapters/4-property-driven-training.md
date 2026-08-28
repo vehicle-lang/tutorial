@@ -329,11 +329,11 @@ they differ in how those inputs are chosen.
 
 Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
 
-![$\epsilon$-balls that straddle the decision boundary (red): an augmented point drawn from one of these may land on the wrong side while still inheriting the original label](../assets/images/SR-vs-CR-4-white-bg.png)
+![Epsilon-balls that straddle the decision boundary (red): an augmented point drawn from one of these may land on the wrong side while still inheriting the original label](../assets/images/SR-vs-CR-4-white-bg.png)
 
 In the case where two data points' $\epsilon$-balls overlap, there is a chance we generate two new data points with the same position in the input space. Furthermore, if the two original data points lie both close to (and on opposite sides of) the decision boundary, the augmented data points may have _different labels_, despite occupying the same location in the input space:
 
-![Two $\epsilon$-balls overlapping across the decision boundary: a point in the shaded intersection can be generated twice, once with each label](../assets/images/SR-vs-CR-5-white-bg.png)
+![Two epsilon-balls overlapping across the decision boundary: a point in the shaded intersection can be generated twice, once with each label](../assets/images/SR-vs-CR-5-white-bg.png)
 
 These inconsistencies mean this approach is generally unviable for network robustification.
 
@@ -341,7 +341,7 @@ These inconsistencies mean this approach is generally unviable for network robus
 
 **Adversarial Training** [@madry2017towards] also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtly different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. Pictorially, this amounts to looking at gradients, while not drawing any firm lines:
 
-![Training points and the $\epsilon$-balls around them, within a region of the input space](../assets/images/SR-vs-CR-3-white-bg.png)
+![Training points and the epsilon-balls around them, within a region of the input space](../assets/images/SR-vs-CR-3-white-bg.png)
 
 Formally, adversarial training uses a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
 
@@ -476,7 +476,7 @@ $$f(\mathbf{x})_{SR} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{R} < f(\mathb
 
 There is no label to hold fixed here, so there is nothing for the standard recipe to
 maximise. What is needed is a way to take an arbitrary specification $\phi$ and produce a
-differentiable loss $[\![\phi]\!]$ that measures how far the network is from satisfying
+differentiable loss $\lbrack\!\lbrack \phi \rbrack\!\rbrack$ that measures how far the network is from satisfying
 it. Such translations are called **differentiable logics**.
 
 ## Differentiable logics
@@ -485,7 +485,7 @@ A differentiable logic replaces the Boolean connectives with real-valued, differ
 ones, so that a formula evaluates to a number that can be minimised rather than a truth
 value that cannot. A very small example over a toy language conveys the idea:
 
-$$[\![a_1 \leq a_2]\!] := a_1 - a_2 \qquad [\![p_1 \wedge p_2]\!] := [\![p_1]\!] \times [\![p_2]\!] \qquad [\![p_1 \vee p_2]\!] := [\![p_1]\!] + [\![p_2]\!]$$
+$$\lbrack\!\lbrack a_1 \leq a_2 \rbrack\!\rbrack := a_1 - a_2 \qquad \lbrack\!\lbrack p_1 \wedge p_2 \rbrack\!\rbrack := \lbrack\!\lbrack p_1 \rbrack\!\rbrack \times \lbrack\!\lbrack p_2 \rbrack\!\rbrack \qquad \lbrack\!\lbrack p_1 \vee p_2 \rbrack\!\rbrack := \lbrack\!\lbrack p_1 \rbrack\!\rbrack + \lbrack\!\lbrack p_2 \rbrack\!\rbrack$$
 
 An atom is translated into the *margin* by which it holds or fails, and the connectives
 combine margins. Several such logics exist, and they differ in ways that matter for
@@ -529,7 +529,7 @@ $$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big
 Problem 3 adds the specification itself as a second term, translated by the
 differentiable logic, and $\lambda$ balances the two:
 
-$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\lambda\,\mathcal{L}(\mathbf{x}, y; f) + (1-\lambda) \max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} [\![\phi]\!](\mathbf{x}, \mathbf{x}', y; f)\Big]$$
+$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\lambda\,\mathcal{L}(\mathbf{x}, y; f) + (1-\lambda) \max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} \lbrack\!\lbrack \phi \rbrack\!\rbrack(\mathbf{x}, \mathbf{x}', y; f)\Big]$$
 
 This single objective has the earlier methods as special cases. Setting $\lambda = 1$
 recovers adversarial training over a general region. Taking $\mathbb{H}$ to be the
@@ -555,7 +555,7 @@ are the same text. Nothing is hand-translated, and the two cannot drift apart.
 
 The interface mirrors the objective above. `load_specification` takes the specification
 and a differentiable logic and returns the named properties, each as a callable that
-evaluates $[\![\phi]\!]$ for a batch; `alpha` in the training loop is the $\lambda$ that
+evaluates $\lbrack\!\lbrack \phi \rbrack\!\rbrack$ for a batch; `alpha` in the training loop is the $\lambda$ that
 balances task loss against constraint loss.
 
 The code below selects `VehicleDifferentiableLogic`, Vehicle's built-in default. The
