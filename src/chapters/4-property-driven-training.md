@@ -2,13 +2,23 @@
 title: "Property-Driven Training"
 ---
 
-# Motivation
+This chapter comes in two parts. The first asks what the standard machine-learning
+toolkit can do about the properties of Chapter 3: we train a network the ordinary way,
+put Chapter 3's question to it, and then look at data augmentation and adversarial
+training, the two established methods for making a network more robust. The second part
+asks what is missing from that toolkit once the property we care about is an arbitrary
+logical specification rather than an $\epsilon$-ball, and describes the property-driven
+framework that Vehicle is built to support [@FlinkowCKMK25].
+
+# Part I --- Training for robustness with standard machine learning
+
+## Motivation
 We will begin this chapter with a question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
 The long tradition of robustifying neural networks in machine learning has a few methods
 ready. For example, we can re-train the networks with new data that was augmented using images within the
 desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the boundary of the $\epsilon$-ball) during training. Let us briefly explore these approaches.
 
-# Training with Loss Functions
+## Training with Loss Functions
 Humans learn by making mistakes. The same is true of neural networks. Loss functions are a way of measuring the "magnitude" of a mistake made by a neural network. For a given training input, loss functions compute a penalty proportional to the difference between the output of the network and the _true_ output (i.e., the training label). Formally, this is written as follows:
 
 $$\mathcal{L}: \mathbb{R}^n \times \mathbb{R}^m \rightarrow \mathbb{R}$$
@@ -295,9 +305,12 @@ At $\epsilon = 0.005$ there is one image to win back; at $\epsilon = 0.02$ there
 sixteen.
 
 
-# How to make our models verifiable?
+## Data augmentation
 
-## Current Approaches
+Machine learning has a long tradition of making networks more robust, and two methods
+dominate it. Both work by training on extra inputs drawn from around each data point;
+they differ in how those inputs are chosen.
+
 **Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, usually done using methods such as rotation, cropping, flipping, random sampling, etc. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
 
 Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
@@ -310,6 +323,8 @@ In the case where two data points' $\epsilon$-balls overlap, there is a chance w
 
 These inconsistencies mean this approach is generally unviable for network robustification.
 
+## Adversarial training
+
 **Adversarial Training** [@madry2017towards] also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtly different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. The goal of adversarial training is to improve the network's worst-case robustness; it is a form of prophylaxis against adversarial attacks.
 
 Formally, adversarial training uses a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
@@ -319,30 +334,124 @@ $$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(x, y) \bigg]$$
 In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimisation parameters $\theta$ which _minimises_ this loss value.
 
 
-[the below paragraph was pasted from the previous version -- double check understanding and fix citation]: #
+## What adversarial training actually optimises
 
-The main limitation of adversarial training turns out to be the logical property it optimises for.
-Recall that we may encode an arbitrary property in Vehicle. However, as was discovered in [@CasadioKDKKAR22], projected gradient descent can only optimise for one concrete property.
-Recall the property of $\epsilon$-ball robustness was defined as:
-$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$. It turns out that adversarial training determines the definition of $\text{robust}$ to be
-$|f(\mathbf{x}) - f(\hat{\mathbf{x}})| \leq \delta$.
+Adversarial training works, and for $\epsilon$-ball robustness on image classifiers it is
+the standard answer. But it is worth being precise about *which* property it improves,
+because the answer is narrower than it first appears --- and this is where Part II begins.
+
+Recall how Chapter 3 stated robustness:
+$\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}(f(\mathbf{x}))$.
+That leaves $\text{robust}$ undefined, and different ways of filling it in give genuinely
+different properties. Casadio et al. [-@CasadioKDKKAR22] set them side by side:
+
+| Training method | Definition of $\text{robust}$ it optimises | Property |
+| --- | --- | --- |
+| Data augmentation | $\arg\max [f(\mathbf{x})] = i$ | classification robustness |
+| DL2 training | $f(\mathbf{x})_i \geq \eta$ | strong classification robustness |
+| Adversarial training | $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq \delta$ | standard robustness |
+| Lipschitz continuity | $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq L \lvert \mathbf{x} - \hat{\mathbf{x}} \rvert$ | Lipschitz robustness |
+
+Projected gradient descent optimises exactly one row of this table: it minimises how far
+the output can move within the ball, which is *standard* robustness. Chapter 3's
+specification, meanwhile, asks that the advised label stays the same, which is
+*classification* robustness --- a different row.
+
+The two are not in an implication relation in either direction. So it is entirely
+possible, and in the literature common, to train for one property, verify another, and
+report the result as though a single notion of robustness had been improved. Getting more
+of what you optimised while gaining nothing you verified is not a subtle failure mode; it
+is the expected outcome of a mismatch nobody wrote down.
+
+This is the first of three difficulties that motivate the rest of the chapter.
 
 
-## Beyond $\epsilon$-Balls
-In the previous chapter, we learnt how to prove properties of neural networks, with a specific focus on $\epsilon$-ball robustness. It is of course nice that we can prove this property is true for a given neural network, but as we have seen above, it is not novel to be able to train for it; this can be done with relative ease simply by using adversarial training.
+# Part II --- Property-driven training
 
-However, something that adversarial training cannot do is teach a network to abide by _any arbitrary logical property_. This is where Vehicle comes in: we can define arbitrary properties in our specifications, and use Vehicle's built-in functionality to compile these into a loss function to train a neural network. We can escape the world of $\epsilon$-balls and train our networks to satisfy any property we may desire. Nonetheless, $\epsilon$-ball robustness is a useful and intuitive property to understand, and we will continue to use it for our running example throughout the rest of this section,  as well as in the exercises at the end.
+Part I ended on a mismatch: adversarial training optimises standard robustness while our
+specification asks for classification robustness. That is one instance of a general
+problem. The machine-learning toolkit was built for one property, on one kind of input
+region, in one application domain; a specification language lets us write down far more
+than that. This part follows the framework of Flinkow et al. [-@FlinkowCKMK25], which
+sets out what has to change, and why Vehicle is organised the way it is.
 
+Three difficulties stand between the standard recipe and training for arbitrary
+specifications. We take them in turn.
 
-# Logical Loss Functions
-Traditional loss functions aim to minimise _task loss_. However, a neural network's performance on a given task is not necessarily correlated with the likelihood that it satisfies logical properties such as robustness. Let us recall our initial question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_ Given what we now know about adversarial training and loss functions, we can reframe this question: _how can we train a network to abide by any arbitrary logical property?_
+## Problem 1: specifications and objectives come apart
 
-Gradient descent algorithms train networks to fit data. The big idea behind logical loss functions is to use that same algorithm to train the network to also obey the specification. Standard logic is insufficient for this task since we need a differentiable signal to find the gradient. Hence, we need a type of logic that we can differentiate.
+The table at the end of Part I is the first difficulty in miniature. Interpreting a
+logical specification as an optimisation objective is done by hand, informally, and it is
+easy to get wrong --- and when it goes wrong nothing complains. Training proceeds, the
+loss falls, and the verifier reports no improvement, because the quantity being minimised
+was never the quantity being checked.
 
-# Differentiable Logics
-Traditional logics are difficult to translate to loss functions for neural networks because they consist only of boolean values and operations, which are undifferentiable. If we want to use gradient-based techniques for logical properties, we need a logical calculus which uses connectives that are both mathematically rigorous in terms of semantics and differentiable.
+The consequence Casadio et al. [-@CasadioKDKKAR22] draw is worth stating plainly: one kind
+of robustness does not imply another, so optimising for one can achieve very little in
+verification success rates for another. What is needed is not a better hand-translation
+but a *systematic* one --- a single source of truth from which both the verification query
+and the training objective are derived. That is exactly what a specification language can
+provide, and it is the reason training belongs inside the verification toolchain rather
+than beside it.
 
-Differentiable logics (DLs) convert booleans and operations over booleans into equivalent numerical operations that are differentiable. We have numerous DLs at our disposal (including DL2 [@FischerBDGZV19], DFLs [@KriekenAH22], and more), and Vehicle implements a variety of these. One such logic that has shown particular promise is quantitative linear logic (QLL), or Capucci Logic [@capucci2026]. QLL defines the logical connectives with the following real-valued functions:
+## Problem 2: from $\epsilon$-balls to hyper-rectangles
+
+The second difficulty is the shape of the input region. Adversarial training assumes an
+$\ell_\infty$-norm ball around a data point,
+
+$$\mathbb{B}(\mathbf{x}; \epsilon) := \{\mathbf{x}' \in \mathbb{R}^m \mid x_i - \epsilon \leq x'_i \leq x_i + \epsilon\},$$
+
+which suits images, where a small perturbation of every pixel is a meaningful notion of
+"nearby". It suits other domains badly.
+
+In natural language processing the input space is discrete, and an $\epsilon$-ball around
+a sentence contains no sentences --- the region that matters is the set of *semantically*
+similar sentences, which is not a ball around anything. In cyber-physical systems the
+input space is low-dimensional and the interesting regions are named by the
+specification itself: "intruder near and approaching from the left" is a constraint on
+five variables with different units and ranges, not a ball.
+
+The generalisation is to a **hyper-rectangle**, an independent interval per dimension:
+
+$$\mathbb{H}(\mathbf{l}, \mathbf{u}) := \{\mathbf{x} \in \mathbb{R}^m \mid l_i \leq x_i \leq u_i\}.$$
+
+Every $\epsilon$-ball is a hyper-rectangle with $l_i = x_i - \epsilon$ and
+$u_i = x_i + \epsilon$, so nothing is lost, and regions that no ball can express become
+available. The training objective generalises by substitution --- where adversarial
+training maximises over $\mathbf{x}' \in \mathbb{B}(\mathbf{x}; \epsilon)$, we maximise
+over $\mathbf{x}' \in \mathbb{H}(\mathbf{x})$.
+
+## Problem 3: beyond "classify this as $N$"
+
+The third difficulty is on the output side. Adversarial training assumes the goal is to
+keep the predicted class fixed. Many specifications say something less prescriptive.
+
+ACAS Xu's third property, which Chapter 2 verified, asks that if the intruder is directly
+ahead and closing, then the score for *clear-of-conflict* will not be minimal. It does not
+say which advisory the network should give --- only that one of the four alternatives must
+outrank one particular option. Written out, the conclusion is a disjunction:
+
+$$f(\mathbf{x})_{SR} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{R} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{SL} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{L} < f(\mathbf{x})_{COC}$$
+
+There is no label to hold fixed here, so there is nothing for the standard recipe to
+maximise. What is needed is a way to take an arbitrary specification $\phi$ and produce a
+differentiable loss $[\![\phi]\!]$ that measures how far the network is from satisfying
+it. Such translations are called **differentiable logics**.
+
+## Differentiable logics
+
+A differentiable logic replaces the Boolean connectives with real-valued, differentiable
+ones, so that a formula evaluates to a number that can be minimised rather than a truth
+value that cannot. A very small example over a toy language conveys the idea:
+
+$$[\![a_1 \leq a_2]\!] := a_1 - a_2 \qquad [\![p_1 \wedge p_2]\!] := [\![p_1]\!] \times [\![p_2]\!] \qquad [\![p_1 \vee p_2]\!] := [\![p_1]\!] + [\![p_2]\!]$$
+
+An atom is translated into the *margin* by which it holds or fails, and the connectives
+combine margins. Several such logics exist, and they differ in ways that matter for
+optimisation [@SlusarzKDSS23; @FischerBDGZV19; @KriekenAH22]. We will use just one.
+
+The logic we adopt is quantitative linear logic (QLL), due to Capucci et al.
+[-@capucci2026]:
 
 **Negation:** $$\neg a:=-a$$
 
@@ -352,15 +461,78 @@ Differentiable logics (DLs) convert booleans and operations over booleans into e
 
 **Implication:** $$a\implies b:=b-a$$
 
-where $0<p<\infty$, representing the _hardness degree_. As $p\rightarrow\infty$, the QLL connectives converge on their traditional definitions. This is one approach that conserves logical semantics whilst allowing us to use gradient-based methods for property-driven training.
+where $0<p<\infty$ is the _hardness degree_. As $p\rightarrow\infty$ the connectives
+converge on $\max$ and $\min$, their traditional counterparts; smaller $p$ gives a
+smoother surface whose gradients reach further. Conjunction and disjunction are the
+familiar log-sum-exp softening of $\max$ and $\min$, which is what makes them
+differentiable everywhere.
 
-Note that in the Capucci logic the order is reversed: $-\infty$ is the top and $\infty$ is the
+Note that the truth direction is reversed: $-\infty$ is the top and $\infty$ is the
 bottom. This is usual in the differentiable logic literature, DL2 [@FischerBDGZV19]
-included, because the value measures how far a formula is from being satisfied — the
-less error there is, the more true the formula is.
+included, because the value measures how far a formula is from being satisfied --- the
+less error there is, the more true the formula is. It also means that a loss built this
+way is unbounded below, which matters when it is combined with a task loss.
 
-# Logical Loss Functions in Vehicle
-Vehicle supports several different differentiable logics from the literature, though we will not explore them here. Instead, we will use a simple example to explain how logical loss functions can be generated using Vehicle with PyTorch. 
+## The property-driven objective
+
+The three pieces now assemble. Standard training minimises the expected task loss over
+the data:
+
+$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\mathcal{L}(\mathbf{x}, y; f)\Big]$$
+
+Adversarial training minimises it against the worst case in an $\epsilon$-ball, and
+Problem 2 replaces that ball with a hyper-rectangle:
+
+$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} \mathcal{L}(\mathbf{x}', y; f)\Big]$$
+
+Problem 3 adds the specification itself as a second term, translated by the
+differentiable logic, and $\lambda$ balances the two:
+
+$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\lambda\,\mathcal{L}(\mathbf{x}, y; f) + (1-\lambda) \max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} [\![\phi]\!](\mathbf{x}, \mathbf{x}', y; f)\Big]$$
+
+This single objective has the earlier methods as special cases. Setting $\lambda = 1$
+recovers adversarial training over a general region. Taking $\mathbb{H}$ to be the
+$\epsilon$-cube around $\hat{\mathbf{x}}$ and $\phi$ to be
+$\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq \delta$ recovers standard
+robustness --- the row of Part I's table that adversarial training optimises. And a
+specification with no input constraint at all, $\forall \mathbf{x}.\,Q(\mathbf{x})$, is
+handled by letting $\mathbb{H}$ be the domain of the input, typically the normalisation
+bounds $\mathbf{l} = \mathbf{0}$, $\mathbf{u} = \mathbf{1}$.
+
+Both extremes of $\lambda$ are worth understanding. At $\lambda = 1$ the specification is
+ignored. At $\lambda = 0$ the task is ignored, and since a constant network satisfies most
+robustness properties perfectly, the optimiser is free to discard the classifier
+altogether --- the constraint term alone does not distinguish a useful constant from a
+useless one. The blend is not a convenience; it is what rules out the degenerate solution.
+
+## Property-driven training in Vehicle
+
+Vehicle's answer to Problem 1 is to derive both artefacts from one source. The same
+`.vcl` specification that Chapter 3 compiled into verification queries can be compiled
+into a loss function, so the property being trained for and the property being verified
+are the same text. Nothing is hand-translated, and the two cannot drift apart.
+
+The interface mirrors the objective above. `load_specification` takes the specification
+and a differentiable logic and returns the named properties, each as a callable that
+evaluates $[\![\phi]\!]$ for a batch; `alpha` in the training loop is the $\lambda$ that
+balances task loss against constraint loss.
+
+The code below selects `VehicleDifferentiableLogic`, Vehicle's built-in default. The
+Capucci logic of the previous section can be declared directly in the specification as a
+`DifferentiableTensorLogic` and selected by name with
+`vcl.CustomDifferentiableLogic("qllAdditive")`; a worked example lives alongside the
+chapter code.
+
+**A note on the current release.** The sections above describe the framework and the
+Vehicle interface, and both are stable. We do not, however, present trained-and-verified
+results here. In Vehicle 0.27.1 the loss compiled from a `forall` quantifier does not
+behave as the objective above requires: widening the input region, or searching it
+harder, makes the compiled loss report the property as *better* satisfied rather than
+worse. Since the framework depends on that inner maximisation being a genuine worst case,
+we have deferred the experimental half of this chapter until the behaviour is resolved
+upstream, rather than report numbers we cannot stand behind. Readers can reproduce the
+diagnostic themselves by evaluating a specification's loss at several values of
+$\epsilon$ and watching which way it moves.
 
 Next, we will load our Vehicle specification and define our constraint loss function:
 
