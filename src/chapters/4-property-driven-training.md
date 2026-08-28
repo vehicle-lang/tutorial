@@ -438,6 +438,24 @@ The generalisation is to a **hyper-rectangle**, an independent interval per dime
 
 $$\mathbb{H}(\mathbf{l}, \mathbf{u}) := \{\mathbf{x} \in \mathbb{R}^m \mid l_i \leq x_i \leq u_i\}.$$
 
+We can always "draw" such a hyper-rectangle, assuming that we have only linear constraints on the input variable. And so far, all examples we cared about were given in that format.
+Recall, for example, this constraint from Chapter 2:
+
+```vehicle
+directlyAhead : UnnormalisedInput -> Bool
+directlyAhead x =
+  1500  <= x ! distanceToIntruder <= 1800 and
+  -0.06 <= x ! angleToIntruder    <= 0.06
+
+movingTowards : UnnormalisedInput -> Bool
+movingTowards x =
+  x ! intruderHeading >= 3.10  and
+  x ! speed           >= 980   and
+  x ! intruderSpeed   >= 960
+```
+
+These constriants give rise to a hyper-rectangle.
+
 Every $\epsilon$-ball is a hyper-rectangle with $l_i = x_i - \epsilon$ and
 $u_i = x_i + \epsilon$, so nothing is lost, and regions that no ball can express become
 available. The training objective generalises by substitution --- where adversarial
