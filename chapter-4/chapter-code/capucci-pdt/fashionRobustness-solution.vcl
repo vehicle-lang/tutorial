@@ -1,0 +1,53 @@
+--The input for the network is a 28 * 28 image
+type Image = Tensor Real [28, 28]
+
+--A label is an int between 0 and 9
+type Label = Index 10
+
+
+--All pixels in the image have values between 0 and 1
+validImage : Image -> Bool
+validImage x = forall i j . 0 <= x ! i ! j <= 1
+
+--The network takes an image and returns a vector of scores
+@network
+classifier : Image -> Tensor Real [10]
+
+--The classifier scores a given label above all others
+advises : Image -> Label -> Bool
+advises image label = forall j . j != label => classifier image ! label > classifier image ! j
+
+
+--The radius of the epsilon ball that we are checking robustness within
+@parameter
+epsilon : Real
+
+--Every pixel in the perturbation is less than or equal to epsilon
+boundedByEpsilon : Image -> Bool
+boundedByEpsilon perturbation = forall i j . -epsilon <= perturbation ! i ! j <= epsilon
+
+--Check that every valid perturbation of an image is classified as the given label
+robustAround : Image -> Label -> Bool
+robustAround image label = forall perturbation .
+	let perturbedImage = image - perturbation in
+	boundedByEpsilon perturbation and validImage perturbedImage =>
+		advises perturbedImage label
+
+
+--The size of the data set. The `infer` option means the compiler works this
+--out from the data sets below, so it need not be supplied on the command line
+@parameter(infer=True)
+n : Nat
+
+--Take two datasets
+
+@dataset
+trainingImages : Vector Image n
+
+@dataset
+trainingLabels : Vector Label n
+
+--Test the image for robustness around the label
+@property
+robust : Vector Bool n
+robust = foreach i . robustAround (trainingImages ! i) (trainingLabels ! i)
