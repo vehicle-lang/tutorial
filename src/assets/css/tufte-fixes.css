@@ -238,3 +238,27 @@ figure.fullwidth > .marginnote {
     color: #ddd;
   }
 }
+
+
+/* Chapter 4's robustness taxonomy table.
+   The middle column carries the formal definitions, which are much wider than the
+   text either side of them, so give it the room and let the outer columns wrap. */
+.robustness-taxonomy {
+  overflow-x: auto;
+}
+
+.robustness-taxonomy table {
+  width: 100%;
+}
+
+.robustness-taxonomy th:nth-child(2),
+.robustness-taxonomy td:nth-child(2) {
+  width: 50%;
+}
+
+.robustness-taxonomy th:nth-child(1),
+.robustness-taxonomy td:nth-child(1),
+.robustness-taxonomy th:nth-child(3),
+.robustness-taxonomy td:nth-child(3) {
+  width: 25%;
+}

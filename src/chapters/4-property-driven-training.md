@@ -329,17 +329,19 @@ they differ in how those inputs are chosen.
 
 Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
 
-![Data Manifold for D](../assets/images/SR-vs-CR-4-white-bg.png)
+![$\epsilon$-balls that straddle the decision boundary (red): an augmented point drawn from one of these may land on the wrong side while still inheriting the original label](../assets/images/SR-vs-CR-4-white-bg.png)
 
 In the case where two data points' $\epsilon$-balls overlap, there is a chance we generate two new data points with the same position in the input space. Furthermore, if the two original data points lie both close to (and on opposite sides of) the decision boundary, the augmented data points may have _different labels_, despite occupying the same location in the input space:
 
-![Data Manifold for D](../assets/images/SR-vs-CR-5-white-bg.png)
+![Two $\epsilon$-balls overlapping across the decision boundary: a point in the shaded intersection can be generated twice, once with each label](../assets/images/SR-vs-CR-5-white-bg.png)
 
 These inconsistencies mean this approach is generally unviable for network robustification.
 
 ## Adversarial training
 
-**Adversarial Training** [@madry2017towards] also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtly different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. The goal of adversarial training is to improve the network's worst-case robustness; it is a form of prophylaxis against adversarial attacks.
+**Adversarial Training** [@madry2017towards] also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtly different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. Pictorially, this amounts to looking at gradients, while not drawing any firm lines:
+
+![Training points and the $\epsilon$-balls around them, within a region of the input space](../assets/images/SR-vs-CR-3-white-bg.png)
 
 Formally, adversarial training uses a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
 
@@ -359,12 +361,16 @@ $\forall \mathbf{x} \in \mathbb{B}(\hat{\mathbf{x}}, \epsilon)\;.\;\text{robust}
 That leaves $\text{robust}$ undefined, and different ways of filling it in give genuinely
 different properties. Casadio et al. [-@CasadioKDKKAR22] set them side by side:
 
+<div class="robustness-taxonomy">
+
 | Training method | Definition of $\text{robust}$ it optimises | Property |
 | --- | --- | --- |
 | Data augmentation | $\arg\max [f(\mathbf{x})] = i$ | classification robustness |
-| DL2 training | $f(\mathbf{x})_i \geq \eta$ | strong classification robustness |
+| DL2 training [@FischerBDGZV19] | $f(\mathbf{x})_i \geq \eta$ | strong classification robustness |
 | Adversarial training | $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq \delta$ | standard robustness |
 | Lipschitz continuity | $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq L \lvert \mathbf{x} - \hat{\mathbf{x}} \rvert$ | Lipschitz robustness |
+
+</div>
 
 Projected gradient descent optimises exactly one row of this table: it minimises how far
 the output can move within the ball, which is *standard* robustness. Chapter 3's
