@@ -320,7 +320,7 @@ transcripts go to `marabou-outputs-neg/` and `marabou-outputs-neg-ex7/`.
 | `capucci_neg_e01` | training | 29/50 | **15/50** | 35/50 | 21 | 14 | 51.7% | 781 s |
 | `capucci_neg_e02` | training | 29/50 | **8/50** | 42/50 | 21 | 21 | 27.6% | 637 s |
 | `capucci_neg_e01` | Exercise #7 | 29/50 | **15/50** | 35/50 | 21 | 14 | 51.7% | 890 s |
-| `capucci_neg_e02` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
+| `capucci_neg_e02` | Exercise #7 | 29/50 | **8/50** | 42/50 | 21 | 21 | 27.6% | 766 s |
 
 <!-- RESULTS TABLE END -->
 
@@ -368,8 +368,7 @@ published property rather than a compromise. And it means the comparison against
 baseline's 22/50 is **fair rather than generous**, which is how it had to be described
 while only the non-strict figure was available.
 
-The strict property is nonetheless more work for the solver: 890 s against 781 s for the
-same model, since a query cannot be discharged by finding an equality.
+
 
 No image timed out or errored in either run, so the counts are decisive rather than an
 artefact of the solver giving up. Both were faster than the baseline's 924 s --- 781 s and
@@ -392,15 +391,21 @@ sacrificed for robustness; here accuracy was not sacrificed and robustness fell 
 constraint term is damaging the property it names, and doing so faster than it damages the
 classifier.
 
-**The two specifications agree, so the non-strict workaround is sound.** `capucci_neg_e01`
-verifies 15/50 under both the strict published property and the non-strict one it was
-trained against, with the same 35 falsifications. No image on this problem is decided by
-the difference between `>` and `>=`. Two things follow: the `CompareIndex` limitation costs
-nothing here, so training against the non-strict formulation is a faithful stand-in rather
-than a compromise; and the comparison against the baseline's 22/50 is like-for-like.
+**The two specifications agree exactly, so the non-strict workaround is sound.** Both
+models return the same counts under the strict published property and under the non-strict
+one they were trained against --- 15/50 with 35 falsifications for `e01`, 8/50 with 42 for
+`e02`. Not a single image on this problem is decided by the difference between `>` and
+`>=`, on either network.
 
-Note this is demonstrated for one model, which is evidence rather than proof that ties never
-matter --- the `e02` pair will either strengthen it or qualify it.
+Two things follow. The `CompareIndex` limitation costs nothing here, so training against
+the non-strict formulation is a faithful stand-in for the published property rather than a
+compromise --- which also vindicates the same workaround in `fmnist-robustness.vcl`. And the
+comparison against the baseline's 22/50 is like-for-like, so the decline is real and not an
+artefact of measuring two different properties.
+
+The strict property is more work for the solver even though it returns the same answer:
+890 s against 781 s for `e01`, 766 s against 637 s for `e02`. A query cannot be discharged
+by finding an equality, so Marabou has to do more to reach the same verdict.
 
 **Read together with the training runs, the conclusion is about the toolchain, not the
 hyper-parameters.** Every configuration tried has failed, and each in a different way:
