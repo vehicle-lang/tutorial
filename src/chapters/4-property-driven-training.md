@@ -366,11 +366,14 @@ different properties. Casadio et al. [-@CasadioKDKKAR22] set them side by side:
 | Training method | Definition of $\text{robust}$ it optimises | Property |
 | --- | --- | --- |
 | Data augmentation | $\arg\max [f(\mathbf{x})] = i$ | classification robustness |
-| DL2 training [@FischerBDGZV19] | $f(\mathbf{x})_i \geq \eta$ | strong classification robustness |
+| DL2 training | $f(\mathbf{x})_i \geq \eta$ | strong classification robustness |
 | Adversarial training | $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq \delta$ | standard robustness |
 | Lipschitz continuity | $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq L \lvert \mathbf{x} - \hat{\mathbf{x}} \rvert$ | Lipschitz robustness |
 
 </div>
+
+*DL2 training refers to the method of Fischer et al. [-@FischerBDGZV19]; $\eta$ is the
+confidence margin it requires of the advised class.*
 
 Projected gradient descent optimises exactly one row of this table: it minimises how far
 the output can move within the ball, which is *standard* robustness. Chapter 3's
@@ -426,7 +429,7 @@ which suits images, where a small perturbation of every pixel is a meaningful no
 
 In natural language processing the input space is discrete, and an $\epsilon$-ball around
 a sentence contains no sentences --- the region that matters is the set of *semantically*
-similar sentences, which is not a ball around anything. In cyber-physical systems the
+similar sentences, which is not a ball around anything. As Chapter 2, has shown, in cyber-physical systems the
 input space is low-dimensional and the interesting regions are named by the
 specification itself: "intruder near and approaching from the left" is a constraint on
 five variables with different units and ranges, not a ball.
