@@ -82,13 +82,11 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Subset
 
-MEAN, STD = 0.2860, 0.3530  # mean and standard deviation of Fashion MNIST
 BATCH_SIZE = 64
 SUBSET_SIZE = 1024  # ensure SUBSET_SIZE mod BATCH_SIZE == 0
 
 transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((MEAN,), (STD,))
+    transforms.ToTensor()
 ])
 
 train_data = torchvision.datasets.FashionMNIST(
@@ -105,14 +103,12 @@ train_loader = DataLoader(
 ```python
 import tensorflow as tf
 
-MEAN, STD = 0.2860, 0.3530  # mean and standard deviation of Fashion MNIST
 BATCH_SIZE = 64
 SUBSET_SIZE = 1024  # ensure SUBSET_SIZE mod BATCH_SIZE == 0
 
 (train_images, train_labels), _ = tf.keras.datasets.fashion_mnist.load_data()
 
 train_images = train_images[:SUBSET_SIZE].astype("float32") / 255.0
-train_images = (train_images - MEAN) / STD
 train_images = train_images[..., None]  # add channel dim -> (N, 28, 28, 1)
 train_labels = train_labels[:SUBSET_SIZE].astype("int32")
 
@@ -135,10 +131,26 @@ subset keeps the second half of this chapter runnable while still showing the ef
 Keep it an exact multiple of `BATCH_SIZE`; the reason becomes clear later, when we pass
 `n=BATCH_SIZE` to the constraint loss.
 
-`MEAN` and `STD` are the mean and standard deviation of Fashion MNIST, used to
-normalise the pixel values. Note that this is normalisation for *training*, and is a
-separate matter from the problem-space/input-space discussion of Chapter 2: it rescales
-the data, not the specification.
+**There is deliberately no normalisation step.** `ToTensor` (and dividing by 255 in
+TensorFlow) leaves pixel values in $[0, 1]$, and that is where we leave them. This is
+worth dwelling on, because the usual recipe for image classifiers subtracts the dataset
+mean and divides by its standard deviation, and doing so here would quietly break the
+chapter.
+
+The reason is that our specification says what a valid input is:
+`validImage x = forall i j . 0 <= x ! i ! j <= 1`, and the `.idx` datasets we hand to the
+verifier hold pixels in exactly that range. Normalising during training would move the
+network's input space to roughly $[-0.81, 2.02]$ while leaving the verifier's input space
+at $[0, 1]$ --- so the network would be verified on inputs unlike any it was trained on.
+Worse, $\epsilon$ would silently denote two different regions: a perturbation of $0.005$
+in normalised units is only $0.0018$ of a raw pixel, so training would enforce a
+neighbourhood almost three times tighter than the one being checked.
+
+Keeping the data in the range the specification talks about costs us nothing here --- the
+network below trains perfectly well on raw pixels --- and it keeps a single meaning for
+$\epsilon$ across training and verification. Part II returns to this: it is a small
+instance of the general difficulty of interfacing a logical specification with an
+optimisation objective. One of the exercises in this chapter will give you a chance to reconstruct the whole training-verification pipeline *with* normalisation baked into the training. 
 
 Finally, note that the two frameworks store images differently: PyTorch's `ToTensor`
 produces channel-first batches of shape `(N, 1, 28, 28)`, whereas here we append the
@@ -303,6 +315,8 @@ This sets the terms for the rest of the chapter. To ask whether adding robustnes
 training objective helps, we need a radius at which the network is genuinely vulnerable.
 At $\epsilon = 0.005$ there is one image to win back; at $\epsilon = 0.02$ there are
 sixteen.
+
+We will first consider traditional machine learning methods that were introduced to address the problem of adversarial robustness. 
 
 
 ## Data augmentation
