@@ -264,6 +264,62 @@ in Vehicle 0.27.1 --- not that the Capucci logic, the blending weight, or the si
 chosen wrongly. The most useful output of these two runs is evidence for the upstream bug
 report.
 
+## Verification of the negated-sign snapshots (in progress)
+
+Launched 14:47 on 2026-08-28. Two models, each verified against **both** specifications,
+at `epsilon 0.02` on the same 50 FashionMNIST test images.
+
+| Model | training accuracy | correct on 50 test | ceiling |
+| --- | ---: | ---: | ---: |
+| `capucci_neg_e01.onnx` | 87.9% | 29/50 | 29/50 |
+| `capucci_neg_e02.onnx` | 73.1% | 29/50 | 29/50 |
+
+The ceiling is the same as the correct count, because an image the network already
+misclassifies fails `advises` at zero perturbation and can never be proved robust. So 29
+is the arithmetic best case for either model.
+
+### Why both specifications
+
+| Pass | Specification | Comparable with |
+| --- | --- | --- |
+| 1 | `fashionRobustness-capucci.vcl` (the one trained against) | the property that was actually optimised |
+| 2 | `fashionRobustness-solution.vcl` (Exercise #7) | the vanilla baseline of 22/50 |
+
+The two differ **only on ties**: Exercise #7 requires the advised label to score strictly
+higher than every other, while the training specification permits equality. The strict
+property is therefore the stronger one, and its verified count can only be **lower than or
+equal to** the non-strict count.
+
+That makes the comparison worth having in its own right. If the two counts come back
+equal, ties do not arise in practice on this problem and the `CompareIndex` limitation
+costs nothing; if the strict count is lower, the gap is precisely the price of the
+workaround described above.
+
+### How it is run
+
+`verify_neg.py` runs pass 1 and `verify_neg_ex7.py` pass 2. The second waits for the
+first to finish before starting, because a 50-image run needs about 14 GB and two
+concurrent solvers would risk the machine. Both use Chapter 3 Exercise #7's command with
+only the specification and `epsilon` varying, and both apply the same guards:
+
+| Guard | Value | Purpose |
+| --- | --- | --- |
+| `--solver-args --timeout=` | 120 s per image | a single hard query cannot stall the run |
+| wall clock | 7200 s per model | backstop if the per-image cap misbehaves |
+| `RLIMIT_AS` | 24 GB | Marabou dies rather than swapping the machine |
+
+Results append to `traces-neg/verify.csv`, tagged `training` or `exercise7`. Full solver
+transcripts go to `marabou-outputs-neg/` and `marabou-outputs-neg-ex7/`.
+
+### A gap to be aware of
+
+The vanilla baseline has **not** been measured under the training specification --- the
+22/50 figure comes from Exercise #7's strict property. So pass 2's numbers can be compared
+with the baseline and pass 1's cannot. Comparing pass 1's count against 22/50 would flatter
+the trained models, since the non-strict property is the weaker of the two. Measuring
+`vanilla_e100.onnx` under the training specification would close this, and is one further
+verification run.
+
 ## Files
 
 | File | Role |
