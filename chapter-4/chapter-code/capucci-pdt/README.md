@@ -177,7 +177,7 @@ with gradient clipping, which was not used here.
 `capucci_e03.onnx` is corrupt. The traces of this run are kept as
 `traces/per_epoch.diverged-run.csv` and `traces/train_log.diverged-run.txt`.
 
-## Run 2: `pdt-Capucci-neg.py`, negated sign --- in progress
+## Run 2: `pdt-Capucci-neg.py`, negated sign --- completed 10 epochs
 
 `pdt-Capucci-neg.py` is a copy of the script differing in one character:
 
@@ -200,12 +200,69 @@ is principled.
 
 Launched 11:53 on 2026-08-28 with settings otherwise identical to run 1, including no
 gradient clipping, so both runs start from the same checkpoint and differ only in the
-sign. Since the negated objective maximises a quantity that is unbounded *above*,
-divergence at least as fast as run 1's is expected.
+sign. Outputs are in `traces-neg/` and `capucci-models-neg/`.
 
-Outputs go to `traces-neg/` and `capucci-models-neg/` so this run cannot disturb run 1's.
+It ran all ten epochs without diverging:
 
-**No epoch results yet at the time of writing.**
+| epoch | constraint | cross-entropy | blended | train acc | correct on 50 test | seconds |
+| ----: | ---------: | ------------: | ------: | --------: | -----------------: | ------: |
+| 0 (start) | -- | 0.0413 | -- | 99.5% | **38/50** | -- |
+| 1 | -0.5501 | 0.3351 | +0.4641 | 87.9% | 29/50 | 303 |
+| 2 | -0.9270 | 0.7927 | +0.8733 | 73.1% | 29/50 | 243 |
+| 3 | -0.7877 | 0.8372 | +0.8075 | 72.4% | 27/50 | 240 |
+| 4 | -0.4810 | 0.7543 | +0.5903 | 74.6% | 24/50 | 253 |
+| 5 | -0.4662 | 0.7941 | +0.5974 | 72.2% | 23/50 | 219 |
+| 6 | -0.4491 | 0.8121 | +0.5943 | 72.1% | 26/50 | 291 |
+| 7 | -0.4971 | 0.8655 | +0.6445 | 70.7% | 26/50 | 215 |
+| 8 | -0.5391 | 0.9134 | +0.6888 | 67.2% | 18/50 | 184 |
+| 9 | -0.6222 | 0.9973 | +0.7722 | 63.6% | 25/50 | 288 |
+| 10 | -0.7886 | 1.1711 | +0.9416 | 56.7% | 16/50 | 306 |
+
+### What this shows
+
+**The sign of the coefficient does not control where the constraint loss goes.** This
+variant *maximises* the constraint term, which on the logic's semantics should drive it
+toward `falseElement` (`+infinity`). It never became positive. It fell to $-0.93$, came
+back to $-0.45$, and drifted down again to $-0.79$, wandering with no relation to the
+direction being pushed. Compare the two runs at epoch 1, where the only difference is the
+sign and the starting weights are identical:
+
+| epoch 1 | constraint | cross-entropy | train acc | correct on 50 test |
+| --- | ---: | ---: | ---: | ---: |
+| positive sign | -0.3372 | 0.1531 | 95.1% | **38/50** |
+| negated sign | **-0.5501** | 0.3351 | 87.9% | 29/50 |
+
+Negating the coefficient made the constraint loss *more* negative than adding it did. The
+reported value and the gradient being followed are therefore decoupled: the optimiser is
+descending a gradient that does not control the quantity it is nominally the gradient of.
+That is consistent with the quantifier defect --- the compiled loss depends on which points
+the adversarial search selects, and that selection moves as the weights move, so the value
+can drift independently of the step.
+
+**It did not diverge, but that is stability rather than success.** Run 1 overflowed to
+`nan` at epoch 3 by descending toward `-infinity`; this variant pushes away from that
+singularity, so it survived ten epochs with finite values. All ten snapshots are usable.
+
+**The network degraded steadily anyway.** Held-out accuracy fell from 38/50 to 16/50 and
+training accuracy from 99.5% to 56.7%, while cross-entropy rose 28-fold. The held-out
+column is noisy --- 18 at epoch 8, 25 at epoch 9, 16 at epoch 10 --- which is the same
+plus-or-minus-three wobble that 50 images gave in the vanilla experiment, so individual
+figures should not be read too closely. The trend is not in doubt.
+
+**Every snapshot has a lower ceiling than the starting checkpoint.** Since a misclassified
+image can never be proved robust, the best conceivable verification result from this run is
+29/50 (epochs 1 and 2), against the vanilla baseline's *achieved* 22/50. The headroom that
+made the experiment worth running has largely been spent on lost accuracy.
+
+### Conclusion across both runs
+
+Neither sign produced a network worth preferring to the starting checkpoint, and neither
+moved the constraint loss in the direction the objective specified. Taken with the earlier
+finding that the compiled loss reports a property as better satisfied when the input region
+is widened, the reasonable reading is that this loss is not yet a usable training signal
+in Vehicle 0.27.1 --- not that the Capucci logic, the blending weight, or the sign was
+chosen wrongly. The most useful output of these two runs is evidence for the upstream bug
+report.
 
 ## Files
 
