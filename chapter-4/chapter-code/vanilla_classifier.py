@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 import torchvision
@@ -60,13 +61,16 @@ for epoch in range(num_epochs):
 model.eval()
 input_tensor = torch.randn(1,1,28,28)
 
+path = "vanilla-experiment/onnx_models/vanilla_classifier.onnx"
+os.makedirs(os.path.dirname(path), exist_ok=True)
+
 torch.onnx.export(
     model,
     input_tensor,
-    "vanilla-experiment/onnx_models/vanilla_classifier.onnx",
+    path,
     input_names= ["input"],
     output_names=["output"],
     external_data=False, # required for Marabou verification
 )
 
-print("Saved to vanilla-experiment/onnx_models/vanilla_classifier.onnx")
+print("Saved to " + path)

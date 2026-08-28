@@ -93,4 +93,4 @@ for epoch in range(num_epochs):
         f"train accuracy: {100 * correct / seen:.1f}%"
     )
 
-model.export("models/tf_simple_classifier")
+model.export("pdt-experiment/onnx_models/tf_pdt_classifier")

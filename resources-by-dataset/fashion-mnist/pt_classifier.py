@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 import torchvision
@@ -106,7 +107,8 @@ for epoch in range(num_epochs):
 model.eval()
 input_tensor = torch.randn(1,1,28,28)
 
-path = "models/simple_classifier.onnx"
+path = "pdt-experiment/onnx_models/pdt_classifier.onnx"
+os.makedirs(os.path.dirname(path), exist_ok=True)
 
 torch.onnx.export(
     model,
