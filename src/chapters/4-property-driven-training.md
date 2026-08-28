@@ -8,7 +8,7 @@ put Chapter 3's question to it, and then look at data augmentation and adversari
 training, the two established methods for making a network more robust. The second part
 asks what is missing from that toolkit once the property we care about is an arbitrary
 logical specification rather than an $\epsilon$-ball, and describes the property-driven
-framework that Vehicle is built to support [@FlinkowCKMK25].
+framework that Vehicle is built to support.
 
 # Part I --- Training for robustness with standard machine learning
 
@@ -372,7 +372,7 @@ Part I ended on a mismatch: adversarial training optimises standard robustness w
 specification asks for classification robustness. That is one instance of a general
 problem. The machine-learning toolkit was built for one property, on one kind of input
 region, in one application domain; a specification language lets us write down far more
-than that. This part follows the framework of Flinkow et al. [-@FlinkowCKMK25], which
+than that. This part follows the framework of Flinkow et al. [@FlinkowCKMK25], which
 sets out what has to change, and why Vehicle is organised the way it is.
 
 Three difficulties stand between the standard recipe and training for arbitrary
