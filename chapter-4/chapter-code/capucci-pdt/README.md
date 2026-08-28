@@ -311,6 +311,51 @@ only the specification and `epsilon` varying, and both apply the same guards:
 Results append to `traces-neg/verify.csv`, tagged `training` or `exercise7`. Full solver
 transcripts go to `marabou-outputs-neg/` and `marabou-outputs-neg-ex7/`.
 
+### Results so far
+
+<!-- RESULTS TABLE START -->
+
+| Model | spec | correct | verified | falsified | of which misclassified | genuinely non-robust | robust share of eligible | solver |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `capucci_neg_e01` | training | 29/50 | **15/50** | 35/50 | 21 | 14 | 51.7% | 781 s |
+| `capucci_neg_e02` | training | 29/50 | _not yet run_ | | | | | |
+| `capucci_neg_e01` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
+| `capucci_neg_e02` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
+
+<!-- RESULTS TABLE END -->
+
+**This table may be incomplete.** The verifications run unattended and outlive any one
+working session; `traces-neg/verify.csv` is the source of truth. To fold whatever has
+finished into the table above, run:
+
+    python3 record_results.py
+
+It recomputes the decomposition from the raw counts and rewrites the table in place, so it
+is safe to run more than once.
+
+Set beside the network this run started from:
+
+| | correct | verified | robust share of eligible |
+| --- | ---: | ---: | ---: |
+| `vanilla_e100` (baseline, Exercise #7 spec) | 38/50 | **22/50** | 57.9% |
+| `capucci_neg_e01` (training spec) | 29/50 | **15/50** | 51.7% |
+
+**Property-driven training made the network worse at the property, on both measures.**
+Fewer images are provably robust in absolute terms --- 15 against 22 --- and a smaller
+proportion of the images the network classifies correctly are robust, 51.7% against 57.9%.
+So the loss of nine test images was not compensated by better behaviour on those that
+remain.
+
+The comparison is moreover **generous to the trained model**, because it is measured under
+the non-strict training specification while the baseline was measured under Exercise #7's
+strict one. The strict property can only score lower or equal, so the Exercise #7 pass
+should return 15 or fewer.
+
+No image timed out or errored, so the counts are decisive rather than an artefact of the
+solver giving up. The run took 781 s against the baseline's 924 s, which is what a
+falsification-heavy run looks like: Marabou stops at the first counterexample, so finding
+more of them is faster than proving their absence.
+
 ### A gap to be aware of
 
 The vanilla baseline has **not** been measured under the training specification --- the
