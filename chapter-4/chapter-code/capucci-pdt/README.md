@@ -134,6 +134,79 @@ Everything the run produces lands in `traces/`, which is gitignored:
 | `model_eNN.onnx` | the network after each epoch, so any epoch can be verified |
 | `train_log.txt` | whatever the run printed, if stdout is redirected there |
 
+## Run 1: `pdt-Capucci.py`, positive sign --- diverged at epoch 3
+
+Launched 11:36 on 2026-08-28 with the settings above. Stopped after epoch 3.
+
+| epoch | constraint | cross-entropy | blended | train acc | correct on 50 test | seconds |
+| ----: | ---------: | ------------: | ------: | --------: | -----------------: | ------: |
+| 0 (start) | -- | 0.0413 | -- | 99.5% | **38/50** | -- |
+| 1 | -0.3372 | 0.1531 | -0.1411 | 95.1% | **38/50** | 262 |
+| 2 | -2.4780 | 1.3693 | -0.9391 | 81.1% | 31/50 | 285 |
+| 3 | `nan` | `nan` | `nan` | 31.2% | 3/50 | 300 |
+
+**Epoch 1 is the encouraging row.** The constraint loss improved roughly 25-fold over the
+starting network while held-out accuracy did not move at all --- still 38 of the 50 test
+images classified correctly, the same as the baseline. Whether that corresponds to
+*provable* robustness is a separate question that only Marabou can answer.
+
+**Epoch 2 shows the trade beginning.** The constraint loss improved a further sevenfold,
+but seven test images were lost. Since a misclassified image can never be proved robust,
+that lowered the ceiling on provable robustness from 38 to 31.
+
+**Epoch 3 diverged.** The weights overflowed to `nan`: 39,305 of the 52,652 parameters in
+`capucci_e03.onnx` are non-finite. Because `nan` is absorbing --- every subsequent gradient
+is `nan` too --- the remaining seven epochs could not have recovered, and the run was
+stopped rather than left to produce six more unusable snapshots.
+
+The cause is the unbounded constraint loss. `trueElement` is `-infinity` in this logic, so
+there is no floor: with 60% of the objective's weight and nothing bounding it, the
+optimiser drove the term toward `-infinity` until float32 overflowed. Taken with the
+earlier clamped run, both ends are now measured:
+
+| constraint term | outcome |
+| --- | --- |
+| clamped at 0 | contributes exactly `0.0000`; the run reduces to cross-entropy at reduced weight |
+| unclamped | diverges to `nan` within three epochs |
+
+Neither is a usable configuration. That is a finding about the loss, not about the choice
+of hyper-parameters --- and the standard remedy is to bound the *step* rather than the loss,
+with gradient clipping, which was not used here.
+
+`capucci_e01.onnx` and `capucci_e02.onnx` have finite weights and are worth verifying;
+`capucci_e03.onnx` is corrupt. The traces of this run are kept as
+`traces/per_epoch.diverged-run.csv` and `traces/train_log.diverged-run.txt`.
+
+## Run 2: `pdt-Capucci-neg.py`, negated sign --- in progress
+
+`pdt-Capucci-neg.py` is a copy of the script differing in one character:
+
+    total = ALPHA * cross_entropy - (1 - ALPHA) * constraint_loss
+
+The motivation is the quantifier defect reported upstream: Vehicle 0.27.1 compiles a
+`forall` into a loss that reports the property as *better* satisfied when the input region
+is widened and when the adversarial search is given more effort, which is the opposite of
+what a worst-case quantifier requires. If the compiled loss is inverted with respect to
+the property, minimising it trains away from robustness, and negating the coefficient
+would compensate.
+
+Note what the sign means on the logic's stated semantics: minimising the constraint term
+drives it toward `trueElement` (`-infinity`), so *maximising* it --- what this variant does
+--- drives it toward `falseElement` (`+infinity`). On those semantics this variant trains
+the network to violate the property. It is worth running only because we have evidence
+that the stated semantics do not match what the compiled loss measures. Whichever sign
+gives the better verification result tells us about the defect, not about which objective
+is principled.
+
+Launched 11:53 on 2026-08-28 with settings otherwise identical to run 1, including no
+gradient clipping, so both runs start from the same checkpoint and differ only in the
+sign. Since the negated objective maximises a quantity that is unbounded *above*,
+divergence at least as fast as run 1's is expected.
+
+Outputs go to `traces-neg/` and `capucci-models-neg/` so this run cannot disturb run 1's.
+
+**No epoch results yet at the time of writing.**
+
 ## Files
 
 | File | Role |
@@ -144,6 +217,9 @@ Everything the run produces lands in `traces/`, which is gitignored:
 | `0-49Images.idx`, `0-49Labels.idx` | the 50 held-out test images Exercise #7 checks |
 | `pdt-Capucci.py` | the experiment: continues `vanilla_e100.onnx` with the blended objective |
 | `data/` | FashionMNIST, downloaded on demand (gitignored) |
+| `pdt-Capucci-neg.py` | as above, with the constraint loss subtracted rather than added |
+| `capucci-models/` | snapshots from run 1 (positive sign) |
+| `capucci-models-neg/` | snapshots from run 2 (negated sign) |
 | `README.md` | this file |
 
 `.vclo` files are Vehicle's compiled caches and are gitignored.
