@@ -319,7 +319,7 @@ transcripts go to `marabou-outputs-neg/` and `marabou-outputs-neg-ex7/`.
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | `capucci_neg_e01` | training | 29/50 | **15/50** | 35/50 | 21 | 14 | 51.7% | 781 s |
 | `capucci_neg_e02` | training | 29/50 | **8/50** | 42/50 | 21 | 21 | 27.6% | 637 s |
-| `capucci_neg_e01` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
+| `capucci_neg_e01` | Exercise #7 | 29/50 | **15/50** | 35/50 | 21 | 14 | 51.7% | 890 s |
 | `capucci_neg_e02` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
 
 <!-- RESULTS TABLE END -->
@@ -357,12 +357,19 @@ That cannot be explained as an accuracy-for-robustness trade-off, which is the u
 such a decline would be read. With accuracy fixed, the constraint term is damaging the
 very property it names, and doing so faster than it damages the classifier.
 
-The comparison against the baseline is moreover **generous to the trained models**, since
-they are measured under the non-strict training specification while the baseline was
-measured under Exercise #7's strict one. The strict property can only score lower or equal,
-so the Exercise #7 pass can return at most 15 for `e01` and at most 8 for `e02`. The
-conclusion will therefore not reverse; what those runs add is whether ties arise in
-practice on this problem.
+**The two specifications turn out to agree.** `capucci_neg_e01` verifies 15/50 under both
+--- the non-strict property it was trained on and Exercise #7's strict one --- with the same
+35 falsifications. So ties do not arise in practice on this problem: no image is decided by
+the difference between `>` and `>=`.
+
+That is worth recording for two reasons. It means the `CompareIndex` limitation costs
+nothing here, so training against the non-strict formulation is a sound stand-in for the
+published property rather than a compromise. And it means the comparison against the
+baseline's 22/50 is **fair rather than generous**, which is how it had to be described
+while only the non-strict figure was available.
+
+The strict property is nonetheless more work for the solver: 890 s against 781 s for the
+same model, since a query cannot be discharged by finding an equality.
 
 No image timed out or errored in either run, so the counts are decisive rather than an
 artefact of the solver giving up. Both were faster than the baseline's 924 s --- 781 s and
@@ -370,14 +377,50 @@ artefact of the solver giving up. Both were faster than the baseline's 924 s ---
 counterexample, so finding more of them is quicker than proving their absence. The
 progressively shorter time is itself a symptom of the progressively worse network.
 
-### A gap to be aware of
+### Conclusions from the verification experiment
 
-The vanilla baseline has **not** been measured under the training specification --- the
-22/50 figure comes from Exercise #7's strict property. So pass 2's numbers can be compared
-with the baseline and pass 1's cannot. Comparing pass 1's count against 22/50 would flatter
-the trained models, since the non-strict property is the weaker of the two. Measuring
-`vanilla_e100.onnx` under the training specification would close this, and is one further
-verification run.
+**Property-driven training lost provable robustness rather than gaining it.** The network
+it started from proves 22 of the 50 images; after one epoch the figure is 15, after two it
+is 8. Measured as a share of the images each network classifies correctly --- the only
+images that could possibly be proved robust --- the decline is 57.9%, 51.7%, 27.6%.
+
+**The loss is not a trade for accuracy.** This is the sharpest finding. The two snapshots
+have the *identical* ceiling of 29/50, so accuracy is held fixed between them, and provable
+robustness still halved from 15 to 8, with genuinely non-robust images rising from 14 to 21
+out of the same 29 eligible. A decline of this kind is normally explained as accuracy being
+sacrificed for robustness; here accuracy was not sacrificed and robustness fell anyway. The
+constraint term is damaging the property it names, and doing so faster than it damages the
+classifier.
+
+**The two specifications agree, so the non-strict workaround is sound.** `capucci_neg_e01`
+verifies 15/50 under both the strict published property and the non-strict one it was
+trained against, with the same 35 falsifications. No image on this problem is decided by
+the difference between `>` and `>=`. Two things follow: the `CompareIndex` limitation costs
+nothing here, so training against the non-strict formulation is a faithful stand-in rather
+than a compromise; and the comparison against the baseline's 22/50 is like-for-like.
+
+Note this is demonstrated for one model, which is evidence rather than proof that ties never
+matter --- the `e02` pair will either strengthen it or qualify it.
+
+**Read together with the training runs, the conclusion is about the toolchain, not the
+hyper-parameters.** Every configuration tried has failed, and each in a different way:
+
+| Configuration | Outcome |
+| --- | --- |
+| constraint loss clamped at 0 | term contributes exactly `0.0000`; run reduces to cross-entropy |
+| unclamped, added | diverges to `nan` at epoch 3 |
+| unclamped, subtracted | runs, but the loss still falls; robustness collapses |
+
+Together with the finding that the compiled loss reports a property as *better* satisfied
+when the input region is widened, and that the coefficient's sign does not control which
+direction the loss travels, the reasonable reading is that this loss is not yet a usable
+training signal in Vehicle 0.27.1. The Capucci logic, the blending weight and the sign were
+not chosen wrongly; the signal they are applied to does not track the property.
+
+The useful output of this experiment is therefore evidence for the upstream bug report,
+not a trained network. The snapshots are kept so that the verification can be repeated once
+the quantifier defect is fixed, which would give a clean before-and-after on the same
+models.
 
 ## Files
 
