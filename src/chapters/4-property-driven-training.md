@@ -454,9 +454,35 @@ movingTowards x =
   x ! intruderSpeed   >= 960
 ```
 
-These constriants give rise to a hyper-rectangle in a five-dimensional space.
+These constriants give rise to the following hyper-rectangle in five-dimensional space:
 
-Every $\epsilon$-ball is a hyper-rectangle with $l_i = x_i - \epsilon$ and
+<!-- $$
+X = \left\{ x \in \mathbb{R}^5 :\;\;
+\begin{aligned}
+    &1500 \le x_1 \le 1800, \\
+    &-0.06 \le x_2 \le 0.06, \\
+    &3.10 \le x_3 \le x_3^{\max}, \\
+    &980 \le x_4 \le x_4^{\max}, \\
+    &960 \le x_5 \le x_5^{\max}
+\end{aligned}
+\right\}
+$$ 
+
+Where $x_n^{max}$ is the maximum input value for attribute $x_n$ -->
+
+$$
+X = \left\{ x \in \mathbb{R}^5 :\;\;
+\begin{aligned}
+    &1500 \le x_1 \le 1800, \\
+    &-0.06 \le x_2 \le 0.06, \\
+    &3.10 \le x_3 \le \pi, \\
+    &980 \le x_4 \le 1200, \\
+    &960 \le x_5 \le 1200
+\end{aligned}
+\right\}
+$$
+
+Note that here the upper bounds for $x_3$, $x_4$ and $x_5$ are those listed as maximum input values in the ACAS Xu specification in Chapter 2. Every $\epsilon$-ball is a hyper-rectangle with $l_i = x_i - \epsilon$ and
 $u_i = x_i + \epsilon$, so nothing is lost, and regions that no ball can express become
 available. The training objective generalises by substitution --- where adversarial
 training maximises over $\mathbf{x}' \in \mathbb{B}(\mathbf{x}; \epsilon)$, we maximise
@@ -472,7 +498,7 @@ ahead and closing, then the score for *clear-of-conflict* will not be minimal. I
 say which advisory the network should give --- only that one of the four alternatives must
 outrank one particular option. Written out, the conclusion is a disjunction:
 
-$$f(\mathbf{x})_{SR} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{R} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{SL} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{L} < f(\mathbf{x})_{COC}$$
+$$f(\mathbf{x})_{SR} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{WR} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{SL} < f(\mathbf{x})_{COC} \;\vee\; f(\mathbf{x})_{WL} < f(\mathbf{x})_{COC}$$
 
 There is no label to hold fixed here, so there is nothing for the standard recipe to
 maximise. What is needed is a way to take an arbitrary specification $\phi$ and produce a
@@ -489,18 +515,16 @@ $$\lbrack\!\lbrack a_1 \leq a_2 \rbrack\!\rbrack := a_1 - a_2 \qquad \lbrack\!\l
 
 An atom is translated into the *margin* by which it holds or fails, and the connectives
 combine margins. Several such logics exist, and they differ in ways that matter for
-optimisation [@SlusarzKDSS23; @FischerBDGZV19; @KriekenAH22]. We will use just one.
-
-The logic we adopt is quantitative linear logic (QLL), due to Capucci et al.
+optimisation [@SlusarzKDSS23; @FischerBDGZV19; @KriekenAH22]. The logic we adopt is quantitative linear logic (QLL), due to Capucci et al.
 [-@capucci2026]:
 
-**Negation:** $$\neg a:=-a$$
+**Negation:** $$\lbrack\!\lbrack\neg a\rbrack\!\rbrack:=-\lbrack\!\lbrack a\rbrack\!\rbrack$$
 
-**Conjunction:** $$a\cap^pb:=\frac{1}{p}\log(e^{pa}+e^{pb})$$
+**Conjunction:** $$\lbrack\!\lbrack a\cap^pb\rbrack\!\rbrack:=\frac{1}{p}\log(e^{p\lbrack\!\lbrack a\rbrack\!\rbrack}+e^{p\lbrack\!\lbrack b\rbrack\!\rbrack})$$
 
-**Disjunction:** $$a\cup^pb:=-\frac{1}{p}\log(e^{-pa}+e^{-pb})$$
+**Disjunction:** $$\lbrack\!\lbrack a\cup^pb\rbrack\!\rbrack:=-\frac{1}{p}\log(e^{-p\lbrack\!\lbrack a\rbrack\!\rbrack}+e^{-p\lbrack\!\lbrack b\rbrack\!\rbrack})$$
 
-**Implication:** $$a\implies b:=b-a$$
+**Implication:** $$\lbrack\!\lbrack a\implies b\rbrack\!\rbrack:=\lbrack\!\lbrack b\rbrack\!\rbrack-\lbrack\!\lbrack a\rbrack\!\rbrack$$
 
 where $0<p<\infty$ is the _hardness degree_. As $p\rightarrow\infty$ the connectives
 converge on $\max$ and $\min$, their traditional counterparts; smaller $p$ gives a
