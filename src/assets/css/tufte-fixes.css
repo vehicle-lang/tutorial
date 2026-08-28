@@ -248,7 +248,8 @@ figure.fullwidth > .marginnote {
 }
 
 .robustness-taxonomy table {
-  width: 100%;
+  width: 55%; /* Match Tufte text column -- 100% spills into the margin */
+  max-width: 90%;
 }
 
 .robustness-taxonomy th:nth-child(2),

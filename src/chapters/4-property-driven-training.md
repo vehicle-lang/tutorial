@@ -454,7 +454,7 @@ movingTowards x =
   x ! intruderSpeed   >= 960
 ```
 
-These constriants give rise to a hyper-rectangle.
+These constriants give rise to a hyper-rectangle in a five-dimensional space.
 
 Every $\epsilon$-ball is a hyper-rectangle with $l_i = x_i - \epsilon$ and
 $u_i = x_i + \epsilon$, so nothing is lost, and regions that no ball can express become
@@ -464,7 +464,7 @@ over $\mathbf{x}' \in \mathbb{H}(\mathbf{x})$.
 
 ## Problem 3: beyond "classify this as $N$"
 
-The third difficulty is on the output side. Adversarial training assumes the goal is to
+The third difficulty is on the output side. Classification robustness assumes the goal is to
 keep the predicted class fixed. Many specifications say something less prescriptive.
 
 ACAS Xu's third property, which Chapter 2 verified, asks that if the intruder is directly
