@@ -318,7 +318,7 @@ transcripts go to `marabou-outputs-neg/` and `marabou-outputs-neg-ex7/`.
 | Model | spec | correct | verified | falsified | of which misclassified | genuinely non-robust | robust share of eligible | solver |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | `capucci_neg_e01` | training | 29/50 | **15/50** | 35/50 | 21 | 14 | 51.7% | 781 s |
-| `capucci_neg_e02` | training | 29/50 | _not yet run_ | | | | | |
+| `capucci_neg_e02` | training | 29/50 | **8/50** | 42/50 | 21 | 21 | 27.6% | 637 s |
 | `capucci_neg_e01` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
 | `capucci_neg_e02` | Exercise #7 | 29/50 | _not yet run_ | | | | | |
 
@@ -335,26 +335,40 @@ is safe to run more than once.
 
 Set beside the network this run started from:
 
-| | correct | verified | robust share of eligible |
-| --- | ---: | ---: | ---: |
-| `vanilla_e100` (baseline, Exercise #7 spec) | 38/50 | **22/50** | 57.9% |
-| `capucci_neg_e01` (training spec) | 29/50 | **15/50** | 51.7% |
+| | correct | verified | genuinely non-robust | robust share of eligible |
+| --- | ---: | ---: | ---: | ---: |
+| `vanilla_e100` (baseline, Exercise #7 spec) | 38/50 | **22/50** | 16 | 57.9% |
+| `capucci_neg_e01` (training spec) | 29/50 | **15/50** | 14 | 51.7% |
+| `capucci_neg_e02` (training spec) | 29/50 | **8/50** | 21 | 27.6% |
 
-**Property-driven training made the network worse at the property, on both measures.**
-Fewer images are provably robust in absolute terms --- 15 against 22 --- and a smaller
-proportion of the images the network classifies correctly are robust, 51.7% against 57.9%.
-So the loss of nine test images was not compensated by better behaviour on those that
-remain.
+**Property-driven training made the network worse at the property, on every measure.**
+Against the starting network there are fewer provably robust images in absolute terms ---
+15, then 8, against 22 --- and a smaller proportion of the images the network classifies
+correctly are robust: 51.7% and 27.6% against 57.9%. The nine test images lost by epoch 1
+were not paid for by better behaviour on those that remain.
 
-The comparison is moreover **generous to the trained model**, because it is measured under
-the non-strict training specification while the baseline was measured under Exercise #7's
-strict one. The strict property can only score lower or equal, so the Exercise #7 pass
-should return 15 or fewer.
+**The two snapshots isolate the effect, and this is the sharpest result of the
+experiment.** They have the *identical* ceiling of 29/50, so accuracy is held constant
+between them --- yet provable robustness halved, from 15 to 8, and the number of genuinely
+non-robust images rose from 14 to 21 out of the same 29 eligible. The second epoch of
+training cost no accuracy at all and destroyed robustness anyway.
 
-No image timed out or errored, so the counts are decisive rather than an artefact of the
-solver giving up. The run took 781 s against the baseline's 924 s, which is what a
-falsification-heavy run looks like: Marabou stops at the first counterexample, so finding
-more of them is faster than proving their absence.
+That cannot be explained as an accuracy-for-robustness trade-off, which is the usual way
+such a decline would be read. With accuracy fixed, the constraint term is damaging the
+very property it names, and doing so faster than it damages the classifier.
+
+The comparison against the baseline is moreover **generous to the trained models**, since
+they are measured under the non-strict training specification while the baseline was
+measured under Exercise #7's strict one. The strict property can only score lower or equal,
+so the Exercise #7 pass can return at most 15 for `e01` and at most 8 for `e02`. The
+conclusion will therefore not reverse; what those runs add is whether ties arise in
+practice on this problem.
+
+No image timed out or errored in either run, so the counts are decisive rather than an
+artefact of the solver giving up. Both were faster than the baseline's 924 s --- 781 s and
+637 s --- which is what falsification-heavy runs look like: Marabou stops at the first
+counterexample, so finding more of them is quicker than proving their absence. The
+progressively shorter time is itself a symptom of the progressively worse network.
 
 ### A gap to be aware of
 
