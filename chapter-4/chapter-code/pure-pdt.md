@@ -38,8 +38,8 @@ epoch), epsilon 0.005, Adam at lr 1e-3.
 ## Training statistics
 
 | Epoch | Constraint loss | Cross-entropy (monitored) | Train accuracy | Seconds |
-|------:|----------------:|--------------------------:|---------------:|--------:|
-| _start_ (vanilla e200) | – | 0.000281 | 100.00% | – |
+| ------: | ----------------: | --------------------------: | ---------------: | --------: |
+| *start* (vanilla e200) | – | 0.000281 | 100.00% | – |
 | 1 | 0.6221 | 0.1373 | 94.92% | 183 |
 | 2 | 0.9240 | 0.6482 | 79.10% | 236 |
 | 3 | 0.9970 | 0.8944 | 72.17% | 202 |
@@ -71,11 +71,11 @@ vehicle verify \
 ```
 
 | Model | Verified | Falsified | Solver time |
-|-------|---------:|----------:|------------:|
+| ------- | ---------: | ----------: | ------------: |
 | vanilla, epoch 200 (baseline) | **29/50** | 21/50 | 14 min 35 s |
 | +1 epoch, constraint loss only | **14/50** | 36/50 | 39 min 50 s |
-| +5 epochs, constraint loss only | _pending_ | _pending_ | – |
-| +10 epochs, constraint loss only | _pending_ | _pending_ | – |
+| +5 epochs, constraint loss only | *pending* | *pending* | – |
+| +10 epochs, constraint loss only | *pending* | *pending* | – |
 
 Full transcripts are in [pdt-experiment/marabou-outputs/](pdt-experiment/marabou-outputs/), one file per model.
 
