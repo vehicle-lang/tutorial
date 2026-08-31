@@ -304,8 +304,6 @@ not a quantity the task objective measures, so driving that objective lower cann
 expected to improve it. If we want robustness — at radii where it is genuinely at risk —
 it has to enter the objective itself, which is what the rest of this chapter does.
 
-
-
 # Running the property-driven training example
 
 The data sets are described in the [chapter README](../README.md) — they are the same
@@ -411,5 +409,3 @@ python -m tf2onnx.convert \
     --saved-model models/tf_simple_classifier \
     --output models/tf_simple_classifier.onnx
 ```
-
-

@@ -103,7 +103,7 @@ Confirmed working: the specification typechecks, compiles to a loss under the
 magnitude $69$ on a randomly initialised network).
 
 **Which specification to verify against is not yet decided.** Verifying with Exercise
-#7's strict form keeps the result comparable with the baseline table above, at the cost of
+# 7's strict form keeps the result comparable with the baseline table above, at the cost of
 training and verifying subtly different properties. Verifying with the non-strict form
 makes the two identical, but the baseline would have to be re-measured under it.
 
@@ -367,8 +367,6 @@ nothing here, so training against the non-strict formulation is a sound stand-in
 published property rather than a compromise. And it means the comparison against the
 baseline's 22/50 is **fair rather than generous**, which is how it had to be described
 while only the non-strict figure was available.
-
-
 
 No image timed out or errored in either run, so the counts are decisive rather than an
 artefact of the solver giving up. Both were faster than the baseline's 924 s --- 781 s and

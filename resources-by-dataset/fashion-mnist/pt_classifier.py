@@ -44,10 +44,10 @@ class Normalize(nn.Module):
         super().__init__()
         self.mean = mean
         self.std = std
- 
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return (x - self.mean) / self.std
- 
+
 model = nn.Sequential(
     Normalize(MEAN, STD),
     nn.Flatten(),
