@@ -35,6 +35,8 @@ robustAround image label = forall perturbation .
 
 
 --Take two datasets
+@parameter(infer=True)
+n : Nat
 
 @dataset
 trainingImages : Vector Image n
