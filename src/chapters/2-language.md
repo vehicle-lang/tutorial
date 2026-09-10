@@ -239,6 +239,32 @@ strongLeft      = 3
 strongRight     = 4
 ```
 
+Alternatively, there are `record` definitions that replace tensors, allowing naming directly in the definitions. Tensors and records are interchangable.
+
+```vehicle
+record UnnormalisedInput where
+    { distanceToIntruder : Real
+    , angleToIntruder : Real
+    , intruderHeading : Real
+    , speed : Real
+    , intruderSpeed : Real
+    }
+```
+
+The output tensor can be similarly translated.
+
+```vehicle
+record Output where
+    { clearOfConflict : Real
+    , weakLeft : Real
+    , weakRight : Real
+    , strongLeft : Real
+    , strongRight : Real
+    }
+```
+
+These types replace the tensors and can be accessed using `record.field` syntax, making defining and accessing more convenient in some cases.
+
 # Property Definition in Vehicle
 
 We now make up for the time invested into learning the Vehicle syntax, as stating a verification property becomes very easy. Let us now look at the property again:
@@ -247,6 +273,13 @@ We now make up for the time invested into learning the Vehicle syntax, as statin
 
 We first need to define what it means to be *directly ahead* and *moving towards*.
 The exact ACAS Xu definition can be written in Vehicle as:
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-button active" data-index="0">Indices</button>
+    <button class="tab-button" data-index="1">Records</button>
+  </div>
+  <div class="tabs-content">
+<div>
 
 ```vehicle
 directlyAhead : UnnormalisedInput -> Bool
@@ -260,6 +293,26 @@ movingTowards x =
   x ! speed           >= 980   and
   x ! intruderSpeed   >= 960
 ```
+</div>
+
+<div>
+
+```vehicle
+directlyAhead : UnnormalisedInput -> Bool
+directlyAhead x =
+  1500  <= x.distanceToIntruder <= 1800 and
+  -0.06 <= x.angleToIntruder    <= 0.06
+
+movingTowards : UnnormalisedInput -> Bool
+movingTowards x =
+  x.intruderHeading >= 3.10  and
+  x.speed           >= 980   and
+  x.intruderSpeed   >= 960
+```
+</div>
+
+</div>
+</div>
 
 Note the reasoning in terms of the "problem space", i.e. the use of unnormalised input vectors.
 
