@@ -244,10 +244,10 @@ Alternatively, there are `record` definitions that replace tensors, allowing nam
 ```vehicle
 record UnnormalisedInput where
     { distanceToIntruder : Real
-    , angleToIntruder : Real
-    , intruderHeading : Real
-    , speed : Real
-    , intruderSpeed : Real
+    , angleToIntruder    : Real
+    , intruderHeading    : Real
+    , speed              : Real
+    , intruderSpeed      : Real
     }
 ```
 
@@ -256,10 +256,10 @@ The output tensor can be similarly translated.
 ```vehicle
 record Output where
     { clearOfConflict : Real
-    , weakLeft : Real
-    , weakRight : Real
-    , strongLeft : Real
-    , strongRight : Real
+    , weakLeft        : Real
+    , weakRight       : Real
+    , strongLeft      : Real
+    , strongRight     : Real
     }
 ```
 
