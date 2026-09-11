@@ -3,6 +3,11 @@
 Continuing the epoch-100 vanilla classifier with property-driven training, using the
 Capucci (QLL) differentiable logic. Set up 2026-08-28.
 
+**Status.** Runs 1 and 2 (2026-08-28, Vehicle 0.27.1) failed because of a sampler bug in
+Vehicle; run 3 (2026-09-11, Vehicle 0.28.0) repeats run 1 with the bug fixed and gains
+provable robustness on every snapshot, from 22/50 to 24--27/50, at no cost in accuracy.
+Sections below are in chronological order; the earlier ones describe 0.27.1 behaviour.
+
 ## Starting point
 
 | | |
@@ -427,19 +432,183 @@ not a trained network. The snapshots are kept so that the verification can be re
 the quantifier defect is fixed, which would give a clean before-and-after on the same
 models.
 
+## The bug, and its fix in Vehicle 0.28.0
+
+Vehicle 0.28.0 was released on 2026-09-10 and installed here on 2026-09-11, replacing
+0.27.1. Diffing the two Python wheels locates the defect: it was in the PyTorch sampler,
+not the compiler. In `DefaultPyTorchSampler` the FGSM step was
+
+    perturbation = epsilon * torch.sign(gradient)      # 0.27.1
+    perturbation = -epsilon * torch.sign(gradient)     # 0.28.0
+
+so the adversarial search behind `forall perturbation` walked *down* the loss and returned
+the least violating perturbation rather than the most violating one. That is the whole of
+the quantifier defect: a wider ball gave the search more room to find a benign point, and
+a harder search found a more benign one. Two smaller changes came with it: the search now
+enables gradients even when the loss is called under `torch.no_grad()`, and random starting
+points are drawn per pixel rather than as one scalar.
+
+Re-running the epsilon sweep from the bug notes, with gradients enabled, on an untrained
+network and four random images:
+
+| epsilon | default | DL2 | qllAdditive |
+| ------: | ------: | --: | ----------: |
+| 0.0 | 0.62 | 0.62 | 1.20 |
+| 0.02 | 0.90 | 0.90 | 1.24 |
+| 0.5 | 4.57 | 4.57 | 1.71 |
+| 2.0 | 6.07 | 6.07 | 1.94 |
+
+The loss now increases with epsilon under all three logics, and DL2 no longer returns
+`+inf`. Issues 3 and 4 of the bug notes (an `@parameter` inside a logic, the de Bruijn
+crash) have not been re-tested.
+
+**The divergence in run 1 was a consequence of the bug.** On `vanilla_e100.onnx` with real
+training images, the corrected `qllAdditive` loss is exactly 0 for images the network
+classifies with a comfortable margin and positive for the rest, growing with epsilon (four
+images at epsilon 0.02: `0.0, 0.0, 2.37, 2.26`). The `j = label` term of the `>=`
+conjunction pins the log-sum-exp at or above zero, so the term is bounded below and there
+is no `-infinity` to descend toward. Under 0.27.1 the same loss was negative everywhere.
+The original positive-sign script, unclamped, is therefore the right configuration, and
+`pdt-Capucci-neg.py` is obsolete.
+
+The corrected loss is slower: about 3 s for four images against roughly 20 s per 64-image
+batch before, so an epoch takes about twice as long. With eight threads a 64-image call was
+seen to thrash; the run-3 script pins PyTorch to four.
+
+## Run 3: `pdt-Capucci-v028.py`, run 1 repeated under Vehicle 0.28.0 --- completed
+
+Launched 16:38 on 2026-09-11; training finished 18:33, the last verification 20:35. Every
+setting is identical to run 1 --- same checkpoint, specification,
+logic, epsilon 0.02, alpha 0.4, batch 64, 1024 images, Adam at 1e-3, 10 epochs, no
+clamping, no gradient clipping --- so that any difference is attributable to the fix. Only
+the output locations differ: `traces-v028/` and `capucci-models-v028/`, leaving run 1's
+folders intact as the evidence for the bug report.
+
+`verify_v028.py` runs alongside the trainer and verifies each snapshot as it appears,
+against Exercise #7's strict specification at epsilon 0.02 with the same guards as the
+run-2 scripts. Only the strict specification is used, since run 2 showed the two forms
+agree on every image here. Transcripts go to `marabou-outputs-v028/`.
+
+<!-- V028 RESULTS TABLE START -->
+
+| epoch | constraint | cross-entropy | train acc | correct on 50 test | verified | genuinely non-robust | robust share of eligible | solver |
+| ----: | ---------: | ------------: | --------: | -----------------: | -------: | -------------------: | -----------------------: | -----: |
+| 0 (start) | -- | 0.0413 | 99.5% | 38/50 | **22/50** | 16 | 57.9% | 924 s |
+| 1 | +0.5420 | 0.0592 | 98.7% | 37/50 | **27/50** | 10 | 73.0% | 2305 s |
+| 2 | +0.4620 | 0.0595 | 98.9% | 39/50 | **24/50** | 14 | 61.5% | 2139 s |
+| 3 | +0.4155 | 0.0578 | 98.7% | 39/50 | **26/50** | 13 | 66.7% | 1748 s |
+| 4 | +0.3714 | 0.0584 | 98.5% | 38/50 | **24/50** | 14 | 63.2% | 720 s |
+| 5 | +0.3340 | 0.0537 | 99.3% | 38/50 | **25/50** | 13 | 65.8% | 740 s |
+| 6 | +0.3617 | 0.0631 | 98.8% | 38/50 | **25/50** | 13 | 65.8% | 721 s |
+| 7 | +0.2918 | 0.0525 | 99.3% | 39/50 | **25/50** | 14 | 64.1% | 2505 s |
+| 8 | +0.2896 | 0.0551 | 99.0% | 40/50 | **26/50** | 14 | 65.0% | 757 s |
+| 9 | +0.2830 | 0.0587 | 98.9% | 38/50 | **27/50** | 11 | 71.1% | 836 s |
+| 10 | +0.2880 | 0.0628 | 99.0% | 40/50 | **27/50** | 13 | 67.5% | 832 s |
+
+<!-- V028 RESULTS TABLE END -->
+
+`traces-v028/per_epoch.csv` and `traces-v028/verify.csv` are the sources of truth; the
+table above is regenerated from them by:
+
+    python3 record_results_v028.py
+
+Training took just under two hours (16 steps of about 40 s per epoch); the ten
+verifications took 3.7 h of solver time in total, between 12 and 42 minutes each. No image
+errored; one query timed out (image 6 of the epoch-2 model, which every other snapshot
+proves).
+
+### Per-image verdicts
+
+Images 0--49 of the test set, one row per snapshot. `T` proved robust, `F` falsified,
+`?` timed out. Images the snapshot misclassifies are falsified at zero perturbation and
+appear as `F`.
+
+    e01: FTTTTTTFFTFFFTFTTFTTTFTFTFFFTFTTTTTFTFTTFTFFFFTTFF
+    e02: FFTTTT?FFTFFFTTTTFFTFFTFTFFFTFTTTTTFTFTTFTFFTFFTFF
+    e03: TFTTTTTFFTFFFTFTFFTTFFTFTFFFTFTTTTTFTTTTFTFFTFFTFF
+    e04: FFTTTTTTFTFFFTFTFFFTFFTFTFFFTFTTTTTFTFTTFTFFTFFTFF
+    e05: FFTTTTTTFTFFFTFTFFFTFFTFTFFTTFTTTTTFTFTTFTFFTFFTFF
+    e06: TFTTTTTTFTFFFTFTFFFFFFTFTFFFTFTTTTTFTTTTFTFFTFFTFF
+    e07: FFTTTTTTFTFFFTFTFFFTFFTFTFFFTFTTTTTFTTTTFTFFTFFTFF
+    e08: FTTTTTTTFTFFFTFTFFTFFFTFTFFFTFTTTTTFTTTTFTFFFFTTFF
+    e09: FTTTTTTFFTFFFTFTTFFTFFTFTFFFTFTTTTTFTTTTFTFFTFTTFF
+    e10: TFTTTTTTFTTFFTFTTFFTFFTFTFFFTFTTTTTFTTTTFTFFFFFTFF
+
+| | images |
+| --- | ---: |
+| proved robust by all ten snapshots | 20 |
+| proved by at least one snapshot | 34 |
+| never proved by any snapshot | 16 |
+| flip between snapshots | 14 |
+
+The 16 never proved are the 10 to 13 images each snapshot misclassifies together with a
+handful that are correctly classified but breakable in every snapshot. The 14 that flip
+are the margin: images whose robustness at `epsilon 0.02` is decided by where exactly the
+optimiser happens to be at the end of the epoch.
+
+### Conclusions from run 3
+
+**Property-driven training gained provable robustness, on every snapshot.** The starting
+network proves 22 of the 50 test images. All ten snapshots prove between 24 and 27, a mean
+of 25.6, and the final snapshot proves 27. Measured as a share of the images each network
+classifies correctly, the only images that could be proved, the baseline's 57.9% became
+61.5% to 73.0%.
+
+**It cost no accuracy.** The ceiling never fell below 37/50 and finished at 40/50, two above
+the starting network; cross-entropy stayed between 0.052 and 0.063 throughout (the start is
+0.041); training accuracy stayed between 98.5% and 99.3%. The final snapshot is better than
+the starting network on both axes at once: 40 correct against 38, and 27 provably robust
+against 22. That is the trade run 2 could not make, where accuracy was held fixed between
+two snapshots and robustness halved anyway.
+
+**The fix is the whole explanation.** Same checkpoint, same specification, same logic, same
+hyper-parameters, same absence of clamping and gradient clipping; the only difference from
+run 1 is Vehicle 0.28.0 instead of 0.27.1. Run 1 diverged to `nan` at epoch 3; run 3
+trained for ten epochs with a loss that fell monotonically apart from one uptick at epoch 6
+and never approached zero from below. The constraint loss went from 0.54 to 0.29.
+
+**Training loss and verified count decouple after the first epoch.** The loss halved over
+epochs 1 to 10 while the verified count went 27, 24, 26, 24, 25, 25, 25, 26, 27, 27 --- a
+band of plus or minus two around a flat line, with epoch 1 already at the top of it. Two
+reasons are plausible and both probably contribute. The loss is measured on the 1024
+training images and the verification on 50 held-out test images, so part of the later
+improvement is fitting rather than generalising. And the loss sees only what the FGSM search
+finds, which is a lower bound on the worst case, so the loss can approach zero on an image
+that Marabou can still break. Longer training at this learning rate would be expected to
+keep lowering the loss without moving the verified count much.
+
+**The 14 flipping images are why a single snapshot is a noisy measurement.** Consecutive
+epochs differ by up to three verified images without any change in what was being
+optimised, so a one-snapshot comparison has an error bar of about plus or minus two on this
+50-image set. The evidence that training helped is that all ten snapshots sit above the
+baseline, not that any one of them does.
+
+**What this means for the earlier conclusions.** The reading of runs 1 and 2 stands as a
+description of Vehicle 0.27.1: the compiled loss did not track the property because the
+sampler searched in the wrong direction, and no choice of sign, weight or clamping could
+fix that. Under 0.28.0 the same loss is a usable training signal. The Capucci logic, alpha
+0.4, epsilon 0.02 and the unclamped positive-sign objective are all vindicated as they were
+originally chosen. The bug report can now cite a before-and-after on identical models.
+
 ## Files
 
 | File | Role |
 | --- | --- |
 | `vanilla_e100.onnx` | the starting point: epoch-100 vanilla classifier |
 | `fashionRobustness-solution.vcl` | Chapter 3 Exercise #7's specification, used for **verification** |
-| `fashionRobustness-capucci.vcl` | the same property plus the `qllAdditive` logic, intended for **training** --- does not currently compile to a loss, see above |
+| `fashionRobustness-capucci.vcl` | the same property (non-strict `advises`) plus the `qllAdditive` logic, used for **training** |
 | `0-49Images.idx`, `0-49Labels.idx` | the 50 held-out test images Exercise #7 checks |
 | `pdt-Capucci.py` | the experiment: continues `vanilla_e100.onnx` with the blended objective |
 | `data/` | FashionMNIST, downloaded on demand (gitignored) |
-| `pdt-Capucci-neg.py` | as above, with the constraint loss subtracted rather than added |
-| `capucci-models/` | snapshots from run 1 (positive sign) |
-| `capucci-models-neg/` | snapshots from run 2 (negated sign) |
+| `pdt-Capucci-neg.py` | as above, with the constraint loss subtracted rather than added (run 2; obsolete since 0.28.0, kept for the record) |
+| `pdt-Capucci-v028.py` | run 3: `pdt-Capucci.py` unchanged in settings, writing to the `-v028` folders, under Vehicle 0.28.0 |
+| `verify_neg.py`, `verify_neg_ex7.py` | run 2's verification against the training and Exercise #7 specifications |
+| `verify_v028.py` | run 3's verification watcher: checks each snapshot against Exercise #7 as it appears |
+| `record_results.py`, `record_results_v028.py` | regenerate the run 2 and run 3 results tables in this file |
+| `capucci-models/` | snapshots from run 1 (positive sign, Vehicle 0.27.1) |
+| `capucci-models-neg/` | snapshots from run 2 (negated sign, Vehicle 0.27.1) |
+| `capucci-models-v028/` | snapshots from run 3 (Vehicle 0.28.0) |
+| `marabou-outputs-neg/`, `marabou-outputs-neg-ex7/`, `marabou-outputs-v028/` | Marabou transcripts for runs 2 and 3 |
 | `README.md` | this file |
 
 `.vclo` files are Vehicle's compiled caches and are gitignored.
