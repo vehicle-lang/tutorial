@@ -512,10 +512,10 @@ table above is regenerated from them by:
 
     python3 record_results_v028.py
 
-Training took just under two hours (16 steps of about 40 s per epoch); the ten
-verifications took 3.7 h of solver time in total, between 12 and 42 minutes each. No image
-errored; one query timed out (image 6 of the epoch-2 model, which every other snapshot
-proves).
+Total wall time was about four hours: two for training, and 3.7 hours of solver time for
+the ten verifications, which overlapped with training. Individual verifications took
+between 12 and 42 minutes. No image errored. One query timed out, image 6 of the epoch 2
+model, which every other snapshot proves.
 
 ### Per-image verdicts
 
@@ -567,21 +567,17 @@ run 1 is Vehicle 0.28.0 instead of 0.27.1. Run 1 diverged to `nan` at epoch 3; r
 trained for ten epochs with a loss that fell monotonically apart from one uptick at epoch 6
 and never approached zero from below. The constraint loss went from 0.54 to 0.29.
 
-**Training loss and verified count decouple after the first epoch.** The loss halved over
-epochs 1 to 10 while the verified count went 27, 24, 26, 24, 25, 25, 25, 26, 27, 27 --- a
-band of plus or minus two around a flat line, with epoch 1 already at the top of it. Two
-reasons are plausible and both probably contribute. The loss is measured on the 1024
-training images and the verification on 50 held-out test images, so part of the later
-improvement is fitting rather than generalising. And the loss sees only what the FGSM search
-finds, which is a lower bound on the worst case, so the loss can approach zero on an image
-that Marabou can still break. Longer training at this learning rate would be expected to
-keep lowering the loss without moving the verified count much.
+**Two things worth knowing beyond the headline.**
 
-**The 14 flipping images are why a single snapshot is a noisy measurement.** Consecutive
-epochs differ by up to three verified images without any change in what was being
-optimised, so a one-snapshot comparison has an error bar of about plus or minus two on this
-50-image set. The evidence that training helped is that all ten snapshots sit above the
-baseline, not that any one of them does.
+- The verified count plateaus after epoch 1 while the loss keeps falling. The ten counts
+  were 27, 24, 26, 24, 25, 25, 25, 26, 27, 27. The loss is measured on the 1024 training
+  images through an FGSM search, and the verification is exact on 50 held-out images, so
+  later loss improvement is partly fitting rather than generalising, and partly tightening
+  margins on perturbations the search can find but Marabou is not limited to.
+- Consecutive snapshots differ by up to three images with no change in the objective.
+  Twenty images are proved by all ten snapshots, sixteen by none, and fourteen flip. So a
+  single snapshot carries an error bar of about plus or minus two on this test set. The
+  evidence for the gain is that all ten sit above 22, not any one of them.
 
 **What this means for the earlier conclusions.** The reading of runs 1 and 2 stands as a
 description of Vehicle 0.27.1: the compiled loss did not track the property because the
