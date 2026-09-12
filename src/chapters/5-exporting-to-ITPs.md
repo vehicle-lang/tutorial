@@ -92,23 +92,19 @@ safe = forall x . safeInput x => safeOutput x
 
 # Exporting to an ITP: The Command
 
-To export a compiled Vehicle specification, use the `vehicle export` command. The key options are:
+To export a verified Vehicle specification from a cache, use the `vehicle export` command. The key options in Vehicle 0.26.1 are:
 
 ```bash
 vehicle export \
   --target <ITP>          # One of: Agda, Rocq, Imandra, Isabelle/HOL
-  --cache <path>          # Path to the verification cache (mutually exclusive with --specification)
-  --specification <path>  # Path to the .vcl file (mutually exclusive with --cache)
-  --network <name:file>   # Required when using --specification; maps a network name to its ONNX file
-  --dataset <name:file>   # Required when using --specification; maps a dataset name to its data file
-  --parameter <name:val>  # Required when using --specification; provides a concrete value for a parameter
+  --cache <path>          # Path to the verification cache
   --output <file>         # Where to write the generated ITP file
   --module-name <name>    # Optional module name override for the generated file
 ```
 
- **Note**: `--cache` and `--specification` are mutually exclusive. Either point Vehicle to a previously generated verification cache (to export with verified lemmas) or directly to a `.vcl` specification file (to export as axioms/postulates). Passing both will result in a command-line error.
+To compile directly from a specification without a cache, use `vehicle compile itp` instead. This produces axioms or postulates rather than cache-validated lemmas.
 
- **Note on concrete parameter values**: If your specification declares a parameter (e.g. `parameter p : Index 5`) and you originally verified and constructed a proof assuming `p` is universally quantified (i.e. `forall`), passing a concrete value via `--parameter p:3` at export time will cause the exported type to change. For example, in Rocq a `forall p, ...` lemma becomes a statement with a fixed `p = 3`. Any existing proof that relies on the `forall` quantifier structure will break and need to be updated accordingly.
+ **Note on concrete parameter values**: If your specification declares a parameter (e.g. `parameter p : Index 5`) and you originally verified and constructed a proof assuming `p` is universally quantified (i.e. `forall`), passing a concrete value via `--parameter p:3` when compiling directly will cause the generated type to change. For example, in Rocq a `forall p, ...` axiom becomes a statement with a fixed `p = 3`. Any existing proof that relies on the `forall` quantifier structure will break and need to be updated accordingly.
 
 A neural network controller `controller.onnx` can be verified against the specification by running:
 
@@ -120,7 +116,7 @@ vehicle verify \
   --cache controller-result
 ```
 
-The `--cache argument specifies where Vehicle writes the verification result. This cache records whether the property was successfully verified, alongside the hashes of the specification file and the neural network.
+The `--cache` argument specifies where Vehicle writes the verification result. This cache records whether the property was successfully verified, alongside the hashes of the specification file and the neural network.
 
 Assuming this property holds, we can export the specification from the cache to our ITP of choice:
 
@@ -131,10 +127,10 @@ vehicle export \
   --output WindControllerSpec.<ITP_EXTENSION>
 ```
 
-If you want to export the specification directly **without a verification cache** (generating axioms or postulates instead of verified lemmas), you can pass the `.vcl` file and its resources directly without verifying:
+If you want to compile the specification directly **without a verification cache** (generating axioms or postulates instead of verified lemmas), pass the `.vcl` file and its resources to the ITP compiler:
 
 ```bash
-vehicle export \
+vehicle compile itp \
   --target <ITP_NAME> \
   --specification windController.vcl \
   --network controller:controller.onnx \
@@ -652,17 +648,20 @@ The full proof of correctness for the system can be found in [SafetyProof.thy](h
 
 When exporting specifications to an interactive theorem prover, you can choose whether or not to provide a verification cache using the `--cache` parameter.
 
-# 1. Exporting WITH a Cache (`--cache`)
-Providing the cache path points Vehicle to the hashes and verification results generated during the `vehicle verify` step.
-*   **How it works (where supported)**: For Agda and Rocq, Vehicle translates `@property` declarations into formal proof structures (`Lemma` in Rocq, or macro calls in Agda). Note that Imandra and Isabelle do not currently support cache-backed validation.
-*   **At check time**: When the theorem prover checks the generated file, it invokes a Vehicle validation step (`vehicle_validate` in Rocq or `checkSpecification` in Agda). This checks that the cache exists and that the stored hashes still match the current source files and network, it does **not** re-run the neural network verifier (e.g. Marabou). Verification was already done, the cache just records the result.
-*   **Why use it**: A succesful verification is required for a cache to be created. Meaning an ITP proof using this cache can be used for actual verification. The cache also stores a hash of the network and specification, so if either is later modified, the hash check will fail, indicating that re-verification is needed before the proof is valid again.
+## Exporting with a Cache (`--cache`)
 
-# 2. Exporting WITHOUT a Cache (Postulates & Axioms)
+Providing the cache path points Vehicle to the hashes and verification results generated during the `vehicle verify` step.
+
+- **How it works (where supported)**: For Agda and Rocq, Vehicle translates `@property` declarations into formal proof structures (`Lemma` in Rocq, or macro calls in Agda). Note that Imandra and Isabelle do not currently support cache-backed validation.
+- **At check time**: When the theorem prover checks the generated file, it invokes a Vehicle validation step (`vehicle_validate` in Rocq or `checkSpecification` in Agda). This checks that the cache exists and that the stored hashes still match the current source files and network; it does **not** re-run the neural network verifier (e.g. Marabou). Verification was already done: the cache records the result.
+- **Why use it**: A successful verification is required for a cache to be created, so an ITP proof using this cache can use the verified result. The cache also stores a hash of the network and specification. If either is later modified, the hash check fails, indicating that re-verification is needed before the proof is valid again.
+
+## Exporting without a Cache (Postulates and Axioms)
+
 If you omit the `--cache` parameter (or if your target backend does not support cache-backed validation, as is currently the case for Imandra and Isabelle), Vehicle cannot verify whether the property holds.
-*   **How it works**: Vehicle compiles all `@property` declarations into **postulates** (Agda) or **axioms** (Rocq, Isabelle, Imandra).
-*   **Why use it**:
-    *   **Iterative development**: You want to check if your system-level proof is structurally correct under the assumption that the neural network satisfies its properties, before needing to run verification.
+
+- **How it works**: Vehicle compiles all `@property` declarations into **postulates** (Agda) or **axioms** (Rocq, Isabelle, Imandra).
+- **Why use it**: You can check whether your system-level proof is structurally correct under the assumption that the neural network satisfies its properties before running verification.
 
 # Summary: The Vehicle to ITP Pipeline
 
@@ -705,11 +704,13 @@ The following diagram illustrates the complete process of using Vehicle to expor
 
 # Exercises
 
- **Note**: While some of the instructions and examples in these exercises reference Rocq for consistency, you can complete them using your preferred ITP backend (Agda, Imandra, or Isabelle).
+We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty: *easy, moderate and hard*.
 
-## Exercise 1 (*): Export the Wind Controller Specification
+**Note**: While some of the instructions and examples in these exercises reference Rocq for consistency, you can complete them using your preferred ITP backend (Agda, Imandra, or Isabelle).
 
-Navigate to the `examples/windController` directory in the repository. We will run a verification using the Marabou verifier to produce the verification cache, then export it:
+## Exercise #1 (⭑): Export the Wind Controller Specification
+
+Navigate to the `chapter-5/chapter-code` directory of the [tutorial repository](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-5/chapter-code). We will run a verification using the Marabou verifier to produce the verification cache, then export it:
 
 1. Run the verification command to generate the cache:
    ```bash
@@ -728,13 +729,13 @@ Navigate to the `examples/windController` directory in the repository. We will r
    ```
 3. Open `WindControllerSpec.v` and verify that the safety property `safe` appears as a `Lemma` discharged by the `vehicle_validate` tactic (Rocq).
 
-## Exercise 2 (*): Exporting With vs. Without Cache
+## Exercise #2 (⭑): Exporting With vs. Without Cache
 
 Let's compare the generated output files when exporting with and without a verification cache.
 
-1. Export the specification again, but this time use `--specification` directly instead of `--cache`:
+1. Compile the specification directly without the verification cache:
    ```bash
-   vehicle export \
+   vehicle compile itp \
      --target Rocq \
      --specification windController.vcl \
      --network controller:controller.onnx \
@@ -743,39 +744,56 @@ Let's compare the generated output files when exporting with and without a verif
 2. Open both `WindControllerSpec.v` and `WindControllerSpecAxiom.v` side by side.
 3. Note how the representation of the `safe` property changes. Confirm that it is exported as a `Lemma` (verified using the cache) in the former, but as an opaque `Axiom` or `Parameter` in the latter.
 
-## Exercise 3 (*): Refactoring Specifications to Records
+## Exercise #3 (⭑⭑): Refactoring Specifications to Records
 
 In previous chapters, we learned how to use user defined records to improve spec readability. Let's rewrite our specification to see how record types affect the exported ITP files.
 
-1. Create a copy of `windController.vcl` and rewrite it. Refactor the network inputs and outputs to use records (using the `@tensor record` syntax) rather than raw tensors.
+1. Create a copy of `windController.vcl` and rewrite it. Refactor the network inputs and outputs to use records (using the `@tensor record` syntax) rather than raw tensors. Keep the existing `normalise` calculation unchanged: this exercise changes the Vehicle data representation, not the supplied ONNX model or its preprocessing.
 2. Update the network definition, `safeInput`, and `safeOutput` functions in your specification to project fields using record field names rather than tensor indexing operations.
 3. Re-verify the updated specification and export it to Rocq.
-4. Compare your .vcl file and generated export file. Notice how the difference in readability and structure between the two files and how it affects the generated code.
+4. Compare your `.vcl` file and generated export file. Notice the difference in readability and structure between the two files and how it affects the generated code.
 
-If you get stuck or want to compare your final specification with the completed versions:
+If you get stuck, compare your work with the solution supplied for the same local network:
 
-*   Original tensor-based specification: [windController.vcl (tensor-based)](https://github.com/vehicle-lang/vehicle/blob/dev/examples/windController/windController.vcl)
-*   Refactored record-based specification: [windController.vcl (record-based)](https://github.com/vehicle-lang/vehicle/blob/dev/examples/windController-newStyle/windController.vcl)
-*   **Note**: The refactored record-based specification has normalisation built directly into the neural network itself, so it lacks the explicit `normalise` function found in the original tensor-based version. However, it is otherwise fundamentally the same.
+- [Record-based model solution](https://github.com/vehicle-lang/tutorial/blob/exercises/chapter-5/solutions/windController-records-solution.vcl)
 
-## Exercise 4 (*): Verifying and Proving Centred Sensor Stability
+## Exercise #4 (⭑⭑⭑): Verifying and Proving Centred Sensor Stability
 
-Specify and verify a stability property: **Centred Sensor Stability**. This property asserts that when the sensor readings indicate the car is very close to the centre of the road (bounded within $[-0.5, 0.5]$ metres), the controller output adjustment must remain small (bounded within $[-0.5, 0.5]$ metres/second) to prevent sensor error from causing erratic overcorrections.
+Specify and verify a stability property: **Centred Sensor Stability**. The property should say that when the current sensor reading is within $[-0.2, 0.2]$ metres of the road centre and has changed by at most $0.2$ metres since the previous reading, the controller's velocity adjustment remains within $[-0.5, 0.5]$ metres/second.
 
-1. Open your copy of `windController.vcl`.
-2. Define a new property `sensorNearCenter` that bounds the output velocity change when inputs are near the road centre (within $[-0.5, 0.5]$).
-3. Run `vehicle verify` on the updated specification to generate a new verification cache.
-4. Export the verified specification with the cache to Rocq.
-5. In your `SafetyProof.v` file, write a new theorem `controllerCenterBound` and use the new exported `sensorNearCenter` lemma to prove a centred bound.
+The position and change conditions describe different things. For example, a previous reading of $-0.2$ and a current reading of $0.2$ are both close to the centre, but the reading has jumped by $0.4$ metres. Because the controller receives both readings, it may react more strongly to that change. The condition $|currentSensor - previousSensor| \leq 0.2$ excludes this pair and captures the intended meaning of a stable reading.
 
-**Challenge (Parameterised Stability):**
+Vehicle 0.26.1 also needs an explicit finite range for every input to the network. Let the change be `currentSensor - previousSensor`. Rearranging this gives `previousSensor = currentSensor - change`. In the worst case the current reading is $0.2$ metres from the centre and the previous reading is another $0.2$ metres beyond it, so:
+
+$$|previousSensor| \leq 0.2 + 0.2 = 0.4.$$
+
+Therefore you will write $|previousSensor| \leq 0.4$ in the Vehicle property. This is not an extra physical assumption; it merely makes a consequence of the other two assumptions explicit for the verifier.
+
+1. Open `chapter-5/exercises/windController-exercises.vcl` from the [supporting exercise materials](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-5/exercises).
+2. Define `stableNearCenterInput` using the current-position and sensor-change bounds described above.
+3. Define `derivedPreviousSensorBound` for $|previousSensor| \leq 0.4$ and include it in the premise passed to Vehicle.
+4. Define `smallControllerOutput` and a new property `sensorNearCenter` requiring the controller output to remain within $[-0.5, 0.5]$.
+5. Run `vehicle verify` on the updated specification to generate a new verification cache.
+6. Export the verified specification with the cache to Rocq.
+7. In a Rocq proof file, write `controllerCenterBound` using only `stableNearCenterInput` as its assumption. The exported `sensorNearCenter` lemma expects the explicit previous-reading bound as well, so first prove that bound from the two parts of `stableNearCenterInput`, then supply it when applying the generated lemma. This Rocq step proves that the `0.4` bound follows automatically from the two stability conditions, so `controllerCenterBound` does not require an additional assumption.
+
+**Challenge (parameterised stability):**
+
 Try creating a parameterised version of this property by declaring:
+
 ```vehicle
-parameter maxDistance : Real
-parameter maxSpeed : Real
+@parameter
+maxDistance : Real
+
+@parameter
+maxSensorChange : Real
+
+@parameter
+maxSpeed : Real
 ```
-You can save this parameterised version in a separate specification file (e.g., `windControllerParam.vcl`). This allows you to run verification with different distance and speed values (using the `--parameter` flag) to easily verify different safety bounds.
+
+Use `maxDistance + maxSensorChange` in the explicit bound for the previous reading. You can then supply different values with the `--parameter` flag to explore which combinations the controller satisfies. A checked model solution and known passing and failing examples are documented in the Chapter 5 solutions README.
 
 If you get stuck or want to compare your work:
-*   [Completed Centred Stability Specification (windController.vcl)](https://github.com/vehicle-lang/vehicle/blob/dev/examples/windController/windController.vcl) <!-- Placeholder link -->
-*   [Completed Safety Proof (SafetyProof.v)](https://github.com/vehicle-lang/vehicle/blob/dev/examples/windController/rocqProof/SafetyProof.v) <!-- Placeholder link -->
+
+- [Chapter 5 model solutions](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-5/solutions)

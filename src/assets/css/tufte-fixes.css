@@ -26,6 +26,12 @@ pre>code {
   box-sizing: border-box;
 }
 
+/* List code block fix */
+li > pre {
+  width: 100%;
+  max-width: 100%;
+}
+
 pre.fullwidth {
   width: 90%;
   max-width: 90%;
