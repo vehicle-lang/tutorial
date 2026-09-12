@@ -15,10 +15,13 @@ epochs with the specification in its objective, and verified after every one of 
 # Part I --- Training for robustness with standard machine learning
 
 ## Motivation
-We will begin this chapter with a question: _how can we train a neural network to be more robust within a desirable $\epsilon$?_
-The long tradition of robustifying neural networks in machine learning has a few methods
-ready. For example, we can re-train the networks with new data that was augmented using images within the
-desired $\epsilon$-balls, or generate adversarial examples (sample images closest to the boundary of the $\epsilon$-ball) during training. Let us briefly explore these approaches.
+We begin with a question: _how can we train a neural network to be more robust within a
+chosen $\epsilon$?_ Machine learning has a long tradition of methods for this, and two
+dominate. One re-trains the network on additional data drawn from inside the
+$\epsilon$-balls around the training points; the other generates adversarial examples, the
+points inside each ball on which the network is closest to changing its answer, as
+training proceeds. We will look at both, after first seeing how robust a network trained
+in the ordinary way turns out to be.
 
 ## Training with Loss Functions
 Humans learn by making mistakes. The same is true of neural networks. Loss functions are a way of measuring the "magnitude" of a mistake made by a neural network. For a given training input, loss functions compute a penalty proportional to the difference between the output of the network and the _true_ output (i.e., the training label). Formally, this is written as follows:
@@ -182,6 +185,8 @@ model = nn.Sequential(
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 cross_entropy = nn.CrossEntropyLoss()
 
+num_epochs = 150  # the script ships with 5; the table below uses 75, 100 and 150
+
 for epoch in range(num_epochs):
     running_loss, correct, seen = 0.0, 0, 0
 
@@ -273,28 +278,14 @@ Note that this is not the ceiling moving. Over those same checkpoints the number
 correctly classified images goes 38, 38, 37 --- down by one --- while the number proved
 robust falls by four.
 
-That is worth dwelling on, because it is what one would expect. Once the training data is
-fitted, further optimisation of cross-entropy cannot change which side of the decision
-boundary those points fall on --- so instead it draws the boundary closer to them, buying
-ever greater confidence on examples that were already correct. The margin around each
-point narrows. A small enough neighbourhood never notices this, which is why the
-$\epsilon = 0.005$ column is flat; a larger one does, and points that sat comfortably
-inside the correct region begin to straddle its edge. Robustness, on this evidence, is not
-merely a quantity the task objective neglects. It is one the task objective quietly
-erodes, and the erosion is invisible until the question is asked at a radius wide enough
-to see it. Which is precisely why robustness has to be trained for, rather than hoped for
-as a by-product of fitting the data well [@madry2017towards].
-
-The $\epsilon = 0.005$ figures therefore say more about the question than about the
-network. At that radius, classifying an image correctly almost guarantees classifying its
-whole neighbourhood correctly, so the verification is measuring generalisation more than
-robustness.
-
-What survives regardless is the shape of the objective. Once cross-entropy is satisfied,
-there is nothing left in it to push the network towards anything it does not measure ---
-the loss falls sevenfold above while held-out accuracy does not improve at all.
-Robustness is exactly such an unmeasured quantity. If we want it, it has to appear in the
-objective itself.
+This is what one would expect. Once the training data is fitted, further optimisation of
+cross-entropy cannot change which side of the decision boundary the training points fall
+on, so it draws the boundary closer to them instead, buying greater confidence on answers
+that were already correct. The margin around each point narrows. A neighbourhood of radius
+$0.005$ is too small to notice; one of radius $0.02$ is not. So robustness is not just a
+quantity the task objective fails to measure. It is one the task objective erodes, and the
+erosion only shows at a radius wide enough to see it [@madry2017towards]. If we want
+robustness, it has to appear in the objective itself.
 
 **How much room is there to improve?** Before turning to methods, it is worth asking how
 much of a robustness problem there is to solve, and that depends on $\epsilon$. The
@@ -323,33 +314,51 @@ We will first consider traditional machine learning methods that were introduced
 
 ## Data augmentation
 
-Machine learning has a long tradition of making networks more robust, and two methods
-dominate it. Both work by training on extra inputs drawn from around each data point;
-they differ in how those inputs are chosen.
+Both established methods train on extra inputs drawn from around each data point; they
+differ in how those inputs are chosen.
 
-**Data Augmentation** works by generating additional data within the $\epsilon$-balls of the original training data points, usually done using methods such as rotation, cropping, flipping, random sampling, etc. The augmented data points are assigned the same label as the original ones they were augmented from. We can then use our usual training methods with this augmented dataset with the hope that it will improve the network's average-case robustness [@SK19].
+**Data augmentation** generates additional training data inside the $\epsilon$-ball of
+each original point, by rotating, cropping, flipping or randomly perturbing it, and gives
+every new point the label of the point it came from. Training then proceeds as usual on
+the enlarged data set, in the hope of improving the network's average-case robustness
+[@SK19].
 
-Unfortunately, this approach has its problems. Firstly, if our original sampled data point is already very close to the decision boundary, there is a chance that an augmented data point will actually lie on the wrong side, even though it is still within the $\epsilon$-ball. This means it will have been assigned the wrong label:
+The method has two problems, both to do with labels. If an original point lies close to
+the decision boundary, an augmented point may fall on the other side of it while still
+inside the ball, and so carry the wrong label:
 
 ![Epsilon-balls that straddle the decision boundary (red): an augmented point drawn from one of these may land on the wrong side while still inheriting the original label](../assets/images/SR-vs-CR-4-white-bg.png)
 
-In the case where two data points' $\epsilon$-balls overlap, there is a chance we generate two new data points with the same position in the input space. Furthermore, if the two original data points lie both close to (and on opposite sides of) the decision boundary, the augmented data points may have _different labels_, despite occupying the same location in the input space:
+And if the balls of two points on opposite sides of the boundary overlap, the same
+location in input space can be generated twice, once with each label:
 
 ![Two epsilon-balls overlapping across the decision boundary: a point in the shaded intersection can be generated twice, once with each label](../assets/images/SR-vs-CR-5-white-bg.png)
 
-These inconsistencies mean this approach is generally unviable for network robustification.
+Training on data with these inconsistencies does not reliably make a network robust, so
+the method is not viable for the kind of robustness we want to verify.
 
 ## Adversarial training
 
-**Adversarial Training** [@madry2017towards] also involves generating new data to train the network, but unlike data augmentation where perturbations are sampled randomly, adversarial training aims to find the _worst-case_ perturbation within $\epsilon$-distance to a data point from the training dataset. Whilst data augmentation can be done using worst-case examples, it is still subtly different to adversarial training. Most notably, adversarial training is a process integrated into the network's training loop, so perturbations are regenerated at every iteration. This means the worst-case examples will _always_ be worst case, which is not true for data augmentation, as after a certain number of iterations the network will have learnt to account for these examples. Pictorially, this amounts to looking at gradients, while not drawing any firm lines:
+**Adversarial training** [@madry2017towards] also trains on new points, but chooses them
+differently. Instead of sampling perturbations at random, it searches for the
+_worst-case_ perturbation within $\epsilon$ of each training point, the one on which the
+network's loss is largest. The search is part of the training loop, so the perturbations
+are recomputed at every step and stay worst-case as the network changes, whereas augmented
+data is fixed in advance and the network soon learns to handle it. Pictorially, the method
+follows the loss gradient inside each ball rather than scattering new points across it:
 
 ![Training points and the epsilon-balls around them, within a region of the input space](../assets/images/SR-vs-CR-3-white-bg.png)
 
-Formally, adversarial training uses a variant of gradient descent, called **projected gradient descent**, to _maximise_ loss in order to find worst-case perturbations. We ensure that the perturbation still lies within the $\epsilon$-ball of the original data point by _projecting_ those perturbations that escape the $\epsilon$-ball back inside. Our new training objective, due to Madry et al. [-@madry2017towards], becomes:
+Formally, adversarial training uses **projected gradient descent** to _maximise_ the loss
+over the ball, projecting any perturbation that escapes the ball back inside, and then
+minimises the result over the network's parameters. The objective, due to Madry et al.
+[-@madry2017towards], is:
 
 $$\min_\theta\bigg[\max_{x:|x-\hat x|\le\epsilon} \mathcal{L}(x, y) \bigg]$$
 
-In other words, we want to find the perturbation $x$ that is within $\epsilon$-distance of the data point $\hat x$ that produces the _largest_ loss (the worst-case perturbation). Then, we aim to find the optimisation parameters $\theta$ which _minimises_ this loss value.
+The inner maximisation finds the perturbation $x$ within $\epsilon$ of the data point
+$\hat x$ that produces the largest loss; the outer minimisation finds the parameters
+$\theta$ that make that worst-case loss as small as possible.
 
 
 ## What adversarial training actually optimises
@@ -397,27 +406,26 @@ Part I ended on a mismatch: adversarial training optimises standard robustness w
 specification asks for classification robustness. That is one instance of a general
 problem. The machine-learning toolkit was built for one property, on one kind of input
 region, in one application domain; a specification language lets us write down far more
-than that. This part follows the framework of Flinkow et al. [@FlinkowCKMK25], which
-sets out what has to change, and why Vehicle is organised the way it is.
+than that. This is the third of the challenges listed in Chapter 1, integrating
+property-driven training with verification. This part follows the framework of Flinkow et
+al. [@FlinkowCKMK25], which sets out what has to change, and why Vehicle is organised the
+way it is.
 
 Three difficulties stand between the standard recipe and training for arbitrary
 specifications. We take them in turn.
 
 ## Problem 1: specifications and objectives come apart
 
-The table at the end of Part I is the first difficulty in miniature. Interpreting a
-logical specification as an optimisation objective is done by hand, informally, and it is
-easy to get wrong --- and when it goes wrong nothing complains. Training proceeds, the
-loss falls, and the verifier reports no improvement, because the quantity being minimised
-was never the quantity being checked.
-
-The consequence Casadio et al. [-@CasadioKDKKAR22] draw is worth stating plainly: one kind
-of robustness does not imply another, so optimising for one can achieve very little in
-verification success rates for another. What is needed is not a better hand-translation
-but a *systematic* one --- a single source of truth from which both the verification query
-and the training objective are derived. That is exactly what a specification language can
-provide, and it is the reason training belongs inside the verification toolchain rather
-than beside it.
+The table at the end of Part I is the first difficulty in miniature. Turning a logical
+specification into an optimisation objective is done by hand, and when it goes wrong
+nothing complains: training proceeds, the loss falls, and the verifier reports no
+improvement, because the quantity minimised was never the quantity checked. Casadio et al.
+[-@CasadioKDKKAR22] draw the consequence: one kind of robustness does not imply another,
+so optimising for one can achieve very little for another. What is needed is not a better
+hand-translation but a *systematic* one, a single source from which both the verification
+query and the training objective are derived. That is what a specification language can
+provide, and it is why training belongs inside the verification toolchain rather than
+beside it.
 
 ## Problem 2: from $\epsilon$-balls to hyper-rectangles
 
@@ -430,18 +438,18 @@ which suits images, where a small perturbation of every pixel is a meaningful no
 "nearby". It suits other domains badly.
 
 In natural language processing the input space is discrete, and an $\epsilon$-ball around
-a sentence contains no sentences --- the region that matters is the set of *semantically*
-similar sentences, which is not a ball around anything. As Chapter 2, has shown, in cyber-physical systems the
-input space is low-dimensional and the interesting regions are named by the
-specification itself: "intruder near and approaching from the left" is a constraint on
+a sentence contains no sentences; the region that matters is the set of *semantically*
+similar sentences, which is not a ball around anything. In the cyber-physical systems of
+Chapter 2 the input space is low-dimensional and the interesting regions are named by the
+specification itself: "intruder directly ahead and moving towards us" is a constraint on
 five variables with different units and ranges, not a ball.
 
 The generalisation is to a **hyper-rectangle**, an independent interval per dimension:
 
 $$\mathbb{H}(\mathbf{l}, \mathbf{u}) := \{\mathbf{x} \in \mathbb{R}^m \mid l_i \leq x_i \leq u_i\}.$$
 
-We can always "draw" such a hyper-rectangle, assuming that we have only linear constraints on the input variable. And so far, all examples we cared about were given in that format.
-Recall, for example, this constraint from Chapter 2:
+Any conjunction of bounds on individual inputs describes one. Recall this constraint from
+Chapter 2:
 
 ```vehicle
 directlyAhead : UnnormalisedInput -> Bool
@@ -456,7 +464,7 @@ movingTowards x =
   x ! intruderSpeed   >= 960
 ```
 
-These constriants give rise to the following hyper-rectangle in five-dimensional space:
+These constraints give rise to the following hyper-rectangle in five-dimensional space:
 
 <!-- $$
 X = \left\{ x \in \mathbb{R}^5 :\;\;
@@ -484,11 +492,12 @@ X = \left\{ x \in \mathbb{R}^5 :\;\;
 \right\}
 $$
 
-Note that here the upper bounds for $x_3$, $x_4$ and $x_5$ are those listed as maximum input values in the ACAS Xu specification in Chapter 2. Every $\epsilon$-ball is a hyper-rectangle with $l_i = x_i - \epsilon$ and
-$u_i = x_i + \epsilon$, so nothing is lost, and regions that no ball can express become
-available. The training objective generalises by substitution --- where adversarial
-training maximises over $\mathbf{x}' \in \mathbb{B}(\mathbf{x}; \epsilon)$, we maximise
-over $\mathbf{x}' \in \mathbb{H}(\mathbf{x})$.
+The upper bounds for $x_3$, $x_4$ and $x_5$ are the maximum input values from the ACAS Xu
+specification in Chapter 2. Every $\epsilon$-ball is a hyper-rectangle with
+$l_i = x_i - \epsilon$ and $u_i = x_i + \epsilon$, so nothing is lost, and regions that no
+ball can express become available. The training objective generalises by substitution:
+where adversarial training maximises over $\mathbf{x}' \in \mathbb{B}(\mathbf{x}; \epsilon)$,
+we maximise over $\mathbf{x}' \in \mathbb{H}(\mathbf{x})$.
 
 ## Problem 3: beyond "classify this as $N$"
 
@@ -584,24 +593,19 @@ and a differentiable logic and returns the named properties, each as a callable 
 evaluates $\lbrack\!\lbrack \phi \rbrack\!\rbrack$ for a batch; `alpha` in the training loop is the $\lambda$ that
 balances task loss against constraint loss.
 
-The code below selects `VehicleDifferentiableLogic`, Vehicle's built-in default. The
-Capucci logic of the previous section can be declared directly in the specification as a
+Vehicle has two built-in logics, `VehicleDifferentiableLogic` and
+`DL2DifferentiableLogic`; the code below selects the first. The Capucci logic of the
+previous section can be declared directly in the specification as a
 `DifferentiableTensorLogic` and selected by name with
-`vcl.CustomDifferentiableLogic("qllAdditive")`; a worked example lives alongside the
-chapter code.
+`vcl.CustomDifferentiableLogic("qllAdditive")`, which is what the experiment at the end
+of the chapter does.
 
 **A note on Vehicle versions.** The code in this section needs **Vehicle 0.28.0 or
-later**. In 0.27.1 and earlier the loss compiled from a `forall` quantifier did not
-behave as the objective above requires: widening the input region, or searching it
-harder, made the compiled loss report the property as *better* satisfied rather than
-worse, and training against it made networks less robust. The cause was a single sign in
-the adversarial search that implements the inner $\max$: it descended the loss instead of
-ascending it, returning the *least* violating perturbation. Version 0.28.0 fixes it, and
-the results at the end of this chapter were obtained with it. The diagnostic that found
-the problem is worth keeping in your own toolkit: evaluate a specification's loss on a
-fixed network at several values of $\epsilon$, and check that it moves the way the
-quantifier demands. For a `forall` over the neighbourhood it must not fall as the
-neighbourhood grows.
+later**. In earlier versions the adversarial search that implements the inner $\max$
+stepped in the wrong direction, so the compiled loss reported a property as *better*
+satisfied inside a wider neighbourhood, and training against it made networks less
+robust. The scripts run without complaint on those versions, so check `vehicle --version`
+rather than waiting for an error.
 
 Next, we will load our Vehicle specification and define our constraint loss function:
 
@@ -644,9 +648,12 @@ constraint_loss_fn = spec["robust"]
 </div>
 </div>
 
-The first parameter to the `load_specification` function is the path to the Vehicle specification. The second parameter defines which logic to use -- this is optional, and defaults to DL2. We define which property from the specification to use as our constraint loss function by accessing it by name on the specification object.
+The first parameter to the `load_specification` function is the path to the Vehicle specification. The second parameter defines which logic to use; it is optional, and defaults to `DL2DifferentiableLogic`. We define which property from the specification to use as our constraint loss function by accessing it by name on the specification object.
 
-Next, we will define a simple model and training procedure:
+Next, we will define a simple model and training procedure. This is the minimal version of
+the loop, at $\epsilon = 0.005$ and `alpha = 0.5` with the built-in logic; the experiment
+at the end of the chapter changes those three settings, for reasons Part I has already
+given, and otherwise runs exactly this code.
 
 <div class="tabs-container">
   <div class="tabs-header">
@@ -922,9 +929,7 @@ and 0.063 throughout, against 0.041 at the start. The final network is better th
 starting one on both axes at once. Part I showed that cross-entropy alone erodes robustness
 once the data is fitted. The constraint term reverses that, and the task term did not have
 to give anything up for it. That is the blend of the previous section doing what it was
-designed to do: neither term alone would have got here, since cross-entropy alone erodes
-the margin, and the constraint alone would be perfectly satisfied by a network that
-classifies everything the same way.
+designed to do.
 
 Two things are worth knowing beyond the headline.
 
@@ -957,10 +962,28 @@ networks and all ten solver transcripts. Its README walks through the code and r
 run, including the two earlier attempts under Vehicle 0.27.1 that failed because of the
 bug described above, which is how the bug was found. Two habits from that episode carry
 over to any property-driven training project. Check the compiled loss against the
-quantifier before training, by evaluating it at several radii. And treat a constraint loss
-that falls while the verified count also falls as a pipeline bug, not a training
-difficulty: the surrogate and the property have come apart, and the fix is upstream of the
-hyper-parameters.
+quantifier before training: evaluate it on a fixed network at several radii, and for a
+`forall` over the neighbourhood it must not fall as the neighbourhood grows. And treat a
+constraint loss that falls while the verified count also falls as a pipeline bug, not a
+training difficulty: the surrogate and the property have come apart, and the fix is
+upstream of the hyper-parameters.
+
+## Where this leaves us
+
+Part II set out three problems. The experiment answers the first directly: the property
+that was trained for and the property that was verified are the same `.vcl` text, compiled
+two ways, and nothing was translated by hand. It does not exercise the other two. The input
+region is an $\epsilon$-cube and the conclusion holds one label fixed, so the same result
+could in principle have been reached by adversarial training with the right choice of
+loss. What the specification buys becomes visible only when the region is a
+hyper-rectangle that no ball describes, or the conclusion is a disjunction with no label to
+hold fixed, as in the ACAS Xu property of Chapter 2. The machinery is identical: the same
+`load_specification`, the same blended objective, the same verification command. This
+chapter has shown, in the simplest case where the answer can be checked against Part I's
+baseline, that the machinery does what it claims. The third of Chapter 1's challenges,
+integrating property-driven training with verification, is in that sense met for
+robustness; extending the measurement to richer specifications is the natural next
+experiment, and the exercises point the way.
 
 # Exercises
 
@@ -975,10 +998,10 @@ Use a Vehicle specification (either the one provided, or your own) to verify a p
 ## Exercise #3 (⭑⭑): Further experimentation
 Try various combinations of task loss functions, constraint loss functions, and alpha values. How do these affect each other? Is there a combination that makes the network more robust? Is there a combination that makes the network more accurate? What happens when you use multiple constraint loss functions simultaneously?
 
-## Exercise #4 (⭑⭑⭑): Training a model from scratch
+## Exercise #4 (⭑⭑): Normalisation inside the network
+Part I kept the pixels in $[0, 1]$ and warned against normalising them. Rebuild the training-verification pipeline *with* normalisation, but placed inside the network as its first layer, so that the inputs the specification and the verifier see are still raw pixels. Train, export, and verify. What does Marabou say about the exported network, and why? Fix it by folding the normalisation into the first linear layer before exporting, check that the folded network computes the same function as the trained one, and verify again. The chapter code's `pt_classifier.py` contains one solution.
+
+## Exercise #5 (⭑⭑⭑): Training a model from scratch
 Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness, and the effect robustness training can have on this.
 
 Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
-
-## Exercise #5 (⭑⭑): Normalisation inside the network
-Part I kept the pixels in $[0, 1]$ and warned against normalising them. Rebuild the training-verification pipeline *with* normalisation, but placed inside the network as its first layer, so that the inputs the specification and the verifier see are still raw pixels. Train, export, and verify. What does Marabou say about the exported network, and why? Fix it by folding the normalisation into the first linear layer before exporting, check that the folded network computes the same function as the trained one, and verify again. The chapter code's `pt_classifier.py` contains one solution.
