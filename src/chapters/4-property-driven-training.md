@@ -950,23 +950,14 @@ rather than as a second proof of it.
 
 Part II set out three problems. The experiment answers the first directly: the property
 that was trained for and the property that was verified are the same `.vcl` text, compiled
-two ways, and nothing was translated by hand. It does not exercise the other two. The input
-region is an $\epsilon$-cube and the conclusion holds one label fixed, so the same result
-could in principle have been reached by adversarial training with the right choice of
-loss. What the specification buys becomes visible only when the region is a
-hyper-rectangle that no ball describes, or the conclusion is a disjunction with no label to
-hold fixed, as in the ACAS Xu property of Chapter 2. Chapter 6 is where both appear in a
-real system: the Vancomycert dosing controller's input domain is a five-dimensional
-hyper-rectangle of patient ranges, and its properties bound the dose the network outputs
-rather than fix a label. That chapter specifies and verifies those properties with Vehicle;
-the same specification compiles to a loss by the mechanism of this chapter, and the case
-study names property-driven training as the next step without carrying it out. The
-machinery is identical throughout: the same `load_specification`, the same blended
-objective, the same verification command. This chapter has shown, in the simplest case
-where the answer can be checked against Part I's baseline, that the machinery does what it
-claims. The third of Chapter 1's challenges, integrating property-driven training with
-verification, is in that sense met for robustness; training against a specification like
-Chapter 6's is the natural next experiment, and the exercises point the way.
+two ways, and nothing was translated by hand. It does not exercise the other two, since
+its input region is an $\epsilon$-cube and its conclusion holds one label fixed. Chapter 6
+will show how the richer, real-life specifications described in Problems 2 and 3 arise
+naturally in the modelling of cyber-physical systems, where input regions are given by
+physical ranges and conclusions are bounds on what a controller may do rather than
+labels. Vehicle will be indispensable then, and the machinery is the same one this chapter
+has just shown at work: the same `load_specification`, the same blended objective, the
+same verification command.
 
 # Exercises
 
