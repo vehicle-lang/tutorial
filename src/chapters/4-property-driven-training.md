@@ -821,7 +821,7 @@ previous section, with the constraint loss compiled from the robustness specific
 epoch's network is exported and verified with Chapter 3's command, unchanged, so each result
 lands directly beside the 22.
 
-### The specification, and the logic
+## The experiment: specification and logic
 
 The training specification is Chapter 3's, with two changes. The first is that `advises` is
 stated non-strictly, `classifier image ! label >= classifier image ! j` for all `j`, because
@@ -879,7 +879,7 @@ whole neighbourhood is classified correctly, and positive otherwise; it exerts a
 on the images that are breakable. The task loss holds the classification in place while
 that force acts.
 
-### The run
+## The experiment: the run
 
 The settings are those of the previous section with two changes, both of which Part I
 argued for: $\epsilon = 0.02$ rather than $0.005$, because $0.005$ leaves one image to win
@@ -909,7 +909,7 @@ last three by Vehicle afterwards, on the fifty held-out test images, exactly as 
 table. No image errored; one query timed out, on the epoch-2 network, and is counted as
 unverified.
 
-### What it shows
+## What the experiment shows
 
 **Property-driven training gained provable robustness, on every snapshot.** The starting
 network proves 22 of the fifty images. All ten snapshots prove between 24 and 27, and the
@@ -947,7 +947,7 @@ The margin is smaller, as it should be after five epochs at a radius where there
 to win, and the plain run is unseeded, so read it as consistent with the table above
 rather than as a second proof of it.
 
-### Reproducing it
+## Reproducing the experiment
 
 Everything is in the
 [`chapter-4/chapter-code/capucci-pdt` folder](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/chapter-code/capucci-pdt)
