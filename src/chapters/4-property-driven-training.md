@@ -8,7 +8,9 @@ put Chapter 3's question to it, and then look at data augmentation and adversari
 training, the two established methods for making a network more robust. The second part
 asks what is missing from that toolkit once the property we care about is an arbitrary
 logical specification rather than an $\epsilon$-ball, and describes the property-driven
-framework that Vehicle is built to support.
+framework that Vehicle is built to support. It closes with the experiment the whole
+chapter has been building towards: the network from the first part, trained for ten more
+epochs with the specification in its objective, and verified after every one of them.
 
 # Part I --- Training for robustness with standard machine learning
 
@@ -564,16 +566,18 @@ Capucci logic of the previous section can be declared directly in the specificat
 `vcl.CustomDifferentiableLogic("qllAdditive")`; a worked example lives alongside the
 chapter code.
 
-**A note on the current release.** The sections above describe the framework and the
-Vehicle interface, and both are stable. We do not, however, present trained-and-verified
-results here. In Vehicle 0.27.1 the loss compiled from a `forall` quantifier does not
+**A note on Vehicle versions.** The code in this section needs **Vehicle 0.28.0 or
+later**. In 0.27.1 and earlier the loss compiled from a `forall` quantifier did not
 behave as the objective above requires: widening the input region, or searching it
-harder, makes the compiled loss report the property as *better* satisfied rather than
-worse. Since the framework depends on that inner maximisation being a genuine worst case,
-we have deferred the experimental half of this chapter until the behaviour is resolved
-upstream, rather than report numbers we cannot stand behind. Readers can reproduce the
-diagnostic themselves by evaluating a specification's loss at several values of
-$\epsilon$ and watching which way it moves.
+harder, made the compiled loss report the property as *better* satisfied rather than
+worse, and training against it made networks less robust. The cause was a single sign in
+the adversarial search that implements the inner $\max$: it descended the loss instead of
+ascending it, returning the *least* violating perturbation. Version 0.28.0 fixes it, and
+the results at the end of this chapter were obtained with it. The diagnostic that found
+the problem is worth keeping in your own toolkit: evaluate a specification's loss on a
+fixed network at several values of $\epsilon$, and check that it moves the way the
+quantifier demands. For a `forall` over the neighbourhood it must not fall as the
+neighbourhood grows.
 
 Next, we will load our Vehicle specification and define our constraint loss function:
 
@@ -746,6 +750,16 @@ torch.onnx.export(
 ```
 
 Exporting an ONNX file in PyTorch works by tracing, which runs the model with an arbitrary input and records each operation. Hence, we provide the model with a randomly generated input tensor. At the time of writing, Marabou does not support external data locations, so we require that `external_data=False`. Recent versions of PyTorch route `torch.onnx.export` through a new exporter that additionally requires the `onnxscript` package, so install that alongside `torch` if the export reports it missing.
+
+One more constraint comes from the verifier rather than the exporter. Marabou reads only
+a subset of ONNX operations: the `Gemm`, `Relu` and `Reshape` that this network produces
+are fine, but elementwise `Sub`, `Div` and `Mul` are not, and a network containing them
+is reported as `errored` on every image. This matters if you follow the common advice to
+normalise *inside* the network, as a first layer that subtracts the mean and divides by
+the standard deviation: that layer exports as exactly those operations. The remedy is to
+fold the normalisation into the first linear layer before exporting, which is exact
+because both are affine. The chapter code's `pt_classifier.py` does this, and one of the
+exercises below asks you to.
 </div>
 
 <div>
@@ -767,6 +781,163 @@ The model is now saved in ONNX format under the name specified with the `--outpu
 </div>
 </div>
 
+## Does it work?
+
+Part I left us with a network and a number. The network is the 100-epoch classifier
+trained on cross-entropy alone, at 99.5% training accuracy; the number is 22, the count of
+Chapter 3's fifty test images it is provably robust on at $\epsilon = 0.02$, out of the 38
+it classifies correctly. We also saw that training it further on cross-entropy pushes that
+number *down*. The question this chapter has been building towards is whether putting the
+specification into the objective pushes it back up, and whether it does so without
+sacrificing the classifier.
+
+The cleanest way to answer that is to change nothing else. So the experiment takes that
+same network, loads its weights, and trains it for ten more epochs on the objective of the
+previous section, with the constraint loss compiled from the robustness specification. Every
+epoch's network is exported and verified with Chapter 3's command, unchanged, so each result
+lands directly beside the 22.
+
+### The specification, and the logic
+
+The training specification is Chapter 3's, with two changes. The first is that `advises` is
+stated non-strictly, `classifier image ! label >= classifier image ! j` for all `j`, because
+the loss compiler does not yet support the `j != label` guard of the strict form. The two
+differ only when the advised label ties with another, and on this problem they return
+identical verdicts for every image, so training on the non-strict property and verifying on
+the strict one is a like-for-like comparison.
+
+The second is that the specification declares the differentiable logic it should be
+compiled with. Rather than the built-in default, we use the quantitative linear logic of
+Part II, written out in Vehicle as a `DifferentiableTensorLogic`:
+
+```vehicle
+p : Real
+p = 2.0
+
+qllAdditive : DifferentiableTensorLogic
+qllAdditive =
+  { trueElement                = -infinity
+  , falseElement               = infinity
+  , pointwiseNegation          = \x -> -x
+  , pointwiseConjunction       = \{dims} x y -> (const (1/p) dims) * log(exp(const p dims * x) + exp(const p dims * y))
+  , pointwiseDisjunction       = \{dims} x y -> -(const (1/p) dims) * log(exp(const (-p) dims * x) + exp(const (-p) dims * y))
+  , pointwiseLessThan          = \x y -> x - y
+  , pointwiseLessEqualThan     = \x y -> x - y
+  , pointwiseGreaterThan       = \x y -> y - x
+  , pointwiseGreaterEqualThan  = \x y -> y - x
+  , pointwiseEqual             = \x y -> max (x - y) (y - x)
+  , pointwiseNotEqual          = \x y -> - max (x - y) (y - x)
+  , reduceConjunction          = \{dims} xs -> (1/p) * log(reduceAdd (exp (const p dims * xs)))
+  , reduceDisjunction          = \{dims} xs -> (1/p) * log(reduceAdd (exp (const (-p) dims * xs)))
+  }
+```
+
+Each line is one of the definitions from the section on differentiable logics: negation is
+$-a$, conjunction and disjunction are the log-sum-exp softenings of $\max$ and $\min$ with
+hardness $p$, and a comparison becomes the margin by which it holds, so that
+$a \geq b$ compiles to $b - a$, which is at most zero when true. The `reduce` forms are the
+same connectives applied across a tensor, which is how `forall j` over the ten labels is
+handled. Selecting it on the Python side is one argument:
+
+```python
+spec = loss_pt.load_specification(
+    "fashionRobustness-capucci.vcl",
+    logic=vcl.CustomDifferentiableLogic("qllAdditive"),
+)
+constraint_loss_fn = spec["robust"]
+```
+
+One consequence of the definitions is worth noticing before training, because it explains
+the numbers that follow. `advises` quantifies over *every* label, including the advised one,
+and for that label the margin `y - x` is exactly zero. The soft maximum of a set of margins
+one of which is zero is at least zero. So the compiled loss for an image is zero when the
+whole neighbourhood is classified correctly, and positive otherwise; it exerts a force only
+on the images that are breakable. The task loss holds the classification in place while
+that force acts.
+
+### The run
+
+The settings are those of the previous section with two changes, both of which Part I
+argued for: $\epsilon = 0.02$ rather than $0.005$, because $0.005$ leaves one image to win
+back and $0.02$ leaves sixteen, and $\alpha = 0.4$, so the constraint term carries slightly
+more weight than the task term. Otherwise: the same 1024 training images in batches of 64,
+Adam at $10^{-3}$, ten epochs, no clamping of the loss and no gradient clipping. On a CPU an
+epoch takes ten to fourteen minutes, because the constraint loss runs an adversarial search
+for every image in every batch; verifying fifty images takes between twelve and forty
+minutes per network and about 14 GB of memory.
+
+| epoch | constraint loss | cross-entropy | train accuracy | correctly classified | provably robust, $\epsilon = 0.02$ | of the correctly classified |
+| ----: | --------------: | ------------: | -------------: | -------------------: | ---------------------------------: | --------------------------: |
+| 0 (start) | --- | 0.0413 | 99.5% | 38/50 | **22/50** | 57.9% |
+| 1 | 0.542 | 0.059 | 98.7% | 37/50 | **27/50** | 73.0% |
+| 2 | 0.462 | 0.060 | 98.9% | 39/50 | **24/50** | 61.5% |
+| 3 | 0.416 | 0.058 | 98.7% | 39/50 | **26/50** | 66.7% |
+| 4 | 0.371 | 0.058 | 98.5% | 38/50 | **24/50** | 63.2% |
+| 5 | 0.334 | 0.054 | 99.3% | 38/50 | **25/50** | 65.8% |
+| 6 | 0.362 | 0.063 | 98.8% | 38/50 | **25/50** | 65.8% |
+| 7 | 0.292 | 0.053 | 99.3% | 39/50 | **25/50** | 64.1% |
+| 8 | 0.290 | 0.055 | 99.0% | 40/50 | **26/50** | 65.0% |
+| 9 | 0.283 | 0.059 | 98.9% | 38/50 | **27/50** | 71.1% |
+| 10 | 0.288 | 0.063 | 99.0% | 40/50 | **27/50** | 67.5% |
+
+The first three columns are measured during training, on the 1024 training images; the
+last three by Vehicle afterwards, on the fifty held-out test images, exactly as in Part I's
+table. No image errored; one query timed out, on the epoch-2 network, and is counted as
+unverified.
+
+### What it shows
+
+**Property-driven training gained provable robustness, on every snapshot.** The starting
+network proves 22 of the fifty images. All ten snapshots prove between 24 and 27, and the
+final one proves 27. As a share of the images each network classifies correctly, the only
+images that could possibly be proved, the baseline's 57.9% became 61.5% to 73.0%.
+
+**It cost no accuracy.** The number of test images classified correctly never fell below
+37 and finished at 40, two above the starting network; cross-entropy stayed between 0.052
+and 0.063 throughout, against 0.041 at the start. The final network is better than the
+starting one on both axes at once. Part I showed that cross-entropy alone erodes robustness
+once the data is fitted. The constraint term reverses that, and the task term did not have
+to give anything up for it. That is the blend of the previous section doing what it was
+designed to do: neither term alone would have got here, since cross-entropy alone erodes
+the margin, and the constraint alone would be perfectly satisfied by a network that
+classifies everything the same way.
+
+Two things are worth knowing beyond the headline.
+
+- **The verified count plateaus after epoch 1 while the loss keeps falling.** The ten
+  counts were 27, 24, 26, 24, 25, 25, 25, 26, 27, 27. The loss is measured on the 1024
+  training images through an FGSM search, and the verification is exact on 50 held-out
+  images, so later loss improvement is partly fitting rather than generalising, and partly
+  tightening margins on perturbations the search can find but Marabou is not limited to.
+- **Consecutive snapshots differ by up to three images with no change in the objective.**
+  Twenty images are proved by all ten snapshots, sixteen by none, and fourteen flip. So a
+  single snapshot carries an error bar of about plus or minus two on this test set. The
+  evidence for the gain is that all ten sit above 22, not any one of them.
+
+The same comparison can be made from scratch, with the two chapter scripts as they ship:
+`vanilla_classifier.py` and `pt_classifier.py` differ only in the constraint term, and each
+trains for five epochs. Their networks classify 33 and 34 of the fifty images correctly,
+so the ceilings match; at $\epsilon = 0.02$ the plain one proves 25 and the property-driven
+one 29, and at $\epsilon = 0.005$, the radius the constraint was trained at, 30 against 32.
+The margin is smaller, as it should be after five epochs at a radius where there is little
+to win, and the plain run is unseeded, so read it as consistent with the table above
+rather than as a second proof of it.
+
+### Reproducing it
+
+Everything is in the
+[`chapter-4/chapter-code/capucci-pdt` folder](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/chapter-code/capucci-pdt)
+of the tutorial repository: the starting network, both specifications, the fifty images,
+the training script, a script that verifies each snapshot as it is written, all ten trained
+networks and all ten solver transcripts. Its README walks through the code and records the
+run, including the two earlier attempts under Vehicle 0.27.1 that failed because of the
+bug described above, which is how the bug was found. Two habits from that episode carry
+over to any property-driven training project. Check the compiled loss against the
+quantifier before training, by evaluating it at several radii. And treat a constraint loss
+that falls while the verified count also falls as a pipeline bug, not a training
+difficulty: the surrogate and the property have come apart, and the fix is upstream of the
+hyper-parameters.
+
 # Exercises
 
 We will use symbols (⭑), (⭑⭑) and (⭑⭑⭑) to rate exercise difficulty: *easy, moderate and hard*.
@@ -784,3 +955,6 @@ Try various combinations of task loss functions, constraint loss functions, and 
 Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness, and the effect robustness training can have on this.
 
 Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
+
+## Exercise #5 (⭑⭑): Normalisation inside the network
+Part I kept the pixels in $[0, 1]$ and warned against normalising them. Rebuild the training-verification pipeline *with* normalisation, but placed inside the network as its first layer, so that the inputs the specification and the verifier see are still raw pixels. Train, export, and verify. What does Marabou say about the exported network, and why? Fix it by folding the normalisation into the first linear layer before exporting, check that the folded network computes the same function as the trained one, and verify again. The chapter code's `pt_classifier.py` contains one solution.
