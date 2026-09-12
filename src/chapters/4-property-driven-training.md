@@ -600,13 +600,6 @@ previous section can be declared directly in the specification as a
 `vcl.CustomDifferentiableLogic("qllAdditive")`, which is what the experiment at the end
 of the chapter does.
 
-**A note on Vehicle versions.** The code in this section needs **Vehicle 0.28.0 or
-later**. In earlier versions the adversarial search that implements the inner $\max$
-stepped in the wrong direction, so the compiled loss reported a property as *better*
-satisfied inside a wider neighbourhood, and training against it made networks less
-robust. The scripts run without complaint on those versions, so check `vehicle --version`
-rather than waiting for an error.
-
 Next, we will load our Vehicle specification and define our constraint loss function:
 
 <div class="tabs-container">
@@ -839,7 +832,8 @@ the strict one is a like-for-like comparison.
 
 The second is that the specification declares the differentiable logic it should be
 compiled with. Rather than the built-in default, we use the quantitative linear logic of
-Part II, written out in Vehicle as a `DifferentiableTensorLogic`:
+Capucci et al. [-@capucci2026] introduced in Part II, written out in Vehicle as a
+`DifferentiableTensorLogic`:
 
 ```vehicle
 p : Real
@@ -952,22 +946,6 @@ The margin is smaller, as it should be after five epochs at a radius where there
 to win, and the plain run is unseeded, so read it as consistent with the table above
 rather than as a second proof of it.
 
-## Reproducing the experiment
-
-Everything is in the
-[`chapter-4/chapter-code/capucci-pdt` folder](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/chapter-code/capucci-pdt)
-of the tutorial repository: the starting network, both specifications, the fifty images,
-the training script, a script that verifies each snapshot as it is written, all ten trained
-networks and all ten solver transcripts. Its README walks through the code and records the
-run, including the two earlier attempts under Vehicle 0.27.1 that failed because of the
-bug described above, which is how the bug was found. Two habits from that episode carry
-over to any property-driven training project. Check the compiled loss against the
-quantifier before training: evaluate it on a fixed network at several radii, and for a
-`forall` over the neighbourhood it must not fall as the neighbourhood grows. And treat a
-constraint loss that falls while the verified count also falls as a pipeline bug, not a
-training difficulty: the surrogate and the property have come apart, and the fix is
-upstream of the hyper-parameters.
-
 ## Where this leaves us
 
 Part II set out three problems. The experiment answers the first directly: the property
@@ -977,13 +955,18 @@ region is an $\epsilon$-cube and the conclusion holds one label fixed, so the sa
 could in principle have been reached by adversarial training with the right choice of
 loss. What the specification buys becomes visible only when the region is a
 hyper-rectangle that no ball describes, or the conclusion is a disjunction with no label to
-hold fixed, as in the ACAS Xu property of Chapter 2. The machinery is identical: the same
-`load_specification`, the same blended objective, the same verification command. This
-chapter has shown, in the simplest case where the answer can be checked against Part I's
-baseline, that the machinery does what it claims. The third of Chapter 1's challenges,
-integrating property-driven training with verification, is in that sense met for
-robustness; extending the measurement to richer specifications is the natural next
-experiment, and the exercises point the way.
+hold fixed, as in the ACAS Xu property of Chapter 2. Chapter 6 is where both appear in a
+real system: the Vancomycert dosing controller's input domain is a five-dimensional
+hyper-rectangle of patient ranges, and its properties bound the dose the network outputs
+rather than fix a label. That chapter specifies and verifies those properties with Vehicle;
+the same specification compiles to a loss by the mechanism of this chapter, and the case
+study names property-driven training as the next step without carrying it out. The
+machinery is identical throughout: the same `load_specification`, the same blended
+objective, the same verification command. This chapter has shown, in the simplest case
+where the answer can be checked against Part I's baseline, that the machinery does what it
+claims. The third of Chapter 1's challenges, integrating property-driven training with
+verification, is in that sense met for robustness; training against a specification like
+Chapter 6's is the natural next experiment, and the exercises point the way.
 
 # Exercises
 
