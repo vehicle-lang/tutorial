@@ -2,11 +2,16 @@
 # Core tool chain — needed for every chapter
 ################################################################################
 
-# Vehicle itself. Deliberately unpinned: Chapter 1 tells readers to run
-# `pip install vehicle-lang`, so CI should test against whatever that gives
-# them today. Pinning here is how this file drifted to 0.17.0 while the
-# chapters documented a much newer command-line interface.
-vehicle-lang
+# Vehicle itself. Deliberately not pinned to one version: Chapter 1 tells
+# readers to run `pip install vehicle-lang`, so CI should test against whatever
+# that gives them today. Pinning here is how this file drifted to 0.17.0 while
+# the chapters documented a much newer command-line interface.
+#
+# The lower bound is real, though: Chapter 4's property-driven training does
+# not work below 0.28.0, because the adversarial search inside the compiled
+# loss stepped in the wrong direction (fixed in 0.28.0). The scripts run
+# without error on 0.27.1 and simply train networks that are less robust.
+vehicle-lang>=0.28.0
 
 # The neural network verifier used from Chapter 2 onwards. Provides the
 # `Marabou` executable that `vehicle verify --solver Marabou` looks for.

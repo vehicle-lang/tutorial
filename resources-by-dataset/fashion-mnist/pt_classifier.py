@@ -1,3 +1,4 @@
+import copy
 import os
 import torch
 import torch.nn as nn
@@ -105,13 +106,41 @@ for epoch in range(num_epochs):
     )
 
 model.eval()
+
+# --- fold the normalisation into the first layer before exporting -------------------
+# The Normalize module exports as ONNX `Sub` and `Div` operations, and Marabou 2.0.0
+# supports neither (nor `Mul`), so a network exported with it in place cannot be
+# verified: every image is reported as `errored`. Normalisation is affine and so is the
+# first Linear layer, so the two compose exactly:
+#
+#     W ((x - MEAN)/STD) + b  =  (W/STD) x + (b - (MEAN/STD) * rowsum(W))
+#
+# The exported network therefore takes the same raw [0,1] pixels as the trained one,
+# contains only Gemm and Relu operations, and computes the same function to within
+# float32 rounding, which is checked below before anything is written.
+def fold_normalisation(m: nn.Sequential) -> nn.Sequential:
+    norm, first = m[0], m[2]
+    folded = nn.Sequential(*[copy.deepcopy(layer) for layer in list(m)[1:]])
+    with torch.no_grad():
+        W, b = first.weight.detach(), first.bias.detach()
+        folded[1].weight.copy_(W / norm.std)
+        folded[1].bias.copy_(b - (norm.mean / norm.std) * W.sum(dim=1))
+    return folded.eval()
+
+export_model = fold_normalisation(model)
+with torch.no_grad():
+    probe = torch.rand(256, 1, 28, 28)
+    deviation = (model(probe) - export_model(probe)).abs().max().item()
+assert deviation < 1e-4, f"folded network deviates from the trained one by {deviation}"
+print(f"Folded normalisation into the first layer for export (max deviation {deviation:.1e})")
+
 input_tensor = torch.randn(1,1,28,28)
 
 path = "pdt-experiment/onnx_models/pdt_classifier.onnx"
 os.makedirs(os.path.dirname(path), exist_ok=True)
 
 torch.onnx.export(
-    model,
+    export_model,
     input_tensor,
     path,
     input_names= ["input"],

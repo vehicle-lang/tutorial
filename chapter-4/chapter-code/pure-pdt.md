@@ -1,5 +1,16 @@
 # Property-driven training with no task loss at all
 
+> **Status (2026-09-11).** This experiment was run under Vehicle 0.27.1, whose compiled
+> loss searched in the wrong direction (see the note on versions at the end of the
+> chapter-code README), and through the input-normalisation mismatch described in
+> [normalisation-options.md](normalisation-options.md). Both defects have since been
+> fixed and the property-driven training in the chapter now works
+> ([README.md, part 3](README.md)). The numbers below should therefore not be quoted as
+> evidence about constraint-only training; they are kept as a record of what the two
+> defects looked like from the outside, and of how the analysis proceeded. The
+> expectation that `alpha = 0` collapses accuracy stands on other grounds: a constant
+> classifier satisfies robustness perfectly.
+
 A single experiment, run to answer one question: if the constraint loss compiled
 from a Vehicle specification is what makes a network verifiable, what happens if we
 train on *only* that, with the task loss switched off entirely?

@@ -1,5 +1,17 @@
 # Vehicle 0.27.1: reproducers for four issues found on 2026-08-27
 
+> **Status as of 2026-09-11, Vehicle 0.28.0.** Re-tested after upgrading:
+>
+> | issue | status in 0.28.0 |
+> | --- | --- |
+> | 1. `forall` inverted at training time | **fixed.** The cause was the sign of the FGSM step in `DefaultPyTorchSampler` (`+eps*sign(grad)` in 0.27.1, `-eps*sign(grad)` in 0.28.0), so the adversarial search descended the loss instead of ascending it. The epsilon sweep now increases with epsilon under the default, DL2 and `qllAdditive` logics; the property-driven training it blocked now works, see `../../chapter-code/capucci-pdt/README.md` run 3. |
+> | 2. DL2 yields `+inf` | **fixed.** DL2 now returns the same finite values as the default logic on `fmnist-robustness.vcl`. |
+> | 3. `@parameter` inside a logic fails to compile | **fixed.** `specs/test-capucci.vcl` now compiles to a loss. |
+> | 4. de Bruijn error compiling `foreach` inside `forall` | **still fails**, with a different internal error: `varOutOfBounds` from `Vehicle.Data.Variable.Bound.Context.Name.Class`, called from `Vehicle/Backend/Loss/JSON.hs:211` (`ixToProperName`). `specs/novacuity.vcl` still typechecks. |
+>
+> This folder is kept as the record behind the bug reports and the "what went wrong
+> under 0.27.1" sections of the chapter; it is not needed for the exercises.
+
 > **Where to run these.** The Python scripts in `loss-quantifier/` load their
 > specification by relative path, so they must be run from
 > `chapter-4/chapter-code/`, not from this directory:
