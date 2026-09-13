@@ -562,11 +562,11 @@ Problem 2 replaces that ball with a hyper-rectangle:
 $$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} \mathcal{L}(\mathbf{x}', y; f)\Big]$$
 
 Problem 3 adds the specification itself as a second term, translated by the
-differentiable logic, and $\lambda$ balances the two:
+differentiable logic, and $\alpha$ balances the two:
 
-$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\lambda\,\mathcal{L}(\mathbf{x}, y; f) + (1-\lambda) \max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} \lbrack\!\lbrack \phi \rbrack\!\rbrack(\mathbf{x}, \mathbf{x}', y; f)\Big]$$
+$$\text{minimise} \quad \mathop{\mathbb{E}}_{(\mathbf{x},y)\sim\mathcal{D}} \Big[\alpha\,\mathcal{L}(\mathbf{x}, y; f) + (1-\alpha) \max_{\mathbf{x}' \in \mathbb{H}(\mathbf{x})} \lbrack\!\lbrack \phi \rbrack\!\rbrack(\mathbf{x}, \mathbf{x}', y; f)\Big]$$
 
-This single objective has the earlier methods as special cases. Setting $\lambda = 1$
+This single objective has the earlier methods as special cases. Setting $\alpha = 1$
 recovers adversarial training over a general region. Taking $\mathbb{H}$ to be the
 $\epsilon$-cube around $\hat{\mathbf{x}}$ and $\phi$ to be
 $\lvert f(\mathbf{x}) - f(\hat{\mathbf{x}}) \rvert \leq \delta$ recovers standard
@@ -575,8 +575,8 @@ specification with no input constraint at all, $\forall \mathbf{x}.\,Q(\mathbf{x
 handled by letting $\mathbb{H}$ be the domain of the input, typically the normalisation
 bounds $\mathbf{l} = \mathbf{0}$, $\mathbf{u} = \mathbf{1}$.
 
-Both extremes of $\lambda$ are worth understanding. At $\lambda = 1$ the specification is
-ignored. At $\lambda = 0$ the task is ignored, and since a constant network satisfies most
+Both extremes of $\alpha$ are worth understanding. At $\alpha = 1$ the specification is
+ignored. At $\alpha = 0$ the task is ignored, and since a constant network satisfies most
 robustness properties perfectly, the optimiser is free to discard the classifier
 altogether --- the constraint term alone does not distinguish a useful constant from a
 useless one. The blend is not a convenience; it is what rules out the degenerate solution.
@@ -590,8 +590,8 @@ are the same text. Nothing is hand-translated, and the two cannot drift apart.
 
 The interface mirrors the objective above. `load_specification` takes the specification
 and a differentiable logic and returns the named properties, each as a callable that
-evaluates $\lbrack\!\lbrack \phi \rbrack\!\rbrack$ for a batch; `alpha` in the training loop is the $\lambda$ that
-balances task loss against constraint loss.
+evaluates $\lbrack\!\lbrack \phi \rbrack\!\rbrack$ for a batch; `alpha` in the training loop is the $\alpha$ of
+the objective, balancing task loss against constraint loss.
 
 Vehicle has two built-in logics, `VehicleDifferentiableLogic` and
 `DL2DifferentiableLogic`; the code below selects the first. The Capucci logic of the
@@ -951,8 +951,13 @@ rather than as a second proof of it.
 Part II set out three problems. The experiment answers the first directly: the property
 that was trained for and the property that was verified are the same `.vcl` text, compiled
 two ways, and nothing was translated by hand. It does not exercise the other two, since
-its input region is an $\epsilon$-cube and its conclusion holds one label fixed. Chapter 6
-will show how the richer, real-life specifications described in Problems 2 and 3 arise
+its input region is an $\epsilon$-cube and its conclusion holds one label fixed. That said,
+this chapter has already set up everything you need to handle more complex specifications.
+Exercise #6 below explains what experiments to run to see Vehicle in action on Problems 2
+and 3.
+
+Chapter 6 will return to specifications of this kind, and will show how the richer,
+real-life specifications described in Problems 2 and 3 arise
 naturally in the modelling of cyber-physical systems, where input regions are given by
 physical ranges and conclusions are bounds on what a controller may do rather than
 labels. Vehicle will be indispensable then, and the machinery is the same one this chapter
@@ -979,3 +984,11 @@ Part I kept the pixels in $[0, 1]$ and warned against normalising them. Rebuild 
 Finally, try creating your own model from scratch and repeat the experiments and comparisons described above. Explore the relationship between how complex a model is and to what degree it can satisfy robustness, and the effect robustness training can have on this.
 
 Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
+
+## Exercise #6 (⭑⭑⭑): Training for properties more complex than $\epsilon$-ball robustness
+Recall the code and Vehicle specifications from Chapter 2, Exercise #4 (verification of a model trained on the Iris data set).
+For any of your properties that Marabou falsified, run property-driven training, and measure whether they become verifiable as a result.
+You may need to take into consideration the heuristics you learnt in this chapter, concerning the choice of
+parameters such as $\alpha$ and $p$, as well as data and model normalisation.
+
+Hint: this exercise is only possible because Vehicle implements a more general property-driven procedure than ($\epsilon$-ball) adversarial training.
