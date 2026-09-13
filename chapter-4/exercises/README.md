@@ -115,7 +115,26 @@ Write your snapshots to a new folder so that the committed ones stay as a refere
 keep the verification command unchanged so that your counts are comparable with the
 README's tables.
 
-## Exercise #4 (⭑⭑⭑): Training a model from scratch
+## Exercise #4 (⭑⭑): Normalisation inside the network
+
+Rebuild the training-verification pipeline *with* normalisation, but placed inside the
+network as its first layer, so that the inputs the specification and the verifier see are
+still raw pixels. Train, export, and verify. What does Marabou say about the exported
+network, and why? Fix it by folding the normalisation into the first linear layer before
+exporting, check that the folded network computes the same function as the trained one,
+and verify again.
+
+Start from `pt_classifier.py`, which already normalises inside the network with a small
+`Normalize` module. To see the problem, export `model` directly instead of `export_model`
+and run the verification command from the chapter-code README; then put the fold back.
+The identity you need is
+
+    W ((x - MEAN)/STD) + b  =  (W/STD) x + (b - (MEAN/STD) * rowsum(W))
+
+and `chapter-code/vanilla-experiment/folded-vanilla-models/fold_normalisation.py` applies
+it to a saved ONNX file after the fact, which is the other place the fold can live.
+
+## Exercise #5 (⭑⭑⭑): Training a model from scratch
 
 Finally, try creating your own model from scratch and repeat the experiments and
 comparisons described above. Explore the relationship between how complex a model is
@@ -133,6 +152,21 @@ Two things to keep constant so that your networks stay comparable: the verificat
 command from Chapter 3 Exercise #7, and the fifty test images it uses. Marabou can run
 out of memory on wider or deeper networks; Vehicle then reports those images as
 `errored`, which is expected rather than a mistake on your part.
+
+## Exercise #6 (⭑⭑⭑): Training for properties more complex than epsilon-ball robustness
+
+Recall the code and Vehicle specifications from Chapter 2, Exercise #4, the Iris model.
+For any of your properties that Marabou falsified, run property-driven training and
+measure whether they become verifiable as a result.
+
+The material is in `../../resources-by-dataset/iris/`: `iris_model.onnx`, the test-set
+files `iris_test_data.idx` and `iris_test_label.idx`, the notebook `Iris.ipynb` that
+trained the model, and `iris-possible-answers.vcl` with candidate properties. The
+training loop from `pt_classifier.py` transfers directly: load the Iris specification
+with `load_specification`, name the property you want as the constraint loss, and blend it
+with the task loss. Keep the heuristics from this chapter in mind, in particular the
+choice of `ALPHA`, of the hardness `p` if you use the Capucci logic, and the handling of
+normalisation.
 
 Sample solutions and expected results are in `../solutions`.
 

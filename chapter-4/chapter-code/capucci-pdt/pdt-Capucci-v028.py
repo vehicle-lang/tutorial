@@ -61,7 +61,7 @@ SUBSET_SIZE = 1024  # ensure SUBSET_SIZE mod BATCH_SIZE == 0
 EPSILON = 0.02      # the radius at which the starting network is genuinely vulnerable:
                     # it proves 22 of the 38 images it classifies correctly, leaving 16
 ALPHA = 0.4         # weight on the task loss; (1 - ALPHA) weights the constraint loss,
-                    # matching the lambda of the objective in the chapter. Unchanged from
+                    # matching the alpha of the objective in the chapter. Unchanged from
                     # run 1 so the two runs differ only in the Vehicle version.
 NUM_EPOCHS = 10
 

@@ -130,7 +130,37 @@ The specification with the custom logic, `../chapter-code/capucci-pdt/fashionRob
 is the model solution for "use a different constraint loss function": the
 `DifferentiableTensorLogic` block at its foot is all that is needed to define one.
 
-## Exercise #4: a model from scratch
+## Exercise #4: normalisation inside the network
+
+**What Marabou says.** With a `Normalize` layer exported as part of the network, every
+one of the fifty images is reported as `errored`:
+
+```plain
+Caught a MarabouError error. Code: 105, Errno: 0, Message: Onnx operation Div not currently supported by Marabou.
+```
+
+The layer becomes ONNX `Sub` and `Div` nodes, and Marabou 2.0.0's ONNX reader accepts
+neither. Rewriting it as a multiply and an add does not help: `Mul` is rejected too. The
+operations it does accept include `Gemm`, `Relu` and `Reshape`, which is all a plain
+multi-layer perceptron needs.
+
+**The fix.** Normalisation is affine and so is the first linear layer, so they compose
+into a single linear layer with weights `W / STD` and bias `b - (MEAN / STD) * rowsum(W)`.
+`pt_classifier.py`'s `fold_normalisation` does this on a copy of the trained model just
+before export, and asserts that the folded and original networks agree on 256 random
+inputs before writing anything; the observed deviation was `8e-7`. The exported graph
+is `Reshape, Gemm, Relu, Gemm, Relu, Gemm`, and verification then works: 34/50 correct,
+32/50 robust at `epsilon 0.005`, 29/50 at `epsilon 0.02`.
+
+**Why the fold is the right fix, and not only a workaround.** The folded network takes raw
+`[0, 1]` pixels, which is the space the specification's `validImage` describes and the
+space the `.idx` files live in, so `epsilon` means the same perturbation in training and
+in verification. Normalising *outside* the network, with a `transforms.Normalize` step,
+would have broken that: the chapter's earlier attempt did exactly this, and
+`../chapter-code/normalisation-options.md` records what it cost and the three ways to
+repair it.
+
+## Exercise #5: a model from scratch
 
 No model solution is provided; the point is to build your own. Expected results, from
 the chapter's experience with the 784-64-32-10 network:
@@ -144,3 +174,10 @@ the chapter's experience with the 784-64-32-10 network:
   robust per correctly classified image, but classifies fewer images correctly. The two
   effects pull the raw verified count in opposite directions, which is why the count
   should always be read against the number of eligible images.
+
+## Exercise #6: properties beyond epsilon-ball robustness
+
+No model solution is provided yet. The Iris properties are bounds on a four-dimensional
+input space with conclusions that are not a fixed label, so this is the first exercise in
+which the generality of property-driven training over adversarial training matters.
+Contributions of a worked solution are welcome.

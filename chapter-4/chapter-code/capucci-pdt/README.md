@@ -48,7 +48,7 @@ normalised ones: it scores 76.0% on raw `[0,1]` inputs against 36.0% on normalis
 | Epochs | 10 | about 5.6 min each, so roughly an hour |
 | Optimiser | Adam, lr 1e-3 | |
 
-`ALPHA` follows the $\lambda$ of the chapter's objective, which weights the task term. At
+`ALPHA` follows the $\alpha$ of the chapter's objective, which weights the task term. At
 0.4 the constraint term therefore carries the larger share.
 
 Clamping was removed on request. It had capped each image's constraint loss at 0 before

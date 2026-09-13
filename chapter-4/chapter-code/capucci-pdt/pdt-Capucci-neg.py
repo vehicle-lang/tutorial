@@ -77,7 +77,7 @@ SUBSET_SIZE = 1024  # ensure SUBSET_SIZE mod BATCH_SIZE == 0
 EPSILON = 0.02      # the radius at which the starting network is genuinely vulnerable:
                     # it proves 22 of the 38 images it classifies correctly, leaving 16
 ALPHA = 0.4         # weight on the task loss; (1 - ALPHA) weights the constraint loss,
-                    # matching the lambda of the objective in the chapter. At 0.4 the
+                    # matching the alpha of the objective in the chapter. At 0.4 the
                     # constraint term carries slightly more weight than the task term.
                     # Note that in this logic trueElement is -infinity, so the constraint
                     # loss is unbounded below: an already-satisfied image keeps yielding
