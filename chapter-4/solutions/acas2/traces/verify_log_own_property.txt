@@ -1,0 +1,27 @@
+[15:15:13] === acasXu_1_8_seq_e01.onnx
+[15:15:18]   property1 : verified   (6s)
+[15:15:18] done; results in traces/verify_own_property.csv
+[15:15:18] === acasXu_1_8_seq_e02.onnx
+[15:15:40]   property2 : verified   (22s)
+[15:15:40] done; results in traces/verify_own_property.csv
+[15:15:40] === acasXu_1_8_seq_e03.onnx
+[15:15:41]   property3 : falsified  x = [1799.988667, -5.9998124016e-2, 3.09999732192, 980.0, 960.0]  (1s)
+[15:15:41] done; results in traces/verify_own_property.csv
+[15:15:42] === acasXu_1_8_seq_e04.onnx
+[15:15:43]   property4 : verified   (1s)
+[15:15:43] done; results in traces/verify_own_property.csv
+[15:15:43] === acasXu_1_8_seq_e05.onnx
+[15:15:45]   property5 : verified   (2s)
+[15:15:45] done; results in traces/verify_own_property.csv
+[15:15:45] === acasXu_1_8_seq_e06.onnx
+[15:17:52]   property6 : falsified  x = [52418.746579, -1.007452005744, -3.136590585536, 222.1869, 246.6108]  (127s)
+[15:17:52] done; results in traces/verify_own_property.csv
+[15:17:52] === acasXu_1_8_seq_e07.onnx
+[15:32:53]   property7 : timeout    (900s)
+[15:32:53] done; results in traces/verify_own_property.csv
+[15:32:53] === acasXu_1_8_seq_e08.onnx
+[15:47:53]   property8 : timeout    (900s)
+[15:47:53] done; results in traces/verify_own_property.csv
+[15:47:53] === acasXu_1_8_seq_e09.onnx
+[15:47:55]   property9 : falsified  x = [6999.970618, -0.143828364944, -3.141592, 103.2483, 1.5348]  (2s)
+[15:47:55] done; results in traces/verify_own_property.csv

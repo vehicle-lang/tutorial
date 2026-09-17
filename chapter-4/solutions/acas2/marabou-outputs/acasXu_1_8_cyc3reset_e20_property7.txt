@@ -1,0 +1,15 @@
+$ vehicle verify --specification /home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu-upstream.vcl --solver Marabou --network acasXu:/home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/models/acasXu_1_8_cyc3reset_e20.onnx --property property7
+
+
+Warning: In property 'property7', at least one of the generated queries were found to contain a strict inequality (i.e. constraints of the form 'x < y'). Unfortunately the Marabou query format only supports non-strict inequalities (i.e. constraints of the form 'x <= y').
+
+In order to provide support, Vehicle has automatically converted the strict inequalities to non-strict inequalites. This is not sound, but errors will be at most the floating point epsilon used by the solver, which is usually very small (e.g. 1e-9). However, this may lead to unexpected behaviour (e.g. loss of the law of excluded middle).
+
+See https://github.com/vehicle-lang/vehicle/issues/74 for further details.
+
+  property7 [......................................................] 0/2 queries
+  property7 [===========================>..........................] 1/2 queries
+Verifying properties:
+
+    result: ✗ - Marabou found a counterexample
+      x: [ 6814.48726, -2.7042823936e-2, -2.128516544576, 130.1829, 89.3148 ]

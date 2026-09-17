@@ -4,7 +4,9 @@ This chapter reuses the data sets introduced in the previous two chapters, so th
 is no new data to describe. Training uses **Fashion MNIST**, the ten-class clothing
 counterpart to MNIST described in the
 [Chapter 3 README](../chapter-3/README.md), and the property being trained for is the
-same classification robustness verified there.
+same classification robustness verified there. The one exception is Exercise #6, which
+returns to Chapter 2's ACAS Xu networks and trains for their ten collision-avoidance
+properties, a setting with no data set at all.
 
 What changes is the direction of travel. Chapters 2 and 3 took a fixed network and
 asked whether it satisfied a specification. Here the specification is compiled into a
@@ -51,4 +53,10 @@ as in Chapter 3.
   trained networks and the solver transcripts, with a README that walks through both
   experiments step by step and lists the Python libraries required.
 - `exercises` - the exercises for this chapter and what you need to attempt them.
-- `solutions` - sample solutions and expected results.
+  `exercises/acas2` holds the starting material for Exercise #6, the ACAS Xu benchmark:
+  the ten-property specification, three networks, and the scripts that split the
+  specification and run Marabou.
+- `solutions` - sample solutions and expected results. `solutions/acas2` is the complete,
+  self-contained worked solution of Exercise #6: training script, one-property
+  specifications, every snapshot, all traces and solver transcripts, and a README that
+  records each step.

@@ -1,0 +1,11 @@
+model,property,verdict,counterexample,solver_seconds,transcript
+acasXu_1_8_seq_e10.onnx,1,verified,,2.9,marabou-outputs/acasXu_1_8_seq_e10_property1.txt
+acasXu_1_8_seq_e10.onnx,2,verified,,20.5,marabou-outputs/acasXu_1_8_seq_e10_property2.txt
+acasXu_1_8_seq_e10.onnx,3,verified,,1.4,marabou-outputs/acasXu_1_8_seq_e10_property3.txt
+acasXu_1_8_seq_e10.onnx,4,falsified,"1799.988667, -5.9998124016e-2, 0.0, 1000.0002, 769.71",2.0,marabou-outputs/acasXu_1_8_seq_e10_property4.txt
+acasXu_1_8_seq_e10.onnx,5,falsified,"400.005115, 0.200000029904, -3.141592, 100.0, 143.304",1.3,marabou-outputs/acasXu_1_8_seq_e10_property5.txt
+acasXu_1_8_seq_e10.onnx,6,falsified,"32046.732136, -3.141592, -3.141592, 606.2024, 63.456",105.8,marabou-outputs/acasXu_1_8_seq_e10_property6.txt
+acasXu_1_8_seq_e10.onnx,7,timeout,,900.1,marabou-outputs/acasXu_1_8_seq_e10_property7.txt
+acasXu_1_8_seq_e10.onnx,8,timeout,,900.0,marabou-outputs/acasXu_1_8_seq_e10_property8.txt
+acasXu_1_8_seq_e10.onnx,9,falsified,"6999.970618, -0.140001905888, -3.141592, 125.2395, 1.314",1.6,marabou-outputs/acasXu_1_8_seq_e10_property9.txt
+acasXu_1_8_seq_e10.onnx,10,verified,,1112.7,marabou-outputs/acasXu_1_8_seq_e10_property10.txt

@@ -1,0 +1,12 @@
+[16:55:29] === acasXu_1_8_cyc3reset_e20.onnx
+[16:56:01]   property1 : verified   (32s)
+[16:56:37]   property2 : verified   (36s)
+[16:56:39]   property3 : falsified  x = [1799.988667, 5.9998124016e-2, 3.09999732192, 980.0, 960.0]  (2s)
+[16:56:41]   property4 : falsified  x = [1799.988667, 5.9998124016e-2, 0.0, 1000.6943, 711.2904]  (2s)
+[16:56:43]   property5 : falsified  x = [400.005115, 0.200000029904, -3.136590585536, 100.0, 134.2464]  (2s)
+[19:09:27]   property6 : timeout    (7964s)
+[19:09:30]   property7 : falsified  x = [6814.48726, -2.7042823936e-2, -2.128516544576, 130.1829, 89.3148]  (3s)
+[19:24:30]   property8 : timeout    (900s)
+[19:24:56]   property9 : falsified  x = [4499.982772, -0.381370419248, -3.14090084976, 121.7833, 75.0]  (26s)
+[19:26:07]   property10: verified   (71s)
+[19:26:07] done; results in traces/verify_cyc3reset_e20.csv

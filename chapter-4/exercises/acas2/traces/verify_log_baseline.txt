@@ -1,0 +1,12 @@
+[15:15:00] === acasXu_1_8.onnx
+[15:15:04]   property1 : verified   (4s)
+[15:20:06]   property2 : verified   (302s)
+[15:20:08]   property3 : falsified  x = [1799.988667, 5.9998124016e-2, 3.09999732192, 980.0, 960.0]  (1s)
+[15:20:09]   property4 : falsified  x = [1799.988667, 5.9998124016e-2, 0.0, 1000.0002, 772.0476]  (1s)
+[15:20:10]   property5 : falsified  x = [400.005115, 0.200000029904, -3.136590585536, 100.0, 44.436]  (1s)
+[15:35:10]   property6 : timeout    (900s)
+[16:01:39]   property7 : timeout    (1588s)
+[16:23:03]   property8 : timeout    (1284s)
+[16:23:05]   property9 : falsified  x = [6940.43275, -0.213288964064, -3.141592, 109.1663, 58.4076]  (1s)
+[16:25:18]   property10: verified   (133s)
+[16:25:18] done; results in traces/verify_baseline.csv

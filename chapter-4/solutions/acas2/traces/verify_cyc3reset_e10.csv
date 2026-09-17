@@ -1,0 +1,11 @@
+model,property,verdict,counterexample,solver_seconds,transcript
+acasXu_1_8_cyc3reset_e10.onnx,1,verified,,12.4,marabou-outputs/acasXu_1_8_cyc3reset_e10_property1.txt
+acasXu_1_8_cyc3reset_e10.onnx,2,verified,,41.6,marabou-outputs/acasXu_1_8_cyc3reset_e10_property2.txt
+acasXu_1_8_cyc3reset_e10.onnx,3,falsified,"1799.988667, 5.9998124016e-2, 3.09999732192, 980.0, 960.0",2.5,marabou-outputs/acasXu_1_8_cyc3reset_e10_property3.txt
+acasXu_1_8_cyc3reset_e10.onnx,4,falsified,"1799.988667, -5.9998124016e-2, 0.0, 1000.0002, 742.224",2.4,marabou-outputs/acasXu_1_8_cyc3reset_e10_property4.txt
+acasXu_1_8_cyc3reset_e10.onnx,5,falsified,"400.005115, 0.289095579024, -3.136590585536, 103.168, 55.9956",2.8,marabou-outputs/acasXu_1_8_cyc3reset_e10_property5.txt
+acasXu_1_8_cyc3reset_e10.onnx,6,timeout,,7964.2,marabou-outputs/acasXu_1_8_cyc3reset_e10_property6.txt
+acasXu_1_8_cyc3reset_e10.onnx,7,timeout,,900.0,marabou-outputs/acasXu_1_8_cyc3reset_e10_property7.txt
+acasXu_1_8_cyc3reset_e10.onnx,8,timeout,,900.5,marabou-outputs/acasXu_1_8_cyc3reset_e10_property8.txt
+acasXu_1_8_cyc3reset_e10.onnx,9,falsified,"6999.970618, -0.164374376624, -3.141592, 100.1419, 35.274",1.9,marabou-outputs/acasXu_1_8_cyc3reset_e10_property9.txt
+acasXu_1_8_cyc3reset_e10.onnx,10,verified,,63.7,marabou-outputs/acasXu_1_8_cyc3reset_e10_property10.txt

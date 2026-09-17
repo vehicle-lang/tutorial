@@ -2,8 +2,8 @@
 
 These results were obtained with Vehicle 0.28.0 and Marabou 2.0.0 on a 12-core CPU
 machine with 30 GB of memory. Trained networks and complete solver transcripts are
-committed under `../chapter-code`, so every number below can be checked without
-retraining.
+committed under `../chapter-code` and, for Exercise #6, under `acas2/` in this folder, so
+every number below can be checked without retraining.
 
 ## Exercise #1: running the chapter code
 
@@ -175,7 +175,31 @@ the chapter's experience with the 784-64-32-10 network:
   effects pull the raw verified count in opposite directions, which is why the count
   should always be read against the number of eligible images.
 
-## Exercise #6: properties beyond epsilon-ball robustness
+## Exercise #6: the ACAS Xu benchmark
+
+The worked solution is `acas2/` in this folder, self-contained and runnable from there; its
+README records every step. In outline,
+for network N_{1,8} and the ten properties of the upstream ACAS Xu specification:
+
+| Network | properties verified by Marabou |
+| --- | --- |
+| N_{1,8} as shipped | {1, 2, 10} |
+| after one tour of the ten properties (10 epochs, one property each) | {1, 2, 3, 10} |
+| after three tours with a fresh Adam optimiser per epoch (30 epochs) | {1, 2, 3, 4, 9, 10} |
+
+Properties 6, 7 and 8 are undecided within a 15-minute limit on the shipped network;
+Property 5 stays falsified throughout. Nothing that held was lost. The 30-epoch network
+still agrees with the original on 90% of uniformly sampled inputs, unlike the single-property
+run recorded in the same README's appendix, which satisfied Property 3 by never advising
+clear-of-conflict at all.
+
+Three things the solution had to get right, all explained there: `minimalScore` must be
+written without the `i != j` guard (Vehicle 0.28.0 compiles the guarded form to a constant
+loss); the optimiser state must not be carried from one property's epoch to the next, or
+the unbounded Capucci loss diverges to NaN on the second visit (gradient clipping does not
+help under Adam); and Marabou needs a per-property time cap.
+
+## Exercise #7: properties beyond epsilon-ball robustness
 
 No model solution is provided yet. The Iris properties are bounds on a four-dimensional
 input space with conclusions that are not a fixed label, so this is the first exercise in

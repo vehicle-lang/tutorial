@@ -1,8 +1,9 @@
 # Chapter 4 exercises
 
-All the exercises use the material in `../chapter-code`; there is nothing extra to
-download. Read that folder's README first: it walks through both of the chapter's
-experiments, and Exercises #1 and #2 are essentially those experiments.
+Exercises #1 to #5 and #7 use the material in `../chapter-code`; Exercise #6 uses the
+ACAS Xu material in `acas2/` here. There is nothing extra to download. Read the chapter-code
+README first: it walks through both of the chapter's experiments, and Exercises #1 and #2
+are essentially those experiments.
 
 Before starting, check the Vehicle version:
 
@@ -23,6 +24,9 @@ Two practical notes that apply throughout:
 - **Verification time and memory.** Verifying fifty images against the Chapter 3
   specification takes between twelve and forty minutes per network, and Marabou uses
   about 14 GB of memory while it runs. Run one verification at a time.
+
+Both notes are about the Fashion MNIST exercises (#1 to #5); Exercise #6 has its own,
+very different, timings.
 
 ## Exercise #1 (⭑): Run the chapter code
 
@@ -153,7 +157,49 @@ command from Chapter 3 Exercise #7, and the fifty test images it uses. Marabou c
 out of memory on wider or deeper networks; Vehicle then reports those images as
 `errored`, which is expected rather than a mistake on your part.
 
-## Exercise #6 (⭑⭑⭑): Training for properties more complex than epsilon-ball robustness
+## Exercise #6 (⭑⭑): The ACAS Xu benchmark
+
+This is the first exercise about properties more complex than epsilon-ball robustness.
+In Chapter 2 you verified the ten ACAS Xu properties on the networks N_{1,7}, N_{1,8} and
+N_{1,9}, and saw that most of them fail: N_{1,8}, for instance, satisfies only Properties 1,
+2 and 10, and Properties 6, 7 and 8 are too hard for Marabou to decide within fifteen
+minutes. Using the property-driven training of this chapter, re-train one of these networks
+and see whether more properties become verifiable.
+
+Two things make this harder than Fashion MNIST. There is **no data set**, so there is no task
+loss to hold the network to its job (`ALPHA = 0`), and with a single property that is fatal:
+training N_{1,8} on Property 3 alone makes the property hold after one epoch by producing a
+network that *never* advises clear-of-conflict anywhere. And the ten properties are stated
+with a guarded implication `i != j => ...` that Vehicle 0.28.0 compiles to a constant loss,
+so the training specification has to state `minimalScore` non-strictly without the guard,
+as `fmnist-robustness.vcl` does for the same reason.
+
+The hint that makes it work: split the specification into ten one-property files and train
+on them **one property per epoch, repeatedly**, so that the properties counterbalance each
+other and no single one gets to reshape the whole network. Start a fresh optimiser each
+epoch, or the second visit to a property will diverge.
+
+Everything needed is in `acas2/`: the upstream ten-property specification, the three
+networks, `split-spec.py` (the one-property specifications), `pdt-acas2.py` (the sequential
+trainer) and `verify-acas2.py` (one Marabou call per property, with a time limit). Its README
+records every step of the worked run, including the two failed attempts: N_{1,8} goes from
+three verified properties to six after three tours of the ten, while still agreeing with the
+original network on 90% of inputs.
+
+**Note 1.** Timings here are unlike the Fashion MNIST exercises: an epoch takes about ten
+seconds and Marabou proves or refutes most ACAS Xu properties in seconds, but Properties 6,
+7 and 8 do not finish in fifteen minutes and need a cap, and a property left uncapped can run
+for hours.
+
+**Note 2.** Properties 6, 7 and 8 are the whole-input-space properties. Their regions cover
+nearly the entire valid box (Property 7's is literally all of it), so Marabou has to
+case-split over most of the network's 300 ReLUs instead of the few that are active in a
+narrow slice like Property 3's. Vehicle also turns each into several queries (Property 6 into
+8, because of the disjunction in its antecedent), each of which is a full Marabou run. They
+were the hard ones in the original Reluplex paper too, which is why the spec's comments say
+7 was tested on N_{1,9} only and 8 on N_{2,9} only.
+
+## Exercise #7 (⭑⭑⭑): Training for properties more complex than epsilon-ball robustness: the Iris data set
 
 Recall the code and Vehicle specifications from Chapter 2, Exercise #4, the Iris model.
 For any of your properties that Marabou falsified, run property-driven training and
