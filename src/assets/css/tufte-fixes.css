@@ -72,6 +72,31 @@ section > table td:first-child {
   width: 28%;
 }
 
+/* A table inside a :::fullwidth directive spans the page (text column plus margin)
+   with automatic column widths: for wide tables such as the ACAS Xu verdicts in
+   Chapter 4, Exercise #6, whose eleven verdict columns would otherwise be squeezed
+   into the space left by the 28% first column. */
+div.fullwidth > table {
+  width: 90%;
+  max-width: 90%;
+  table-layout: auto;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  line-height: 1.35;
+}
+
+div.fullwidth > table th,
+div.fullwidth > table td {
+  vertical-align: top;
+  padding-right: 0.6em;
+}
+
+div.fullwidth > table th:first-child,
+div.fullwidth > table td:first-child {
+  width: auto;
+  white-space: nowrap;
+}
+
 /* Full-width figures have no spare margin for a side caption. Keep their
    captions directly below the image at every viewport width. */
 figure.fullwidth > label.margin-toggle:not(.sidenote-number),

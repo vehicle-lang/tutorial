@@ -1000,6 +1000,7 @@ These are the verdicts you should have obtained in Chapter 2's exercises, for th
 shipped networks on the ten properties, with a 15-minute cap per property (✓ verified,
 ✗ falsified, t/o = undecided within the cap):
 
+:::fullwidth
 <!-- EXERCISE 6 BASELINE TABLE START -->
 | NN | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | summary |
 |:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------------------|
@@ -1007,6 +1008,7 @@ shipped networks on the ten properties, with a 15-minute cap per property (✓ v
 | $N_{1,8}$ | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
 | $N_{1,9}$ | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
 <!-- EXERCISE 6 BASELINE TABLE END -->
+:::
 
 Note that some properties remain unverified for all three networks: Properties 3, 4, 5 and 9
 are falsified on every one, 6 and 7 are undecided on every one, and 8 is falsified on one
