@@ -99,23 +99,29 @@ BASELINES = [("N_{1,7}", "verify_baseline_1_7.csv"), ("N_{1,8}", "verify_baselin
 
 
 def build_baselines():
-    """The three shipped networks on the ten properties, verdict symbols only: the table
-    Exercise #6 shows as what Chapter 2's exercises were expected to produce."""
-    lines = ["| Network | " + " | ".join(str(k) for k in range(1, 11)) + " | verified |", "|---|" + "---|" * 11]
+    """The three shipped networks on the ten properties: the table Exercise #6 shows as what
+    Chapter 2's exercises were expected to produce. The last column spells the outcome out
+    in words; besides being informative, that makes a row longer than pandoc's 72-character
+    threshold, which is what makes pandoc size the columns by the dashes in the separator
+    row (narrow network and property columns, wide summary) instead of by content."""
+    lines = ["| NN | " + " | ".join(str(k) for k in range(1, 11)) + " | summary |",
+             "|:----|" + ":--:|" * 10 + ":------------------------|"]
     for title, name in BASELINES:
         d = load(name)
-        cells, verified = [], []
+        cells, groups = [], {"verified": [], "falsified": [], "undecided": []}
         for k in range(1, 11):
             r = d.get(k)
             if r is None:
-                cells.append("running")
+                cells.append("")          # no verdict yet: leave the cell empty
             elif r["verdict"] == "verified":
-                cells.append("✓"); verified.append(str(k))
+                cells.append("✓"); groups["verified"].append(str(k))
             elif r["verdict"] == "falsified":
-                cells.append("✗")
+                cells.append("✗"); groups["falsified"].append(str(k))
             else:
-                cells.append("timeout")
-        lines.append(f"| {title} | " + " | ".join(cells) + f" | {{{', '.join(verified)}}} |")
+                cells.append("t/o"); groups["undecided"].append(str(k))   # undecided within the time limit
+        summary = "; ".join(f"{word} {', '.join(ks)}" if word != "verified" else f"verified {{{', '.join(ks)}}}"
+                            for word, ks in groups.items() if ks)
+        lines.append(f"| {title} | " + " | ".join(cells) + f" | {summary} |")
     return "\n".join(lines)
 
 

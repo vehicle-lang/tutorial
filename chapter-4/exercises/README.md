@@ -202,14 +202,14 @@ were the hard ones in the original Reluplex paper too, which is why the spec's c
 
 These are the verdicts you should have obtained in Chapter 2's exercises, for the three
 shipped networks on the ten properties, with a 15-minute cap per property (✓ verified,
-✗ falsified, timeout = undecided within the cap):
+✗ falsified, t/o = undecided within the cap):
 
 <!-- EXERCISE 6 BASELINE TABLE START -->
-| Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| N_{1,7} | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | ✗ | ✗ | ✓ | {1, 2, 10} |
-| N_{1,8} | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
-| N_{1,9} | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
+| NN | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | summary |
+|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------------------|
+| N_{1,7} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | ✗ | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 8, 9; undecided 6, 7 |
+| N_{1,8} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
+| N_{1,9} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
 <!-- EXERCISE 6 BASELINE TABLE END -->
 
 Note that some properties remain unverified for all three networks: Properties 3, 4, 5 and 9
