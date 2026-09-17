@@ -93,8 +93,13 @@ div.fullwidth > table td {
 
 div.fullwidth > table th:first-child,
 div.fullwidth > table td:first-child {
-  width: auto;
+  width: 1%;              /* shrink to the content: the network name */
   white-space: nowrap;
+}
+
+div.fullwidth > table th:last-child,
+div.fullwidth > table td:last-child {
+  width: 50%;             /* the summary column gets half the table */
 }
 
 /* Full-width figures have no spare margin for a side caption. Keep their
