@@ -322,7 +322,7 @@ The ReLU output makes dose predictions non-negative, while a small positive offs
 
 ## Property-Driven Training
 
-Property-driven training, introduced in Chapter 4, is another possible step. It adapts the loss function to include the specification, which can make the network better able to meet the constraints. This is suggested but not developed further in this case study, so no property-driven loss function or results are given here.
+Property-driven training, introduced in Chapter 4 and exercised on the ACAS Xu collision-avoidance networks in its Exercise #6, is another possible step. It adapts the loss function to include the specification, which can make the network better able to meet the constraints. This is suggested but not developed further in this case study, so no property-driven loss function or results are given here.
 
 The next part uses the verified network properties in the [Rocq system proof](#63-rocq-system-proof).
 

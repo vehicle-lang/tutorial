@@ -580,6 +580,8 @@ ignored. At $\alpha = 0$ the task is ignored, and since a constant network satis
 robustness properties perfectly, the optimiser is free to discard the classifier
 altogether --- the constraint term alone does not distinguish a useful constant from a
 useless one. The blend is not a convenience; it is what rules out the degenerate solution.
+Exercise #6 shows what this looks like when $\alpha = 0$ is forced by the absence of data,
+and what can stand in for the blend.
 
 ## Property-driven training in Vehicle
 
@@ -825,8 +827,10 @@ lands directly beside the 22.
 
 The training specification is Chapter 3's, with two changes. The first is that `advises` is
 stated non-strictly, `classifier image ! label >= classifier image ! j` for all `j`, because
-the loss compiler does not yet support the `j != label` guard of the strict form. The two
-differ only when the advised label ties with another, and on this problem they return
+the loss compiler does not handle the `j != label` guard of the strict form: it compiles
+without complaint to a loss that is identically zero, so a network trained on the guarded
+form simply does not move (Exercise #6 meets the same guard in the ACAS Xu specification).
+The two differ only when the advised label ties with another, and on this problem they return
 identical verdicts for every image, so training on the non-strict property and verifying on
 the strict one is a like-for-like comparison.
 
@@ -953,8 +957,8 @@ that was trained for and the property that was verified are the same `.vcl` text
 two ways, and nothing was translated by hand. It does not exercise the other two, since
 its input region is an $\epsilon$-cube and its conclusion holds one label fixed. That said,
 this chapter has already set up everything you need to handle more complex specifications.
-Exercise #6 below explains what experiments to run to see Vehicle in action on Problems 2
-and 3.
+Exercises #6 and #7 below explain what experiments to run to see Vehicle in action on
+Problems 2 and 3.
 
 Chapter 6 will return to specifications of this kind, and will show how the richer,
 real-life specifications described in Problems 2 and 3 arise
@@ -985,7 +989,33 @@ Finally, try creating your own model from scratch and repeat the experiments and
 
 Hint: a simple model is worse at spotting the difference between two different images. Does this make it more or less likely to be robust?
 
-## Exercise #6 (⭑⭑⭑): Training for properties more complex than $\epsilon$-ball robustness
+## Exercise #6 (⭑⭑): The ACAS Xu benchmark
+This is the first exercise about properties more complex than $\epsilon$-ball robustness. In Chapter 2 you verified the ten ACAS Xu properties on the networks $N_{1,7}$, $N_{1,8}$ and $N_{1,9}$ and found that most of them fail: $N_{1,8}$, for instance, satisfies only Properties 1, 2 and 10, Properties 3, 4, 5 and 9 are falsified in seconds, and Properties 6, 7 and 8 are too hard for Marabou to decide within fifteen minutes. Using the property-driven training of this chapter, re-train one of these networks and see whether more properties become verifiable.
+
+Two things make this harder than Fashion MNIST. There is **no data set**, so there is no task loss to hold the network to its job ($\alpha = 0$), and with a single property that is fatal: training $N_{1,8}$ on Property 3 alone makes the property hold after one epoch by producing a network that *never* advises clear-of-conflict anywhere: the degenerate solution the objective section warned about, with no task term to rule it out. And the properties are stated with a guarded implication `i != j => ...` that the loss compiler turns into a constant loss, so the training specification must state `minimalScore` non-strictly without the guard, as `fmnist-robustness.vcl` does for the same reason.
+
+Hint: split the specification into ten one-property files and train on them **one property per epoch, repeatedly**, so that the properties counterbalance each other and no single one gets to reshape the whole network; start a fresh optimiser each epoch, or the second visit to a property will diverge. Properties 6, 7 and 8 quantify over (almost) the whole input space, so Marabou has to case-split over most of the network's 300 ReLUs; give them a time cap and do not expect a verdict. The starting material is in [chapter-4/exercises/acas2](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/exercises/acas2) and a complete worked solution, which takes $N_{1,8}$ from three verified properties to six while keeping 90% of its original advisories, in [chapter-4/solutions/acas2](https://github.com/vehicle-lang/tutorial/tree/exercises/chapter-4/solutions/acas2).
+
+These are the verdicts you should have obtained in Chapter 2's exercises, for the three
+shipped networks on the ten properties, with a 15-minute cap per property (✓ verified,
+✗ falsified, timeout = undecided within the cap):
+
+<!-- EXERCISE 6 BASELINE TABLE START -->
+| Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| $N_{1,7}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | ✗ | ✗ | ✓ | {1, 2, 10} |
+| $N_{1,8}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
+| $N_{1,9}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | running | running | running | {1, 2} |
+<!-- EXERCISE 6 BASELINE TABLE END -->
+
+Note that some properties remain unverified for all three networks: Properties 3, 4, 5 and 9
+are falsified on every one, and 6 and 7 are undecided on every one. This may suggest that
+these properties are difficult or impossible to infer from data: the networks were trained on
+a data set sampled from a controller, and a property that no network has picked up from the
+data is a property the data does not exhibit clearly enough, or a property the network
+architecture cannot represent, which property-driven training may be able to supply.
+
+## Exercise #7 (⭑⭑⭑): Training for properties more complex than $\epsilon$-ball robustness: the Iris data set
 Recall the code and Vehicle specifications from Chapter 2, Exercise #4 (verification of a model trained on the Iris data set).
 For any of your properties that Marabou falsified, run property-driven training, and measure whether they become verifiable as a result.
 You may need to take into consideration the heuristics you learnt in this chapter, concerning the choice of
