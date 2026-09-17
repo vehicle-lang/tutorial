@@ -24,6 +24,14 @@ export default function rehypeTufte(this: Processor): Transformer<Root, Root> {
         if (!Array.isArray(className)) return CONTINUE;
         className.push("fullwidth");
       });
+      // Tables too, so that a wide table (e.g. the ACAS Xu verdicts in Chapter 4,
+      // Exercise #6) can escape the text-column width like figures and code blocks.
+      visit(div, { type: "element", tagName: "table" }, (table) => {
+        const className =
+          table.properties.className || (table.properties.className = []);
+        if (!Array.isArray(className)) return CONTINUE;
+        className.push("fullwidth");
+      });
       parent.children.splice(index, 1, ...div.children);
     });
   };

@@ -72,33 +72,32 @@ section > table td:first-child {
   width: 28%;
 }
 
-/* A table inside a :::fullwidth directive spans the page (text column plus margin)
-   with automatic column widths: for wide tables such as the ACAS Xu verdicts in
-   Chapter 4, Exercise #6, whose eleven verdict columns would otherwise be squeezed
-   into the space left by the 28% first column. */
-div.fullwidth > table {
+/* A table inside a :::fullwidth directive (rehype-tufte moves the class onto the
+   table itself, as it does for figures and code blocks) spans the page: text column
+   plus margin, with automatic column widths, a narrow first column and a wide last
+   one. Used for the ACAS Xu verdicts in Chapter 4, Exercise #6, whose eleven verdict
+   columns would otherwise be squeezed into the space left by the 28% first column.
+   `section > table.fullwidth` outranks the `section > table` rules above. */
+section > table.fullwidth {
   width: 90%;
   max-width: 90%;
   table-layout: auto;
-  box-sizing: border-box;
-  font-size: 1.4rem;
-  line-height: 1.35;
 }
 
-div.fullwidth > table th,
-div.fullwidth > table td {
-  vertical-align: top;
+section > table.fullwidth th,
+section > table.fullwidth td {
+  overflow-wrap: normal;
   padding-right: 0.6em;
 }
 
-div.fullwidth > table th:first-child,
-div.fullwidth > table td:first-child {
+section > table.fullwidth th:first-child,
+section > table.fullwidth td:first-child {
   width: 1%;              /* shrink to the content: the network name */
   white-space: nowrap;
 }
 
-div.fullwidth > table th:last-child,
-div.fullwidth > table td:last-child {
+section > table.fullwidth th:last-child,
+section > table.fullwidth td:last-child {
   width: 50%;             /* the summary column gets half the table */
 }
 
