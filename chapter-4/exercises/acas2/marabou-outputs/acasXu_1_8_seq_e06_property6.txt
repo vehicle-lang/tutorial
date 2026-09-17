@@ -1,8 +1,0 @@
-$ vehicle verify --specification /home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu-upstream.vcl --solver Marabou --network acasXu:/home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/models/acasXu_1_8_seq_e06.onnx --property property6
-
-  property6 [......................................................] 0/8 queries
-  property6 [======>...............................................] 1/8 queries
-Verifying properties:
-
-    result: ✗ - Marabou found a counterexample
-      x: [ 52418.746579, -1.007452005744, -3.136590585536, 222.1869, 246.6108 ]

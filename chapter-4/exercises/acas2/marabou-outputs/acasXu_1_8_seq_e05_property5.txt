@@ -1,9 +1,0 @@
-$ vehicle verify --specification /home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu-upstream.vcl --solver Marabou --network acasXu:/home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/models/acasXu_1_8_seq_e05.onnx --property property5
-
-  property5 [......................................................] 0/4 queries
-  property5 [=============>........................................] 1/4 queries
-  property5 [===========================>..........................] 2/4 queries
-  property5 [========================================>.............] 3/4 queries
-  property5 [======================================================] 4/4 queries
-Verifying properties:
-    result: 🗸 - Marabou proved no counterexample exists

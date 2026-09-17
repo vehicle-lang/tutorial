@@ -180,12 +180,13 @@ on them **one property per epoch, repeatedly**, so that the properties counterba
 other and no single one gets to reshape the whole network. Start a fresh optimiser each
 epoch, or the second visit to a property will diverge.
 
-Everything needed is in `acas2/`: the upstream ten-property specification, the three
-networks, `split-spec.py` (the one-property specifications), `pdt-acas2.py` (the sequential
-trainer) and `verify-acas2.py` (one Marabou call per property, with a time limit). Its README
-records every step of the worked run, including the two failed attempts: N_{1,8} goes from
-three verified properties to six after three tours of the ten, while still agreeing with the
-original network on 90% of inputs.
+The starting material is in `acas2/`: the upstream ten-property specification, the three
+networks, `split-spec.py` (writes the one-property specifications) and `verify-acas2.py` (one
+Marabou call per property, with a time limit); its README says what to do. The complete
+worked solution, with the sequential trainer `pdt-acas2.py`, every snapshot and all solver
+transcripts, is in `../solutions/acas2/`, whose README records every step, including the two
+failed attempts: N_{1,8} goes from three verified properties to six after three tours of the
+ten, while still agreeing with the original network on 90% of inputs.
 
 **Note 1.** Timings here are unlike the Fashion MNIST exercises: an epoch takes about ten
 seconds and Marabou proves or refutes most ACAS Xu properties in seconds, but Properties 6,

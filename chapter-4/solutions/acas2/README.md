@@ -18,14 +18,26 @@ The experiment, as specified:
 
 All results, training losses and Marabou verdicts, are in tables below.
 
-> **Status (2026-09-17, 21:00).** Training is complete. All verifications are complete except the
-> four long 9000 s re-runs of Properties 6, 7, 8 on the baseline and Property 6 on `e30`
-> (`traces/verify_long_*.csv`), running at the time of writing. `python3 record-results.py`
-> refreshes the tables in this file from the CSVs, `python3 record-results.py --baselines`
-> prints the three-network table used in Exercise #6, and the table under "Re-running the
-> undecided properties" still has to be filled in by hand from `traces/verify_long_*.csv`.
-> This folder is then to be copied over `../../solutions/acas2/` and pruned to the starting
-> material (see the chapter-4 README).
+## The result in one table: the shipped network against the 30-epoch network
+
+<!-- HEADLINE TABLE START -->
+| Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
+|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------|
+| shipped N_{1,8} | ✓ 4 s | ✓ 5 min | ✗ 2 s | ✗ 1 s | ✗ 1 s | t/o† 2 h 30 min | t/o† 2 h 30 min | t/o† 2 h 30 min | ✗ 1 s | ✓ 2 min | {1, 2, 10} |
+| fresh Adam e30 | ✓ 24 s | ✓ 25 s | ✓ 2 s | ✓ 1 s | ✗ 24 s | ✗† 2 h 8 min | ✗ 2 s | ✗ 4 s | ✓ 28 s | ✓ 49 s | {1, 2, 3, 4, 9, 10} |
+
+✓ verified, ✗ falsified, t/o undecided within the limit, each with Marabou's time; † from the re-run with a one-property specification and a 9000 s limit.
+<!-- HEADLINE TABLE END -->
+
+The trained network is the only one in this folder with a definite verdict on every property.
+Falsifying is cheaper than proving: Marabou needs one input to refute, but must exhaust the
+region to prove, and the shipped network's near-tied outputs make that slow on the
+whole-input-space Properties 6, 7 and 8. Training made the network more *decidable*, but every
+extra decision on 6, 7 and 8 went against it.
+
+All training and verification runs recorded here are complete (last one 2026-09-17, 21:51).
+`python3 record-results.py` regenerates the three Marabou tables in this file from the CSVs in
+`traces/`.
 
 ## Contents
 
@@ -111,6 +123,18 @@ Results (the same table is repeated under Step 4 with the trained network's colu
 | 8 | timeout (1284 s) | timeout (900 s) | e08: timeout (900 s) |
 | 9 | ✗ falsified (1 s)<br>x = [6940, -0.2133, -3.142, 109.2, 58.41] | ✗ falsified (2 s)<br>x = [7000, -0.14, -3.142, 125.2, 1.314] | e09: ✗ falsified (2 s)<br>x = [7000, -0.1438, -3.142, 103.2, 1.535] |
 | 10 | ✓ verified (133 s) | ✓ verified (1113 s) | (e10, previous column) |
+
+The same for all three shipped networks (N_{1,7} and N_{1,9} were verified later with the
+same command and cap; `traces/verify_baseline_1_7.csv`, `traces/verify_baseline_1_9.csv`).
+This is the table Exercise #6 shows the reader as the expected outcome of Chapter 2:
+
+<!-- BASELINES TABLE START -->
+| NN | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | summary |
+|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------------------|
+| N_{1,7} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | ✗ | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 8, 9; undecided 6, 7 |
+| N_{1,8} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
+| N_{1,9} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
+<!-- BASELINES TABLE END -->
 
 Reading the baseline column: Property 1 holds, as the Reluplex paper says it does on all
 45 networks. Property 2 holds too, although it was only tested upstream on N_{x,y} with
@@ -322,6 +346,14 @@ reported as a timeout only after 1588 s, and Property 10 of `e10` ran to complet
 watchdog thread at the deadline, which does not depend on how the output is read; later
 runs use that version. Results marked `timeout` are undecided, not falsified.
 
+In compact form, each intermediate snapshot of the tour on the property it had just been
+trained on (Property 10 is `e10`'s column above):
+
+| snapshot | e01 | e02 | e03 | e04 | e05 | e06 | e07 | e08 | e09 |
+|---|---|---|---|---|---|---|---|---|---|
+| trained on property | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| verdict on that property | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ | t/o | t/o | ✗ |
+
 ### Reading the verification tables
 
 - **Property 3, the one the first round was about, is verified on `e10`.** It is falsified on
@@ -503,11 +535,11 @@ Marabou's counterexample [distance, angle, heading, speed, intruderSpeed], timeo
 <!-- COMPACT VERIFY TABLE START -->
 | Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| N_{1,8} baseline | ✓ (4 s) | ✓ (302 s) | ✗ (2 s) | ✗ (1 s) | ✗ (1 s) | timeout (900 s) | timeout (1588 s) | timeout (1284 s) | ✗ (1 s) | ✓ (133 s) | {1, 2, 10} |
+| N_{1,8} baseline | ✓ (4 s) | ✓ (302 s) | ✗ (2 s) | ✗ (1 s) | ✗ (1 s) | timeout† (9001 s) | timeout† (9000 s) | timeout† (9000 s) | ✗ (1 s) | ✓ (133 s) | {1, 2, 10} |
 | tour e10 | ✓ (3 s) | ✓ (20 s) | ✓ (1 s) | ✗ (2 s) | ✗ (1 s) | ✗ (106 s) | timeout (900 s) | timeout (900 s) | ✗ (2 s) | ✓ (1113 s) | {1, 2, 3, 10} |
 | fresh Adam e10 | ✓ (12 s) | ✓ (42 s) | ✗ (2 s) | ✗ (2 s) | ✗ (3 s) | timeout (7964 s) | timeout (900 s) | timeout (900 s) | ✗ (2 s) | ✓ (64 s) | {1, 2, 10} |
 | fresh Adam e20 | ✓ (32 s) | ✓ (36 s) | ✗ (2 s) | ✗ (2 s) | ✗ (2 s) | timeout (7964 s) | ✗ (3 s) | timeout (900 s) | ✗ (26 s) | ✓ (71 s) | {1, 2, 10} |
-| fresh Adam e30 | ✓ (24 s) | ✓ (25 s) | ✓ (2 s) | ✓ (1 s) | ✗ (24 s) | timeout (7964 s) | ✗ (2 s) | ✗ (4 s) | ✓ (28 s) | ✓ (49 s) | {1, 2, 3, 4, 9, 10} |
+| fresh Adam e30 | ✓ (24 s) | ✓ (25 s) | ✓ (2 s) | ✓ (1 s) | ✗ (24 s) | ✗† (7670 s) | ✗ (2 s) | ✗ (4 s) | ✓ (28 s) | ✓ (49 s) | {1, 2, 3, 4, 9, 10} |
 
 † from the re-run with a one-property specification and a 9000 s limit (see below); the original 900 s verdict is in the detailed table.
 <!-- COMPACT VERIFY TABLE END -->
@@ -568,14 +600,35 @@ python3 verify-acas2.py models/acasXu_1_8_cyc3reset_e30.onnx --properties 6 --sp
 watchdog; both were tested to kill a run at 5 s.
 
 **Split-and-conquer did not help either.** Marabou's parallel mode was tried on the baseline's
-Property 7 with its one-property specification, `--solver-args "--snc --num-workers=4"`
-(passed through by `verify-acas2.py --solver-args`), with a 600 s cap: neither of the
-property's two queries finished (`traces/verify_snc_baseline_p7.csv`,
-`marabou-outputs/acasXu_1_8_property7_property07_snc.txt`). The pass-through itself works:
+Property 7 with its one-property specification, passed through by `verify-acas2.py
+--solver-args` (`traces/verify_snc_baseline_p7.csv`,
+`marabou-outputs/acasXu_1_8_property7_property07_snc.txt`):
+
+| Test | Marabou flags | cap | verdict |
+|---|---|---:|---|
+| N_{1,8} baseline, Property 7, one-property spec | `--snc --num-workers=4` | 600 s | t/o, neither of the property's two queries finished | The pass-through itself works:
 Property 1 verifies under the same flags in 17 s against 4 s without, the difference being
 the workers' start-up.
 
-<!-- LONG RERUN TABLE -->
+<!-- LONG RERUN TABLE START -->
+| Network | Property | verdict with a 9000 s limit | counterexample [distance, angle, heading, speed, intruderSpeed] |
+|---|---:|---|---|
+| N_{1,8} baseline | 6 | timeout (2 h 30 min) |  |
+| N_{1,8} baseline | 7 | timeout (2 h 30 min) |  |
+| N_{1,8} baseline | 8 | timeout (2 h 30 min) |  |
+| fresh Adam e30 | 6 | ✗ falsified (2 h 8 min) | [1.306e+04, -0.7, -3.142, 100, 108.7] |
+<!-- LONG RERUN TABLE END -->
+
+On the shipped network, ten times the budget changed nothing: Properties 6, 7 and 8 are still
+undecided after 2 h 30 min each with a dedicated one-property specification. The `e30` result is
+the informative one: Property 6, undecided on every snapshot within 15 minutes, is **falsified**
+on the 30-epoch network once Marabou is given long enough (2 h 8 min).
+Its counterexample lies at the edge of the property's region: angle −0.70 is the boundary of
+the `angle <= -0.7` disjunct, ownship speed 100 is the minimum, and the intruder is 13,058 ft
+away, well inside "sufficiently far away". So the trained network's gains on Properties 3, 4
+and 9 did not come with Property 6, and the "Conclusions" bullet that calls Property 6
+undecided should be read with this in mind: undecided on the shipped network, falsified on
+the trained one.
 
 ### Does the 30-epoch network avoid the trivial-network problem from acas?
 
@@ -611,7 +664,7 @@ space whose advisory has changed with no data to say whether that is acceptable.
   Verified properties: baseline {1, 2, 10}; one tour {1, 2, 3, 10}; three tours with a fresh
   optimiser per epoch {1, 2, 3, 4, 9, 10}. Nothing that held was lost in either case.
   Properties 5, 7 and 8 remain falsified (5 and 7, 8 demand behaviour N_{1,8} was never
-  trained for) and 6 remains undecided.
+  trained for), and 6, undecided within 15 minutes, is falsified on `e30` given 2 hours.
 - **One property per epoch is catastrophic forgetting in slow motion, and the cure is
   repetition.** In the single tour, Properties 4 and 5 held on the snapshot trained on them
   and were lost by the end; the loss matrix shows each epoch undoing part of the previous

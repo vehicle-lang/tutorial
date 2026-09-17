@@ -1,0 +1,2 @@
+model,property,verdict,counterexample,solver_seconds,transcript
+acasXu_1_8_cyc3reset_e30.onnx,6,falsified,"13058.430775, -0.699996963072, -3.141592, 100.0, 108.6996",7669.7,marabou-outputs/acasXu_1_8_cyc3reset_e30_property6_property06.txt

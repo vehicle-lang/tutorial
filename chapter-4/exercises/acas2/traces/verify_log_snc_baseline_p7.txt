@@ -1,3 +1,0 @@
-[20:14:44] === acasXu_1_8.onnx
-[20:24:44]   property7 : timeout    (600s)
-[20:24:44] done; results in traces/verify_snc_baseline_p7.csv

@@ -1,0 +1,2 @@
+model,property,verdict,counterexample,solver_seconds,transcript
+acasXu_1_8.onnx,7,timeout,,9000.5,marabou-outputs/acasXu_1_8_property7_property07.txt

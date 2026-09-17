@@ -1,9 +1,0 @@
-$ timeout -s KILL 905 vehicle verify --specification /home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu-upstream.vcl --solver Marabou --network acasXu:/home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu_1_9.onnx --property property10
-
-  property10 [.....................................................] 0/4 queries
-  property10 [=============>.......................................] 1/4 queries
-  property10 [==========================>..........................] 2/4 queries
-  property10 [=======================================>.............] 3/4 queries
-  property10 [=====================================================] 4/4 queries
-Verifying properties:
-    result: 🗸 - Marabou proved no counterexample exists

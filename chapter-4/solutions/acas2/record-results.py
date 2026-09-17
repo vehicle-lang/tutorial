@@ -125,6 +125,51 @@ def build_baselines():
     return "\n".join(lines)
 
 
+HEADLINE_START, HEADLINE_END = "<!-- HEADLINE TABLE START -->", "<!-- HEADLINE TABLE END -->"
+
+
+def fmt_time(seconds):
+    seconds = float(seconds)
+    if seconds < 90:
+        return f"{seconds:.0f} s"
+    if seconds < 3600:
+        return f"{seconds / 60:.0f} min"
+    return f"{seconds // 3600:.0f} h {(seconds % 3600) / 60:.0f} min"
+
+
+def build_headline():
+    """Shipped N_{1,8} against the 30-epoch fresh-Adam network: verdict and solver time per
+    property. Long re-run verdicts (one-property spec, 9000 s cap) replace the 900 s ones
+    where they exist, marked with a dagger."""
+    long = {}
+    for title, name in LONG_RUNS:
+        for k, r in load(name).items():
+            long[(title, k)] = r
+    rows = [("shipped N_{1,8}", "N_{1,8} baseline", "verify_baseline.csv"),
+            ("fresh Adam e30", "fresh Adam e30", "verify_cyc3reset_e30.csv")]
+    lines = ["| Network | " + " | ".join(str(k) for k in range(1, 11)) + " | verified |",
+             "|:----|" + ":--:|" * 10 + ":------------|"]
+    for label, title, name in rows:
+        d = load(name)
+        cells, verified = [], []
+        for k in range(1, 11):
+            r, mark = (long[(title, k)], "†") if (title, k) in long else (d.get(k), "")
+            if r is None:
+                cells.append(""); continue
+            v = r["verdict"]; t = fmt_time(r["solver_seconds"])
+            if v == "verified":
+                cells.append(f"✓{mark} {t}"); verified.append(str(k))
+            elif v == "falsified":
+                cells.append(f"✗{mark} {t}")
+            else:
+                cells.append(f"t/o{mark} {t}")
+        lines.append(f"| {label} | " + " | ".join(cells) + f" | {{{', '.join(verified)}}} |")
+    lines.append("")
+    lines.append("✓ verified, ✗ falsified, t/o undecided within the limit, each with Marabou's time; "
+                 "† from the re-run with a one-property specification and a 9000 s limit.")
+    return "\n".join(lines)
+
+
 def build():
     data = [(title, load(name)) for title, name in COLUMNS]
     lines = ["| Property | " + " | ".join(t for t, _ in data) + " |", "|---:|" + "---|" * len(data)]
@@ -145,6 +190,13 @@ def main():
         print(build_baselines())
         return
     text = open(README).read()
+    BS, BE = "<!-- BASELINES TABLE START -->", "<!-- BASELINES TABLE END -->"
+    if BS in text:
+        text = re.sub(re.escape(BS) + r".*?" + re.escape(BE), lambda _: f"{BS}\n{build_baselines()}\n{BE}", text, flags=re.S)
+    headline = build_headline()
+    hblock = f"{HEADLINE_START}\n{headline}\n{HEADLINE_END}"
+    if HEADLINE_START in text:
+        text = re.sub(re.escape(HEADLINE_START) + r".*?" + re.escape(HEADLINE_END), lambda _: hblock, text, flags=re.S)
     compact = build_compact()
     cblock = f"{COMPACT_START}\n{compact}\n{COMPACT_END}"
     if COMPACT_START in text:
@@ -155,6 +207,8 @@ def main():
     block = f"{START}\n{table}\n{END}"
     text = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: block, text, flags=re.S)
     open(README, "w").write(text)
+    print(headline)
+    print()
     print(compact)
 
 
