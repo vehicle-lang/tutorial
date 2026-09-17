@@ -1005,11 +1005,12 @@ shipped networks on the ten properties, with a 15-minute cap per property (✓ v
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | $N_{1,7}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | ✗ | ✗ | ✓ | {1, 2, 10} |
 | $N_{1,8}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
-| $N_{1,9}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | running | running | running | {1, 2} |
+| $N_{1,9}$ | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
 <!-- EXERCISE 6 BASELINE TABLE END -->
 
 Note that some properties remain unverified for all three networks: Properties 3, 4, 5 and 9
-are falsified on every one, and 6 and 7 are undecided on every one. This may suggest that
+are falsified on every one, 6 and 7 are undecided on every one, and 8 is falsified on one
+network and undecided on the other two. This may suggest that
 these properties are difficult or impossible to infer from data: the networks were trained on
 a data set sampled from a controller, and a property that no network has picked up from the
 data is a property the data does not exhibit clearly enough, or a property the network
