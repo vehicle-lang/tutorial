@@ -169,10 +169,11 @@ and see whether more properties become verifiable.
 Two things make this harder than Fashion MNIST. There is **no data set**, so there is no task
 loss to hold the network to its job (`ALPHA = 0`), and with a single property that is fatal:
 training N_{1,8} on Property 3 alone makes the property hold after one epoch by producing a
-network that *never* advises clear-of-conflict anywhere. And the ten properties are stated
-with a guarded implication `i != j => ...` that Vehicle 0.28.0 compiles to a constant loss,
-so the training specification has to state `minimalScore` non-strictly without the guard,
-as `fmnist-robustness.vcl` does for the same reason.
+network that *never* advises clear-of-conflict anywhere: the degenerate solution the
+chapter's objective section warns about, with no task term to rule it out. And the ten
+properties are stated with a guarded implication `i != j => ...` that the loss compiler turns
+into a constant loss, so the training specification has to state `minimalScore` non-strictly
+without the guard, as `fmnist-robustness.vcl` does for the same reason.
 
 The hint that makes it work: split the specification into ten one-property files and train
 on them **one property per epoch, repeatedly**, so that the properties counterbalance each
@@ -198,6 +199,26 @@ narrow slice like Property 3's. Vehicle also turns each into several queries (Pr
 8, because of the disjunction in its antecedent), each of which is a full Marabou run. They
 were the hard ones in the original Reluplex paper too, which is why the spec's comments say
 7 was tested on N_{1,9} only and 8 on N_{2,9} only.
+
+These are the verdicts you should have obtained in Chapter 2's exercises, for the three
+shipped networks on the ten properties, with a 15-minute cap per property (✓ verified,
+✗ falsified, timeout = undecided within the cap):
+
+<!-- EXERCISE 6 BASELINE TABLE START -->
+| Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| N_{1,7} | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | ✗ | ✗ | ✓ | {1, 2, 10} |
+| N_{1,8} | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
+| N_{1,9} | ✓ | ✓ | ✗ | ✗ | ✗ | timeout | timeout | timeout | ✗ | ✓ | {1, 2, 10} |
+<!-- EXERCISE 6 BASELINE TABLE END -->
+
+Note that some properties remain unverified for all three networks: Properties 3, 4, 5 and 9
+are falsified on every one, 6 and 7 are undecided on every one, and 8 is falsified on one
+network and undecided on the other two. This may suggest that
+these properties are difficult or impossible to infer from data: the networks were trained on
+a data set sampled from a controller, and a property that no network has picked up from the
+data is a property the data does not exhibit clearly enough, or a property the network
+architecture cannot represent, which property-driven training may be able to supply.
 
 ## Exercise #7 (⭑⭑⭑): Training for properties more complex than epsilon-ball robustness: the Iris data set
 

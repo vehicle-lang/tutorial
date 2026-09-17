@@ -18,12 +18,14 @@ The experiment, as specified:
 
 All results, training losses and Marabou verdicts, are in tables below.
 
-> **Status (2026-09-17, 19:40).** Training is complete. Verification is complete except for:
-> the four long 9000 s re-runs of
-> Properties 6, 7, 8 on the baseline and Property 6 on `e30`, all running at the time of
-> writing. Their results land in `traces/verify_*.csv` as they finish; `python3 record-results.py`
-> then refreshes the tables in this file, and the table under "Re-running the undecided
-> properties" still has to be filled in by hand from `traces/verify_long_*.csv`.
+> **Status (2026-09-17, 21:00).** Training is complete. All verifications are complete except the
+> four long 9000 s re-runs of Properties 6, 7, 8 on the baseline and Property 6 on `e30`
+> (`traces/verify_long_*.csv`), running at the time of writing. `python3 record-results.py`
+> refreshes the tables in this file from the CSVs, `python3 record-results.py --baselines`
+> prints the three-network table used in Exercise #6, and the table under "Re-running the
+> undecided properties" still has to be filled in by hand from `traces/verify_long_*.csv`.
+> This folder is then to be copied over `../../solutions/acas2/` and pruned to the starting
+> material (see the chapter-4 README).
 
 ## Contents
 
@@ -564,6 +566,14 @@ python3 verify-acas2.py models/acasXu_1_8_cyc3reset_e30.onnx --properties 6 --sp
 
 `verify-acas2.py` now also wraps each call in GNU `timeout -s KILL`, a second layer under the
 watchdog; both were tested to kill a run at 5 s.
+
+**Split-and-conquer did not help either.** Marabou's parallel mode was tried on the baseline's
+Property 7 with its one-property specification, `--solver-args "--snc --num-workers=4"`
+(passed through by `verify-acas2.py --solver-args`), with a 600 s cap: neither of the
+property's two queries finished (`traces/verify_snc_baseline_p7.csv`,
+`marabou-outputs/acasXu_1_8_property7_property07_snc.txt`). The pass-through itself works:
+Property 1 verifies under the same flags in 17 s against 4 s without, the difference being
+the workers' start-up.
 
 <!-- LONG RERUN TABLE -->
 

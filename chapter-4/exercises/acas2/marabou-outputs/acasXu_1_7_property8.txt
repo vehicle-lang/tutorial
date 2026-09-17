@@ -1,0 +1,8 @@
+$ timeout -s KILL 905 vehicle verify --specification /home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu-upstream.vcl --solver Marabou --network acasXu:/home/ek19/Research/Vehicle/tutorial-exercises/tutorial/chapter-4/exercises/acas2/acasXu_1_7.onnx --property property8
+
+  property8 [....................................................]  0/16 queries
+  property8 [===>................................................]  1/16 queries
+Verifying properties:
+
+    result: ✗ - Marabou found a counterexample
+      x: [ -7.403e-3, -2.435336985664, 2.8663885408e-2, 666.5429, 715.4244 ]

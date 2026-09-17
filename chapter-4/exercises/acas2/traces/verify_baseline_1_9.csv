@@ -5,3 +5,7 @@ acasXu_1_9.onnx,3,falsified,"1799.988667, 5.5235470544e-2, 3.09999732192, 980.0,
 acasXu_1_9.onnx,4,falsified,"1799.988667, -5.9998124016e-2, 0.0, 1000.0002, 789.3144",2.6,marabou-outputs/acasXu_1_9_property4.txt
 acasXu_1_9.onnx,5,falsified,"400.005115, 0.239112850304, -3.136590585536, 100.0, 123.3684",2.1,marabou-outputs/acasXu_1_9_property5.txt
 acasXu_1_9.onnx,6,timeout,,900.0,marabou-outputs/acasXu_1_9_property6.txt
+acasXu_1_9.onnx,7,timeout,,900.0,marabou-outputs/acasXu_1_9_property7.txt
+acasXu_1_9.onnx,8,timeout,,900.0,marabou-outputs/acasXu_1_9_property8.txt
+acasXu_1_9.onnx,9,falsified,"6999.970618, -0.242424088272, -3.131589171072, 103.3924, 135.4992",2.0,marabou-outputs/acasXu_1_9_property9.txt
+acasXu_1_9.onnx,10,verified,,34.8,marabou-outputs/acasXu_1_9_property10.txt

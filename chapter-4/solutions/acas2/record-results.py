@@ -7,7 +7,8 @@ Safe to run repeatedly: it replaces whatever lies between the two markers
 Cells read: ✓ (verified, with solver time), ✗ (falsified, with the counterexample), timeout,
 error, or "running" when that (snapshot, property) has no row yet.
 
-    python3 record-results.py
+    python3 record-results.py               # refresh the tables in README.md
+    python3 record-results.py --baselines   # print the three-network baseline table (for Exercise #6)
 """
 
 import csv
@@ -94,6 +95,30 @@ def build_compact():
     return "\n".join(lines)
 
 
+BASELINES = [("N_{1,7}", "verify_baseline_1_7.csv"), ("N_{1,8}", "verify_baseline.csv"), ("N_{1,9}", "verify_baseline_1_9.csv")]
+
+
+def build_baselines():
+    """The three shipped networks on the ten properties, verdict symbols only: the table
+    Exercise #6 shows as what Chapter 2's exercises were expected to produce."""
+    lines = ["| Network | " + " | ".join(str(k) for k in range(1, 11)) + " | verified |", "|---|" + "---|" * 11]
+    for title, name in BASELINES:
+        d = load(name)
+        cells, verified = [], []
+        for k in range(1, 11):
+            r = d.get(k)
+            if r is None:
+                cells.append("running")
+            elif r["verdict"] == "verified":
+                cells.append("✓"); verified.append(str(k))
+            elif r["verdict"] == "falsified":
+                cells.append("✗")
+            else:
+                cells.append("timeout")
+        lines.append(f"| {title} | " + " | ".join(cells) + f" | {{{', '.join(verified)}}} |")
+    return "\n".join(lines)
+
+
 def build():
     data = [(title, load(name)) for title, name in COLUMNS]
     lines = ["| Property | " + " | ".join(t for t, _ in data) + " |", "|---:|" + "---|" * len(data)]
@@ -109,6 +134,10 @@ def build():
 
 
 def main():
+    import sys
+    if "--baselines" in sys.argv:
+        print(build_baselines())
+        return
     text = open(README).read()
     compact = build_compact()
     cblock = f"{COMPACT_START}\n{compact}\n{COMPACT_END}"

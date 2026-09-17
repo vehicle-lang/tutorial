@@ -4,3 +4,8 @@ acasXu_1_7.onnx,2,verified,,166.8,marabou-outputs/acasXu_1_7_property2.txt
 acasXu_1_7.onnx,3,falsified,"1799.988667, 5.9998124016e-2, 3.09999732192, 980.0, 1089.0516",1.9,marabou-outputs/acasXu_1_7_property3.txt
 acasXu_1_7.onnx,4,falsified,"1799.988667, 5.9998124016e-2, 0.0, 1000.0002, 707.4624",1.6,marabou-outputs/acasXu_1_7_property4.txt
 acasXu_1_7.onnx,5,falsified,"400.005115, 0.200000029904, -3.141007663888, 100.0, 112.5324",1.6,marabou-outputs/acasXu_1_7_property5.txt
+acasXu_1_7.onnx,6,timeout,,900.0,marabou-outputs/acasXu_1_7_property6.txt
+acasXu_1_7.onnx,7,timeout,,900.0,marabou-outputs/acasXu_1_7_property7.txt
+acasXu_1_7.onnx,8,falsified,"-7.403e-3, -2.435336985664, 2.8663885408e-2, 666.5429, 715.4244",14.5,marabou-outputs/acasXu_1_7_property8.txt
+acasXu_1_7.onnx,9,falsified,"2502.270361, -0.272162398144, -3.131589171072, 103.0943, 13.7196",4.2,marabou-outputs/acasXu_1_7_property9.txt
+acasXu_1_7.onnx,10,verified,,73.5,marabou-outputs/acasXu_1_7_property10.txt

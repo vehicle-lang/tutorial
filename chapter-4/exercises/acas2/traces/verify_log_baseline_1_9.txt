@@ -5,3 +5,8 @@
 [19:58:56]   property4 : falsified  x = [1799.988667, -5.9998124016e-2, 0.0, 1000.0002, 789.3144]  (3s)
 [19:58:58]   property5 : falsified  x = [400.005115, 0.239112850304, -3.136590585536, 100.0, 123.3684]  (2s)
 [20:13:58]   property6 : timeout    (900s)
+[20:28:58]   property7 : timeout    (900s)
+[20:43:58]   property8 : timeout    (900s)
+[20:44:00]   property9 : falsified  x = [6999.970618, -0.242424088272, -3.131589171072, 103.3924, 135.4992]  (2s)
+[20:44:35]   property10: verified   (35s)
+[20:44:35] done; results in traces/verify_baseline_1_9.csv
