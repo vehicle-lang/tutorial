@@ -90,15 +90,21 @@ section > table.fullwidth td {
   padding-right: 0.6em;
 }
 
+section > table.fullwidth th:not(:last-child),
+section > table.fullwidth td:not(:last-child) {
+  width: 1%;              /* shrink to the content: network name, verdict symbols */
+  white-space: nowrap;
+  text-align: center;
+}
+
 section > table.fullwidth th:first-child,
 section > table.fullwidth td:first-child {
-  width: 1%;              /* shrink to the content: the network name */
-  white-space: nowrap;
+  text-align: left;
 }
 
 section > table.fullwidth th:last-child,
 section > table.fullwidth td:last-child {
-  width: 50%;             /* the summary column gets half the table */
+  width: auto;            /* the summary column takes everything that is left */
 }
 
 /* Full-width figures have no spare margin for a side caption. Keep their
