@@ -101,7 +101,7 @@ advises : Image -> Label -> Bool
 advises x i = forall j . j != i => classifier x ! i > classifier x ! j
 ```
 
-This completes the basic description if the data set and the model architecture in Vehicle. We are ready to define verification properties.
+This completes the basic description of the data set and the model architecture in Vehicle. We are ready to define verification properties.
 
 ## Definition of Robustness Around a Point
 
@@ -265,7 +265,7 @@ Make conclusion about feasibility and success rates of $\epsilon$-ball robustnes
 ## Exercise #4 (⭑): Strong Classification Robustness in Vehicle
 
 Using the same `.vcl` file as in all previous exercises, define and verify in Vehicle the property of _Strong Classification Robustness_,
-that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \leq \eta$, for some small $\eta$.
+that requires, for all $\mathbf{x}$ in the $\epsilon$-ball of $\hat{\mathbf{x}}$, that $f(\mathbf{x})_i \geq \eta$, for some small $\eta$.
 We now assemble the desired _strong classification robustness_ property definition:
 
 Given an $\hat{\mathbf{x}} \in \mathcal{X}$,
