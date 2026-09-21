@@ -105,7 +105,7 @@ If you are interested to know more about the theoretical underpinnings of Vehicl
 
 - Daggitt, M., Kokke, W., Atkey, R.,  Komendantskaya, E., Slusarz, N., and  Arnaboldi, L. *Vehicle: Bridging the Embedding Gap in the Verification of Neuro-Symbolic Programs.* Invited paper at 10th International Conference on Formal Structures for Computation and Deduction (FSCD'25).
 
-- Daggitt, M., Komendantskaya, E., 
+- Daggitt, M., Komendantskaya, E.,
 Sirman, A., Bruni, A., Teuber, S., Smart, J., Passmore, G.: *Compositional Neural-Cyber-Physical System Verification in the Interactive Theorem Prover of Your Choice.* International Conference on Functional Programming (ICFP'26).
 
 - Casadio, M., Komendantskaya, E., Daggitt, M.L., Kokke, W., Katz, G., Amir, G., Refaeli, I.:
@@ -127,4 +127,3 @@ ACM (2023).
 
 
 -  Sirman, A., Conway, F., Ciupa, J.,  Grinbergs, G., Komendantskaya, E., Hoang, S., Rawson, M., Bruni, A., Belle, V.,  Williams, M. *Vancomycert: A Certified Neuro-Symbolic Drug Delivery System (Case Study).* Symposium on AI Verification (SAIV'26).
-

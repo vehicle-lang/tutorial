@@ -61,7 +61,7 @@ Models learn by iteratively tweaking their optimisation parameters with the goal
 
 $$\min_\theta\mathcal{L}(\hat x,y)$$
 
-We are now ready to code all of this. 
+We are now ready to code all of this.
 
 ## Getting Started with the Code
 
@@ -155,7 +155,7 @@ Keeping the data in the range the specification talks about costs us nothing her
 network below trains perfectly well on raw pixels --- and it keeps a single meaning for
 $\epsilon$ across training and verification. Part II returns to this: it is a small
 instance of the general difficulty of interfacing a logical specification with an
-optimisation objective. One of the exercises in this chapter will give you a chance to reconstruct the whole training-verification pipeline *with* normalisation baked into the training. 
+optimisation objective. One of the exercises in this chapter will give you a chance to reconstruct the whole training-verification pipeline *with* normalisation baked into the training.
 
 Finally, note that the two frameworks store images differently: PyTorch's `ToTensor`
 produces channel-first batches of shape `(N, 1, 28, 28)`, whereas here we append the
@@ -309,7 +309,7 @@ training objective helps, we need a radius at which the network is genuinely vul
 At $\epsilon = 0.005$ there is one image to win back; at $\epsilon = 0.02$ there are
 sixteen.
 
-We will first consider traditional machine learning methods that were introduced to address the problem of adversarial robustness. 
+We will first consider traditional machine learning methods that were introduced to address the problem of adversarial robustness.
 
 
 ## Data augmentation
@@ -476,7 +476,7 @@ X = \left\{ x \in \mathbb{R}^5 :\;\;
     &960 \le x_5 \le x_5^{\max}
 \end{aligned}
 \right\}
-$$ 
+$$
 
 Where $x_n^{max}$ is the maximum input value for attribute $x_n$ -->
 
