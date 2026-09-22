@@ -112,7 +112,7 @@ A neural network controller `controller.onnx` can be verified against the specif
 vehicle verify \
   --specification windController.vcl \
   --network controller:controller.onnx \
-  --verifier Marabou \
+  --solver Marabou \
   --cache controller-result
 ```
 
@@ -717,7 +717,7 @@ Navigate to the `chapter-5/chapter-code` directory of the [tutorial repository](
    vehicle verify \
      --specification windController.vcl \
      --network controller:controller.onnx \
-     --verifier Marabou \
+     --solver Marabou \
      --cache controller-result
    ```
 2. Export the verified specification to your ITP of choice (e.g. Rocq):
