@@ -78,4 +78,4 @@ vehicle verify \
 
 With Vehicle 0.26.1 and the supplied network this verifies both generated
 queries. Tightening only `maxSpeed` to `0.1` does not hold: Marabou returns the
-counterexample `x = [-0.1, -0.3]`. 
+counterexample `x = [-0.1, -0.3]`.

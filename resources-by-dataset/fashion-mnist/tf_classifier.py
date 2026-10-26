@@ -82,11 +82,11 @@ for epoch in range(num_epochs):
 
         grads = tape.gradient(total_loss, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
- 
+
         running_total_loss += total_loss.numpy() * labels.shape[0]
         correct += (tf.argmax(logits, axis=1, output_type=labels.dtype) == labels).numpy().sum()
         seen += labels.shape[0]
-        
+
     print(
         f"Epoch: {epoch + 1}, "
         f"mean total loss: {running_total_loss / seen:.4f}, "
