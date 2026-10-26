@@ -59,7 +59,7 @@ previousSensor = currentSensor - (currentSensor - previousSensor)
                  <= 0.2 + 0.2 = 0.4
 ```
 
-Vehicle 0.26.1 needs this finite bound written in this instance for each 
+Vehicle 0.26.1 needs this finite bound written in this instance for each
 network input, even when it follows from the other conditions.
 
 After adding the property, run:
