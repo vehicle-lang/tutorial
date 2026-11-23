@@ -323,8 +323,6 @@ not a quantity the task objective measures, so driving that objective lower cann
 expected to improve it. If we want robustness — at radii where it is genuinely at risk —
 it has to enter the objective itself, which is what the rest of this chapter does.
 
-
-
 # Part 2: Running the property-driven training example
 
 The data sets are described in the [chapter README](../README.md) — they are the same
@@ -449,13 +447,13 @@ five epochs, Vehicle's default logic) printed the following on 2026-09-11:
 
 ```plain
 Step 0:
-	task loss:        2.2898
-	constraint loss:  0.2350
-	total loss:       1.2624
+ task loss:        2.2898
+ constraint loss:  0.2350
+ total loss:       1.2624
 Step 1:
-	task loss:        2.2174
-	constraint loss:  0.0928
-	total loss:       1.1551
+ task loss:        2.2174
+ constraint loss:  0.0928
+ total loss:       1.1551
 ...
 Epoch: 1, mean total loss: 1.0139, train accuracy: 51.1%
 Epoch: 2, mean total loss: 0.6981, train accuracy: 68.4%
@@ -879,5 +877,3 @@ Two lessons carry over to any property-driven training project:
    the property have come apart, and the pipeline, not the hyper-parameters, is where to
    look. The same habit found the normalisation mismatch recorded in
    [normalisation-options.md](normalisation-options.md).
-
-
