@@ -207,7 +207,7 @@ shipped networks on the ten properties, with a 15-minute cap per property (✓ v
 
 <!-- EXERCISE 6 BASELINE TABLE START -->
 | NN | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | summary |
-|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------------------|
+| :---- | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :------------------------ |
 | N_{1,7} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | ✗ | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 8, 9; undecided 6, 7 |
 | N_{1,8} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
 | N_{1,9} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |

@@ -22,7 +22,7 @@ All results, training losses and Marabou verdicts, are in tables below.
 
 <!-- HEADLINE TABLE START -->
 | Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
-|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------|
+| :---- | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :------------ |
 | shipped N_{1,8} | ✓ 4 s | ✓ 5 min | ✗ 2 s | ✗ 1 s | ✗ 1 s | t/o† 2 h 30 min | t/o† 2 h 30 min | t/o† 2 h 30 min | ✗ 1 s | ✓ 2 min | {1, 2, 10} |
 | fresh Adam e30 | ✓ 24 s | ✓ 25 s | ✓ 2 s | ✓ 1 s | ✗ 24 s | ✗† 2 h 8 min | ✗ 2 s | ✗ 4 s | ✓ 28 s | ✓ 49 s | {1, 2, 3, 4, 9, 10} |
 
@@ -112,7 +112,7 @@ with a 15-minute limit per property.
 Results (the same table is repeated under Step 4 with the trained network's columns):
 
 | Property | N_{1,8} before training (step 1) | e10, after the ten-epoch tour (step 4) | snapshot e_k on its own property k |
-|---:|---|---|---|
+| ---: | --- | --- | --- |
 | 1 | ✓ verified (4 s) | ✓ verified (3 s) | e01: ✓ verified (6 s) |
 | 2 | ✓ verified (302 s) | ✓ verified (20 s) | e02: ✓ verified (22 s) |
 | 3 | ✗ falsified (2 s)<br>x = [1800, 0.06, 3.1, 980, 960] | ✓ verified (1 s) | e03: ✗ falsified (1 s)<br>x = [1800, -0.06, 3.1, 980, 960] |
@@ -130,7 +130,7 @@ This is the table Exercise #6 shows the reader as the expected outcome of Chapte
 
 <!-- BASELINES TABLE START -->
 | NN | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | summary |
-|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:------------------------|
+| :---- | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :------------------------ |
 | N_{1,7} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | ✗ | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 8, 9; undecided 6, 7 |
 | N_{1,8} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
 | N_{1,9} | ✓ | ✓ | ✗ | ✗ | ✗ | t/o | t/o | t/o | ✗ | ✓ | verified {1, 2, 10}; falsified 3, 4, 5, 9; undecided 6, 7, 8 |
@@ -145,7 +145,6 @@ not enforced promptly, see the note under Step 4). Property 9 is falsified in a 
 Property 10 holds (133 s), although upstream it was only tested on N_{4,5}. So before any
 training N_{1,8} satisfies Properties 1, 2 and 10, violates 3, 4, 5 and 9, and 6, 7, 8 are
 undecided within the limit.
-
 
 ## Step 2: splitting the specification into ten
 
@@ -236,8 +235,8 @@ steps. "Agreement" is the fraction of 20,000 inputs drawn uniformly from the who
 input space on which the network gives the same advisory as the original N_{1,8}.
 
 | Epoch | Trained on | loss mean | loss last | agreement with original | seconds | snapshot |
-|---:|---|---:|---:|---:|---:|---|
-| 0 | start |  |  | 100.00% |  | `acasXu_1_8_seq_e00.onnx` |
+| ---: | --- | ---: | ---: | ---: | ---: | --- |
+| 0 | start | | | 100.00% | | `acasXu_1_8_seq_e00.onnx` |
 | 1 | property1 | -4.0188 | -4.0263 | 99.60% | 1 | `acasXu_1_8_seq_e01.onnx` |
 | 2 | property2 | -0.3468 | -0.3594 | 99.60% | 7 | `acasXu_1_8_seq_e02.onnx` |
 | 3 | property3 | -0.2823 | -0.2857 | 99.60% | 8 | `acasXu_1_8_seq_e03.onnx` |
@@ -256,7 +255,7 @@ Row = the network saved at the end of that epoch, column = property (from
 bold. This is the table that shows what training on one property does to the others.
 
 | After epoch | p1 | p2 | p3 | p4 | p5 | p6 | p7 | p8 | p9 | p10 |
-|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 0 (start) | -4.011 | -0.322 | -0.320 | -0.320 | +0.323 | +0.460 | -0.183 | +0.183 | +0.315 | +0.321 |
 | 1 (p1) | **-4.027** | -0.335 | -0.308 | -0.307 | +0.326 | +0.447 | -0.187 | +0.178 | +0.321 | +0.309 |
 | 2 (p2) | -4.042 | **-0.361** | -0.284 | -0.283 | +0.333 | +0.423 | -0.194 | +0.168 | +0.333 | +0.284 |
@@ -272,7 +271,7 @@ bold. This is the table that shows what training on one property does to the oth
 ### What the snapshots advise
 
 | Snapshot | advisories on 4,000 uniform inputs, whole valid space | output range |
-|---|---|---|
+| --- | --- | --- |
 | e00 | COC 99.8%, weakLeft 0.1%, weakRight 0.1% | [−0.021, 0.011] |
 | e01 | COC 100% | [−0.037, 0.011] |
 | e02 | COC 100% | [−0.052, 0.027] |
@@ -310,7 +309,6 @@ bold. This is the table that shows what training on one property does to the oth
   one objective (Chapter 4, Exercise #3, "several constraints at once") rather than
   visiting them in turn.
 
-
 ## Step 4: verifying the trained network on the ten-property specification
 
 ```bash
@@ -327,7 +325,7 @@ ten-property `acasXu-upstream.vcl`, all with a 900 s limit per (snapshot, proper
 - (the baseline column is step 1, `traces/verify_baseline.csv`).
 
 | Property | N_{1,8} before training (step 1) | e10, after the ten-epoch tour (step 4) | snapshot e_k on its own property k |
-|---:|---|---|---|
+| ---: | --- | --- | --- |
 | 1 | ✓ verified (4 s) | ✓ verified (3 s) | e01: ✓ verified (6 s) |
 | 2 | ✓ verified (302 s) | ✓ verified (20 s) | e02: ✓ verified (22 s) |
 | 3 | ✗ falsified (2 s)<br>x = [1800, 0.06, 3.1, 980, 960] | ✓ verified (1 s) | e03: ✗ falsified (1 s)<br>x = [1800, -0.06, 3.1, 980, 960] |
@@ -350,7 +348,7 @@ In compact form, each intermediate snapshot of the tour on the property it had j
 trained on (Property 10 is `e10`'s column above):
 
 | snapshot | e01 | e02 | e03 | e04 | e05 | e06 | e07 | e08 | e09 |
-|---|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | trained on property | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 | verdict on that property | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ | t/o | t/o | ✗ |
 
@@ -399,7 +397,7 @@ runs away, and the weights overflow to NaN early in epoch 14. The run was stoppe
 (`e00` to `e13` are usable, `e14` onwards contain NaN).
 
 | Epoch | Trained on | loss mean | loss last | agreement with original |
-|---:|---|---:|---:|---:|
+| ---: | --- | ---: | ---: | ---: |
 | 1 | property1 | -4.0188 | -4.0263 | 99.6% |
 | 2 | property2 | -0.3468 | -0.3594 | 99.6% |
 | 3 | property3 | -0.2823 | -0.2857 | 99.6% |
@@ -420,7 +418,7 @@ climbed from 3.3 to 35; four steps into epoch 14 the loss was −3.76 at gradien
 (`traces/1_8_cyc3_steps.csv`). All ten losses around the divergence:
 
 | After epoch | p1 | p2 | p3 | p4 | p5 | p6 | p7 | p8 | p9 | p10 |
-|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 10 (p10) | -4.055 | -0.375 | -0.329 | -0.284 | +0.339 | +0.411 | -0.197 | +0.156 | +0.332 | **+0.273** |
 | 11 (p1) | **-4.074** | -0.396 | -0.310 | -0.269 | +0.343 | +0.394 | -0.201 | +0.150 | +0.334 | +0.255 |
 | 12 (p2) | -4.094 | **-0.421** | -0.287 | -0.250 | +0.351 | +0.373 | -0.207 | +0.141 | +0.340 | +0.235 |
@@ -449,7 +447,7 @@ by the end of epoch 14. The full 30 epochs ran to completion but epochs 14 to 30
 meaningless.
 
 | Epoch | Trained on | loss mean | loss last | agreement with original |
-|---:|---|---:|---:|---:|
+| ---: | --- | ---: | ---: | ---: |
 | 1 | property1 | -4.0188 | -4.0263 | 99.6% |
 | 2 | property2 | -0.3468 | -0.3594 | 99.6% |
 | 3 | property3 | -0.2823 | -0.2857 | 99.6% |
@@ -486,9 +484,8 @@ estimate carries over from one property to the next.
 
 **It survived all 30 epochs.** Per-epoch losses (three columns = the three tours):
 
-
 | Epoch | Trained on | loss mean | loss last | agreement | | Epoch | Trained on | loss mean | loss last | agreement | | Epoch | Trained on | loss mean | loss last | agreement |
-|---:|---|---:|---:|---:|---|---:|---|---:|---:|---:|---|---:|---|---:|---:|---:|
+| ---: | --- | ---: | ---: | ---: | --- | ---: | --- | ---: | ---: | ---: | --- | ---: | --- | ---: | ---: | ---: |
 | 1 | p1 | -4.019 | -4.026 | 99.6% | | 11 | p1 | -4.051 | -4.058 | 99.6% | | 21 | p1 | -4.083 | -4.090 | 99.6% |
 | 2 | p2 | -0.348 | -0.360 | 99.6% | | 12 | p2 | -0.409 | -0.422 | 99.6% | | 22 | p2 | -0.474 | -0.488 | 99.6% |
 | 3 | p3 | -0.295 | -0.307 | 99.6% | | 13 | p3 | -0.243 | -0.253 | 99.6% | | 23 | p3 | -0.262 | -0.408 | 97.5% |
@@ -503,7 +500,7 @@ estimate carries over from one property to the next.
 All ten losses after each tour (rows: start, after 10, 20 and 30 epochs):
 
 | After epoch | p1 | p2 | p3 | p4 | p5 | p6 | p7 | p8 | p9 | p10 |
-|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 0 | -4.011 | -0.322 | -0.320 | -0.320 | +0.323 | +0.460 | -0.183 | +0.183 | +0.315 | +0.321 |
 | 10 | -4.043 | -0.382 | -0.267 | -0.267 | +0.352 | +0.405 | -0.208 | +0.151 | +0.345 | +0.267 |
 | 20 | -4.075 | -0.446 | -0.225 | -0.227 | +0.384 | +0.356 | -0.239 | +0.123 | +0.166 | +0.217 |
@@ -534,7 +531,7 @@ Marabou's counterexample [distance, angle, heading, speed, intruderSpeed], timeo
 
 <!-- COMPACT VERIFY TABLE START -->
 | Network | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | verified |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | N_{1,8} baseline | ✓ (4 s) | ✓ (302 s) | ✗ (2 s) | ✗ (1 s) | ✗ (1 s) | timeout† (9001 s) | timeout† (9000 s) | timeout† (9000 s) | ✗ (1 s) | ✓ (133 s) | {1, 2, 10} |
 | tour e10 | ✓ (3 s) | ✓ (20 s) | ✓ (1 s) | ✗ (2 s) | ✗ (1 s) | ✗ (106 s) | timeout (900 s) | timeout (900 s) | ✗ (2 s) | ✓ (1113 s) | {1, 2, 3, 10} |
 | fresh Adam e10 | ✓ (12 s) | ✓ (42 s) | ✗ (2 s) | ✗ (2 s) | ✗ (3 s) | timeout (7964 s) | timeout (900 s) | timeout (900 s) | ✗ (2 s) | ✓ (64 s) | {1, 2, 10} |
@@ -548,7 +545,7 @@ The same verdicts in full, with counterexamples:
 
 <!-- COMBINED VERIFY TABLE START -->
 | Property | N_{1,8} baseline | tour e10 | fresh Adam e10 | fresh Adam e20 | fresh Adam e30 |
-|---:|---|---|---|---|---|
+| ---: | --- | --- | --- | --- | --- |
 | 1 | ✓ (4 s) | ✓ (3 s) | ✓ (12 s) | ✓ (32 s) | ✓ (24 s) |
 | 2 | ✓ (302 s) | ✓ (20 s) | ✓ (42 s) | ✓ (36 s) | ✓ (25 s) |
 | 3 | ✗ (2 s)<br><small>[1800, 0.06, 3.1, 980, 960]</small> | ✓ (1 s) | ✗ (2 s)<br><small>[1800, 0.06, 3.1, 980, 960]</small> | ✗ (2 s)<br><small>[1800, 0.06, 3.1, 980, 960]</small> | ✓ (2 s) |
@@ -563,7 +560,7 @@ The same verdicts in full, with counterexamples:
 Properties verified per network:
 
 | Network | properties verified |
-|---|---|
+| --- | --- |
 | N_{1,8} baseline | {1, 2, 10} |
 | tour e10 | {1, 2, 3, 10} |
 | fresh Adam e10 | {1, 2, 10} |
@@ -612,10 +609,10 @@ the workers' start-up.
 
 <!-- LONG RERUN TABLE START -->
 | Network | Property | verdict with a 9000 s limit | counterexample [distance, angle, heading, speed, intruderSpeed] |
-|---|---:|---|---|
-| N_{1,8} baseline | 6 | timeout (2 h 30 min) |  |
-| N_{1,8} baseline | 7 | timeout (2 h 30 min) |  |
-| N_{1,8} baseline | 8 | timeout (2 h 30 min) |  |
+| --- | ---: | --- | --- |
+| N_{1,8} baseline | 6 | timeout (2 h 30 min) | |
+| N_{1,8} baseline | 7 | timeout (2 h 30 min) | |
+| N_{1,8} baseline | 8 | timeout (2 h 30 min) | |
 | fresh Adam e30 | 6 | ✗ falsified (2 h 8 min) | [1.306e+04, -0.7, -3.142, 100, 108.7] |
 <!-- LONG RERUN TABLE END -->
 
@@ -636,7 +633,7 @@ the trained one.
 Property 3 region:
 
 | Network | whole input space | agreement with original | Property 3 region |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | original N_{1,8} | COC 99.8%, weakLeft 0.1%, weakRight 0.1% | 100% | COC 100% |
 | fresh Adam e10 | COC 100% | 99.8% | COC 100% |
 | fresh Adam e20 | COC 99.9%, strongLeft 0.1% | 99.7% | COC 100% |
@@ -710,7 +707,7 @@ properties instead of three.
 `acasXu.vcl`, Capucci `p = 5` (the `p = 2` run gave identical verdicts):
 
 | Network | epoch 0 (start, re-exported) | epoch 1 | epoch 2 | epoch 3 |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | N_{1,7} | ✗ counterexample [1799.99, 0.0600, 3.0999997, 980.0, 1058.63] | ✓ verified | ✓ verified | ✓ verified |
 | N_{1,8} | ✗ counterexample [1799.99, 0.0570, 3.0999997, 980.0, 960.0] | ✓ verified | ✓ verified | ✓ verified |
 | N_{1,9} | ✗ counterexample [1799.99, 0.0600, 3.0999997, 980.0, 960.0] | ✓ verified | ✓ verified | ✓ verified |
@@ -727,7 +724,7 @@ Verified is not the same as useful. The advisory each snapshot gives, over 4,000
 drawn uniformly from the whole valid input space and 4,000 from the Property 3 region:
 
 | Network | epoch | whole input space | Property 3 region |
-|---|---:|---|---|
+| --- | ---: | --- | --- |
 | N_{1,7} | 0 | COC 97.3%, weakLeft 1.4%, weakRight 1.2%, strongRight 0.1% | COC 100% |
 | | 1 | strongRight 96.0%, strongLeft 2.4%, weakRight 1.0%, weakLeft 0.6%, **COC 0%** | strongRight 100% |
 | | 3 | strongLeft 90.5%, strongRight 9.5%, **COC 0%** | strongLeft 100% |
@@ -880,4 +877,3 @@ Property 3 is `not (advises COC x)`, i.e. `−advises`, hence −0.32 at `p = 5`
 other advisory scores far below clear-of-conflict, one margin becomes large and positive and
 the loss heads towards −∞. Because of the soft-max offset there is no fixed value at which
 the property "becomes true"; read the loss relatively, and use Marabou for the verdict.
-
